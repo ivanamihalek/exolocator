@@ -2,35 +2,22 @@
 
 
 import MySQLdb
-from   el_utils.mysql import connect_to_mysql
+from   el_utils.mysql   import  connect_to_mysql
+from   el_utils.ensembl import  get_species, get_gene_ids
 
 
 #########################################
 def main():
     
-    db = connect_to_mysql()
+    db     = connect_to_mysql()
     cursor = db.cursor()
+    [all_species, ensembl_db_name] = get_species (cursor)
 
-    qry = "show databases like '%core%'"
-    cursor.execute(qry)
-
-    rows = cursor.fetchall()
-    if (not rows):
-        print "No databases with 'core' in the name found"
-        return 1
-
-    ensembl_db_name = {}
-    all_species = []
-    for row in rows:
-        db_name = row[0]
-        name_tokens = db_name.split ('_')
-        species = name_tokens[0]+'_'+ name_tokens[1]
-        ensembl_db_name[species] = db_name
-        all_species.append(species)
 
     for species in all_species:
         print species
-
+        gene_ids = get_gene_ids (cursor, ensembl_db_name[species], 'protein_coding')  
+        print " protein coding genes:  %15d " %  len(gene_ids)
     print "there are %d core dbs available " % len(all_species)
 
 #########################################

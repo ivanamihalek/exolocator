@@ -32,20 +32,19 @@ def connect_to_mysql ():
     try:
         db =MySQLdb.connect(user="root")
     except  MySQLdb.Error, e:
-        print "Error connecting to mysql as root (%s) " % (ensembl_db_name,  e.args[1])
+        print "Error connecting to mysql as root (%s) " % (e.args[1])
         exit(1)
  
     return db
 
 ########
-def connect_to_core (species):
-
-    ensembl_db_name = get_ensembl_name(species)
+def connect_to_db (db_name):
 
     try:
-        db =MySQLdb.connect(user="root", db=ensembl_db_name)
+        db =MySQLdb.connect(user="root", db=db_name)
     except  MySQLdb.Error, e:
-        print "Error connecting to %s: %d %s" % (ensembl_db_name, e.args[0], e.args[1])
+        print "Error connecting to %s: %d %s" % (db_name, e.args[0], e.args[1])
         exit(1)
 
     return db
+
