@@ -19,17 +19,62 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
     # check if the row exists
     qry = "select exists (select 1 from %s  where %s) "  % (table, conditions)
     rows   = search_db (cursor, qry)
-    exists = rows and type(rows[0][0]) is int and rows[0][0]==1
-   
+    exists = rows and (type(rows[0][0]) is long) and (rows[0][0]==1)
+  
+ 
     if exists: # if it exists, update
-        qry = "update"
+        qry = "update %s set" % table
+        first = True
+        for field, value in update_fields.iteritems():
+            if (not first):
+                qry += ", "
+            qry += " %s = " % field
+            if type(value) is int:
+                qry += " %d" % value
+            else:
+                qry += " \'%s\'" % value
+
+            first = False
+        qry += " where %s " % conditions
+        print qry
+        rows   = search_db (cursor, qry)
+        if (rows):
+            rows   = search_db (cursor, qry, verbose=True)
+            return False
 
     else: # if not, make a new one
 
         qry = "insert into %s " % table
         qry += "("
-        for fields in fixed_fields: # again will have to check for the type here
+        first = True
+        for field in fixed_fields.keys()+update_fields.keys(): # again will have to check for the type here
+            if (not first):
+                qry += ", "
+            qry += field
+            first = False
+        qry += ")"
+       
+        qry += " values "
+        qry += "("
+        first = True
+        for value in fixed_fields.values()+update_fields.values(): # again will have to check for the type here
+            if (not first):
+                qry += ", "
+            if type(value) is int:
+                qry += " %d" % value
+            else:
+                qry += " \'%s\'" % value
+            first = False
+        qry += ")"
+      
 
+        rows   = search_db (cursor, qry)
+        if (rows):
+            rows   = search_db (cursor, qry, verbose=True)
+            return False
+
+
+    return True
 
 
 #######
