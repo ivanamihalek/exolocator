@@ -20,6 +20,10 @@ def main():
         print " protein coding genes:  %15d " %  len(gene_ids)
     print "there are %d core dbs available " % len(all_species)
 
+    cursor.close()
+    db.close()
+
+
 #########################################
 if __name__ == '__main__':
     main()
