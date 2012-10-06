@@ -1,6 +1,37 @@
 import MySQLdb
 
 
+########
+def store_or_update (cursor, table, fixed_fields, update_fields):
+
+
+    conditions = ""
+    first = True
+    for [field, value] in fixed_fields.iteritems():
+        if (not first):
+            conditions += " and "
+        if ( type (value) is int):
+            conditions += " %s=%d "   % (field, value)
+        else:
+            conditions += " %s='%s' " % (field, value)
+        first = False
+
+    # check if the row exists
+    qry = "select exists (select 1 from %s  where %s) "  % (table, conditions)
+    rows   = search_db (cursor, qry)
+    exists = rows and type(rows[0][0]) is int and rows[0][0]==1
+   
+    if exists: # if it exists, update
+        qry = "update"
+
+    else: # if not, make a new one
+
+        qry = "insert into %s " % table
+        qry += "("
+        for fields in fixed_fields: # again will have to check for the type here
+
+
+
 #######
 def search_db (cursor, qry, verbose=False):
 

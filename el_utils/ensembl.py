@@ -3,6 +3,96 @@
 import MySQLdb
 from   mysql  import search_db
 
+ 
+
+########
+def stable2gene (cursor, db_name=None, stable_id=None):
+
+    if (not stable_id):
+        return ""
+
+    if  (db_name):
+        qry  = "use %s " % db_name
+        rows = search_db (cursor, qry)
+        if (rows):
+            rows = search_db (cursor, qry, verbose = True)
+            print rows
+            exit (1)
+
+
+    qry = "select gene_id from gene where stable_id='%s'" % stable_id
+    rows = search_db (cursor, qry, verbose = False)
+    
+    if (not rows):
+        rows = search_db (cursor, qry, verbose = True)
+        return ""
+
+    return int(rows[0][0])
+    
+########
+def gene2stable (cursor, db_name=None, gene_id=None):
+
+    if (not gene_id):
+        return ""
+
+    if  (db_name):
+        qry  = "use %s " % db_name
+        rows = search_db (cursor, qry)
+        if (rows):
+            rows = search_db (cursor, qry, verbose = True)
+            print rows
+            exit (1)
+
+
+    qry = "select stable_id from gene where gene_id=%d" % gene_id
+    rows = search_db (cursor, qry, verbose = False)
+    
+    if (not rows):
+        rows = search_db (cursor, qry, verbose = True)
+        return ""
+
+    return rows[0][0]
+    
+
+########
+def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None):
+
+    gene_ids = []
+    
+    if  (db_name):
+        qry  = "use %s " % db_name
+        rows = search_db (cursor, qry)
+        if (rows):
+            rows = search_db (cursor, qry, verbose = True)
+            print rows
+            exit (1)
+
+    qry = "select gene_id from gene"
+
+    if ( biotype or is_known):
+        qry +=  " where "
+        if ( biotype):
+           qry += "biotype='%s'" % biotype
+        if (biotype and is_known):
+            qry += " and "
+        if (is_known):
+           qry += "status='known'"
+
+    rows = search_db (cursor, qry, verbose = False)
+    
+    if (not rows):
+        rows = search_db (cursor, qry, verbose = True)
+        return []
+    else:
+        if ('Error' in rows[0]):
+            print rows[0]
+            return []
+
+        for row in rows:
+            gene_ids.append(int(row[0]))
+    
+    return gene_ids
+
 
 ########
 def get_species (cursor):
@@ -27,28 +117,3 @@ def get_species (cursor):
 
     return all_species, ensembl_db_name
 
-
-########
-def get_gene_ids (cursor, ensembl_db_name, biotype):
-
-    gene_ids = []
-    
-    qry  = "use %s " % ensembl_db_name
-    rows = search_db (cursor, qry)
-    
-    if (rows):
-        rows = search_db (cursor, qry, verbose = True)
-        print rows
-        exit (1)
-
-    qry = "select gene_id from gene where biotype='%s'" % biotype
-    rows = search_db (cursor, qry)
-    
-    if (not rows):
-        rows = search_db (cursor, qry, verbose = True)
-    
-    else:
-        for row in rows:
-            gene_ids.append(row[0])
-    
-    return gene_ids
