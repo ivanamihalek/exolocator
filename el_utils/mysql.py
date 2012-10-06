@@ -4,7 +4,6 @@ import MySQLdb
 ########
 def store_or_update (cursor, table, fixed_fields, update_fields):
 
-
     conditions = ""
     first = True
     for [field, value] in fixed_fields.iteritems():
@@ -36,7 +35,6 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
 
             first = False
         qry += " where %s " % conditions
-        print qry
         rows   = search_db (cursor, qry)
         if (rows):
             rows   = search_db (cursor, qry, verbose=True)
@@ -67,12 +65,10 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
             first = False
         qry += ")"
       
-
         rows   = search_db (cursor, qry)
         if (rows):
             rows   = search_db (cursor, qry, verbose=True)
             return False
-
 
     return True
 
