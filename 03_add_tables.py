@@ -128,6 +128,27 @@ def make_exon_seq_table (cursor):
             return False
 
 #########################################
+def make_coding_region_table(cursor):
+
+
+    table = 'coding_region'
+
+    qry  = "CREATE TABLE " + table + " (gene_id INT PRIMARY KEY)"
+    rows = search_db (cursor, qry)
+    if (rows):
+        return False
+
+
+    # make the columns
+    columns = ['start', 'end']
+    for column in columns:
+        qry = "ALTER TABLE %s ADD %s  INT(10)" % (table, column)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+     
+
+#########################################
 def make_orthologue_table (cursor, table):
     
 
@@ -174,6 +195,8 @@ def make_table (cursor, db_name, table):
         make_exon_seq_table (cursor)
     elif table == 'sw_exon':
         make_sw_exon_table (cursor)
+    elif table == 'coding_region':
+        make_coding_region_table (cursor)
     elif table in ['orthologue', 'unresolved_ortho', 'paralogue']:
         make_orthologue_table (cursor, table)
     else:
@@ -195,7 +218,7 @@ def main():
     for species in all_species:
         print species
         db_name = ensembl_db_name[species]
-        for table in ['gene2exon', 'exon_seq', 'sw_exon']:
+        for table in ['gene2exon', 'exon_seq', 'sw_exon', 'coding_region']:
 
             if ( check_table_exists (cursor, db_name, table)):
                 print table, " found in ", db_name

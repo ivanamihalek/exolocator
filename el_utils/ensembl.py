@@ -89,6 +89,9 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None):
             return []
 
         for row in rows:
+            if ( not type(row[0]) is long ):
+                print row
+                exit(1)
             gene_ids.append(int(row[0]))
     
     return gene_ids
