@@ -73,6 +73,40 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
     return True
 
 
+#########################################
+def create_index (cursor, db_name, index_name, table, columns):
+
+    # columns is a list of columns that we want to have indexed
+    qry = "use %s" % db_name
+    rows = search_db (cursor, qry, verbose=False)
+    if (rows):
+        return False
+    
+    # check whether this index exists already
+    qry = "show index from %s where key_name like '%s'" % ( table, index_name) 
+    rows = search_db (cursor, qry, verbose=True)
+    if (rows):
+        print rows
+        return True
+   
+    qry = "create index %s  on %s " % (index_name, table)
+    qry += " ("
+    first = True
+    for column in columns:
+        if (not first):
+            qry += ", "
+        qry += column
+        first = False
+        qry += ")"
+
+
+    rows = search_db (cursor, qry, verbose=True)
+    if (rows):
+        print rows
+        return False
+   
+    return True
+
 #######
 def search_db (cursor, qry, verbose=False):
 

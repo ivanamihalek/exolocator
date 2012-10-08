@@ -2,7 +2,7 @@
 
 
 import MySQLdb
-from   el_utils.mysql   import  connect_to_mysql, search_db
+from   el_utils.mysql   import  connect_to_mysql, search_db, create_index
 from   el_utils.ensembl import  get_species, get_gene_ids
 
 #########################################
@@ -128,13 +128,11 @@ def make_exon_seq_table (cursor):
             return False
 
 #########################################
-def make_orthologue_table (cursor):
+def make_orthologue_table (cursor, table):
     
 
     # if congamet_gene_id is 0, and source is 'rbh'
     # means that the reciprocal-best-hit was attempted but nothing was found
-
-    table = 'orthologue'
 
     qry  = "CREATE TABLE " + table + "  (orth_pair_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
     rows = search_db (cursor, qry)
@@ -176,39 +174,14 @@ def make_table (cursor, db_name, table):
         make_exon_seq_table (cursor)
     elif table == 'sw_exon':
         make_sw_exon_table (cursor)
-    elif table == 'orthologue':
-        make_orthologue_table (cursor)
+    elif table in ['orthologue', 'unresolved_ortho', 'paralogue']:
+        make_orthologue_table (cursor, table)
     else:
         print "I don't know how to make table '%s'" % table
 
 
     
     
-#########################################
-def create_index (cursor, db_name, index_name, table, col1, col2):
-    
-
-    qry = "use %s" % db_name
-    rows = search_db (cursor, qry, verbose=False)
-    if (rows):
-        return False
-    
-    # check whether this index exists already
-    qry = "show index from %s where key_name like '%s'" % ( table, index_name) 
-    rows = search_db (cursor, qry, verbose=True)
-    if (rows):
-        print rows
-        return True
-   
-
-    qry = "create index %s  on %s  (%s, %s)" % (index_name, table, col1, col2)
-    rows = search_db (cursor, qry, verbose=True)
-    if (rows):
-        print rows
-        return False
-   
-    return True
-
 
 #########################################
 def main():
@@ -230,21 +203,23 @@ def main():
                 print table, " not found in ", db_name
                 make_table (cursor, db_name, table)
         
-        create_index (cursor, db_name,'eg_index', 'gene2exon',  'exon_id', 'gene_id')
-        create_index (cursor, db_name,'ek_index', 'exon_seq', 'exon_id', 'is_known')
+        create_index (cursor, db_name,'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
+        create_index (cursor, db_name,'ek_index', 'exon_seq', ['exon_id', 'is_known'])
 
 
     # add orthologue table to human - we are human-centered here
     print "adding orthologue to human"
     species = 'homo_sapiens'
     db_name = ensembl_db_name[species]
-    table   = 'orthologue'
-    if ( check_table_exists (cursor, db_name, table)):
-        print table, " found in ", db_name
-    else:
-        print table, " not found in ", db_name
-        make_table (cursor, db_name, table)
-        
+    for table in ['orthologue', 'unresolved_ortho', 'paralogue']:
+        if ( check_table_exists (cursor, db_name, table)):
+            print table, " found in ", db_name
+        else:
+            print table, " not found in ", db_name
+            make_table (cursor, db_name, table)
+
+        create_index (cursor, db_name,'gene_index', table, ['gene_id'])
+
     
 
     cursor.close()
