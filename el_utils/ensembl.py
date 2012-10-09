@@ -19,7 +19,6 @@ def stable2gene (cursor, db_name=None, stable_id=None):
             print rows
             exit (1)
 
-
     qry = "select gene_id from gene where stable_id='%s'" % stable_id
     rows = search_db (cursor, qry, verbose = False)
     
