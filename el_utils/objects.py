@@ -13,6 +13,7 @@ class Exon:
         self.strand            = ensembl_row[4]
         self.phase             = ensembl_row[5]
         self.end_phase         = ensembl_row[6]
+        self.is_constitutive   = ensembl_row[8]
         #  known (that's the source indicator - we 
         # got it from table called 'exon')
         self.is_known          = 1
@@ -34,6 +35,7 @@ class Exon:
         # got it from table called 'prediction_exon')
         self.is_known          = 0
         self.is_canonical      = 0
+        self.is_constitutive   = 0
         
         return True
 
@@ -57,9 +59,10 @@ class Exon:
         self.is_known            = in_list[7]
         self.is_coding           = in_list[8]
         self.is_canonical        = in_list[9]
-        self.covering_exon       = in_list[10]
-        self.covering_exon_known = in_list[11]
-        self.analysis_id         = in_list[12]
+        self.is_constitutive     = in_list[10]
+        self.covering_exon       = in_list[11]
+        self.covering_exon_known = in_list[12]
+        self.analysis_id         = in_list[13]
 
         return True
 

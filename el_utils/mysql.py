@@ -97,7 +97,7 @@ def create_index (cursor, db_name, index_name, table, columns):
             qry += ", "
         qry += column
         first = False
-        qry += ")"
+    qry += ")"
 
 
     rows = search_db (cursor, qry, verbose=True)

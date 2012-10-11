@@ -388,7 +388,6 @@ def get_translated_region(cursor, gene_id, species):
             this_transcript_region_end   = start[end_exon_id]   + exon_seq_end   - 1
 
         else: 
-
             end   = {}  
 
             end[start_exon_id] = get_exon_end (cursor, start_exon_id)

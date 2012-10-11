@@ -1,0 +1,4 @@
+    if table=='exon':
+        qry  = "select distinct exon.exon_id from  exon, transcript "
+        qry += " where exon.transcript_id = transcript.transcript_id "
+        qry += " and transcript.gene_id = %d " % gene_id

@@ -61,6 +61,8 @@ def make_gene2exon_table (cursor):
 
     table = 'gene2exon'
 
+
+
     qry  = "CREATE TABLE " + table + " (gene2exon_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
     rows = search_db (cursor, qry)
     if (rows):
@@ -73,7 +75,8 @@ def make_gene2exon_table (cursor):
             return False
 
     
-    for column_name in ['strand', 'phase',  'is_known', 'is_coding', 'is_canonical']:
+    for column_name in ['strand', 'phase',  'is_known', 
+                        'is_coding', 'is_canonical', 'is_constitutive']:
         qry = "ALTER TABLE %s  ADD %s tinyint" % (table, column_name)
         rows = search_db (cursor, qry)
         if (rows):
@@ -213,7 +216,6 @@ def main():
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    
     # add exon tables to all species
     for species in all_species:
         print species
