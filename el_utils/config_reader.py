@@ -6,10 +6,6 @@ Created on Apr 15, 2012
 # Python imports
 import os, sys, re
 
-# utilities imports
-import ConfigParser 
-from utilities.Singleton import Singleton
-
        
 @Singleton
 class ConfigurationReader:
@@ -21,7 +17,7 @@ class ConfigurationReader:
         
         self.cfg_dir = self.get_cfg_dir()
         
-        self.cfg_files = []
+        self.cfg_files  = []
         self.cfg_params = {}
         self.checkout_cfg_files()
         
