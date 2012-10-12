@@ -3,7 +3,8 @@
 
 import MySQLdb
 from   el_utils.mysql   import  connect_to_mysql, search_db
-from   el_utils.ensembl import  get_species, get_gene_ids, gene2stable
+from   el_utils.ensembl import  get_species, get_gene_ids
+from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
 from   el_utils.objects import  Exon
 from   el_utils.threads import  parallelize
 
@@ -41,7 +42,6 @@ def get_canonical_transcript_id (cursor, gene_id):
     elif ( 'Error' in rows[0]):
         print  rows[0]
         return ""
-
 
     return rows[0][0]
 
@@ -384,24 +384,24 @@ def get_translated_region(cursor, gene_id, species):
             start[start_exon_id] = get_exon_start(cursor, start_exon_id)
             start[end_exon_id]   = get_exon_start(cursor, end_exon_id)
 
-            this_transcript_region_start = start[start_exon_id] + exon_seq_start - 1
-            this_transcript_region_end   = start[end_exon_id]   + exon_seq_end   - 1
+            this_translation_region_start = start[start_exon_id] + exon_seq_start - 1
+            this_translation_region_end   = start[end_exon_id]   + exon_seq_end   - 1
 
         else: 
-
             end   = {}  
 
             end[start_exon_id] = get_exon_end (cursor, start_exon_id)
             end[end_exon_id]   = get_exon_end (cursor, end_exon_id)
 
-            this_transcript_region_start = end[end_exon_id]   - exon_seq_end   + 1
-            this_transcript_region_end   = end[start_exon_id] - exon_seq_start + 1
+            this_translation_region_start = end[end_exon_id]   - exon_seq_end   + 1
+            this_translation_region_end   = end[start_exon_id] - exon_seq_start + 1
 
-        if (this_transcript_region_start <= transl_region_start):
-            transl_region_start = this_transcript_region_start
+        if (this_translation_region_start <= transl_region_start):
+            transl_region_start = this_translation_region_start
         
-        if (this_transcript_region_end >= transl_region_end):
-            transl_region_end = this_transcript_region_end
+        if (this_translation_region_end >= transl_region_end):
+            transl_region_end = this_translation_region_end
+
 
         
     return [transl_region_start, transl_region_end]
@@ -417,6 +417,7 @@ def mark_coding (cursor, gene_id, species, exons):
 
     [transl_region_start,transl_region_end] = ret
         
+    translated_length = 0
     for exon in exons:
 
         exon.is_coding = 0
@@ -427,7 +428,7 @@ def mark_coding (cursor, gene_id, species, exons):
             # if there is a related trascript, the thing is coding
             # (the default is not coding)
             qry  = "select count(1) from exon_transcript "
-            qry += " where exon_id = %d " % exon.exon_id
+            qry += " where  exon_id = %d " % exon.exon_id
             rows = search_db (cursor, qry)
             if (not rows[0][0]):
                 continue
@@ -435,7 +436,9 @@ def mark_coding (cursor, gene_id, species, exons):
             # now need to check that it is within the coding region
             exon_start = get_exon_start (cursor, exon.exon_id)
             exon_end   = get_exon_end   (cursor, exon.exon_id)
-            
+
+            translated_length += exon_end-exon_start+1
+
             if ( exon_end < transl_region_start or
                  transl_region_end   < exon_start):
                 exon.is_coding = 0
@@ -443,19 +446,16 @@ def mark_coding (cursor, gene_id, species, exons):
                 exon.is_coding = 1
                 if ( transl_region_start > exon_start ):
                     exon.translation_starts = transl_region_start-exon_start
-                    print " exon id ", exon.exon_id
-                    print " start region", transl_region_start, " exon", exon_start
-                    print " exon translation_starts ", exon.translation_starts
+                    translated_length -= exon.translation_starts
 
                 if ( exon_end > transl_region_end):
                     length = exon.end_in_gene - exon.start_in_gene + 1
                     diff   = exon_end - transl_region_end
                     exon.translation_ends = length - diff
-                    
-                    print " exon id ", exon.exon_id
-                    print " end region", transl_region_end, " exon", exon_end
-                    print " exon translation_ends ", exon.translation_ends
-          
+                    translated_length -= diff
+
+ 
+           
         else: # exons belongs to a  predicted transcript 
             # == we don't know if it is coding or not
             exon.is_coding = None
@@ -497,7 +497,7 @@ def gene2exon(species_list, ensembl_db_name):
 
     for species in species_list:
         print  species
-        if (species in ['ailuropoda_melanoleuca', 'anolis_carolinensis']):
+        if (species in ['ailuropoda_melanoleuca', 'anolis_carolinensis', 'bos_taurus']):
             continue
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
@@ -507,8 +507,11 @@ def gene2exon(species_list, ensembl_db_name):
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         
-        #for gene_id in gene_ids:
-        for gene_id in [196]:
+        ct = 0
+        tot = 0
+        for gene_id in gene_ids:
+
+            tot += 1
             # find all exons associated with the gene id
             exons = find_exons (cursor, gene_id, species)
             if (not exons):
@@ -516,10 +519,34 @@ def gene2exon(species_list, ensembl_db_name):
                 exit(1)
             #for exon in exons:
             #    print exon
+            length = 0
+            for exon in exons:
+                if (not exon.is_canonical):
+                    continue
+                
+                if (exon.translation_ends is None):
+                    length += exon.end_in_gene - exon.start_in_gene + 1
+                else:
+                    length += exon.translation_ends + 1
 
-            # store to gene2exon table
+                if (not exon.translation_starts is None):
+                    length -= exon.translation_starts
+
+            if  (0 and length%3):
+                ct +=1
+                print "\t", gene2stable(cursor, gene_id=gene_id),
+                print " number of exons: ", len(exons), 
+                print " length ", length, "pep ", length/3, " remainder ", length%3,
+                print "   ", ct, tot
+                
+            # what is the length of the canonical transcript according to Ensembl
+            canonical_transl_id = gene2stable_canon_transl(cursor, gene_id)
+
+            print canonical_transl_id
+
             exit (1)
-
+            # store to gene2exon table
+ 
     cursor.close()
     db.close()
 

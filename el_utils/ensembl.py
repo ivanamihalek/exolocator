@@ -3,7 +3,29 @@
 import MySQLdb
 from   mysql  import search_db
 
+#########################################
+def gene2stable_canon_transl(cursor, gene_id, db_name=None,):
+
+    if  (db_name):
+        qry  = "use %s " % db_name
+        rows = search_db (cursor, qry)
+        if (rows):
+            rows = search_db (cursor, qry, verbose = True)
+            print rows
+            exit (1)
  
+    qry  = "select translation.stable_id  from translation, gene "
+    qry += " where gene.canonical_transcript_id = translation.transcript_id "
+    qry += " and gene.gene_id = %d " % gene_id
+    rows = search_db (cursor, qry, verbose = False)
+    
+    if (not rows):
+        rows = search_db (cursor, qry, verbose = True)
+        return ""
+
+    return  rows[0][0]
+
+
 
 ########
 def stable2gene (cursor, db_name=None, stable_id=None):
@@ -24,7 +46,7 @@ def stable2gene (cursor, db_name=None, stable_id=None):
     
     if (not rows):
         rows = search_db (cursor, qry, verbose = True)
-        return ""
+        return 0
 
     return int(rows[0][0])
     
