@@ -134,7 +134,6 @@ def check_table_exists (cursor, db_name, table_name):
 #######
 def search_db (cursor, qry, verbose=False):
 
-
     try:
         cursor.execute(qry)
     except MySQLdb.Error, e:
