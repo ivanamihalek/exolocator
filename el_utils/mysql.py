@@ -19,10 +19,9 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
     qry = "select exists (select 1 from %s  where %s) "  % (table, conditions)
     rows   = search_db (cursor, qry)
     exists = rows and (type(rows[0][0]) is long) and (rows[0][0]==1)
-  
- 
+
     if exists: # if it exists, update
-        qry = "update %s set" % table
+        qry = "update %s set " % table
         first = True
         for field, value in update_fields.iteritems():
             if (not first):
@@ -35,6 +34,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
 
             first = False
         qry += " where %s " % conditions
+
         rows   = search_db (cursor, qry)
         if (rows):
             rows   = search_db (cursor, qry, verbose=True)

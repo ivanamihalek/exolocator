@@ -87,20 +87,20 @@ class Exon:
     # when somrthing is defined as an exon ....
     def __init__ (self):
         
-        self.gene_id             = None
-        self.exon_id             = None
-        self.start_in_gene       = None
-        self.end_in_gene         = None
-        self.exon_seq_id         = None
-        self.strand              = None
-        self.phase               = None
-        self.end_phase           = None
-        self.translation_starts  = None
-        self.translation_ends    = None
-        self.is_known            = None
-        self.is_coding           = None
-        self.is_canonical        = None
-        self.covering_exon       = None
-        self.covering_exon_known = None
-        self.analysis_id         = None
+        self.exon_id             = 0
+        self.gene_id             = 0
+        self.start_in_gene       = 0
+        self.end_in_gene         = 0
+        self.exon_seq_id         = 0
+        self.strand              = 0
+        self.phase               = 0
+        self.end_phase           = 0
+        self.translation_starts  = 0
+        self.translation_ends    = 0
+        self.is_known            = 0
+        self.is_coding           = 0
+        self.is_canonical        = 0
+        self.covering_exon       = 0
+        self.covering_exon_known = 0
+        self.analysis_id         = 0
 

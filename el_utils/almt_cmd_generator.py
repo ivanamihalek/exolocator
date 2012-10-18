@@ -1,3 +1,4 @@
+#!/usr/bin/python
 '''
 Created on Apr 12, 2012
 
@@ -5,7 +6,7 @@ Created on Apr 12, 2012
 '''
 
 import os, re, commands
-from utilities.ConfigurationReader import ConfigurationReader
+from   config_reader   import ConfigurationReader
 
 
 #####################################################################################
@@ -40,33 +41,25 @@ class AlignmentCommandGenerator(object):
         config.read("../utils.cfg")
         '''
         
-        self.configReader = ConfigurationReader.Instance()
-        
+        self.configReader = ConfigurationReader()
         # blast tools
-        self.blast_e_value  = self.configReader.get_value('blast', 'expectation')
         
-        self.blastn         = self.configReader.get_value('blast', 'blastn')
-        self.blastn         = self.blastn % self.blast_e_value
         
-        self.tblastn        = self.configReader.get_value('blast', 'tblastn')
-        self.tblastn        = self.tblastn % self.blast_e_value
+        self.fastacmd       = self.configReader.get_path('fastacmd')
+        self.blastall       = self.configReader.get_path('mafft')
+
+        self.blastp         = self.configReader.get_path('blastall')
+        self.blastp        += " -p blastp -e "+ self.configReader.get_value('blastp_e_value')
         
-        self.blastp         = self.configReader.get_value('blast', 'blastp')
-        self.blastp         = self.blastp % self.blast_e_value
-        
+
         # ensembl database
-        self.ensembldb      = self.configReader.get_value('local_ensembl', 'ensembldb')
-        self.gene_expansion = int (self.configReader.get_value('local_ensembl', 'expansion'))
-        self.dna_masked     = int (self.configReader.get_value('local_ensembl', 'masked'))
+        self.ensembldb      = self.configReader.get_path('ensembl_fasta')
         
         # Smith-Waterman
-        self.sw_sharp       = self.configReader.get_value('sw#', 'sw#')
+        self.sw_sharp       = self.configReader.get_path('sw#')
         
-        # genewise
-        self.genewise       = self.configReader.get_value('wise', 'wise')
-        self.genewise_flags = self.configReader.get_value('wise', 'flags')
-        
-        self.mafft          = self.configReader.get_value('mafft', 'mafft')
+        # mafft
+        self.mafft          = self.configReader.get_path('mafft')
         
         
     def generate_fastacmd_gene_command (self, sequence_id, 
@@ -118,7 +111,11 @@ class AlignmentCommandGenerator(object):
             output_cmd = ""
 
 
-        return "fastacmd {0} {1} {2} {3} {4} {5}".format(database, seq_id_cmd, data_type_cmd, strand_cmd, location_cmd, output_cmd)
+        fastacmd_cmd_line  = self.fastacmd
+        fastacmd_cmd_line +=  " {0} {1} {2} {3} {4} {5}".format(database, seq_id_cmd, 
+                                                               data_type_cmd, strand_cmd,
+                                                               location_cmd, output_cmd)
+        return fastacmd_cmd_line
         
     
     def generate_fastacmd_plain (self, database, seq_id, output_file_path = ''):
@@ -132,7 +129,10 @@ class AlignmentCommandGenerator(object):
             output_cmd  = "-o %s" % output_file_path
         else:
             output_cmd  = ""
-        return "fastacmd {0} {1} {2} ".format(database_cmd, seq_id_cmd, output_cmd)
+
+        fastacmd_cmd_line  = self.fastacmd
+        fastacmd_cmd_line +=  " {0} {1} {2} ".format(database_cmd, seq_id_cmd, output_cmd)
+        return fastacmd_cmd_line
  
     def generate_fastacmd_protein_command (self, protein_id, species_name, protein_type, output_file_path):
         
@@ -145,19 +145,11 @@ class AlignmentCommandGenerator(object):
             output_cmd = ""
         return "fastacmd {0} {1} {2} {3}".format(prot_id_cmd, data_type_cmd, database, output_cmd)
     
-    def generate_blastn_command (self, database, input_file, output_file):
-        cmd = "{0} -d {1} -i {2} -o {3}".format(self.blastn, database, input_file, output_file)
-        return cmd
-    
-    def generate_tblastn_command (self, database, input_file, output_file):
-
-        cmd = "{0} -d {1} -i {2} -o {3}".format(self.tblastn, database, input_file, output_file)
-        return cmd
     
     def generate_blastp_plain (self, database, input_file, output_file):
         
         # sombbody hardcoded the  output format in the self.blastp
-        blastp = "blastall -p blastp -e 1.e-5 -m 8 "
+        blastp = self.blastp + " -m 8 "
         if output_file:
             cmd = "{0} -d {1} -i {2} -o {3}".format(blastp, database, input_file, output_file)
         else:
@@ -173,18 +165,15 @@ class AlignmentCommandGenerator(object):
             
         return cmd
 
-    def generate_blastp_command_for_species(self, species_name, input_file, output_file, protein_type):
-        database = self._generate_proteindb_file_name(species_name, protein_type)
-        return self.generate_blastp_command(database, input_file, output_file)
     
-    def generate_SW_command (self, query_sequence_file, target_fasta_db_file, output_file, supress_stdout = True):
-        cmd = "{0} -i {1} -j {2} --out {3}".format(self.sw_sharp, query_sequence_file, target_fasta_db_file, output_file)
+    def generate_SW_command (self, query_sequence_file, target_fasta_db_file, 
+                             output_file, supress_stdout = True):
+        cmd = "{0} -i {1} -j {2} --out {3}".format(self.sw_sharp, query_sequence_file, 
+                                                   target_fasta_db_file, output_file)
         if supress_stdout:
-            cmd += " > .sw_stdout_supressed"
+            cmd += " > /dev/null"
         return cmd
     
-    def generate_genewise_command (self, protein_file, dna_file, output_file, additional_flags = True):
-        pass
     
     def generate_formatdb_command (self, input_db_file, sequence_type):
         
@@ -262,6 +251,9 @@ def main():
     acg = AlignmentCommandGenerator()
     cmd = acg.generate_SW_command("query.fa", "target.fa", "output", True)
     print cmd
+    print
+    for [key, val] in acg.__dict__.iteritems():
+        print key, val
     
     
 if __name__ == '__main__':

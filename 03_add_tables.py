@@ -198,6 +198,7 @@ def main():
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
+
     # add exon tables to all species
     for species in all_species:
         print species

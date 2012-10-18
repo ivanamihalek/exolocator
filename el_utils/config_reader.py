@@ -1,3 +1,4 @@
+#!/usr/bin/python
 '''
 Created on Apr 15, 2012
 
@@ -5,77 +6,113 @@ Created on Apr 15, 2012
 '''
 # Python imports
 import os, sys, re
+from mysql import connect_to_mysql, connect_to_db, search_db
 
        
-@Singleton
 class ConfigurationReader:
     '''
-    Loads configuration files from the cfg directory in the Exolocator source directory
+    Loads configuration files from the cfg database - which is assumend to be named '%exoloc%config%'
     '''
 
     def __init__ (self):
         
-        self.cfg_dir = self.get_cfg_dir()
+        self.util_path = {}
+        self.dir_path  = {}
+        self.parameter_value  = {}
+        self.cfg_db_name = ""
+        self.get_cfg_db()
+        self.load_cfg()
         
-        self.cfg_files  = []
-        self.cfg_params = {}
-        self.checkout_cfg_files()
-        
-    def get_cfg_dir(self):
-        '''
-        Find the absolute path to the configuration directory
-        '''
-        ex_path = sys.path[0]
-        m = re.match("(.*ExoLocator).*", ex_path)
-        proj_root_dir = m.groups()[0]
-        return proj_root_dir + "/cfg/"
-        
+    def get_cfg_db(self):
+        db     = connect_to_mysql()
+        cursor = db.cursor()
+        qry    = "show databases like'%exoloc%config%'" 
+        rows   = search_db (cursor, qry, verbose=False)
+        if (not rows):
+            print "config database not found (by guessing)"
+            print "pls fix config_reader.py"
+            cursor.close()
+            db.close()
+            exit (1)
+        self.cfg_db_name = rows[0][0]
+        print "reading config from ", self.cfg_db_name
+        cursor.close()
+        db.close()
 
-    def load_cfg_file(self, cfg_file_path):
+
+    def load_cfg(self):
         '''
         Load a configuration file and add the
         key, value pairs to the internal configuration dictionary
         '''
-        cf = ConfigParser.ConfigParser()
-        cf.read(cfg_file_path)
-        sections = cf.sections()
-        for section in sections:
-            for cfg_item in cf.items(section):
-                (key, value) = cfg_item
-                self.cfg_params.setdefault(section, {}).update({key:value})
+        db     = connect_to_db(self.cfg_db_name)
+        cursor = db.cursor()
         
-        
-    
-    def checkout_cfg_files (self):
-        '''
-        Check if all the configuration files have been loaded
-        '''
-        for cfg_file in os.listdir(self.cfg_dir):
-            if cfg_file not in self.cfg_files and cfg_file != "logging.cfg" and cfg_file.endswith(".cfg"):
-                self.cfg_files.append(cfg_file)
-                self.load_cfg_file(self.cfg_dir + cfg_file)
-                
-    def get_value (self, cfg_section, cfg_item):
-        '''
-        Try to get the configuration value. If value is not mapped in the internal
-        configuration dictionary, try to re-load the configuration directory
-        '''
-        if cfg_section in self.cfg_params:
-            section = self.cfg_params[cfg_section]
-            if cfg_item in section:
-                return section[cfg_item]
-            else:
-                self.checkout_cfg_files()
+        # utils
+        qry = "select name, path from util_path"
+        rows   = search_db (cursor, qry, verbose=False)
+        if (not rows):
+            print "no util_path info in %s" % self.cfg_db_name
+            cursor.close()
+            db.close()
+            exit (1)
+        for row in rows:
+            [name, path] = row
+            self.util_path[name] = path
+
+        # utils
+        qry  = "select name, path from dir_path"
+        rows = search_db (cursor, qry, verbose=False)
+        if (not rows):
+            print "no dir_path info in %s" % self.cfg_db_name
+            cursor.close()
+            db.close()
+            exit (1)
+        for row in rows:
+            [name, path] = row
+            self.dir_path[name] = path
+
+
+        # utils
+        qry  = "select name, value from parameter"
+        rows = search_db (cursor, qry, verbose=False)
+        if (not rows):
+            print "no dir_path info in %s" % self.cfg_db_name
+            cursor.close()
+            db.close()
+            exit (1)
+        for row in rows:
+            [name, value]        = row
+            self.parameter_value[name] = value
+
+        cursor.close()
+        db.close()
+   
+    def spill_all(self):
+        for name, path in self.dir_path.iteritems():
+            print name, path
+        for name, path in self.util_path.iteritems():
+            print name, path
+        for name, value in self.parameter_value.iteritems():
+            print name, path
+
+
+    def get_path (self, name):
+        if name in self.dir_path.keys():
+            return self.dir_path[name]
+        elif name in self.util_path.keys():
+            return self.util_path[name]
         else:
-            self.checkout_cfg_files()
-            
-        if cfg_section not in self.cfg_params or cfg_item not in self.cfg_params[cfg_section]:
-            raise KeyError ('Configuration dictionary has no value mapped to the section %s, item %s' % (cfg_section, cfg_item))
+            return ""
         
-        
+    def get_value (self, name):
+        if name in self.parameter_value.keys():
+            return self.parameter_value[name]
+        else:
+            return ""
         
         
 if __name__ == '__main__':
-    cr = ConfigurationReader.Instance()
-    print cr.get_value('wise', 'flags')
-    print cr.get_value('tralala', 'lala')
+    cr = ConfigurationReader()
+    cr.spill_all()
+    print " ** ", cr.get_path('mafft')

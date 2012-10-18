@@ -23,8 +23,9 @@ my @farm = $ftp->ls;
 my $animal;
 
 
-my @skip = ("ancestral_alleles", "ciona_intestinalis",  
-	 "ciona_savignyi", "drosophila_melanogaster",
+my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
+	    "ciona_intestinalis",  
+	    "ciona_savignyi", "drosophila_melanogaster",
 	    "saccharomyces_cerevisiae");
 
 
@@ -32,14 +33,18 @@ my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 
 open (LOG, ">log") || die "error opening log: $!\n";
 
-foreach $animal ( @farm[45..@farm-1] ) {
+my $ct = 0;
+foreach $animal ( @farm[40 .. 44] ) {
+
+    $ct += 1;
+    print $ct, "  ", $animal, "\n";
 
     next if ( grep {/$animal/} @skip);
 
-    print $animal, "\n";
 
 
-    foreach $dir  ( "pep",  "dna" ){
+    #foreach $dir  ( "pep",  "dna" ){
+    foreach $dir  ( "dna"){
     
 	$local_dir = "$local_repository/$animal/$dir" ;
 	( -e $local_dir )  || `mkdir -p $local_dir`;
@@ -54,9 +59,9 @@ foreach $animal ( @farm[45..@farm-1] ) {
 
 	foreach $item (@contents) {
 
-	    next if  ($item !~ /\.gz$/);
-	    next if  ($item =~ /\.dna_sm\./);
-	    next if  ($item =~ /\.dna_rm\./);
+	    next if ($item !~ /\.gz$/);
+	    next if ($item =~ /\.dna_sm\./);
+	    next if ($item =~ /\.dna_rm\./);
 	    print "\t$item\n";
 
 	    $unzipped = $item;

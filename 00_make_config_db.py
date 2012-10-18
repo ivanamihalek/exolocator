@@ -8,6 +8,27 @@ from   el_utils.mysql   import  check_table_exists, store_or_update
   Set paths to Ensembl directories and to various utility programs.
 '''
 #########################################
+def  make_parameter_table (cursor):
+
+
+    table = 'parameter'
+
+    print "making ", table
+
+    qry  = "create table " + table + "  (id int(10) primary key auto_increment)"
+    rows = search_db (cursor, qry, verbose=True)
+    if (rows):
+        return False
+
+    # make the columns
+    for column  in  ['name', 'value']:
+        qry = "alter table  %s  add  %s  varchar (20)" % (table, column)
+        rows = search_db (cursor, qry, verbose=True)
+        if (rows):
+            return False
+
+ 
+#########################################
 def  make_path_table (cursor, table):
 
     print "making ", table
@@ -63,6 +84,8 @@ def make_table (cursor, table):
         make_path_table (cursor, table)
     elif table == 'dir_path':
         make_path_table (cursor, table)
+    elif table == 'parameter':
+        make_parameter_table (cursor)
     elif table == 'seqregion2file':
         make_seqregion2file_table (cursor)
        
@@ -81,9 +104,13 @@ def main():
     util_path['mafft']    = '/usr/local/bin/mafft'
     util_path['blastall'] = '/usr/bin/blastall'
     util_path['fastacmd'] = '/usr/bin/fastacmd'
-    
+    util_path['sw#']      = '/home/ivanam/third/swsharp/swsharp'
+
     dir_path = {}
-    dir_path['ensembl_fasta'] = '/home/ivanam/databases/ensembl/fasta'
+    dir_path['ensembl_fasta']    = '/mnt/ensembl/release-68/fasta/'
+
+    parameter = {}
+    parameter['blastp_e_value'] = "1.e-10" # it will be used as a string  when fmting the blastp cmd
 
     # check if the paths are functioning (at this point at least)
     for util in util_path.values():
@@ -119,27 +146,34 @@ def main():
     search_db (cursor, qry)
         
     # make tables
-    for table in ['util_path', 'dir_path', 'seqregion2file']:
+    for table in ['util_path', 'dir_path', 'seqregion2file', 'parameter']:
         if ( check_table_exists (cursor, db_name, table)):
             print table, " found in ", db_name
         else:
             print table, " not found in ", db_name
             make_table (cursor,  table)
    
-    # fill util and and dir path tables
+    # fill util, dir and path tables (seqregion2file to be fille elsewhere)
+    fixed_fields  = {}
+    update_fields = {}
     for [name, path] in util_path.iteritems():
-        fixed_fields  = {}
-        update_fields = {}
         fixed_fields['name'] = name
-        fixed_fields['path'] = path
+        update_fields['path'] = path
         store_or_update (cursor, 'util_path', fixed_fields, update_fields)
 
+    fixed_fields  = {}
+    update_fields = {}
     for [name, path] in dir_path.iteritems():
-        fixed_fields  = {}
-        update_fields = {}
         fixed_fields['name'] = name
-        fixed_fields['path'] = path
+        update_fields['path'] = path
         store_or_update (cursor, 'dir_path', fixed_fields, update_fields)
+
+    fixed_fields  = {}
+    update_fields = {}
+    for [name, value] in parameter.iteritems():
+        fixed_fields['name']  = name
+        update_fields['value'] = value
+        store_or_update (cursor, 'parameter', fixed_fields, update_fields)
 
     cursor.close()
     db.close()

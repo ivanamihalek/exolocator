@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
-
 import MySQLdb
+import commands
 from   el_utils.mysql   import  connect_to_mysql, search_db
 from   el_utils.ensembl import  get_species, get_gene_ids
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
 from   el_utils.objects import  Exon
 from   el_utils.threads import  parallelize
-
-
+from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
 #########################################
 def get_gene_region (cursor, gene_id, is_known=None):
@@ -56,7 +55,9 @@ def get_known_exons (cursor, gene_id, species):
 
     rows = search_db (cursor, qry)
     
-    if (not rows or 'Error' in rows[0]):
+    if (not rows ):
+        return []
+    if ('Error' in rows[0]):
         search_db (cursor, qry, verbose = True)
         return []
 
@@ -79,7 +80,8 @@ def get_known_exons (cursor, gene_id, species):
         if (not rows or 'Error' in rows[0]):
             search_db (cursor, qry, verbose = True)
             continue
-        exon  = Exon()
+        exon         = Exon()
+        exon.gene_id = gene_id
         exon.load_from_ensembl_exon (gene_region_start, rows[0])
         exons.append(exon)
 
@@ -110,9 +112,9 @@ def get_predicted_exons (cursor, gene_id, species):
     if (not rows):
         return []
     for row in rows:
-        exon  = Exon()
-        exon.load_from_ensembl_prediction (gene_region_start, row)
+        exon         = Exon()
         exon.gene_id = gene_id
+        exon.load_from_ensembl_prediction (gene_region_start, row)
         exons.append(exon)
  
     return exons
@@ -308,7 +310,7 @@ def get_transcript_ids(cursor, gene_id, species):
     if ((not rows) or species!='homo_sapiens'): # try softer criteria
         qry    = "SELECT transcript_id  FROM transcript "
         qry   += " WHERE gene_id=%d AND biotype='protein_coding' "  %  gene_id
-        rows   = search_db (cursor, qry, verbose=True)
+        rows   = search_db (cursor, qry, verbose=False)
   
     if (not rows):
         return []
@@ -426,7 +428,7 @@ def mark_coding (cursor, gene_id, species, exons):
             exon.is_coding = 0
             # find related transcripts
             # if there is a related trascript, the thing is coding
-            # (the default is not coding)
+            # (the default is 'not coding')
             qry  = "select count(1) from exon_transcript "
             qry += " where  exon_id = %d " % exon.exon_id
             rows = search_db (cursor, qry)
@@ -494,11 +496,16 @@ def gene2exon(species_list, ensembl_db_name):
     db     = connect_to_mysql()
     cursor = db.cursor()
 
-
+    acg = AlignmentCommandGenerator()
+    #species_list = ['danio_rerio']
+    species_list = ['callithrix_jacchus']
     for species in species_list:
+        print
+        print "############################"
         print  species
-        if (species in ['ailuropoda_melanoleuca', 'anolis_carolinensis', 'bos_taurus']):
-            continue
+        #if (species in ['ailuropoda_melanoleuca', 'anolis_carolinensis', 
+        #                'bos_taurus','danio_rerio']):
+        #    continue
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
 
@@ -509,21 +516,33 @@ def gene2exon(species_list, ensembl_db_name):
         
         ct = 0
         tot = 0
-        for gene_id in gene_ids:
+        #for gene_id in [1]:
+        for gene_id in [21459]:
+        #for gene_id in gene_ids:
 
             tot += 1
             # find all exons associated with the gene id
             exons = find_exons (cursor, gene_id, species)
             if (not exons):
-                print  gene_id, " no exons found" 
-                exit(1)
-            #for exon in exons:
-            #    print exon
+                #ct +=1
+                print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
+                
+   
             length = 0
             for exon in exons:
-                if (not exon.is_canonical):
+                if (not exon.is_canonical): 
                     continue
                 
+                if (not exon.is_coding): 
+                    # in some genomes an exon appears as canonical
+                    # even though it is not coding
+                    continue
+                
+
+                print
+                print exon
+                #print exon.start_in_gene, exon.end_in_gene
+
                 if (exon.translation_ends is None):
                     length += exon.end_in_gene - exon.start_in_gene + 1
                 else:
@@ -531,20 +550,47 @@ def gene2exon(species_list, ensembl_db_name):
 
                 if (not exon.translation_starts is None):
                     length -= exon.translation_starts
+            
+            if (not length):
+                print gene2stable (cursor, gene_id = gene_id), " no exons marked as canonical"
+                continue
 
-            if  (0 and length%3):
-                ct +=1
-                print "\t", gene2stable(cursor, gene_id=gene_id),
-                print " number of exons: ", len(exons), 
-                print " length ", length, "pep ", length/3, " remainder ", length%3,
-                print "   ", ct, tot
                 
             # what is the length of the canonical transcript according to Ensembl
             canonical_transl_id = gene2stable_canon_transl(cursor, gene_id)
+            if ( not canonical_transl_id):
+                print "no canonical transl id found for ", gene_id
+                continue
 
-            print canonical_transl_id
 
-            exit (1)
+            # get canonical transcript from ensembl fasta database
+            cmd = acg.generate_fastacmd_protein_command (canonical_transl_id, species, 
+                                                         "all", None)
+            fasta = commands.getoutput(cmd)
+            
+            if (not fasta):
+                print gene2stable (cursor, gene_id = gene_id), "fasta not found for ", canonical_transl_id
+                continue
+            
+            translation_length = 0
+            for line in fasta.split('\n'):
+                if '>' in line:
+                    continue
+                translation_length += len(line)
+
+
+            if ( abs(length/3-translation_length) > 3):
+                ct +=1
+                print gene2stable (cursor, gene_id = gene_id),
+                print "exon length ", length/3, " transl len ", translation_length,
+                print "(", ct, " out of ", tot, ")"
+            
+
+            if (tot==1000):
+                break
+            print fasta
+   
+            #exit (1)
             # store to gene2exon table
  
     cursor.close()
