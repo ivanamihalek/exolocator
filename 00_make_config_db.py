@@ -107,7 +107,7 @@ def main():
     util_path['sw#']      = '/home/ivanam/third/swsharp/swsharp'
 
     dir_path = {}
-    dir_path['ensembl_fasta']    = '/mnt/ensembl/release-68/fasta/'
+    dir_path['ensembl_fasta']   = '/mnt/ensembl/release-68/fasta/'
 
     parameter = {}
     parameter['blastp_e_value'] = "1.e-10" # it will be used as a string  when fmting the blastp cmd

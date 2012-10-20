@@ -42,27 +42,29 @@ class Exon:
 
     #################################################
     # load in from gene2exon table (select * from gene2exon)
-    def load_from_gene2exon (self, in_list):
+    def load_from_gene2exon (self, gene2exon_row):
 
-        if ( len(in_list) < 13):
+        if ( len(gene2exon_row) < 17):
             print "error loading exon: the in list must be",
             print " at least 13 elements long"
             return False
         
-        self.gene_id             = in_list[0]
-        self.exon_id             = in_list[1]
-        self.start_in_gene       = in_list[2]
-        self.end_in_gene         = in_list[3]
-        self.exon_seq_id         = in_list[4]
-        self.strand              = in_list[5]
-        self.phase               = in_list[6]
-        self.is_known            = in_list[7]
-        self.is_coding           = in_list[8]
-        self.is_canonical        = in_list[9]
-        self.is_constitutive     = in_list[10]
-        self.covering_exon       = in_list[11]
-        self.covering_exon_known = in_list[12]
-        self.analysis_id         = in_list[13]
+        self.gene_id             = gene2exon_row[1]
+        self.exon_id             = gene2exon_row[2]
+        self.start_in_gene       = gene2exon_row[3]
+        self.end_in_gene         = gene2exon_row[4]
+        self.translation_starts  = gene2exon_row[5]
+        self.translation_ends    = gene2exon_row[6]
+        self.exon_seq_id         = gene2exon_row[7]
+        self.strand              = gene2exon_row[8]
+        self.phase               = gene2exon_row[9]
+        self.is_known            = gene2exon_row[10]
+        self.is_coding           = gene2exon_row[11]
+        self.is_canonical        = gene2exon_row[12]
+        self.is_constitutive     = gene2exon_row[13]
+        self.covering_exon       = gene2exon_row[14]
+        self.covering_exon_known = gene2exon_row[15]
+        self.analysis_id         = gene2exon_row[16]
 
         return True
 
@@ -87,20 +89,20 @@ class Exon:
     # when somrthing is defined as an exon ....
     def __init__ (self):
         
-        self.exon_id             = 0
-        self.gene_id             = 0
-        self.start_in_gene       = 0
-        self.end_in_gene         = 0
-        self.exon_seq_id         = 0
-        self.strand              = 0
-        self.phase               = 0
-        self.end_phase           = 0
-        self.translation_starts  = 0
-        self.translation_ends    = 0
-        self.is_known            = 0
-        self.is_coding           = 0
-        self.is_canonical        = 0
-        self.covering_exon       = 0
-        self.covering_exon_known = 0
-        self.analysis_id         = 0
+        self.exon_id             = None
+        self.gene_id             = None
+        self.start_in_gene       = None
+        self.end_in_gene         = None
+        self.exon_seq_id         = None
+        self.strand              = None
+        self.phase               = None
+        self.end_phase           = None
+        self.translation_starts  = None
+        self.translation_ends    = None
+        self.is_known            = None
+        self.is_coding           = None
+        self.is_canonical        = None
+        self.covering_exon       = None
+        self.covering_exon_known = None
+        self.analysis_id         = None
 

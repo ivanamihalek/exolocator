@@ -2,8 +2,8 @@
 
 
 import MySQLdb
-from   el_utils.mysql   import  connect_to_mysql, search_db, 
-from   el_utils.mysql   import  create_index, check_table_exists
+from   el_utils.mysql   import  connect_to_mysql, search_db
+from   el_utils.mysql   import  create_index, check_table_exists, check_column_exists
 from   el_utils.ensembl import  get_species, get_gene_ids
 
 #########################################
@@ -30,7 +30,6 @@ def make_sw_exon_table (cursor):
         if (rows):
             return False
 
-    
     for column_name in ['strand', 'phase',  'has_NNN', 'has_stop', 'has_3p_ss', 'has_5p_ss']:
         qry = "ALTER TABLE %s  ADD %s tinyint" %  (table, column_name)
         rows = search_db (cursor, qry)
@@ -50,7 +49,8 @@ def make_gene2exon_table (cursor):
     if (rows):
         return False
 
-    for column_name in ['gene_id', 'exon_id', 'start_in_gene', 'end_in_gene', 'exon_seq_id']:
+    for column_name in ['gene_id', 'exon_id', 'start_in_gene', 'end_in_gene', 
+                        'translation_starts', 'translation_ends', 'exon_seq_id']:
         qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
         rows = search_db (cursor, qry)
         if (rows):
@@ -189,7 +189,27 @@ def make_table (cursor, db_name, table):
 
 
     
+#########################################
+def add_filename_column (cursor, db_name):
     
+    qry = "alter table seq_region add file_name blob"
+    rows = search_db (cursor, qry)
+    if (rows):
+        return False
+  
+    return True
+   
+    
+#########################################
+def modify_filename_column (cursor, db_name):
+    
+    qry = "alter table seq_region modify column  file_name blob"
+    rows = search_db (cursor, qry)
+    if (rows):
+        return False
+  
+    return True
+   
 
 #########################################
 def main():
@@ -211,9 +231,22 @@ def main():
                 print table, " not found in ", db_name
                 make_table (cursor, db_name, table)
         
-        create_index (cursor, db_name,'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
-        create_index (cursor, db_name,'ek_index', 'exon_seq', ['exon_id', 'is_known'])
+        create_index (cursor, db_name, 'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
+        create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
 
+    # add file_name column to seq_region table
+    for species in all_species:
+        print species
+        db_name = ensembl_db_name[species]
+
+        if ( check_column_exists (cursor, db_name, "seq_region", "file_name")):
+            print "file_name found in seq_region, ", db_name
+            #modify_filename_column (cursor, db_name)
+        else:
+            print "file_name  not found in seq_region, ", db_name
+            add_filename_column (cursor, db_name)
+        
+    
 
     # add orthologue table to human - we are human-centered here
     print "adding orthologue to human"

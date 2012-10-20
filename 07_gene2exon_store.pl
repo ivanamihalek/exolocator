@@ -497,27 +497,29 @@ def store_exon (cursor, exon):
     fixed_fields  = {}
     update_fields = {}
 
-    fixed_fields['gene_id'] = exon.gene_id
-    fixed_fields['exon_id'] = exon.exon_id
+    fixed_fields['gene_id']  = exon.gene_id
+    fixed_fields['exon_id']  = exon.exon_id
+    fixed_fields['is_known'] = exon.is_known
 
-    update_fields['start_in_gene']     = exon.start_in_gene
-    update_fields['end_in_gene']       = exon.end_in_gene
-    update_fields['exon_seq_id']       = exon.exon_seq_id
-    update_fields['strand']            = exon.strand
-    update_fields['phase']             = exon.phase
-    update_fields['is_known']          = exon.is_known
-    update_fields['is_coding']         = exon.is_coding
-    update_fields['is_canonical']      = exon.is_canonical
-    update_fields['is_constitutive']   = exon.is_constitutive
-    update_fields['covering_exon']     = exon.covering_exon
-    update_fields['covering_is_known'] = exon.covering_exon_known
-    update_fields['analysis_id']       = exon.analysis_id
+    update_fields['start_in_gene']      = exon.start_in_gene
+    update_fields['end_in_gene']        = exon.end_in_gene
+    update_fields['exon_seq_id']        = exon.exon_seq_id
+    update_fields['strand']             = exon.strand
+    update_fields['phase']              = exon.phase
+    update_fields['translation_starts'] = exon.translation_starts
+    update_fields['translation_ends']   = exon.translation_ends
+    update_fields['is_coding']          = exon.is_coding
+    update_fields['is_canonical']       = exon.is_canonical
+    update_fields['is_constitutive']    = exon.is_constitutive
+    update_fields['covering_exon']      = exon.covering_exon
+    update_fields['covering_is_known']  = exon.covering_exon_known
+    update_fields['analysis_id']        = exon.analysis_id
 
     if ( not store_or_update (cursor, 'gene2exon', fixed_fields, update_fields)):
         print "failed storing exon ", exon.exon_id
         exit (1)
 
-    pass
+
 
 #########################################
 def gene2exon(species_list, ensembl_db_name):

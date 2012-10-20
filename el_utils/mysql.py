@@ -27,18 +27,15 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
             if (not first):
                 qry += ", "
             qry += " %s = " % field
-            if type(value) is int:
+            if  value is None:
+                qry += " null "
+            elif type(value) is int:
                 qry += " %d" % value
             else:
                 qry += " \'%s\'" % value
 
             first = False
         qry += " where %s " % conditions
-
-        rows   = search_db (cursor, qry)
-        if (rows):
-            rows   = search_db (cursor, qry, verbose=True)
-            return False
 
     else: # if not, make a new one
 
@@ -58,17 +55,19 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
         for value in fixed_fields.values()+update_fields.values(): # again will have to check for the type here
             if (not first):
                 qry += ", "
-            if type(value) is int:
+            if  value is None:
+                qry += " null "
+            elif type(value) is int:
                 qry += " %d" % value
             else:
                 qry += " \'%s\'" % value
             first = False
         qry += ")"
-      
-        rows   = search_db (cursor, qry)
-        if (rows):
-            rows   = search_db (cursor, qry, verbose=True)
-            return False
+
+    rows   = search_db (cursor, qry)
+    if (rows):
+        rows   = search_db (cursor, qry, verbose=True)
+        return False
 
     return True
 
@@ -107,7 +106,24 @@ def create_index (cursor, db_name, index_name, table, columns):
    
     return True
 
+    
+#########################################
+def check_column_exists (cursor, db_name, table_name, column_name):
+    
+    qry = "use %s" % db_name
+    rows = search_db (cursor, qry, verbose=False)
+    if (rows):
+        return False
 
+    qry = "show columns from "+ table_name + " like '%s'" % column_name
+    rows = search_db (cursor, qry, verbose=False)
+    if (rows):
+        if ( 'Error' in rows[0]):
+            return False
+        else:
+            return True
+    else: 
+        return False
 
 
 #########################################

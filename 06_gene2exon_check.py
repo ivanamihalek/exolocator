@@ -498,7 +498,8 @@ def gene2exon(species_list, ensembl_db_name):
 
     acg = AlignmentCommandGenerator()
     #species_list = ['danio_rerio']
-    species_list = ['callithrix_jacchus']
+    #species_list = ['callithrix_jacchus']
+    species_list = ['ailuropoda_melanoleuca']
     for species in species_list:
         print
         print "############################"
@@ -517,7 +518,8 @@ def gene2exon(species_list, ensembl_db_name):
         ct = 0
         tot = 0
         #for gene_id in [1]:
-        for gene_id in [21459]:
+        #for gene_id in [21459]:
+        for gene_id in [943]:
         #for gene_id in gene_ids:
 
             tot += 1
@@ -537,11 +539,9 @@ def gene2exon(species_list, ensembl_db_name):
                     # in some genomes an exon appears as canonical
                     # even though it is not coding
                     continue
-                
-
                 print
                 print exon
-                #print exon.start_in_gene, exon.end_in_gene
+                print exon.start_in_gene, exon.end_in_gene
 
                 if (exon.translation_ends is None):
                     length += exon.end_in_gene - exon.start_in_gene + 1
@@ -590,8 +590,6 @@ def gene2exon(species_list, ensembl_db_name):
                 break
             print fasta
    
-            #exit (1)
-            # store to gene2exon table
  
     cursor.close()
     db.close()
