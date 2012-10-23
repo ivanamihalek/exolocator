@@ -23,19 +23,15 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
 
-    for species in all_species:
+    for species in ['danio_rerio']:
+    #for species in all_species:
         print species
 
         qry = "use "+ensembl_db_name[species]
         search_db (cursor, qry)
 
-
-        # in D. rerio  seq_region_ids are off by a magical 949 (?)
         qry  = "select seq_region.name, seq_region.file_name from seq_region, gene "
-        if ( species == 'danio_rerio'):
-            qry += " where gene.biotype='protein_coding' and gene.seq_region_id +949 =  seq_region.seq_region_id "
-        else:
-            qry += " where gene.biotype='protein_coding' and gene.seq_region_id =  seq_region.seq_region_id "
+        qry += " where gene.biotype='protein_coding' and gene.seq_region_id =  seq_region.seq_region_id "
             
 
         rows = search_db (cursor, qry)
@@ -51,7 +47,7 @@ def main():
             if (not file_name):
                 no_file += 1
                 print name, file_name
-                exit (1)
+                #exit (1)
 
         print "\t tot seq_regions: ", tot, " no file: ", no_file
  

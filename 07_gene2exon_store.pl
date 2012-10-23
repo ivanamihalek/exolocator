@@ -145,6 +145,16 @@ def get_canonical_exon_ids (cursor, canonical_transcript_id):
 
 
 #########################################
+def get_canonical_coordinates (cursor, canonical_transcript_id):
+    qry = "select seq_start, start_exon_id,  seq_end, end_exon_id "
+    qry += " from translation where transcript_id = %d " % canonical_transcript_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+    return rows[0]
+
+#########################################
 def  mark_canonical (cursor, gene_id, exons):
 
     canonical_transcript_id = get_canonical_transcript_id(cursor, gene_id)
@@ -155,10 +165,27 @@ def  mark_canonical (cursor, gene_id, exons):
     canonical_exon_ids = get_canonical_exon_ids (cursor, canonical_transcript_id)
     for exon in exons:
         if exon.is_known and (exon.exon_id in canonical_exon_ids):
-            exon.is_canonical     = 1
-            exon.canon_transcr_id = canonical_transcript_id
+            exon.is_canonical = 1
         else:
             exon.is_canonical = 0
+    [canonical_start_in_exon, canonical_start_exon_id,
+     canonical_end_in_exon, canonical_end_exon_id] = get_canonical_coordinates (cursor, canonical_transcript_id)
+    
+    start_found = False
+    end_found   = False
+    for exon in exons:
+        if (exon.exon_id == canonical_start_exon_id):
+            start_found = True
+            exon.canon_transl_start = canonical_start_in_exon-1
+        if (exon.exon_id == canonical_end_exon_id):
+            end_found = True
+            exon.canon_transl_end = canonical_end_in_exon-1
+    if ( not start_found ):
+        print "canonical translation start not found for ", gene_id
+        exit(1)
+    if ( not end_found ):
+        print "canonical translation end not found for ", gene_id
+        exit(1)
             
 #########################################
 def fill_in_annotation_info (cursor, gene_id, exons):
@@ -407,7 +434,7 @@ def get_translated_region(cursor, gene_id, species):
 
 
         
-    return [transl_region_start, transl_region_end]
+    return [transl_region_start, transl_region_end, gene_region_strand]
 
 
            
@@ -418,7 +445,7 @@ def mark_coding (cursor, gene_id, species, exons):
     if ( not ret ):
         return False
 
-    [transl_region_start,transl_region_end] = ret
+    [transl_region_start,transl_region_end, strand] = ret
         
     translated_length = 0
     for exon in exons:
@@ -446,18 +473,12 @@ def mark_coding (cursor, gene_id, species, exons):
                  transl_region_end   < exon_start):
                 exon.is_coding = 0
             else:
+                # there is _a_ translation that covers this exon
+                # otherwise I could have two disjunct translations from
+                # the saem gene, and a couple of exons in the middle that 
+                # are never translated - is that possible?
                 exon.is_coding = 1
-                if ( transl_region_start > exon_start ):
-                    exon.translation_starts = transl_region_start-exon_start
-                    translated_length -= exon.translation_starts
 
-                if ( exon_end > transl_region_end):
-                    length = exon.end_in_gene - exon.start_in_gene + 1
-                    diff   = exon_end - transl_region_end
-                    exon.translation_ends = length - diff
-                    translated_length -= diff
-
- 
            
         else: # exons belongs to a  predicted transcript 
             # == we don't know if it is coding or not
@@ -506,8 +527,8 @@ def store_exon (cursor, exon):
     update_fields['exon_seq_id']        = exon.exon_seq_id
     update_fields['strand']             = exon.strand
     update_fields['phase']              = exon.phase
-    update_fields['translation_starts'] = exon.translation_starts
-    update_fields['translation_ends']   = exon.translation_ends
+    update_fields['canon_transl_start'] = exon.canon_transl_start
+    update_fields['canon_transl_end']   = exon.canon_transl_end
     update_fields['is_coding']          = exon.is_coding
     update_fields['is_canonical']       = exon.is_canonical
     update_fields['is_constitutive']    = exon.is_constitutive

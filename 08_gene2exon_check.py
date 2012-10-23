@@ -22,9 +22,9 @@ def check_exons(species_list, ensembl_db_name):
     cursor = db.cursor()
 
     acg = AlignmentCommandGenerator()
-    #species_list = ['danio_rerio']
+    species_list = ['danio_rerio']
     #species_list = ['callithrix_jacchus']
-    species_list = ['ailuropoda_melanoleuca']
+    #species_list = ['ailuropoda_melanoleuca']
     for species in species_list:
         print
         print "############################"

@@ -145,6 +145,16 @@ def get_canonical_exon_ids (cursor, canonical_transcript_id):
 
 
 #########################################
+def get_canonical_coordinates (cursor, canonical_transcript_id):
+    qry = "select seq_start, start_exon_id,  seq_end, end_exon_id "
+    qry += " from translation where transcript_id = %d " % canonical_transcript_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+    return rows[0]
+
+#########################################
 def  mark_canonical (cursor, gene_id, exons):
 
     canonical_transcript_id = get_canonical_transcript_id(cursor, gene_id)
@@ -158,6 +168,26 @@ def  mark_canonical (cursor, gene_id, exons):
             exon.is_canonical = 1
         else:
             exon.is_canonical = 0
+    [canonical_start_in_exon, canonical_start_exon_id,
+     canonical_end_in_exon, canonical_end_exon_id] = get_canonical_coordinates (cursor, canonical_transcript_id)
+    
+    start_found = False
+    end_found   = False
+    for exon in exons:
+        if (exon.exon_id == canonical_start_exon_id):
+            start_found = True
+            exon.canon_transl_start = canonical_start_in_exon-1
+        if (exon.exon_id == canonical_end_exon_id):
+            end_found = True
+            exon.canon_transl_end = canonical_end_in_exon-1
+    if ( not start_found ):
+        print "canonical translation start not found for ", gene_id
+        exit(1)
+    if ( not end_found ):
+        print "canonical translation end not found for ", gene_id
+        exit(1)
+
+
             
 #########################################
 def fill_in_annotation_info (cursor, gene_id, exons):
@@ -444,27 +474,11 @@ def mark_coding (cursor, gene_id, species, exons):
                 exon.is_coding = 0
 
             else:
+                # there is _a_ translation that covers this exon
+                # otherwise I could have two disjunct translations from
+                # the saem gene, and a couple of exons in the middle that 
+                # are never translated - is that possible?
                 exon.is_coding = 1
-
-                length = exon.end_in_gene - exon.start_in_gene + 1
-
-                if (transl_region_start > exon_start):
-
-                    diff =  transl_region_start - exon_start
-                    if ( strand > 0 ):
-                        exon.translation_starts = diff
-                    else:
-                        exon.translation_ends = length - diff
-                    translated_length        -= diff
-
-                if (exon_end > transl_region_end):
-                    
-                    diff   = exon_end - transl_region_end
-                    if ( strand>0):
-                        exon.translation_ends   = length - diff
-                    else:
-                        exon.translation_starts = diff
-                    translated_length    -= diff
 
         else: # exons belongs to a  predicted transcript 
             # == we don't know if it is coding or not
@@ -506,8 +520,8 @@ def gene2exon(species_list, ensembl_db_name):
 
     acg = AlignmentCommandGenerator()
     #species_list = ['danio_rerio']
+    #species_list = ['bos_taurus']
     #species_list = ['callithrix_jacchus']
-    #species_list = ['ailuropoda_melanoleuca']
     for species in species_list:
         print
         print "############################"
@@ -548,13 +562,13 @@ def gene2exon(species_list, ensembl_db_name):
                 #print exon
                 #print exon.start_in_gene, exon.end_in_gene
 
-                if (exon.translation_ends is None):
+                if (exon.canon_transl_end is None):
                     length += exon.end_in_gene - exon.start_in_gene + 1
                 else:
-                    length += exon.translation_ends + 1
+                    length += exon.canon_transl_end + 1
 
-                if (not exon.translation_starts is None):
-                    length -= exon.translation_starts
+                if (not exon.canon_transl_start is None):
+                    length -= exon.canon_transl_start 
             
             if (not length):
                 print gene2stable (cursor, gene_id = gene_id), " no exons marked as canonical"
@@ -595,7 +609,8 @@ def gene2exon(species_list, ensembl_db_name):
                 break
             #print fasta
    
- 
+        print species,  ct, " out of ", tot
+
     cursor.close()
     db.close()
 

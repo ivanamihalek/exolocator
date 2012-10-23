@@ -70,8 +70,8 @@ class Exon:
         self.exon_id             = gene2exon_row[2]
         self.start_in_gene       = gene2exon_row[3]
         self.end_in_gene         = gene2exon_row[4]
-        self.translation_starts  = gene2exon_row[5]
-        self.translation_ends    = gene2exon_row[6]
+        self.canon_transl_start  = gene2exon_row[5]
+        self.canon_transl_end    = gene2exon_row[6]
         self.exon_seq_id         = gene2exon_row[7]
         self.strand              = gene2exon_row[8]
         self.phase               = gene2exon_row[9]
@@ -114,8 +114,8 @@ class Exon:
         self.strand              = None
         self.phase               = None
         self.end_phase           = None
-        self.translation_starts  = None
-        self.translation_ends    = None
+        self.canon_transl_start  = None
+        self.canon_transl_end    = None
         self.is_known            = None
         self.is_coding           = None
         self.is_canonical        = None

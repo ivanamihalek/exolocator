@@ -28,7 +28,10 @@ def main():
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    for species in all_species:
+
+    
+    #for species in all_species:
+    for species in ['danio_rerio']:
         print species
         dna_path = "{0}{1}/dna".format(fasta_path, species)
         if (not os.path.exists(dna_path)):

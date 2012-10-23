@@ -27,9 +27,6 @@ def  get_seq_info (cursor, gene_id, species):
          exit(1)
     [seq_region_id, seq_region_start, seq_region_end, seq_region_strand] = rows[0]
     
-    # now for seq_name and seq_file
-    if ( species == 'danio_rerio'):
-        seq_region_id +=949 # beats me
 
     qry  = "select name, file_name from seq_region "
     qry += " where seq_region_id= %d" %  seq_region_id
@@ -48,6 +45,28 @@ def strip_stop(pepseq):
     return pepseq
 
 #########################################
+def  canonical_transl_info (cursor, gene_id):
+    
+    qry  = "select canonical_transcript_id from gene  where gene_id = %d " % gene_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+    
+    canonical_transcript_id = int(rows[0][0])
+    qry = "select start_exon_id, seq_start, end_exon_id,  seq_end "
+    qry += " from translation where transcript_id = %d " % canonical_transcript_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+ 
+    [can_transl_start_exon, can_transl_start_position, 
+     can_transl_end_exon, can_transl_end_position] = rows[0]
+
+    return [can_transl_start_exon, can_transl_start_position, can_transl_end_exon, can_transl_end_position]
+
+#########################################
 def check_canonical_sequence(species_list, ensembl_db_name):
 
     db     = connect_to_mysql()
@@ -55,8 +74,10 @@ def check_canonical_sequence(species_list, ensembl_db_name):
     acg     = AlignmentCommandGenerator()
 
     for species in species_list:
-        if (not species == 'ailuropoda_melanoleuca'):
+        if (not species == 'bos_taurus'):
             continue
+        #if (not species == 'danio_rerio'):
+        #    continue
         print
         print "############################"
         print  species
@@ -70,11 +91,29 @@ def check_canonical_sequence(species_list, ensembl_db_name):
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         
-        gene_ids.reverse()
+        
+ 
+        #gene_ids.reverse()
         ct  = 0
         tot = 0
-        for gene_id in gene_ids:
+        #for gene_id in gene_ids:
+        for gene_id in [488]:
  
+            print gene_id, ">>>", gene2stable (cursor, gene_id)
+
+            qry = "select stable_id from gene where gene_id=488"
+            print search_db(cursor, qry)
+          
+            exit(1)
+
+            [can_transl_start_exon, can_transl_start_position,
+             can_transl_end_exon, can_transl_end_position] = canonical_transl_info (cursor, gene_id)
+
+            
+            print gene_id, can_transl_start_exon, can_transl_start_position,
+            print can_transl_end_exon, can_transl_end_position
+            print ">>>", gene2stable (cursor, gene_id)
+
             canonical_transl_id = gene2stable_canon_transl(cursor, gene_id)
             # find canonical translation
             if ( not canonical_transl_id):
@@ -157,13 +196,39 @@ def check_canonical_sequence(species_list, ensembl_db_name):
             # sorting exons in place by their start in gene:
             exons.sort(key=lambda exon: exon.start_in_gene)
 
-            spliced_seq = "" 
-            carry = ""
+
+            canonical_coding_exons = []
             for exon in exons:
                 if (not exon.is_canonical or not exon.is_coding): 
                      continue
+                canonical_coding_exons.append(exon)
+
+            spliced_seq = "" 
+            carry = ""
+
+            for exon in canonical_coding_exons:
+                
                 # find exon sequence within the gene
-                exon_seq     = carry + gene_seq[ exon.start_in_gene:exon.end_in_gene+1]
+
+                start = exon.start_in_gene
+                if (exon is canonical_coding_exons[0]):
+                    if ( not exon.exon_id == can_transl_start_exon ):
+                        print " error start cantransl:  gene_id ",  gene_id,
+                        print  " exon_id ", exon.exon_id, " canon: ", can_transl_start_exon
+                        exit (1)
+                    start += can_transl_start_position-1
+
+                if ( exon is canonical_coding_exons[-1]):
+                    if ( not exon.exon_id == can_transl_end_exon ):
+                        print " error end cantransl:  gene_id ",  gene_id,
+                        print  " exon_id ", exon.exon_id, " canon: ", can_transl_end_exon
+                        exit (1)
+                    end = exon.start_in_gene + can_transl_end_position-1
+                else:
+                    end = exon.end_in_gene
+                   
+                
+                exon_seq     = carry + gene_seq[ start: end+1]
                 remainder    = len(exon_seq)%3
                 if ( remainder == 0 ):
                     carry = ""
@@ -176,6 +241,7 @@ def check_canonical_sequence(species_list, ensembl_db_name):
 
                 dnaseq = Seq (exon_seq, generic_dna)
                 pepseq = dnaseq.translate()
+
                 spliced_seq += exon_seq
                 
             # turn to the corresponding BioPython object
@@ -186,6 +252,8 @@ def check_canonical_sequence(species_list, ensembl_db_name):
             else:
                 pepseq = dnaseq.translate()
                 pepseq = strip_stop(pepseq)  # strip the last stop codon only
+                pepseq0 =  pepseq
+
                 
                 # if there are stil stop codons we'll give another shot to
                 # to the possibility that tit si mitochondrial,
@@ -193,27 +261,52 @@ def check_canonical_sequence(species_list, ensembl_db_name):
                 if ( '*' in pepseq):
                     pepseq = dnaseq.translate(table="Vertebrate Mitochondrial")
                     pepseq = strip_stop(pepseq)
-                         
-                if ( '*' in pepseq): # some more desperate measures
-                    dnaseq = Seq (spliced_seq[1:], generic_dna)
-                    pepseq = dnaseq.translate()
-                    pepseq = strip_stop(pepseq)
 
-                if ( '*' in pepseq): # some more desperate measures
-                    dnaseq = Seq (spliced_seq[2:], generic_dna)
-                    pepseq = dnaseq.translate()
-                    pepseq = strip_stop(pepseq)
+            # some further  desperate measures 
+            ok_so_far = True
+            if ( '*' in pepseq):
+                ok_so_far = False
+                dnaseq = Seq (spliced_seq[1:], generic_dna)
+                pepseq = dnaseq.translate()
+                pepseq = strip_stop(pepseq)
+                pepseq1 =  pepseq
+            else:
+                ok_so_far = True
 
-                if ( '*' in pepseq):
-                    ct += 1
-                    print "Error translating ", species, gene_id, canonical_transl_id
-                    print "canon: ", canonical_translation
-                    print "exons: ", pepseq
-                    print "dna:   ", spliced_seq
+            if (not ok_so_far and '*' in pepseq):
+                dnaseq = Seq (spliced_seq[2:], generic_dna)
+                pepseq = dnaseq.translate()
+                pepseq = strip_stop(pepseq)
+                pepseq2 =  pepseq
+            else:
+                ok_so_far = True
+
+            if (not ok_so_far and  '*' in pepseq):
+                ct += 1
+                print 
+                print ct, tot
+                print "Error translating ", species, gene_id, canonical_transl_id
+                print "canon: ", canonical_translation
+                print "exons: ", 
+                print "phase 0"
+                print pepseq0
+                print "phase 1"
+                print pepseq1
+                print "phase 2"
+                print pepseq2
+                #print "dna:   ", spliced_seq
+            else:
+                ok_so_far = True
+           
+
+            if ( not ok_so_far):
+                continue
 
             difference = len(pepseq) - len(canonical_translation)
             if ( abs(difference) > 3):
                 ct += 1
+                print
+                print ct, tot
                 print canonical_transl_id
                 print "canon", canonical_translation
                 print "exons", pepseq
@@ -223,7 +316,9 @@ def check_canonical_sequence(species_list, ensembl_db_name):
                     if ( i >= len(canonical_translation)):
                         break
                     if (not pepseq[i] ==  canonical_translation[i]):
-                        ct += 1
+                        ct += 1 
+                        print
+                        print ct, tot
                         print canonical_transl_id
                         print "canon", canonical_translation
                         print "exons", pepseq
@@ -231,7 +326,7 @@ def check_canonical_sequence(species_list, ensembl_db_name):
                         print
                         break
 
-            if (not  tot%500):
+            if (not  tot%2000):
                 print ct, tot
 
         print species, ct, tot

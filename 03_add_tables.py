@@ -50,7 +50,7 @@ def make_gene2exon_table (cursor):
         return False
 
     for column_name in ['gene_id', 'exon_id', 'start_in_gene', 'end_in_gene', 
-                        'translation_starts', 'translation_ends', 'exon_seq_id']:
+                        'canon_transl_start', 'canon_transl_end', 'exon_seq_id']:
         qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
         rows = search_db (cursor, qry)
         if (rows):
