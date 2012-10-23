@@ -3,7 +3,7 @@
 import MySQLdb
 import commands
 from   el_utils.mysql   import  connect_to_mysql, search_db
-from   el_utils.ensembl import  get_species, get_gene_ids
+from   el_utils.ensembl import  get_species, get_gene_ids, gene2exon_list
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
 from   el_utils.objects import  Exon
 from   el_utils.threads import  parallelize
@@ -11,23 +11,6 @@ from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
 
 
-
-#########################################
-def gene2exon_list (cursor, gene_id):
-
-    exons = []
-    qry  = "select * from gene2exon where gene_id = %d " % gene_id
-    rows = search_db(cursor, qry)
-    if (not rows):
-        rows = search_db(cursor, qrym, verbose = True)
-        exit (1)
-
-    for row in rows:
-        exon = Exon()
-        exon.load_from_gene2exon(row)
-        exons.append(exon)
-
-    return exons
 
             
 
@@ -77,8 +60,6 @@ def check_exons(species_list, ensembl_db_name):
                     continue
                 
                 if (not exon.is_coding): 
-                    # in some genomes an exon appears as canonical
-                    # even though it is not coding
                     continue
                 
 

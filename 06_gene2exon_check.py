@@ -82,7 +82,7 @@ def get_known_exons (cursor, gene_id, species):
             continue
         exon         = Exon()
         exon.gene_id = gene_id
-        exon.load_from_ensembl_exon (gene_region_start, rows[0])
+        exon.load_from_ensembl_exon (gene_region_start, gene_region_end, rows[0])
         exons.append(exon)
 
     return exons
@@ -114,7 +114,7 @@ def get_predicted_exons (cursor, gene_id, species):
     for row in rows:
         exon         = Exon()
         exon.gene_id = gene_id
-        exon.load_from_ensembl_prediction (gene_region_start, row)
+        exon.load_from_ensembl_prediction (gene_region_start, gene_region_end, row)
         exons.append(exon)
  
     return exons
@@ -404,9 +404,7 @@ def get_translated_region(cursor, gene_id, species):
         if (this_translation_region_end >= transl_region_end):
             transl_region_end = this_translation_region_end
 
-
-        
-    return [transl_region_start, transl_region_end]
+    return [transl_region_start, transl_region_end, gene_region_strand]
 
 
            
@@ -417,7 +415,7 @@ def mark_coding (cursor, gene_id, species, exons):
     if ( not ret ):
         return False
 
-    [transl_region_start,transl_region_end] = ret
+    [transl_region_start, transl_region_end, strand] = ret
         
     translated_length = 0
     for exon in exons:
@@ -444,20 +442,30 @@ def mark_coding (cursor, gene_id, species, exons):
             if ( exon_end < transl_region_start or
                  transl_region_end   < exon_start):
                 exon.is_coding = 0
+
             else:
                 exon.is_coding = 1
-                if ( transl_region_start > exon_start ):
-                    exon.translation_starts = transl_region_start-exon_start
-                    translated_length -= exon.translation_starts
 
-                if ( exon_end > transl_region_end):
-                    length = exon.end_in_gene - exon.start_in_gene + 1
+                length = exon.end_in_gene - exon.start_in_gene + 1
+
+                if (transl_region_start > exon_start):
+
+                    diff =  transl_region_start - exon_start
+                    if ( strand > 0 ):
+                        exon.translation_starts = diff
+                    else:
+                        exon.translation_ends = length - diff
+                    translated_length        -= diff
+
+                if (exon_end > transl_region_end):
+                    
                     diff   = exon_end - transl_region_end
-                    exon.translation_ends = length - diff
-                    translated_length -= diff
+                    if ( strand>0):
+                        exon.translation_ends   = length - diff
+                    else:
+                        exon.translation_starts = diff
+                    translated_length    -= diff
 
- 
-           
         else: # exons belongs to a  predicted transcript 
             # == we don't know if it is coding or not
             exon.is_coding = None
@@ -499,7 +507,7 @@ def gene2exon(species_list, ensembl_db_name):
     acg = AlignmentCommandGenerator()
     #species_list = ['danio_rerio']
     #species_list = ['callithrix_jacchus']
-    species_list = ['ailuropoda_melanoleuca']
+    #species_list = ['ailuropoda_melanoleuca']
     for species in species_list:
         print
         print "############################"
@@ -515,12 +523,12 @@ def gene2exon(species_list, ensembl_db_name):
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         
-        ct = 0
+        ct  = 0
         tot = 0
         #for gene_id in [1]:
         #for gene_id in [21459]:
-        for gene_id in [943]:
-        #for gene_id in gene_ids:
+        #for gene_id in [943]:
+        for gene_id in gene_ids:
 
             tot += 1
             # find all exons associated with the gene id
@@ -532,16 +540,13 @@ def gene2exon(species_list, ensembl_db_name):
    
             length = 0
             for exon in exons:
-                if (not exon.is_canonical): 
-                    continue
-                
-                if (not exon.is_coding): 
+                if (not exon.is_canonical or not exon.is_coding): 
                     # in some genomes an exon appears as canonical
                     # even though it is not coding
                     continue
-                print
-                print exon
-                print exon.start_in_gene, exon.end_in_gene
+                #print
+                #print exon
+                #print exon.start_in_gene, exon.end_in_gene
 
                 if (exon.translation_ends is None):
                     length += exon.end_in_gene - exon.start_in_gene + 1
@@ -588,7 +593,7 @@ def gene2exon(species_list, ensembl_db_name):
 
             if (tot==1000):
                 break
-            print fasta
+            #print fasta
    
  
     cursor.close()

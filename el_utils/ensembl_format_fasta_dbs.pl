@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w 
 
  $local_repository = 
-    "/home/ivanam/databases/ensembl/fasta";
+    "/mnt/ensembl-mirror/release-68/fasta";
 
 chdir $local_repository;
 
@@ -13,15 +13,17 @@ foreach $animal (@farm) {
 
 
     #foreach $dir  ( "pep",  "dna" ){
-    foreach  $dir  ( "pep" ){
+    foreach  $dir  ( "dna" ){
 
 	chdir $local_repository;
 	chdir "$animal/$dir";
-    
+	
+	( $dir eq "dna") && `rm *.fa.*.p*`;
 	@fastas = split "\n",  `ls *.fa`;
 	for $fasta (@fastas) {
 	    print "\t $fasta\n";
-	    $cmd = "formatdb -i $fasta -o T\n";
+	    $cmd = "formatdb -i $fasta -o T";
+	    ( $dir eq "dna") && ( $cmd .= " -p F");
 	    (system $cmd) &&
 		die  " error running $cmd\n";
 	}

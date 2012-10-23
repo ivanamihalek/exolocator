@@ -82,7 +82,7 @@ def get_known_exons (cursor, gene_id, species):
             continue
         exon         = Exon()
         exon.gene_id = gene_id
-        exon.load_from_ensembl_exon (gene_region_start, rows[0])
+        exon.load_from_ensembl_exon (gene_region_start, gene_region_end, rows[0])
         exons.append(exon)
 
     return exons
@@ -114,7 +114,7 @@ def get_predicted_exons (cursor, gene_id, species):
     for row in rows:
         exon         = Exon()
         exon.gene_id = gene_id
-        exon.load_from_ensembl_prediction (gene_region_start, row)
+        exon.load_from_ensembl_prediction (gene_region_start, gene_region_end, row)
         exons.append(exon)
  
     return exons
@@ -528,6 +528,9 @@ def gene2exon(species_list, ensembl_db_name):
     cursor = db.cursor()
 
     for species in species_list:
+
+        if (species == 'ailuropoda_melanoleuca'):
+            continue
 
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)

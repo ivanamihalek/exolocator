@@ -9,7 +9,7 @@ import os, re, commands
 from   config_reader   import ConfigurationReader
 
 
-#####################################################################################
+###########
 
 def isinteger(x):
     try:
@@ -62,38 +62,19 @@ class AlignmentCommandGenerator(object):
         self.mafft          = self.configReader.get_path('mafft')
         
         
-    def generate_fastacmd_gene_command (self, sequence_id, 
-                                   species_name, 
-                                   location_type,
-                                   output_file_path, 
-                                   masked = 0,
+    def generate_fastacmd_gene_command (self, species, seq_name, fasta_db_file, 
                                    strand = None, 
-                                   sequence_start = None, sequence_stop = None):
+                                   sequence_start = None, sequence_stop = None, 
+                                   output_file_path = None):
         
-        
-        if (location_type == "chromosome"):
-
-            if (species_name   =='anolis_carolinensis'):   # horrible
-                seq_id_cmd = "-s 'lcl|%s' " % sequence_id
-            elif (species_name =='taeniopygia_guttata' and 'LGE' in sequence_id): # horribler
-                seq_id_cmd = "-s %s " % sequence_id
-            elif (species_name =='equus_caballus' and 'Un' in sequence_id): # horribler
-                seq_id_cmd = "-s %s " % sequence_id
-            elif (species_name =='gallus_gallus' and '_E' in sequence_id): # the horriblest
-                seq_id_cmd = "-s %s " % sequence_id
-            elif ( 'random' in sequence_id):
-                seq_id_cmd = "-s %s" % sequence_id
-            else:
-                seq_id_cmd = "-s chrom%s" % sequence_id
+        if (isinteger(seq_name)):
+            seq_id_cmd = "-s 'lcl|%s' " % seq_name
         else:
-            if (isinteger(sequence_id)):
-                 seq_id_cmd = "-s 'lcl|%s' " % sequence_id
-            else:
-                seq_id_cmd = "-s %s" % sequence_id
+            seq_id_cmd = "-s %s" % seq_name
         
 
         data_type_cmd = "-p F"
-        database = "-d %s" % self._generate_genedb_file_name(species_name, location_type, sequence_id, masked)
+        database = "-d {0}/{1}/dna/{2}".format(self.ensembldb, species, fasta_db_file)
             
         if (strand == None or int(strand) == 1):
             strand_cmd = "-S 1"

@@ -5,12 +5,21 @@ class Exon:
     #################################################
     # the ensembl row is assumed to have been 
     # obtained by select * from exon
-    def load_from_ensembl_exon(self, gene_start, ensembl_row):
+    def load_from_ensembl_exon(self, gene_start, gene_end, ensembl_row):
  
         self.exon_id           = ensembl_row[0]
-        self.start_in_gene     = ensembl_row[2]-gene_start
-        self.end_in_gene       = ensembl_row[3]-gene_start
-        self.strand            = ensembl_row[4]
+        strand =  ensembl_row[4]
+        start_on_seq_region  = ensembl_row[2]
+        end_on_seq_region    = ensembl_row[3]
+
+        if ( strand > 0 ):
+            self.start_in_gene = start_on_seq_region-gene_start
+            self.end_in_gene   = end_on_seq_region-gene_start
+        else:
+            self.start_in_gene = gene_end - end_on_seq_region
+            self.end_in_gene   = gene_end - start_on_seq_region
+
+        self.strand            = strand
         self.phase             = ensembl_row[5]
         self.end_phase         = ensembl_row[6]
         self.is_constitutive   = ensembl_row[8]
@@ -24,12 +33,20 @@ class Exon:
     #################################################
     # the ensembl row is assumed to have been 
     # obtained by select * from exon_pprediction
-    def load_from_ensembl_prediction(self, gene_start, ensembl_row):
+    def load_from_ensembl_prediction(self, gene_start, gene_end, ensembl_row):
 
         self.exon_id           = ensembl_row[0]
-        self.start_in_gene     = ensembl_row[4]-gene_start
-        self.end_in_gene       = ensembl_row[5]-gene_start
-        self.strand            = ensembl_row[6]
+        strand = ensembl_row[6]
+        start_on_seq_region = ensembl_row[4]
+        end_on_seq_region   = ensembl_row[5]
+
+        if ( strand > 0 ):
+            self.start_in_gene = start_on_seq_region-gene_start
+            self.end_in_gene   = end_on_seq_region  -gene_start
+        else:
+            self.start_in_gene = gene_end - end_on_seq_region
+            self.end_in_gene   = gene_end - start_on_seq_region
+        self.strand            = strand
         self.phase             = ensembl_row[7]
         # not known (that's the source indicator - we 
         # got it from table called 'prediction_exon')

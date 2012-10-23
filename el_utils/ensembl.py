@@ -1,7 +1,25 @@
 #!/usr/bin/python
 
 import MySQLdb
-from   mysql  import search_db
+from   mysql   import search_db
+from   objects import  Exon
+
+#########################################
+def gene2exon_list (cursor, gene_id):
+
+    exons = []
+    qry  = "select * from gene2exon where gene_id = %d " % gene_id
+    rows = search_db(cursor, qry)
+    if (not rows):
+        rows = search_db(cursor, qrym, verbose = True)
+        exit (1)
+
+    for row in rows:
+        exon = Exon()
+        exon.load_from_gene2exon(row)
+        exons.append(exon)
+
+    return exons
 
 #########################################
 def gene2stable_canon_transl(cursor, gene_id, db_name=None,):
