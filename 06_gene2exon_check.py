@@ -156,7 +156,7 @@ def get_canonical_coordinates (cursor, canonical_transcript_id):
 
 #########################################
 def  mark_canonical (cursor, gene_id, exons):
-
+   
     canonical_transcript_id = get_canonical_transcript_id(cursor, gene_id)
     if not canonical_transcript_id:
         print "canonical_transcript_id  not retrived for ",  gene_id
@@ -177,9 +177,11 @@ def  mark_canonical (cursor, gene_id, exons):
         if (exon.exon_id == canonical_start_exon_id):
             start_found = True
             exon.canon_transl_start = canonical_start_in_exon-1
+            canonical_start_in_gene = exon.start_in_gene+exon.canon_transl_start
         if (exon.exon_id == canonical_end_exon_id):
             end_found = True
             exon.canon_transl_end = canonical_end_in_exon-1
+            canonical_end_in_gene = exon.start_in_gene+exon.canon_transl_end
     if ( not start_found ):
         print "canonical translation start not found for ", gene_id
         exit(1)
@@ -187,8 +189,25 @@ def  mark_canonical (cursor, gene_id, exons):
         print "canonical translation end not found for ", gene_id
         exit(1)
 
+    # for each exon in canonical 
+    qry = "select exon_id  from exon_transcript where transcript_id= %d" % canonical_transcript_id
+    rows = search_db (cursor, qry)
+    if (not rows):
+        rows = search_db (cursor, qry, veerbose=True)
+        exit(1)
 
-            
+    canonical_ids = []
+    for row in rows:
+        canonical_ids.append(row[0])
+
+    for exon in exons:
+       exon.is_canonical = 0 # default
+       if ( not exon.is_known):
+           continue
+       if (exon.exon_id in canonical_ids):
+           exon.is_canonical = 1
+
+         
 #########################################
 def fill_in_annotation_info (cursor, gene_id, exons):
 

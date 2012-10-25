@@ -107,7 +107,7 @@ def store_exon_seqs(species_list, ensembl_db_name):
 
             is_mitochondrial = ('.MT.' in fasta_db_file)
 
-            # (2) extract seq from fasta db
+            # extract sequencce from fasta db
             fastacmd = acg.generate_fastacmd_gene_command(species, seq_name, fasta_db_file,
                                                           seq_region_strand,  seq_region_start,    
                                                           seq_region_end)
