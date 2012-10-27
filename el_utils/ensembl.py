@@ -43,10 +43,33 @@ def gene2stable_canon_transl(cursor, gene_id, db_name=None,):
 
     return  rows[0][0]
 
+#########################################
+def gene2canon_transl(cursor, gene_id, db_name=None,):
+
+    if  (db_name):
+        qry  = "use %s " % db_name
+        rows = search_db (cursor, qry)
+        if (rows):
+            rows = search_db (cursor, qry, verbose = True)
+            print rows
+            exit (1)
+ 
+    qry  = "select translation.translation_id  from translation, gene "
+    qry += " where gene.canonical_transcript_id = translation.transcript_id "
+    qry += " and gene.gene_id = %d " % gene_id
+    rows = search_db (cursor, qry, verbose = False)
+    
+    if (not rows):
+        rows = search_db (cursor, qry, verbose = True)
+        return ""
+
+    return  rows[0][0]
+
+
 
 
 ########
-def stable2gene (cursor, db_name=None, stable_id=None):
+def stable2gene (cursor, stable_id=None, db_name=None, ):
 
     if (not stable_id):
         return ""
@@ -69,7 +92,7 @@ def stable2gene (cursor, db_name=None, stable_id=None):
     return int(rows[0][0])
     
 ########
-def gene2stable (cursor, db_name=None, gene_id=None):
+def gene2stable (cursor, gene_id=None, db_name=None, ):
 
     if (not gene_id):
         return ""
@@ -136,6 +159,8 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None):
     return gene_ids
 
 
+
+
 ########
 def get_species (cursor):
 
@@ -159,3 +184,13 @@ def get_species (cursor):
 
     return all_species, ensembl_db_name
 
+########
+def get_compara_name (cursor):
+
+    qry = "show databases like '%compara%'"
+    rows = search_db (cursor, qry)
+    if (not rows):
+        rows = search_db (cursor, qry, verbose = True)
+        return ""
+
+    return rows[0][0]
