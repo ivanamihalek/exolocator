@@ -2,6 +2,15 @@ import MySQLdb
 
 
 ########
+def switch_to_db (cursor, db_name):
+    qry = "use %s" % db_name
+    rows = search_db (cursor, qry, verbose=False)
+    if (rows):
+        print rows
+        return False
+    return True
+
+########
 def store_or_update (cursor, table, fixed_fields, update_fields):
 
     conditions = ""
@@ -75,10 +84,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
 #########################################
 def create_index (cursor, db_name, index_name, table, columns):
 
-    # columns is a list of columns that we want to have indexed
-    qry = "use %s" % db_name
-    rows = search_db (cursor, qry, verbose=False)
-    if (rows):
+    if  not switch_to_db (cursor, db_name):
         return False
     
     # check whether this index exists already
@@ -88,6 +94,7 @@ def create_index (cursor, db_name, index_name, table, columns):
         print rows
         return True
    
+    # columns is a list of columns that we want to have indexed
     qry = "create index %s  on %s " % (index_name, table)
     qry += " ("
     first = True
@@ -110,9 +117,7 @@ def create_index (cursor, db_name, index_name, table, columns):
 #########################################
 def check_column_exists (cursor, db_name, table_name, column_name):
     
-    qry = "use %s" % db_name
-    rows = search_db (cursor, qry, verbose=False)
-    if (rows):
+    if  not switch_to_db (cursor, db_name):
         return False
 
     qry = "show columns from "+ table_name + " like '%s'" % column_name
@@ -129,9 +134,7 @@ def check_column_exists (cursor, db_name, table_name, column_name):
 #########################################
 def check_table_exists (cursor, db_name, table_name):
     
-    qry = "use %s" % db_name
-    rows = search_db (cursor, qry, verbose=False)
-    if (rows):
+    if  not switch_to_db (cursor, db_name):
         return False
 
     qry = "show tables like '%s'" % table_name
@@ -171,6 +174,7 @@ def search_db (cursor, qry, verbose=False):
         return False
 
     return rows
+
 
 ########
 def connect_to_mysql ():

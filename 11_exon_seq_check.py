@@ -5,7 +5,7 @@ import commands
 from   el_utils.mysql   import  connect_to_mysql, search_db
 from   el_utils.ensembl import  get_species, get_gene_ids, gene2exon_list
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
-from   el_utils.ensembl import  gene2canon_transl
+from   el_utils.ensembl import  gene2canon_transl, get_canonical_exons, get_selenocysteines
 from   el_utils.objects import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
@@ -170,65 +170,24 @@ def get_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  seq_re
     if ('ERROR' in ret):
         print "Error running fastacmd: ", fastacmd
         print ret
-        exit (1)
+        if 'Ignoring sequence location' in ret:
+            print 'will ignore'
+            print
+        else:
+            exit (1)
     gene_seq = ""
+    reading = 0
     for line in ret.split("\n"):
         if ('>' in line):
+            reading = 1
+            continue
+        if (not reading):
             continue
         line.rstrip()
         gene_seq += line
 
     return gene_seq
             
-########################################
-def  get_canonical_exons (cursor, gene_id):
-
-    exons = gene2exon_list (cursor, gene_id)
-    if (not exons):
-        print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
-        exit(1) # shouldn't happen at this point
-
-    # sorting exons in place by their start in gene:
-    exons.sort(key=lambda exon: exon.start_in_gene)
-
-    canonical_coding_exons = []
-    reading = False
-    for exon in exons:
-        if (not exon.is_canonical): 
-             continue
-        if (not exon.canon_transl_start is None):
-            reading = True
-        if (reading):
-            canonical_coding_exons.append(exon)
-        if (not exon.canon_transl_end is None):
-            break  
-
-    return canonical_coding_exons
-
-
-#########################################
-def get_selenocysteines (cursor, gene_id):
-
-    selenoC_pos = []
-
-    canonical_transl_id = gene2canon_transl(cursor, gene_id)
-
-    qry  = "select value from translation_attrib "
-    qry += " where attrib_type_id = 12 and  translation_id = %d " % canonical_transl_id
-
-    rows = search_db (cursor, qry)
-    if (not rows):
-       return []
-
-    for row in rows:
-        blah  = row[0].split (" ")
-        start = int(blah[0])
-        end   = int(blah[1])
-        for pos in range(start, end+1):
-            selenoC_pos.append(pos-1)
-
-    return selenoC_pos
-
  
 #########################################
 def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons, 
@@ -413,9 +372,7 @@ def check_canonical_sequence(species_list, ensembl_db_name):
     cursor = db.cursor()
     acg    = AlignmentCommandGenerator()
 
-    for species in species_list:
-        if ( species == 'homo_sapiens'):
-            continue
+    for species in species_list[33:]:
         #if (not species == 'ailuropoda_melanoleuca'):
         #     continue
         print
@@ -432,13 +389,13 @@ def check_canonical_sequence(species_list, ensembl_db_name):
         
         ct  = 0
         tot = 0
-        for gene_id in gene_ids:
+        for gene_id in gene_ids[6000:8000]:
         #for gene_id in [314408,  314604,  314656,  314728,  314736,  314756,  314794,  314805,  314845,  314954,  314978,  314990,  315225,  315324,  315616,  315722,  315802,  315982,  316001,  316194,  319848,  320075,  320236,  320285,  320404,  320891,  368524,  368526,  368549,  368639,  368646,  368651,  368669,  368684,  368687,  368698,  368707,  368743,  368762,  368766,  368767,   368985,  369163,  369184,  369185,  369189,  369191,  369194,  369197,  369266,  369306,  369333,  369359,  369385,  369413,  369474,  369524]:
         
         #for gene_id in [314656]:
 
             tot +=1 
-            if (not  tot%2000):
+            if (not  tot%10):
                 print ct, tot
             # find canonical translation
             canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)

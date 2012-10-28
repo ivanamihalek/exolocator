@@ -1,13 +1,18 @@
 #!/usr/bin/python
 
 import MySQLdb
-from   mysql   import search_db
+from   mysql   import search_db, switch_to_db
 from   objects import  Exon
 
 #########################################
-def gene2exon_list (cursor, gene_id):
+def gene2exon_list (cursor, gene_id, db_name=None):
 
     exons = []
+
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+
     qry  = "select * from gene2exon where gene_id = %d " % gene_id
     rows = search_db(cursor, qry)
     if (not rows):
@@ -20,17 +25,61 @@ def gene2exon_list (cursor, gene_id):
         exons.append(exon)
 
     return exons
+########################################
+def  get_canonical_exons (cursor, gene_id):
+
+    exons = gene2exon_list (cursor, gene_id)
+    if (not exons):
+        print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
+        exit(1) # shouldn't happen at this point
+
+    # sorting exons in place by their start in gene:
+    exons.sort(key=lambda exon: exon.start_in_gene)
+
+    canonical_coding_exons = []
+    reading = False
+    for exon in exons:
+        if (not exon.is_canonical): 
+             continue
+        if (not exon.canon_transl_start is None):
+            reading = True
+        if (reading):
+            canonical_coding_exons.append(exon)
+        if (not exon.canon_transl_end is None):
+            break  
+
+    return canonical_coding_exons
+
 
 #########################################
-def gene2stable_canon_transl(cursor, gene_id, db_name=None,):
+def get_selenocysteines (cursor, gene_id):
 
-    if  (db_name):
-        qry  = "use %s " % db_name
-        rows = search_db (cursor, qry)
-        if (rows):
-            rows = search_db (cursor, qry, verbose = True)
-            print rows
-            exit (1)
+    selenoC_pos = []
+
+    canonical_transl_id = gene2canon_transl(cursor, gene_id)
+
+    qry  = "select value from translation_attrib "
+    qry += " where attrib_type_id = 12 and  translation_id = %d " % canonical_transl_id
+
+    rows = search_db (cursor, qry)
+    if (not rows):
+       return []
+
+    for row in rows:
+        blah  = row[0].split (" ")
+        start = int(blah[0])
+        end   = int(blah[1])
+        for pos in range(start, end+1):
+            selenoC_pos.append(pos-1)
+
+    return selenoC_pos
+
+
+#########################################
+def gene2stable_canon_transl(cursor, gene_id, db_name=None):
+
+    if (db_name and not switch_to_db(cursor, db_name)):
+            return False
  
     qry  = "select translation.stable_id  from translation, gene "
     qry += " where gene.canonical_transcript_id = translation.transcript_id "
@@ -46,13 +95,8 @@ def gene2stable_canon_transl(cursor, gene_id, db_name=None,):
 #########################################
 def gene2canon_transl(cursor, gene_id, db_name=None,):
 
-    if  (db_name):
-        qry  = "use %s " % db_name
-        rows = search_db (cursor, qry)
-        if (rows):
-            rows = search_db (cursor, qry, verbose = True)
-            print rows
-            exit (1)
+    if  (db_name and not switch_to_db(cursor, db_name)):
+            return False
  
     qry  = "select translation.translation_id  from translation, gene "
     qry += " where gene.canonical_transcript_id = translation.transcript_id "
@@ -74,13 +118,8 @@ def stable2gene (cursor, stable_id=None, db_name=None, ):
     if (not stable_id):
         return ""
 
-    if  (db_name):
-        qry  = "use %s " % db_name
-        rows = search_db (cursor, qry)
-        if (rows):
-            rows = search_db (cursor, qry, verbose = True)
-            print rows
-            exit (1)
+    if (db_name and not switch_to_db(cursor, db_name)):
+            return False
 
     qry = "select gene_id from gene where stable_id='%s'" % stable_id
     rows = search_db (cursor, qry, verbose = False)
