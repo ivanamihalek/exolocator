@@ -15,12 +15,6 @@ from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 
-#########################################
-def  is_region_M(file_names):
-    # the hope is to replace this with something
-    # less brain-damaged
-    return ('.MT.' in file_names)
-
 
 
 
@@ -44,8 +38,12 @@ def  get_primary_seq_info (cursor, gene_id, species):
          search_db (cursor, qry, verbose = True)
          return []
     [seq_name, file_names] = rows[0]
-
-    is_mitochondrial = is_region_M(file_names)
+    # Ivana:
+    # What is the proper way to find out whether the seq_region is mitochondrial?
+    # EMily:
+    # It's in the seq_region table, under name. Name will either be a chromosome
+    # number, MT for mitochrondria or the name of a contig.
+    is_mitochondrial = (seq_name == 'MT')
 
     return [seq_name, file_names, seq_region_start, 
             seq_region_end, seq_region_strand, is_mitochondrial]

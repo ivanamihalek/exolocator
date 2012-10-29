@@ -60,7 +60,7 @@ class Node:
         self.is_leaf   = False
         self.is_root   = False
         self.children  = []
-        self.load      = []
+        self.payload   = {}
 
 
 #########################################################
