@@ -107,10 +107,13 @@ def main():
     util_path['sw#']      = '/home/ivanam/third/swsharp/swsharp'
 
     dir_path = {}
-    dir_path['ensembl_fasta']   = '/mnt/ensembl/release-68/fasta/'
+    dir_path['ensembl_fasta']   = '/mnt/ensembl/release-68/fasta'
+    dir_path['taxonomy_dmps']   = '/home/ivanam/pypeworks/exolocator/el_resources'
 
     parameter = {}
     parameter['blastp_e_value'] = "1.e-10" # it will be used as a string  when fmting the blastp cmd
+    parameter['node_dmp']       = 'vert_nodes.dmp'
+    parameter['name_dmp']       = 'vert_names.dmp'
 
     # check if the paths are functioning (at this point at least)
     for util in util_path.values():

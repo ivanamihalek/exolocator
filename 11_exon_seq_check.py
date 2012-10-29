@@ -6,7 +6,7 @@ from   el_utils.mysql   import  connect_to_mysql, search_db
 from   el_utils.ensembl import  get_species, get_gene_ids, gene2exon_list
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
 from   el_utils.ensembl import  gene2canon_transl, get_canonical_exons, get_selenocysteines
-from   el_utils.objects import  Exon
+from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
@@ -366,15 +366,15 @@ def compare_seqs (canonical_translation, translated_seq, verbose=False):
 #########################################
 def check_canonical_sequence(species_list, ensembl_db_name):
 
-    verbose = False
+    verbose = True
 
     db     = connect_to_mysql()
     cursor = db.cursor()
     acg    = AlignmentCommandGenerator()
 
-    for species in species_list[33:]:
-        #if (not species == 'ailuropoda_melanoleuca'):
-        #     continue
+    for species in species_list:
+        if (not species == 'homo_sapiens'):
+             continue
         print
         print "############################"
         print  species
@@ -389,10 +389,10 @@ def check_canonical_sequence(species_list, ensembl_db_name):
         
         ct  = 0
         tot = 0
-        for gene_id in gene_ids[6000:8000]:
+        #for gene_id in gene_ids[6000:8000]:
         #for gene_id in [314408,  314604,  314656,  314728,  314736,  314756,  314794,  314805,  314845,  314954,  314978,  314990,  315225,  315324,  315616,  315722,  315802,  315982,  316001,  316194,  319848,  320075,  320236,  320285,  320404,  320891,  368524,  368526,  368549,  368639,  368646,  368651,  368669,  368684,  368687,  368698,  368707,  368743,  368762,  368766,  368767,   368985,  369163,  369184,  369185,  369189,  369191,  369194,  369197,  369266,  369306,  369333,  369359,  369385,  369413,  369474,  369524]:
         
-        #for gene_id in [314656]:
+        for gene_id in [368727]:
 
             tot +=1 
             if (not  tot%10):

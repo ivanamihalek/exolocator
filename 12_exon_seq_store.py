@@ -3,10 +3,11 @@
 import MySQLdb
 import commands
 from   el_utils.mysql   import  connect_to_mysql, search_db, switch_to_db
+from   el_utils.mysql   import  store_or_update
 from   el_utils.ensembl import  get_species, get_gene_ids, gene2exon_list
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
 from   el_utils.ensembl import  gene2canon_transl, get_canonical_exons, get_selenocysteines
-from   el_utils.objects import  Exon
+from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
@@ -230,7 +231,7 @@ def  get_canonical_exons (cursor, gene_id):
 def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons, 
                          is_mitochondrial, verbose = False):
 
-    canonical_exon_pepseqs = []
+    canonical_exon_pepseq = {}
     translated_seq = "" 
 
     [can_transl_start_exon, can_transl_start_position,
@@ -354,12 +355,12 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
             ok_so_far = True
 
         if ( not ok_so_far):
-            return ""
+            return [{}, ""]
         translated_seq += pepseq # I need the seq in selenoC - to decide
                                  # where the position of  U should be
-        canonical_exon_pepseqs.append(pepseq.tostring())
+        canonical_exon_pepseq[exon.exon_id] = pepseq.tostring()
 
-    return canonical_exon_pepseqs
+    return [canonical_exon_pepseq,translated_seq] 
 
 #########################################
 def compare_seqs (canonical_translation, translated_seq, verbose=False):
@@ -406,10 +407,15 @@ def compare_seqs (canonical_translation, translated_seq, verbose=False):
 #########################################
 def  get_gene_seq (acg, cursor, gene_id, species):
 
+    null = ["",{}]
+
     #########################################
     # which file should we be looking in, which sequence, from where to where
+    ret = get_primary_seq_info (cursor, gene_id, species)
+    if (not ret):
+        return null
     [seq_name, file_names, seq_region_start, seq_region_end, 
-     seq_region_strand, is_mitochondrial] = get_primary_seq_info (cursor, gene_id, species)
+     seq_region_strand, is_mitochondrial] = ret
     # i'm not quite clear why Ensembl is doing this, but sometimes we need the alternative
     # region - ("PATCH" deposited as tte right sequence, but its missing most of the gene)
     # so first establish that is it the case: find canonical translation
@@ -420,9 +426,8 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     gene_seq = extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,  
                                 seq_region_start, seq_region_end)
     # reconstruct the translation from the raw gene_seq and exon boundaries
-    canonical_exon_pepseqs = transl_reconstruct (cursor, gene_id, gene_seq, canonical_coding_exons, 
+    [canonical_exon_pepseq,translated_seq] = transl_reconstruct (cursor, gene_id, gene_seq, canonical_coding_exons, 
                                                  is_mitochondrial)
-    translated_seq = "".join(canonical_exon_pepseqs)
     if (translated_seq):
         # compare the two sequences and cry foul if they are not the same:
         comparison_ok = compare_seqs (canonical_translation, translated_seq)
@@ -431,13 +436,16 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     # if we succefully translated the exons, and came up with the same answer 
     # as the canonical translation, we are done here
     if (comparison_ok):
-        return [gene_seq, canonical_exon_pepseqs]
+        return [gene_seq, canonical_exon_pepseq]
  
     #########################################
     # otherwise repeat the procedure with the alternative seq info:
+    ret = get_alt_seq_info (cursor, gene_id, species)
+    if (not ret):
+        return null
     [seq_name, file_names, seq_region_start, seq_region_end, 
-     seq_region_strand, is_mitochondrial] = get_alt_seq_info (cursor, gene_id, species)
-    # i'm not quite clear why Ensembl is doing this, but sometimes we need the alternative
+     seq_region_strand, is_mitochondrial] = ret
+      # i'm not quite clear why Ensembl is doing this, but sometimes we need the alternative
     # region - ("PATCH" deposited as tte right sequence, but its missing most of the gene)
     # so first establish that is it the case: find canonical translation
     canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
@@ -447,9 +455,8 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     gene_seq = extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,  
                                 seq_region_start, seq_region_end)
     # reconstruct the translation from the raw gene_seq and exon boundaries
-    canonical_exon_pepseqs = transl_reconstruct (cursor, gene_id, gene_seq, canonical_coding_exons, 
-                                                 is_mitochondrial)
-    translated_seq = "".join(canonical_exon_pepseqs)
+    [canonical_exon_pepseq,translated_seq] = transl_reconstruct (cursor, gene_id, gene_seq, canonical_coding_exons, 
+                                                                  is_mitochondrial)
     if (translated_seq):
         # compare the two sequences and cry foul if they are not the same:
         comparison_ok = compare_seqs (canonical_translation, translated_seq)
@@ -458,9 +465,9 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     # if we succefully translated the exons, and came up with the same answer 
     # as the canonical translation, we are done here
     if (comparison_ok):
-        return [gene_seq, canonical_exon_pepseqs]
+        return [gene_seq, canonical_exon_pepseq]
  
-    return ["",[]]
+    return null 
 
 #########################################
 def get_exon_seqs (gene_seq, exons):
@@ -473,13 +480,36 @@ def get_exon_seqs (gene_seq, exons):
         start   = exon.start_in_gene
         end     = exon.end_in_gene
         exon_id = exon.exon_id
-        print start, end
         left_flank[exon_id]  = gene_seq[start-15:start]
         exon_seq[exon_id]    = gene_seq[start:end+1]
         right_flank[exon_id] = gene_seq[end+1:end+16]
         
     return [exon_seq, left_flank, right_flank]
             
+#########################################
+def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq):
+    
+    for exon in exons:
+        exon_id = exon.exon_id
+        #####
+        fixed_fields  = {}
+        update_fields = {}
+        fixed_fields['exon_id']         = exon_id
+        update_fields['is_known']       = exon.is_known
+        update_fields['is_sw']          = 0
+        if (exon_seq[exon_id]):
+            update_fields['dna_seq']    = exon_seq[exon_id]
+        if (left_flank[exon_id] ):
+            update_fields['left_flank'] = left_flank[exon_id]
+        if (right_flank[exon_id] ):
+            update_fields['right_flank']= right_flank[exon_id]
+        if ( canonical_exon_pepseq.has_key(exon_id) and canonical_exon_pepseq[exon_id]):
+            update_fields['protein_seq']= canonical_exon_pepseq[exon_id]
+        #####
+        store_or_update (cursor, 'exon_seq', fixed_fields, update_fields)
+
+
+
 #########################################
 def store_exon_seqs(species_list, ensembl_db_name):
 
@@ -488,8 +518,8 @@ def store_exon_seqs(species_list, ensembl_db_name):
     acg     = AlignmentCommandGenerator()
 
     for species in species_list:
-        #if (not species == 'ailuropoda_melanoleuca'):
-        #    continue
+        if (species == 'homo_sapiens'):
+            continue
         print
         print "############################"
         print  species
@@ -503,19 +533,21 @@ def store_exon_seqs(species_list, ensembl_db_name):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
         ###########################
+        seqs_not_found = []
         ct  = 0
         tot = 0
-        for gene_id in gene_ids[0::100]:
+        for gene_id in gene_ids:
             tot += 1
-            if (not  tot%500):
-                print ct, tot
+            if (not  tot%1000):
+                print species, ct, tot
                 
             # extract raw gene  region - bonus return from checking whether the 
             # sequence is correct: translation of canonical exons
-            [gene_seq, canonical_exon_pepseqs] = get_gene_seq(acg, cursor, gene_id, species)
+            [gene_seq, canonical_exon_pepseq] = get_gene_seq(acg, cursor, gene_id, species)
             if (not gene_seq):
                 print 'no sequence found for ', gene_id
-                exit(1)
+                seqs_not_found.append(gene_id)
+                continue
             # get _all_ exons
             exons = gene2exon_list(cursor, gene_id, ensembl_db_name[species])
             if (not exons):
@@ -526,18 +558,16 @@ def store_exon_seqs(species_list, ensembl_db_name):
             # (the return are three dictionaries, with exon_ids as keys)
             [exon_seq, left_flank, right_flank] = get_exon_seqs (gene_seq, exons)
             # store (exons, dna, protein)
-
-            print "".join(canonical_exon_pepseqs)
-            for exon in exons:
-                exon_id = exon.exon_id
-                print "* "
-                print left_flank[exon_id]
-                print exon_seq[exon_id]
-                print right_flank[exon_id]
-            exit(1)
+            store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
 
         print species, ct, tot
-       
+        if (seqs_not_found):
+            outf = open(species+".seqs_not_found", "w")
+            for not_found in seqs_not_found:
+                print >> outf, str(not_found)+", ",
+            print
+            print
+            outf.close
     cursor.close()
     db    .close()
 
@@ -546,7 +576,7 @@ def store_exon_seqs(species_list, ensembl_db_name):
 #########################################
 def main():
 
-    no_threads = 1
+    no_threads = 5
 
     db     = connect_to_mysql()
     cursor = db.cursor()

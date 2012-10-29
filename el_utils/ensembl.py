@@ -2,7 +2,7 @@
 
 import MySQLdb
 from   mysql   import search_db, switch_to_db
-from   objects import  Exon
+from   exon    import  Exon
 
 #########################################
 def gene2exon_list (cursor, gene_id, db_name=None):
@@ -232,4 +232,16 @@ def get_compara_name (cursor):
         rows = search_db (cursor, qry, verbose = True)
         return ""
 
+    return rows[0][0]
+
+########
+def species2taxid (cursor, species):
+
+
+    qry  = "select taxon_id from genome_db where name = '%s'" % species
+    rows = search_db (cursor, qry)
+    if (not rows):
+        search_db (cursor, qry, verbose = True)
+        return ""
+    
     return rows[0][0]

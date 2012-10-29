@@ -94,7 +94,7 @@ class ConfigurationReader:
         for name, path in self.util_path.iteritems():
             print name, path
         for name, value in self.parameter_value.iteritems():
-            print name, path
+            print name, value
 
 
     def get_path (self, name):

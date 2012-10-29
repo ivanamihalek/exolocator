@@ -1,4 +1,6 @@
 
+import os
+
 #########################################################
 class Exon:
 
@@ -103,7 +105,7 @@ class Exon:
         return printstr
 
     ###################################
-    # when somrthing is defined as an exon ....
+    # when something is defined as an exon ....
     def __init__ (self):
         
         self.exon_id             = None
@@ -122,4 +124,7 @@ class Exon:
         self.covering_exon       = None
         self.covering_exon_known = None
         self.analysis_id         = None
+
+
+
 

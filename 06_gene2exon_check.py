@@ -5,7 +5,7 @@ import commands
 from   el_utils.mysql   import  connect_to_mysql, search_db
 from   el_utils.ensembl import  get_species, get_gene_ids
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
-from   el_utils.objects import  Exon
+from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
