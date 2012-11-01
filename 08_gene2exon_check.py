@@ -22,7 +22,7 @@ def check_exons(species_list, ensembl_db_name):
     cursor = db.cursor()
 
     acg = AlignmentCommandGenerator()
-    species_list = ['danio_rerio']
+    species_list = ['homo_sapiens']
     #species_list = ['callithrix_jacchus']
     #species_list = ['ailuropoda_melanoleuca']
     for species in species_list:
@@ -43,17 +43,19 @@ def check_exons(species_list, ensembl_db_name):
         ct = 0
         tot = 0
         #for gene_id in [1]:
-        #for gene_id in [21459]:
-        for gene_id in gene_ids:
+        for gene_id in [355489]:
+        #for gene_id in gene_ids:
 
             tot += 1
             # find all exons associated with the gene id
             exons = gene2exon_list (cursor, gene_id)
             if (not exons):
-                #ct +=1
+                ct +=1
                 print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
                 
-   
+            if not tot%100:
+                print species, tot, ct
+
             length = 0
             for exon in exons:
                 if (not exon.is_canonical): 
@@ -110,11 +112,12 @@ def check_exons(species_list, ensembl_db_name):
                 print "(", ct, " out of ", tot, ")"
             
 
-            if (tot==1000):
-                break
+            #if (tot==1000):
+            #    break
             #print fasta
    
- 
+        print species, tot, ct
+
     cursor.close()
     db.close()
 

@@ -1,8 +1,60 @@
 #!/usr/bin/python
 
 import MySQLdb
-from   mysql   import search_db, switch_to_db
-from   exon    import  Exon
+from   mysql import search_db, switch_to_db
+from   exon  import Exon
+
+#########################################
+def is_mitochondrial (cursor, gene_id):
+
+    # seq identifier from gene table
+    qry  = "select seq_region_id from gene where gene_id = %d" % gene_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         exit(1)
+    seq_region_id = rows[0][0]
+    
+
+    qry  = "select name from seq_region  where seq_region_id= %d" %  seq_region_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+    seq_name = rows[0][0]
+
+    is_mitochondrial = (seq_name == 'MT')
+
+    return is_mitochondrial
+
+
+
+#########################################
+def get_exon_seqs (cursor, exon_id, db_name=None):
+
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+
+    qry  = "select protein_seq, left_flank, right_flank, dna_seq  "
+    qry += "from  exon_seq where exon_id = %d " % exon_id
+    rows = search_db(cursor, qry)
+    if (not rows):
+        #rows = search_db(cursor, qry, verbose = True)
+        return []
+
+    [protein_seq, left_flank, right_flank, dna_seq] = rows[0]
+    if (protein_seq is None):
+        protein_seq = ""
+    if (left_flank is None):
+        left_flank = ""
+    if (right_flank is None):
+        right_flank = ""
+    if (dna_seq is None):
+        dna_seq = ""
+    
+    return [protein_seq, left_flank, right_flank, dna_seq]
+
 
 #########################################
 def gene2exon_list (cursor, gene_id, db_name=None):
@@ -16,8 +68,8 @@ def gene2exon_list (cursor, gene_id, db_name=None):
     qry  = "select * from gene2exon where gene_id = %d " % gene_id
     rows = search_db(cursor, qry)
     if (not rows):
-        rows = search_db(cursor, qrym, verbose = True)
-        exit (1)
+        #rows = search_db(cursor, qry, verbose = True)
+        return []
 
     for row in rows:
         exon = Exon()
@@ -25,6 +77,7 @@ def gene2exon_list (cursor, gene_id, db_name=None):
         exons.append(exon)
 
     return exons
+
 ########################################
 def  get_canonical_exons (cursor, gene_id):
 
@@ -49,7 +102,6 @@ def  get_canonical_exons (cursor, gene_id):
             break  
 
     return canonical_coding_exons
-
 
 #########################################
 def get_selenocysteines (cursor, gene_id):

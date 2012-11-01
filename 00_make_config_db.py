@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import MySQLdb
-import os
+import os, sys
 from   el_utils.mysql   import  connect_to_mysql, search_db
 from   el_utils.mysql   import  check_table_exists, store_or_update
 '''
@@ -108,28 +108,29 @@ def main():
 
     dir_path = {}
     dir_path['ensembl_fasta']   = '/mnt/ensembl/release-68/fasta'
-    dir_path['taxonomy_dmps']   = '/home/ivanam/pypeworks/exolocator/el_resources'
+    # local juggling of data from one database base to the other
+    dir_path['afs_dumps']       = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
+    dir_path['afs_dumps']      +='ExoLocator/results/dumpster/'
 
     parameter = {}
     parameter['blastp_e_value'] = "1.e-10" # it will be used as a string  when fmting the blastp cmd
-    parameter['node_dmp']       = 'vert_nodes.dmp'
-    parameter['name_dmp']       = 'vert_names.dmp'
 
     # check if the paths are functioning (at this point at least)
     for util in util_path.values():
         if (not os.path.exists(util)):
             print util, " not found "
-            exit (1)
+            sys.exit (1)
 
     for dir in dir_path.values():
         if (not os.path.exists(dir)):
             print dir, " not found "
-            exit (1)
+            sys.exit (1)
         if (not os.path.isdir (dir)):
             print dir, " is not a directory "
-            exit (1)
+            sys.exit (1)
             
     db     = connect_to_mysql()
+    #db     = connect_to_mysql(user="marioot", passwd="tooiram")
     cursor = db.cursor()
 
     # check if the config db exists -- if not, make it
@@ -149,7 +150,7 @@ def main():
     search_db (cursor, qry)
         
     # make tables
-    for table in ['util_path', 'dir_path', 'seqregion2file', 'parameter']:
+    for table in ['util_path', 'dir_path', 'parameter']:
         if ( check_table_exists (cursor, db_name, table)):
             print table, " found in ", db_name
         else:

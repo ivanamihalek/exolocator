@@ -177,9 +177,12 @@ def search_db (cursor, qry, verbose=False):
 
 
 ########
-def connect_to_mysql ():
+def connect_to_mysql (user=None, passwd=None):
     try:
-        db =MySQLdb.connect(user="root")
+        if (user is None):
+            db =MySQLdb.connect(user="root")
+        else:
+            db =MySQLdb.connect(user=user, passwd=passwd)
     except  MySQLdb.Error, e:
         print "Error connecting to mysql as root (%s) " % (e.args[1])
         exit(1)
@@ -187,10 +190,13 @@ def connect_to_mysql ():
     return db
 
 ########
-def connect_to_db (db_name):
+def connect_to_db (db_name, user=None, passwd=None):
 
     try:
-        db =MySQLdb.connect(user="root", db=db_name)
+        if not user is None:
+            db =MySQLdb.connect(user=user, passwd=passwd, db=db_name)
+        else:
+            db =MySQLdb.connect(user="root", db=db_name)
     except  MySQLdb.Error, e:
         print "Error connecting to %s: %d %s" % (db_name, e.args[0], e.args[1])
         exit(1)

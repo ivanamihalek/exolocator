@@ -15,7 +15,9 @@ from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 
+#def is_mitochondrial (cursor, seq_region_id):
 
+    
 
 
 #########################################
@@ -516,7 +518,7 @@ def store_exon_seqs(species_list, ensembl_db_name):
     acg     = AlignmentCommandGenerator()
 
     for species in species_list:
-        if (species == 'homo_sapiens'):
+        if (not species == 'homo_sapiens'):
             continue
         print
         print "############################"
@@ -574,7 +576,7 @@ def store_exon_seqs(species_list, ensembl_db_name):
 #########################################
 def main():
 
-    no_threads = 5
+    no_threads = 1
 
     db     = connect_to_mysql()
     cursor = db.cursor()
@@ -591,3 +593,62 @@ def main():
 #########################################
 if __name__ == '__main__':
     main()
+'''
+    # Ivana:
+    # What is the proper way to find out whether the seq_region is mitochondrial?
+    # EMily:
+    # It's in the seq_region table, under name. Name will either be a chromosome
+    # number, MT for mitochrondria or the name of a contig.
+Hi Ivana
+
+To find which contigs are mitochondrial, use the assembly table.
+
+select s1.name from seq_region s1, assembly asm, seq_region s2 where
+s1.seq_region_id = asm.cmp_seq_region_id and s2.seq_region_id =
+asm.asm_seq_region_id and s2.name = "MT" ;
+in human, returns
++----------------+
+| name |
++----------------+
+| NC_012920 |
+| J01415.1.16569 |
++----------------+
+
+Emily
+
+Hi Ivana
+
+The reason for this is that patches are not always the same length as the
+genomic region they patch over. In most cases, a patch corrects sequencing
+errors but the number of bp stays the same, but in some cases, a patch adds a
+chunk of sequence. We anchor the 5' (wrt the chromosome orientation) end of the
+patch to the identical reference coordinates, and allow the 3' end to differ
+slightly from the reference coordinates. We don't change the complete genomic
+coordinates every time a patch is added (this happens when we bring out a new
+assembly) as this would be more hassle than it's worth and most people don't
+notice it anyway. However the one thing it does affect is the coordinates of
+genes that overlap the 3' end of the patch.
+
+ENSG00000261899, and presumably the other genes you've had a similar issue
+with, overlaps the 3' end of a patch, so its coordinates on the patch are
+shifted compared to its coordinates on the reference genome.
+
+Here's the data from the assembly_exception table for the particular patch that
+affects ENSG00000261899:
++-----------------------+---------------+------------------+----------------+-------------+------------------+-----+
+| assembly_exception_id | seq_region_id | seq_region_start | seq_region_end |exc_type | exc_seq_region_id | exc_seq_region_start | exc_seq_region_end | ori
+|
++-----------------------+---------------+------------------+----------------+-------------+-------------------+----------------------+--------------------+-----+
+| 67                    | 1000057054    | 36453102 | 36596491 | PATCH_NOVEL | 27508 | 36453102 |36590458 | 1 |
++-----------------------+---------------+------------------+----------------+-------------+-------------------+----------------------+--------------------+-----+
+
+To get over this you need to link over the assembly_exception table. This will
+give you the exact relationship between the patch you are looking at and the
+chromosome it is linked to. If you then use the
+seq_region_start/exc_seq_region_start relationship, this will cover all cases,
+whether there is a shift or not.
+
+Hope this helps,
+
+Emily
+'''

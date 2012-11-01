@@ -14,17 +14,21 @@ class ConfigurationReader:
     Loads configuration files from the cfg database - which is assumend to be named '%exoloc%config%'
     '''
 
-    def __init__ (self):
+    def __init__ (self, user=None, passwd=None, check=True):
         
-        self.util_path = {}
-        self.dir_path  = {}
+        self.util_path        = {}
+        self.dir_path         = {}
         self.parameter_value  = {}
-        self.cfg_db_name = ""
+        self.cfg_db_name      = ""
+        self.user             = user
+        self.passwd           = passwd
+        self.check            = check
         self.get_cfg_db()
         self.load_cfg()
         
+        
     def get_cfg_db(self):
-        db     = connect_to_mysql()
+        db     = connect_to_mysql(self.user, self.passwd)
         cursor = db.cursor()
         qry    = "show databases like'%exoloc%config%'" 
         rows   = search_db (cursor, qry, verbose=False)
@@ -45,7 +49,7 @@ class ConfigurationReader:
         Load a configuration file and add the
         key, value pairs to the internal configuration dictionary
         '''
-        db     = connect_to_db(self.cfg_db_name)
+        db     = connect_to_db(self.cfg_db_name,self.user, self.passwd)
         cursor = db.cursor()
         
         # utils
@@ -55,9 +59,12 @@ class ConfigurationReader:
             print "no util_path info in %s" % self.cfg_db_name
             cursor.close()
             db.close()
-            exit (1)
+            sys.exit (1)
         for row in rows:
             [name, path] = row
+            if (self.check and not os.path.exists(path)):
+                print path, " not found "
+                sys.exit (1)
             self.util_path[name] = path
 
         # utils
@@ -67,9 +74,12 @@ class ConfigurationReader:
             print "no dir_path info in %s" % self.cfg_db_name
             cursor.close()
             db.close()
-            exit (1)
+            sys.exit (1)
         for row in rows:
             [name, path] = row
+            if (self.check and not os.path.exists(path)):
+                print path, " not found "
+                sys.exit (1)
             self.dir_path[name] = path
 
 
@@ -80,7 +90,7 @@ class ConfigurationReader:
             print "no dir_path info in %s" % self.cfg_db_name
             cursor.close()
             db.close()
-            exit (1)
+            sys.exit (1)
         for row in rows:
             [name, value]        = row
             self.parameter_value[name] = value

@@ -36,7 +36,7 @@ class Node:
         
     ###################################
     # this should really be operation on the
-    # tre, but python woudn't let me define it there
+    # tree, but python woudn't let me define it there
     def  __cleanup__ (self):
         if  (self.is_leaf):
             return None
@@ -46,7 +46,9 @@ class Node:
             if ret:
                 self.children[i] = ret
         if (len(self.children) == 1):
-            return self.children[0]
+            firstborn = self.children[0]
+            self.children = []
+            return firstborn
 
 
     ###################################
@@ -130,7 +132,17 @@ class Tree:
         if (new_root):
             new_root.is_root = True
             self.root = new_root
- 
+
+        del_ids  = []
+        for node_id, node in self.node.iteritems():
+            if node.is_leaf:
+                continue
+            if (not node.children):
+                del_ids.append(node_id)
+
+        for node_id in del_ids:
+            del self.node[node_id]
+                              
 
 
     ###################################

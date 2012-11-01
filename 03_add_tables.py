@@ -232,6 +232,7 @@ def main():
                 make_table (cursor, db_name, table)
         
         create_index (cursor, db_name, 'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
+        create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
         create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
 
     # add file_name column to seq_region table

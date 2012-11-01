@@ -102,6 +102,10 @@ def canonical_transl_info (cursor, gene_id):
          search_db (cursor, qry, verbose = True)
          return []
  
+
+    print "gene_id", gene_id
+    print "canonical_transcript_id", canonical_transcript_id
+
     return rows[0]
 
 #########################################
@@ -392,7 +396,7 @@ def check_canonical_sequence(species_list, ensembl_db_name):
         #for gene_id in gene_ids[6000:8000]:
         #for gene_id in [314408,  314604,  314656,  314728,  314736,  314756,  314794,  314805,  314845,  314954,  314978,  314990,  315225,  315324,  315616,  315722,  315802,  315982,  316001,  316194,  319848,  320075,  320236,  320285,  320404,  320891,  368524,  368526,  368549,  368639,  368646,  368651,  368669,  368684,  368687,  368698,  368707,  368743,  368762,  368766,  368767,   368985,  369163,  369184,  369185,  369189,  369191,  369194,  369197,  369266,  369306,  369333,  369359,  369385,  369413,  369474,  369524]:
         
-        for gene_id in [368727]:
+        for gene_id in [355489]:
 
             tot +=1 
             if (not  tot%10):

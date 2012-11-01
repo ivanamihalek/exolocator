@@ -4,6 +4,8 @@ import os
 #########################################################
 class Exon:
 
+
+
     #################################################
     # the ensembl row is assumed to have been 
     # obtained by select * from exon
