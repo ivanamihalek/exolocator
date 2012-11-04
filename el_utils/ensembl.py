@@ -5,6 +5,17 @@ from   mysql import search_db, switch_to_db
 from   exon  import Exon
 
 #########################################
+def get_description (cursor, gene_id):
+
+    qry  = "select description from gene where gene_id = %d " % gene_id
+    rows = search_db(cursor, qry)
+    if rows:
+        return rows[0][0]
+
+    return ""
+
+
+#########################################
 def is_mitochondrial (cursor, gene_id):
 
     # seq identifier from gene table
@@ -26,6 +37,29 @@ def is_mitochondrial (cursor, gene_id):
     is_mitochondrial = (seq_name == 'MT')
 
     return is_mitochondrial
+
+
+
+#########################################
+def get_exon_pepseq (cursor, exon_id, db_name=None):
+
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+
+    qry  = "select protein_seq  "
+    qry += "from  exon_seq where exon_id = %d " % exon_id
+
+    rows = search_db(cursor, qry)
+    if (not rows):
+        #rows = search_db(cursor, qry, verbose = True)
+        return []
+
+    protein_seq = rows[0][0]
+    if (protein_seq is None):
+        protein_seq = ""
+  
+    return protein_seq
 
 
 
@@ -168,7 +202,7 @@ def gene2canon_transl(cursor, gene_id, db_name=None,):
 def stable2gene (cursor, stable_id=None, db_name=None, ):
 
     if (not stable_id):
-        return ""
+        return 0
 
     if (db_name and not switch_to_db(cursor, db_name)):
             return False
@@ -276,9 +310,9 @@ def get_species (cursor):
     return all_species, ensembl_db_name
 
 ########
-def get_compara_name (cursor):
+def get_compara_name (cursor, version=68):
 
-    qry = "show databases like '%compara%'"
+    qry = "show databases like '%compara%{0}%'" .format(version)
     rows = search_db (cursor, qry)
     if (not rows):
         rows = search_db (cursor, qry, verbose = True)
@@ -291,6 +325,21 @@ def species2taxid (cursor, species):
 
 
     qry  = "select taxon_id from genome_db where name = '%s'" % species
+    rows = search_db (cursor, qry)
+    if (not rows):
+        search_db (cursor, qry, verbose = True)
+        return ""
+    
+    return rows[0][0]
+
+########
+def genome_db_id2species (cursor, genome_db_id):
+
+
+    switch_to_db (cursor, get_compara_name (cursor))
+
+    qry  = "select name from genome_db where genome_db_id = %d" % genome_db_id
+
     rows = search_db (cursor, qry)
     if (not rows):
         search_db (cursor, qry, verbose = True)

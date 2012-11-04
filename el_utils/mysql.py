@@ -2,6 +2,16 @@ import MySQLdb
 
 
 ########
+def check_null (variable):
+
+    if variable is None:
+        return None
+    if (type(variable) is str and variable=="None"):
+        return None
+    return variable
+
+
+########
 def switch_to_db (cursor, db_name):
     qry = "use %s" % db_name
     rows = search_db (cursor, qry, verbose=False)

@@ -51,7 +51,8 @@ def dump_exons (species_list,  ensembl_db_name):
     cursor = db.cursor()
 
     for species in species_list:
-
+        #if (not species=='homo_sapiens'):
+        #    continue
         outfile  = out_path+species+"_exon_dump.txt"
         of       = erropen (outfile,"w")
   

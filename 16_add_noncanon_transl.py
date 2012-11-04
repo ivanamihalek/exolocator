@@ -2,9 +2,9 @@
 
 import MySQLdb
 import commands
-from   el_utils.mysql   import  connect_to_mysql, search_db, switch_to_db
-from   el_utils.mysql   import  store_or_update
-from   el_utils.ensembl import get_species
+from   el_utils.mysql   import connect_to_mysql, search_db, switch_to_db, check_null
+from   el_utils.mysql   import store_or_update
+from   el_utils.ensembl import get_species, is_mitochondrial
 from   el_utils.threads import parallelize
 # BioPython
 from Bio.Seq import Seq
@@ -13,14 +13,15 @@ from Bio.Alphabet import generic_dna
 #########################################
 def get_phase(cursor, exon_id):
 
-    qry  = "select is_coding, phase from gene2exon where exon_id = %d" % exon_id
+    qry  = "select is_coding, phase, gene_id from gene2exon where exon_id = %d" % exon_id
     rows = search_db(cursor, qry)
     if (rows):
-        [is_coding, phase] = rows[0]
+        [is_coding, phase, gene_id] = rows[0]
     else:
-        [is_coding, phase] = [0,0]
+        [is_coding, phase, gene_id] = [0,0,0]
 
-    return [is_coding, phase]
+    return [is_coding, phase, gene_id]
+
 #########################################
 def translation_bounds(cursor, exon_id):
 
@@ -52,12 +53,15 @@ def phase2offset(phase):
     return offset
 
 #########################################
-def  translate (dna_seq, phase):
+def  translate (dna_seq, phase, mitochondrial=False):
     pepseq = ""
     if phase < 0: phase = 0
     offset = phase2offset(phase)
     dnaseq = Seq (dna_seq[offset:], generic_dna)
-    pepseq = dnaseq.translate().tostring()
+    if mitochondrial:
+        pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
+    else:
+        pepseq = dnaseq.translate().tostring()
 
     if not '*' in pepseq:
         return pepseq
@@ -65,7 +69,10 @@ def  translate (dna_seq, phase):
     phase = (phase+1)%3
     offset = phase2offset(phase)
     dnaseq = Seq (dna_seq[offset:], generic_dna)
-    pepseq = dnaseq.translate().tostring()
+    if mitochondrial:
+        pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
+    else:
+        pepseq = dnaseq.translate().tostring()
     
     if not '*' in pepseq:
         return pepseq
@@ -73,7 +80,10 @@ def  translate (dna_seq, phase):
     phase = (phase+1)%3
     offset = phase2offset(phase)
     dnaseq = Seq (dna_seq[offset:], generic_dna)
-    pepseq = dnaseq.translate().tostring()
+    if mitochondrial:
+        pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
+    else:
+        pepseq = dnaseq.translate().tostring()
     
     if not '*' in pepseq:
         return pepseq
@@ -88,7 +98,7 @@ def pep_exon_seqs(species_list, ensembl_db_name):
 
     for species in species_list:
         
-        if (species == 'homo_sapiens'):
+        if (not species == 'homo_sapiens'):
             continue
         print
         print "############################"
@@ -97,7 +107,7 @@ def pep_exon_seqs(species_list, ensembl_db_name):
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False
 
-        range_end = 0
+        range_end = 30000
 
         while True:
             range_start = range_end   +   1
@@ -107,22 +117,34 @@ def pep_exon_seqs(species_list, ensembl_db_name):
             qry += " from exon_seq  where exon_seq_id >= %d " % range_start
             qry += " and exon_seq_id <= %d "  % range_end 
             rows = search_db(cursor, qry, verbose=False)
+
             if not rows:
                 break
+
             ct   = 0
             fail = 0
             for row in rows:
                 [exon_seq_id, exon_id, dna_seq, protein_seq] = row
-                if protein_seq:
+                protein_seq = check_null (protein_seq)
+
+                if  not protein_seq is None:
                     continue
+                
                 if len(dna_seq)<3:
                     continue
-                [is_coding, phase]   = get_phase (cursor, exon_id)
+                [is_coding, phase, gene_id]   = get_phase (cursor, exon_id)
                 if not is_coding:
                     continue
-                ct   += 1
 
+                ct   += 1
+                mitochondrial =  is_mitochondrial (cursor, gene_id)
+
+
+                # check if there is annotation about translation starting
+                # or ending in this exon
                 [seq_start, seq_end] = translation_bounds (cursor, exon_id)
+                seq_start = check_null(seq_start)
+                seq_end   = check_null(seq_end)
 
                 if seq_start is None and  seq_end is None:
                     pass
@@ -138,9 +160,8 @@ def pep_exon_seqs(species_list, ensembl_db_name):
                         else:
                             dna_seq = dna_seq[:seq_end]
    
-                            
-                pepseq = translate (dna_seq, phase)
- 
+                pepseq = translate (dna_seq, phase, mitochondrial)
+            
                 if ( not pepseq): # ususally some short pieces (end in pos 4 and such)
                     fail +=1
                     continue
@@ -150,28 +171,29 @@ def pep_exon_seqs(species_list, ensembl_db_name):
 
                 if  not '*' in pepseq: #store
                     qry  = "update exon_seq "
-                    qry += "set protein_seq='%s' "   % protein_seq
+                    qry += "set protein_seq='%s' "   % pepseq
                     qry += "where exon_seq_id = %d " % exon_seq_id
                     rows = search_db (cursor, qry)
                     if (rows):
                         rows = search_db (cursor, qry, verbose = True)
                         exit(1)
-                else: # check if there is annotation about translation starting
-                    # or eding in this exon - if not store with the stop codon (?)
+                else: 
                     fail +=1
                     #if seq_start: print "start ", seq_start, 
                     #if seq_end:   print "end ", seq_end, 
                     #print "exon_id ", exon_id,
                     #print "phase ", phase 
                     #print "new pepseq ", pepseq
-                    pass
+                    #pass
 
             print species, range_start, range_end, "\n\t", ct, fail
+            if (range_end >= 100000): break
+      
 
 #########################################
 def main():
 
-    no_threads = 5
+    no_threads = 1
 
     db     = connect_to_mysql()
     cursor = db.cursor()
