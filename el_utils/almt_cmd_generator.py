@@ -10,7 +10,6 @@ from   config_reader   import ConfigurationReader
 
 
 ###########
-
 def isinteger(x):
     try:
         int(x)
@@ -23,8 +22,7 @@ def isinteger(x):
     return True
 
 
-#######
-
+###########
 class AlignmentCommandGenerator(object):
     '''
     Generates commands for utilities that are used (blast, sw, genewise, fastacmd, formatdb)
@@ -45,11 +43,11 @@ class AlignmentCommandGenerator(object):
         # blast tools
         
         
-        self.fastacmd       = self.configReader.get_path('fastacmd')
-        self.blastall       = self.configReader.get_path('mafft')
+        self.fastacmd  = self.configReader.get_path('fastacmd')
+        self.blastall  = self.configReader.get_path('mafft')
 
-        self.blastp         = self.configReader.get_path('blastall')
-        self.blastp        += " -p blastp -e "+ self.configReader.get_value('blastp_e_value')
+        self.blastp    = self.configReader.get_path('blastall')
+        self.blastp    += " -p blastp -e "+ self.configReader.get_value('blastp_e_value')
         
 
         # ensembl database
@@ -57,9 +55,12 @@ class AlignmentCommandGenerator(object):
         
         # Smith-Waterman
         self.sw_sharp       = self.configReader.get_path('sw#')
-        
+        # hacked blast, to be used by swsharp to align exons while respecting the boundaries
+        self.blosum_matrix  = "{0}/{1}".format(self.configReader.get_path('resources'),
+                                               self.configReader.get_value('blosum_hacked'))
         # mafft
         self.mafft          = self.configReader.get_path('mafft')
+       
         
         
     def generate_fastacmd_gene_command (self, species, seq_name, fasta_db_file, 
@@ -147,12 +148,21 @@ class AlignmentCommandGenerator(object):
         return cmd
 
     
-    def generate_SW_command (self, query_sequence_file, target_fasta_db_file, 
+    def generate_SW_nt (self, query_sequence_file, target_fasta_db_file, 
                              output_file, supress_stdout = True):
         cmd = "{0} -i {1} -j {2} --out {3}".format(self.sw_sharp, query_sequence_file, 
                                                    target_fasta_db_file, output_file)
         if supress_stdout:
             cmd += " > /dev/null"
+        return cmd
+    
+    def generate_SW_peptide (self, query_sequence_file, target_fasta_db_file, 
+                             output_file = None):
+        cmd  = "{0} --verbose 0 --matrix-file {1}  ".format(self.sw_sharp, self.blosum_matrix)
+        cmd += " -i {0} -j {1} ".format(query_sequence_file, target_fasta_db_file)
+        cmd += " --out-type 1 "
+        if output_file:
+            cmd += " --out {0} ".format(output_file)
         return cmd
     
     

@@ -93,7 +93,8 @@ def  get_alt_seq_info (cursor, gene_id, species):
         return []
 
 #########################################
-def extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  seq_region_start, seq_region_end):
+def extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  
+                      seq_region_start, seq_region_end):
 
     # now the question is, which file do I use if there are several options?
     first_choice  = ""

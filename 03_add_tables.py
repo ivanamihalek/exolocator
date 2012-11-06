@@ -165,6 +165,46 @@ def make_orthologue_table (cursor, table):
             return False
 
 #########################################
+def make_exon_map_table (cursor):
+    
+    table = 'exon_map'
+
+    qry  = "CREATE TABLE " + table + "  (exon_map_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
+    rows = search_db (cursor, qry)
+    if (rows):
+        return False
+
+    for column_name in ['exon_id', 'cognate_exon_id', 'alignment_id']:
+        qry = "ALTER TABLE %s add %s INT(10)" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
+    for column_name in ['cognate_genome_db_id']:
+        qry = "ALTER TABLE %s add %s INT" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
+    for column_name in ['cigar_line']:
+        qry = "ALTER TABLE %s add %s blob" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+    
+    for column_name in ['similarity']:
+        qry = "ALTER TABLE %s add %s float" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+    
+    for column_name in ['source']:
+        qry = "ALTER TABLE %s add %s VARCHAR(20)" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
+#########################################
 def make_table (cursor, db_name, table):
     
 
@@ -184,6 +224,9 @@ def make_table (cursor, db_name, table):
         make_coding_region_table (cursor)
     elif table in ['orthologue', 'unresolved_ortho', 'paralogue']:
         make_orthologue_table (cursor, table)
+    elif table == 'exon_map':
+        make_exon_map_table (cursor)
+
     else:
         print "I don't know how to make table '%s'" % table
 
@@ -248,19 +291,21 @@ def main():
             add_filename_column (cursor, db_name)
         
     
-
     # add orthologue table to human - we are human-centered here
+    # ditto for map (which exons from other species map onto human exons)
     print "adding orthologue to human"
     species = 'homo_sapiens'
     db_name = ensembl_db_name[species]
-    for table in ['orthologue', 'unresolved_ortho', 'paralogue']:
+    for table in ['orthologue', 'unresolved_ortho', 'paralogue', 'exon_map']:
         if ( check_table_exists (cursor, db_name, table)):
             print table, " found in ", db_name
         else:
             print table, " not found in ", db_name
             make_table (cursor, db_name, table)
-
-        create_index (cursor, db_name,'gene_index', table, ['gene_id'])
+        if table == 'exon_map':
+            create_index (cursor, db_name,'gene_index', table, ['exon_id'])
+        else:
+            create_index (cursor, db_name,'gene_index', table, ['gene_id'])
 
     
 

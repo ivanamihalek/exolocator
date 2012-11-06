@@ -28,8 +28,6 @@ def main():
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
-
-    
     #for species in all_species:
     for species in ['danio_rerio']:
         print species

@@ -63,7 +63,6 @@ def decorate_and_concatenate (exon_seqs_protein, hook):
             print " hook  already  present "
             print pepseq
             exit(1)
-
         decorated_seq += pepseq+hook
     
     return decorated_seq
@@ -75,15 +74,22 @@ def make_map (cursor, ensembl_db_name, acg, ortho_species, human_exons, ortho_ex
 
     print 'making map for', ortho_species
 
-    hook = "WWWPWWW"
-
-    # 1) choose exons that I need
-    # 2) sort them by start position in the gene
+    hook = "Z"
 
     # switch database to human
     switch_to_db(cursor, ensembl_db_name['homo_sapiens'])
+    # 1) choose exons that I need
     protein_seq = []
+    relevant_exons = []
     for exon in human_exons:
+        if ( not exon.is_canonical or not exon.is_coding or not exon.covering_exon < 0):
+            continue
+        print exon.exon_id, exon.is_coding, exon.covering_exon
+        relevant_exons.append(exon)
+
+    # 2) sort them by start position in the gene
+    relevant_exons.sort(key=lambda exon: exon.start_in_gene)
+    for exon in relevant_exons:
         pepseq = get_exon_pepseq (cursor, exon.exon_id)
         if not pepseq:
             continue
@@ -92,33 +98,59 @@ def make_map (cursor, ensembl_db_name, acg, ortho_species, human_exons, ortho_ex
 
     # switch database to the ortho species
     switch_to_db(cursor, ensembl_db_name[ortho_species])
-    protein_seq = []
+    # 1) choose exons that I need
+    protein_seq    = []
+    relevant_exons = []
     for exon in ortho_exons:
-        pepseq = get_exon_pepseq (cursor, exon.exon_id)
-        if not pepseq:
+        if ( not exon.is_canonical or not exon.is_coding ):
             continue
-        protein_seq.append(pepseq)
-        
+        print exon.exon_id, exon.is_coding, exon.covering_exon
+        relevant_exons.append(exon)
+    # 2) sort them by start position in the gene
+    relevant_exons.sort(key=lambda exon: exon.start_in_gene)
+    for exon in relevant_exons:
+       pepseq = get_exon_pepseq (cursor, exon.exon_id)
+       if not pepseq:
+           continue
+       protein_seq.append(pepseq)
     ortho_seq  = decorate_and_concatenate (protein_seq, hook)
  
-    fastafile  = "{0}.fa".format (exon.exon_id)
-    afafile    = "{0}.afa".format (exon.exon_id)
-    
-    outf = erropen (fastafile, "w")
+    fastafile1  = "{0}.1.fa".format (exon.exon_id)
+    outf = erropen (fastafile1, "w")
     print >> outf, ">"+'homo_sapiens'
     print >> outf, human_seq
+    outf.close()
+
+    fastafile2  = "{0}.2.fa".format (exon.exon_id)
+    outf = erropen (fastafile2, "w")
     print >> outf, ">"+ortho_species
     print >> outf, ortho_seq
     outf.close()
    
-    mafftcmd = acg.generate_mafft_command (fastafile, afafile)
-    ret      = commands.getoutput(mafftcmd)
+    swsharpcmd = acg.generate_SW_peptide (fastafile1, fastafile2)
+    print swsharpcmd
+    ret = commands.getoutput(swsharpcmd)
  
-    print afafile
+    print ret
 
     exit (1)
+
+ 
     return map
     
+#########################################
+def store (cursor, map):
+    fixed_fields  = {}
+    update_fields = {}
+    fixed_fields ['exon_id']              = map.exon_id_2
+    fixed_fields ['cognate_exon_id']      = map.exon_id_2
+    fixed_fields ['cognate_genome_db_id'] = species2genome_db(map.species_2)
+    update_fields['cigar_line']           = map.cigar_line
+    update_fields['similarity']           = map.similarity
+    update_fields['source']               = 'ensembl'
+    #####
+    store_or_update (cursor, 'exon_map', fixed_fields, update_fields)
+
 #########################################
 def main():
     
@@ -140,6 +172,7 @@ def main():
         #gene_ids = [stable2gene(cursor,'ENSG00000116729')] # wls
         gene_ids = [stable2gene(cursor,'ENSG00000156970')] # BUB1B
 
+
     for gene_id in gene_ids:
 
         print get_description (cursor, gene_id)
@@ -158,7 +191,10 @@ def main():
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name= ensembl_db_name[ortho_species] )
             if not ortho_exons:
                 print 'no exons for ', species, ortho_gene_id
-            map =  make_map (cursor, ensembl_db_name, acg, ortho_species, human_exons, ortho_exons)
+            map = make_map (cursor, ensembl_db_name, acg, ortho_species, human_exons, ortho_exons)
+            
+            # store the map into the database
+            # store (cursor, maps, alignment_id)
 
         print "==============================="
 

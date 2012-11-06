@@ -25,15 +25,10 @@ class Map:    # this particular map is between exons
     # when something is defined as an exon ....
     def __init__ (self):
         
-        self.species_1            = 'homo_sapiens'
+        self.species_1             = 'homo_sapiens'
         self.species_2            = None
-        self.exon_1               = None
-        self.exon_2               = None
+        self.exon_id_1               = None
+        self.exon_id_2               = None
   
-        self.from_in_exon_1       = None
-        self.to_in_exon_1         = None
-
-        self.from_in_exon_2       = None
-        self.to_in_exon_2         = None
-
-        self.similarity           = None
+        self.cigar_line          = None
+        self.similarity          = None
