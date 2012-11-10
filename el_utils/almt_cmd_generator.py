@@ -150,7 +150,8 @@ class AlignmentCommandGenerator(object):
     
     def generate_SW_nt (self, query_sequence_file, target_fasta_db_file, 
                              output_file, supress_stdout = True):
-        cmd = "{0} -i {1} -j {2} --out {3}".format(self.sw_sharp, query_sequence_file, 
+        # Matija's current implementation is switching the order
+        cmd = "{0} -j {1} -i {2} --out {3}".format(self.sw_sharp, query_sequence_file, 
                                                    target_fasta_db_file, output_file)
         if supress_stdout:
             cmd += " > /dev/null"
@@ -159,8 +160,8 @@ class AlignmentCommandGenerator(object):
     def generate_SW_peptide (self, query_sequence_file, target_fasta_db_file, 
                              output_file = None):
         cmd  = "{0} --verbose 0 --matrix-file {1}  ".format(self.sw_sharp, self.blosum_matrix)
-        cmd += " -i {0} -j {1} ".format(query_sequence_file, target_fasta_db_file)
-        cmd += " --out-type 1 "
+        cmd += " -j {0} -i {1} ".format(query_sequence_file, target_fasta_db_file)
+        cmd += " --out-type 1 --gap-open 3.0 "
         if output_file:
             cmd += " --out {0} ".format(output_file)
         return cmd

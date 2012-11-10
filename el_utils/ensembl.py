@@ -15,6 +15,16 @@ def get_description (cursor, gene_id):
     return ""
 
 
+###################################
+def get_logic_name(analysis_id, cursor):
+        qry = "SELECT logic_name FROM analysis WHERE analysis_id = %d" % analysis_id
+        rows    = search_db (cursor, qry)
+        if (not rows):
+            logic_name = ''
+        else:
+            logic_name = rows[0][0]
+        return logic_name
+
 #########################################
 def is_mitochondrial (cursor, gene_id):
 

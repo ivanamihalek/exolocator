@@ -40,6 +40,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
     exists = rows and (type(rows[0][0]) is long) and (rows[0][0]==1)
 
     if exists: # if it exists, update
+        
         qry = "update %s set " % table
         first = True
         for field, value in update_fields.iteritems():

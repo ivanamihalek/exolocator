@@ -4,7 +4,7 @@ use strict;
 use Net::FTP;
 
 my $local_repository = 
-    "/home/ivanam/databases/ensembl/fasta";
+    "/mnt/ensembl-mirror/release-69/fasta";
 
 my $ftp_address = "ftp.ensembl.org";
 
@@ -14,7 +14,7 @@ my $ftp = Net::FTP->new( $ftp_address , Debug => 0, Passive=> 1)
 $ftp->login("anonymous",'-anonymous@')
     or die "Cannot login ", $ftp->message;
 
-my $topdir = "/pub/release-68/fasta";
+my $topdir = "/pub/release-69/fasta";
 $ftp->cwd($topdir)
     or die "Cannot cwd to $topdir: ", $ftp->message;
 $ftp->binary;
@@ -34,7 +34,7 @@ my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 open (LOG, ">log") || die "error opening log: $!\n";
 
 my $ct = 0;
-foreach $animal ( @farm[40 .. 44] ) {
+foreach $animal ( @farm[10 .. 19] ) {
 
     $ct += 1;
     print $ct, "  ", $animal, "\n";
@@ -43,8 +43,8 @@ foreach $animal ( @farm[40 .. 44] ) {
 
 
 
-    #foreach $dir  ( "pep",  "dna" ){
-    foreach $dir  ( "dna"){
+    foreach $dir  ( "pep",  "dna" ){
+    #foreach $dir  ( "dna"){
     
 	$local_dir = "$local_repository/$animal/$dir" ;
 	( -e $local_dir )  || `mkdir -p $local_dir`;

@@ -5,7 +5,7 @@ import commands
 from   el_utils.mysql   import  connect_to_mysql, search_db, switch_to_db
 from   el_utils.mysql   import  store_or_update
 from   el_utils.ensembl import  get_species, get_gene_ids, gene2exon_list
-from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
+from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl, is_mitochondrial
 from   el_utils.ensembl import  gene2canon_transl, get_canonical_exons, get_selenocysteines
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
@@ -45,10 +45,10 @@ def  get_primary_seq_info (cursor, gene_id, species):
     # EMily:
     # It's in the seq_region table, under name. Name will either be a chromosome
     # number, MT for mitochrondria or the name of a contig.
-    is_mitochondrial = (seq_name == 'MT')
+    mitochondrial = is_mitochondrial(cursor, gene_id)
 
     return [seq_name, file_names, seq_region_start, 
-            seq_region_end, seq_region_strand, is_mitochondrial]
+            seq_region_end, seq_region_strand, mitochondrial]
 
 #########################################
 def  get_alt_seq_info (cursor, gene_id, species):
@@ -86,9 +86,9 @@ def  get_alt_seq_info (cursor, gene_id, species):
                 file_names += " "
             file_names += row[0]
 
-        is_mitochondrial = is_region_M(file_names)
+        mitochondrial = is_mitochondrial (cursor, gene_id)
         return [seq_name, file_names, seq_region_start, 
-                seq_region_end, seq_region_strand, is_mitochondrial]
+                seq_region_end, seq_region_strand, mitochondrial]
     else:
         return []
 
@@ -495,17 +495,17 @@ def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_peps
         #####
         fixed_fields  = {}
         update_fields = {}
-        fixed_fields['exon_id']         = exon_id
-        update_fields['is_known']       = exon.is_known
-        update_fields['is_sw']          = 0
+        fixed_fields['exon_id']          = exon_id
+        fixed_fields['is_known']         = exon.is_known
+        fixed_fields['is_sw']            = 0
         if (exon_seq[exon_id]):
-            update_fields['dna_seq']    = exon_seq[exon_id]
+            update_fields['dna_seq']     = exon_seq[exon_id]
         if (left_flank[exon_id] ):
-            update_fields['left_flank'] = left_flank[exon_id]
+            update_fields['left_flank']  = left_flank[exon_id]
         if (right_flank[exon_id] ):
-            update_fields['right_flank']= right_flank[exon_id]
+            update_fields['right_flank'] = right_flank[exon_id]
         if ( canonical_exon_pepseq.has_key(exon_id) and canonical_exon_pepseq[exon_id]):
-            update_fields['protein_seq']= canonical_exon_pepseq[exon_id]
+            update_fields['protein_seq'] = canonical_exon_pepseq[exon_id]
         #####
         store_or_update (cursor, 'exon_seq', fixed_fields, update_fields)
 
@@ -519,7 +519,7 @@ def store_exon_seqs(species_list, ensembl_db_name):
     acg     = AlignmentCommandGenerator()
 
     for species in species_list:
-        if (not species == 'homo_sapiens'):
+        if (species == 'homo_sapiens'):
             continue
         print
         print "############################"
@@ -546,7 +546,8 @@ def store_exon_seqs(species_list, ensembl_db_name):
             # sequence is correct: translation of canonical exons
             [gene_seq, canonical_exon_pepseq] = get_gene_seq(acg, cursor, gene_id, species)
             if (not gene_seq):
-                print 'no sequence found for ', gene_id
+                ct += 1
+                print 'no sequence found for ', gene_id, "   ",   ct, "out of ", tot
                 seqs_not_found.append(gene_id)
                 continue
             # get _all_ exons
@@ -577,7 +578,7 @@ def store_exon_seqs(species_list, ensembl_db_name):
 #########################################
 def main():
 
-    no_threads = 1
+    no_threads = 5
 
     db     = connect_to_mysql()
     cursor = db.cursor()

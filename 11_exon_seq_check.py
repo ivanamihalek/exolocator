@@ -6,6 +6,7 @@ from   el_utils.mysql   import  connect_to_mysql, search_db
 from   el_utils.ensembl import  get_species, get_gene_ids, gene2exon_list
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl, stable2gene
 from   el_utils.ensembl import  gene2canon_transl, get_canonical_exons, get_selenocysteines
+from   el_utils.ensembl import  is_mitochondrial
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
@@ -103,9 +104,6 @@ def canonical_transl_info (cursor, gene_id):
          return []
  
 
-    print "gene_id", gene_id
-    print "canonical_transcript_id", canonical_transcript_id
-
     return rows[0]
 
 #########################################
@@ -194,14 +192,14 @@ def get_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  seq_re
             
  
 #########################################
-def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons, 
-                         is_mitochondrial, verbose = False):
+def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons, verbose = False):
 
     translated_seq = "" 
 
     [can_transl_start_exon, can_transl_start_position,
      can_transl_end_exon, can_transl_end_position] = canonical_transl_info (cursor, gene_id)
 
+    is_MT = is_mitochondrial (cursor, gene_id)
 
     # do we have any selenocysteines by any chance
     selenoC_pos = get_selenocysteines (cursor,  gene_id)
@@ -257,7 +255,7 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
         pepseq = dnaseq.translate()
 
         # turn to the corresponding BioPython object
-        if ( is_mitochondrial ):
+        if ( is_MT ):
             pepseq = dnaseq.translate(table="Vertebrate Mitochondrial")
         else:
             pepseq = dnaseq.translate()
@@ -370,14 +368,14 @@ def compare_seqs (canonical_translation, translated_seq, verbose=False):
 #########################################
 def check_canonical_sequence(species_list, ensembl_db_name):
 
-    verbose = True
+    verbose = False
 
     db     = connect_to_mysql()
     cursor = db.cursor()
     acg    = AlignmentCommandGenerator()
 
     for species in species_list:
-        if (not species == 'homo_sapiens'):
+        if (not species == 'cavia_porcellus'):
              continue
         print
         print "############################"
@@ -393,9 +391,8 @@ def check_canonical_sequence(species_list, ensembl_db_name):
         
         ct  = 0
         tot = 0
-        #for gene_id in gene_ids[6000:8000]:
-        #for gene_id in [314408,  314604,  314656,  314728,  314736,  314756,  314794,  314805,  314845,  314954,  314978,  314990,  315225,  315324,  315616,  315722,  315802,  315982,  316001,  316194,  319848,  320075,  320236,  320285,  320404,  320891,  368524,  368526,  368549,  368639,  368646,  368651,  368669,  368684,  368687,  368698,  368707,  368743,  368762,  368766,  368767,   368985,  369163,  369184,  369185,  369189,  369191,  369194,  369197,  369266,  369306,  369333,  369359,  369385,  369413,  369474,  369524]:
-        gene_ids = [stable2gene(cursor,'ENSG00000156970')] # BUB1B
+        #gene_ids = [stable2gene(cursor,'ENSG00000156970')] # BUB1B
+        #gene_ids = [19079]
         
         for gene_id in gene_ids:
 
@@ -409,12 +406,10 @@ def check_canonical_sequence(species_list, ensembl_db_name):
             canonical_coding_exons = get_canonical_exons (cursor, gene_id)
 
             # find seq_name and region
-            is_mitochondrial = False
             ret = get_seq_info (cursor, gene_id, species)
             if ret:
                 [seq_name, file_names,  seq_region_start, 
                  seq_region_end, seq_region_strand] = ret
-                is_mitochondrial = ('.MT.' in file_names)
             else:
                 ct +=1 
                 continue
@@ -424,8 +419,7 @@ def check_canonical_sequence(species_list, ensembl_db_name):
 
             # reconstruct the translation from the raw gene_seq and exon boundaries
             translated_seq = transl_reconstruct (cursor, gene_id, gene_seq, 
-                                                 canonical_coding_exons, is_mitochondrial,
-                                                 verbose = verbose)
+                                                 canonical_coding_exons, verbose = verbose)
             if (translated_seq):
                 # compare the two sequences and cry foul if they are not the same:
                 comparison_ok = compare_seqs (canonical_translation, translated_seq, verbose = verbose)
@@ -440,7 +434,6 @@ def check_canonical_sequence(species_list, ensembl_db_name):
             ret = get_alt_seq_info (cursor, gene_id, species)
             if ret:
                 [seq_name, file_names, seq_region_start, seq_region_end] = ret
-                is_mitochondrial = ('.MT.' in file_names)
             else:
                 ct +=1 
                 continue
@@ -451,7 +444,7 @@ def check_canonical_sequence(species_list, ensembl_db_name):
 
             # reconstruct the translation from the raw gene_seq and exon boundaries
             translated_seq = transl_reconstruct (cursor, gene_id, gene_seq, 
-                                                 canonical_coding_exons, is_mitochondrial, verbose = verbose)
+                                                 canonical_coding_exons, verbose = verbose)
             if (translated_seq):
                 # compare the two sequences and cry foul if they are not the same:
                 comparison_ok = compare_seqs (canonical_translation, translated_seq, verbose = verbose)
@@ -466,7 +459,7 @@ def check_canonical_sequence(species_list, ensembl_db_name):
                 print ct, tot
 
  
-        #print species, ct, tot
+        print species, ct, tot
        
     cursor.close()
     db    .close()
@@ -490,3 +483,11 @@ def main():
 if __name__ == '__main__':
     main()
 
+
+
+
+
+
+#########################################
+        #for gene_id in gene_ids[6000:8000]:
+        #for gene_id in [314408,  314604,  314656,  314728,  314736,  314756,  314794,  314805,  314845,  314954,  314978,  314990,  315225,  315324,  315616,  315722,  315802,  315982,  316001,  316194,  319848,  320075,  320236,  320285,  320404,  320891,  368524,  368526,  368549,  368639,  368646,  368651,  368669,  368684,  368687,  368698,  368707,  368743,  368762,  368766,  368767,   368985,  369163,  369184,  369185,  369189,  369191,  369194,  369197,  369266,  369306,  369333,  369359,  369385,  369413,  369474,  369524]:

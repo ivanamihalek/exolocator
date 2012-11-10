@@ -39,7 +39,7 @@ class ConfigurationReader:
             db.close()
             exit (1)
         self.cfg_db_name = rows[0][0]
-        print "reading config from ", self.cfg_db_name
+        #print "reading config from ", self.cfg_db_name
         cursor.close()
         db.close()
 

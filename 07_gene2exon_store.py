@@ -5,7 +5,7 @@ import commands
 from   el_utils.mysql   import  connect_to_mysql, search_db, store_or_update
 from   el_utils.ensembl import  get_species, get_gene_ids
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
-from   el_utils.objects import  Exon
+from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
@@ -240,112 +240,7 @@ def get_logic_name(analysis_id, cursor):
             logic_name = ''
         else:
             logic_name = rows[0][0]
-        return logic_name
-
-
-#########################################
-def sort_out_covering_exons (cursor, exons):
-
-    # havana is manually curated an gets priority
-    is_ensembl = {}
-    is_havana  = {}
-    for exon in exons:
-        logic_name = get_logic_name(exon.analysis_id, cursor)
-        is_ensembl[exon] = ('ensembl' in logic_name)
-        is_havana [exon] = ('havana'  in logic_name)
-
-
-    # find a representative for each overlapping cluster
-    # if we can find havana, it will be havana
-    # otherwise we move to less reliable annotation
-    overlapping_cluster = {}
-    for i in range(len(exons)):
-
-        exon_1 = exons[i]
-
-        already_seen = 0
-        for exon_2 in overlapping_cluster.keys():
-            if exon_1 in overlapping_cluster[exon_2]:
-                already_seen = 1
-                break
-        if (already_seen):
-            continue
-
-        exon_start_1 = exon_1.start_in_gene
-        exon_end_1   = exon_1.end_in_gene
-
-        the_master_exon_is = -1
-
-        for j in range(i+1, len(exons)):
-     
-            exon_2       = exons[j]
-            exon_start_2 = exon_2.start_in_gene
-            exon_end_2   = exon_2.end_in_gene
-
-            the_master_exon_is = -1
-            
-            if (exon_start_1 <= exon_start_2 < exon_end_2 <= exon_end_1):
-                the_master_exon_is = 1
-
-            elif ( exon_start_2 <= exon_start_1 < exon_end_1 <= exon_end_2):
-                the_master_exon_is = 2
-
-                
-            if ( the_master_exon_is > 0 ):
-                # however, we may change our minds
-                if  (exon_1.is_canonical and not exon_2.is_canonical):
-                    the_master_exon_is = 1
-
-                elif (exon_2.is_canonical and not exon_1.is_canonical):
-                    the_master_exon_is = 2
-
-                elif (is_havana[exon_1] and not is_havana[exon_2]):
-                    the_master_exon_is = 1
-
-                elif (is_havana[exon_2] and not is_havana[exon_1]):
-                    the_master_exon_is = 2
-
-                elif (is_ensembl[exon_1] and not is_ensembl[exon_2]):
-                    the_master_exon_is = 1
-
-                elif (is_ensembl[exon_2] and not is_ensembl[exon_1]):
-                    the_master_exon_is = 2
-
-                elif (exon_1.is_known and not exon_2.is_known):
-                    the_master_exon_is = 1
-
-                elif (exon_2.is_known and not exon_1.is_known):
-                    the_master_exon_is = 2
-
-            # the overlapping exons are all grouped
-            # under the heading of the "master" version of the exon
-            if   ( the_master_exon_is < 0):
-                continue
-            elif ( the_master_exon_is == 1):
-
-                if (not overlapping_cluster.has_key(exon_1) ):
-                    overlapping_cluster[exon_1] = []
-                overlapping_cluster[exon_1].append(exon_2)
-     
-            elif ( the_master_exon_is == 2):
-
-                if (not overlapping_cluster.has_key(exon_2) ):
-                    overlapping_cluster[exon_2] = []
-                overlapping_cluster[exon_2].append(exon_1)
-        
-        
-        if   ( the_master_exon_is < 0):
-            if (not overlapping_cluster.has_key(exon_1) ):
-                    overlapping_cluster[exon_1] = []
-
-
-    for exon_1 in overlapping_cluster.keys():
-        exon_1.covering_exon       = -1 # nobody's covering this guy
-        exon_1.covering_exon_known = -1 # formal
-
-        for exon_2 in overlapping_cluster[exon_1]:
-            exon_2.covering_exon        = exon_1.exon_id;
-            exon_2.covering_exon_known  = exon_1.is_known;
+        return logic_name 
 
 #########################################
 def get_transcript_ids(cursor, gene_id, species):
@@ -453,11 +348,111 @@ def get_translated_region(cursor, gene_id, species):
         
         if (this_translation_region_end >= transl_region_end):
             transl_region_end = this_translation_region_end
-
-
         
     return [transl_region_start, transl_region_end, gene_region_strand]
 
+#########################################################
+# resolve which exons are "master" among the ones
+# which are havana, ensembl, predicted ....
+
+from itertools  import combinations
+from pygraph    import digraph
+from pygraph.algorithms.cycles import find_cycle
+from pygraph.algorithms.accessibility import accessibility
+
+#########################################
+def find_master (exon_1, exon_2, is_ensembl, is_havana):
+
+    master_exon    = None
+    covered_exon   = None
+
+    havana_exon    = None
+    ensembl_exon   = None
+    canonical_exon = None
+    superset_exon  = None
+    known_exon     = None
+
+    exon_start_1 = exon_1.start_in_gene
+    exon_end_1   = exon_1.end_in_gene
+    exon_start_2 = exon_2.start_in_gene
+    exon_end_2   = exon_2.end_in_gene
+
+    if (exon_start_1 > exon_end_2 or exon_start_2 > exon_end_1):
+        return None, None # Fully disjoint exons
+
+    if (exon_start_1 <= exon_start_2 < exon_end_2 <= exon_end_1):
+        superset_exon = exon_1
+    elif ( exon_start_2 <= exon_start_1 < exon_end_1 <= exon_end_2):
+        superset_exon = exon_2
+
+    if   (exon_1.is_canonical and not exon_2.is_canonical):
+        canonical_exon = exon_1
+    elif (exon_2.is_canonical and not exon_1.is_canonical):
+        canonical_exon = exon_2
+
+    if   (is_havana[exon_1] and not is_havana[exon_2]):
+        havana_exon = exon_1
+    elif (is_havana[exon_2] and not is_havana[exon_1]):
+        havana_exon = exon_2
+
+    if (is_ensembl[exon_1] and not is_ensembl[exon_2]):
+        ensembl_exon = exon_1
+    elif (is_ensembl[exon_2] and not is_ensembl[exon_1]):
+        ensembl_exon = exon_2
+
+    if (exon_1.is_known and not exon_2.is_known):
+        known_exon = exon_1
+    elif (exon_2.is_known and not exon_1.is_known):
+        known_exon = exon_2
+
+    if havana_exon is not None:
+        master_exon = havana_exon
+    elif canonical_exon is not None:
+        master_exon = canonical_exon
+    elif ensembl_exon is not None:
+        master_exon = ensembl_exon
+    elif known_exon is not None:
+        master_exon = known_exon
+    elif superset_exon is not None:
+        master_exon = superset_exon
+
+    if (master_exon == exon_1):
+        covered_exon = exon_2
+    else:
+        covered_exon = exon_1
+
+    return master_exon, covered_exon
+    
+#########################################
+def sort_out_covering_exons (cursor, exons):
+
+    # havana is manually curated and gets priority
+    is_ensembl = {}
+    is_havana  = {}
+    for exon in exons:
+        logic_name = get_logic_name(exon.analysis_id, cursor)
+        is_ensembl[exon] = ('ensembl' in logic_name)
+        is_havana [exon] = ('havana'  in logic_name)
+
+    dg = digraph()
+    dg.add_nodes(exons)
+    for exon1, exon2 in combinations(dg.nodes(),2):
+        master, covered = find_master(exon1,exon2,is_ensembl,is_havana)
+        if master is not None and covered is not None:
+            dg.add_edge(master,covered)
+    assert not find_cycle(dg)
+    clusters = dict(((k,v) for k,v in accessibility(dg).iteritems()
+                     if not dg.incidents(k)))
+    for k in clusters:
+        clusters[k].remove(k)
+
+    for master_exon, covered_list in clusters.iteritems():
+        master_exon.covering_exon       = -1 # nobody's covering this guy
+        master_exon.covering_exon_known = -1 # formal
+
+        for covered_exon in covered_list:
+            covered_exon.covering_exon       = master_exon.exon_id;
+            covered_exon.covering_exon_known = master_exon.is_known;
 
            
 #########################################
@@ -531,7 +526,6 @@ def find_exons (cursor, gene_id, species):
     # mark coding exons
     mark_coding (cursor, gene_id, species, exons)
 
-
     return exons
 
 #########################################
@@ -572,7 +566,7 @@ def gene2exon(species_list, ensembl_db_name):
 
     for species in species_list:
 
-        #if (not species == 'bos_taurus'):
+        #if (not species == 'homo_sapiens'):
         #    continue
 
         qry = "use " + ensembl_db_name[species]
@@ -586,7 +580,6 @@ def gene2exon(species_list, ensembl_db_name):
         number_of_genes = len(gene_ids)
         ct = 0
         for gene_id in gene_ids:
-
             # find all exons associated with the gene id
             exons = find_exons (cursor, gene_id, species)
             if (not exons):
@@ -599,7 +592,6 @@ def gene2exon(species_list, ensembl_db_name):
             ct += 1 
             if (not ct%100):
                 print  "%s  %5d    (%5.2f) " % (species, ct, float(ct)/number_of_genes)
-
     cursor.close()
     db.close()
 

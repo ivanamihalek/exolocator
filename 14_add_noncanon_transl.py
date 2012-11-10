@@ -44,14 +44,16 @@ def translation_bounds(cursor, exon_id):
 
     return [seq_start, seq_end]
 
+
 #########################################
 def phase2offset(phase):
+    if phase > 2:
+        phase = phase%3
     if phase==0:
         offset = 0
     else:
-        offset = phase+1
+        offset = 3-phase
     return offset
-
 #########################################
 def  translate (dna_seq, phase, mitochondrial=False):
     pepseq = ""
@@ -63,6 +65,8 @@ def  translate (dna_seq, phase, mitochondrial=False):
     else:
         pepseq = dnaseq.translate().tostring()
 
+    if pepseq and pepseq[-1]=='*':
+        pepseq = pepseq[:-1]
     if not '*' in pepseq:
         return pepseq
 
@@ -74,6 +78,8 @@ def  translate (dna_seq, phase, mitochondrial=False):
     else:
         pepseq = dnaseq.translate().tostring()
     
+    if pepseq and  pepseq[-1]=='*':
+        pepseq = pepseq[:-1]
     if not '*' in pepseq:
         return pepseq
 
@@ -85,6 +91,8 @@ def  translate (dna_seq, phase, mitochondrial=False):
     else:
         pepseq = dnaseq.translate().tostring()
     
+    if pepseq and  pepseq[-1]=='*':
+        pepseq = pepseq[:-1]
     if not '*' in pepseq:
         return pepseq
 
@@ -98,7 +106,7 @@ def pep_exon_seqs(species_list, ensembl_db_name):
 
     for species in species_list:
         
-        if (not species == 'homo_sapiens'):
+        if (not species == 'ailuropoda_melanoleuca'):
             continue
         print
         print "############################"
@@ -107,11 +115,12 @@ def pep_exon_seqs(species_list, ensembl_db_name):
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False
 
-        range_end = 30000
+        range_end = 205966
 
         while True:
             range_start = range_end   +   1
-            range_end   = range_start + 999
+            range_end   = range_start 
+            #range_end   = range_start + 999
 
             qry  = "select exon_seq_id, exon_id, dna_seq, protein_seq "
             qry += " from exon_seq  where exon_seq_id >= %d " % range_start
@@ -124,21 +133,22 @@ def pep_exon_seqs(species_list, ensembl_db_name):
             ct   = 0
             fail = 0
             for row in rows:
+                
                 [exon_seq_id, exon_id, dna_seq, protein_seq] = row
                 protein_seq = check_null (protein_seq)
 
-                if  not protein_seq is None:
-                    continue
-                
+                #if  not protein_seq is None and len(protein_seq)> 0:
+                #    continue
+
                 if len(dna_seq)<3:
                     continue
-                [is_coding, phase, gene_id]   = get_phase (cursor, exon_id)
+                [is_coding, phase, gene_id] = get_phase (cursor, exon_id)
+
                 if not is_coding:
                     continue
 
                 ct   += 1
-                mitochondrial =  is_mitochondrial (cursor, gene_id)
-
+                mitochondrial = is_mitochondrial(cursor, gene_id)
 
                 # check if there is annotation about translation starting
                 # or ending in this exon
@@ -162,7 +172,7 @@ def pep_exon_seqs(species_list, ensembl_db_name):
    
                 pepseq = translate (dna_seq, phase, mitochondrial)
             
-                if ( not pepseq): # ususally some short pieces (end in pos 4 and such)
+                if ( not pepseq): # usually some short pieces (end in pos 4 and such)
                     fail +=1
                     continue
  
@@ -185,10 +195,9 @@ def pep_exon_seqs(species_list, ensembl_db_name):
                     #print "phase ", phase 
                     #print "new pepseq ", pepseq
                     #pass
-
+            break
             print species, range_start, range_end, "\n\t", ct, fail
-            if (range_end >= 100000): break
-      
+            
 
 #########################################
 def main():
