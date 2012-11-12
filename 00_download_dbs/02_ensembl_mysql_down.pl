@@ -86,8 +86,10 @@ foreach $dir ( @dirs_I_need) {
 	    next;
 	}
 
-	$ftp->get($item)
-	    or die "getting $item  failed ", $ftp->message;
+	if ( ! $ftp->get($item) ) {
+	    print LOG   "getting $item  failed ", $ftp->message;
+	    next;
+	}
 
 	`mv  $item  $local_dir`;
 	    
@@ -116,14 +118,16 @@ $ftp->cwd($foreign_dir)
     or die "Cannot cwd to $foreign_dir: ", $ftp->message;
 @contents =  $ftp->ls;
  
-foreach $item ('homology', 'homology_member', 'member', 'genome_db') {
+foreach $item ('homology.txt.gz', 'homology_member.txt.gz', 'member.txt.gz', 'genome_db.txt.gz') {
 
     (grep {/$item/} @contents) || die "$item not found in $foreign_dir\n";
     
     print "\t$item\n";
 
-    $ftp->get($item)
-	or die "getting $item  failed ", $ftp->message;
+    if ( ! $ftp->get($item) ) {
+	print LOG   "getting $item  failed ", $ftp->message;
+	next;
+    }
 
     `mv  $item  $local_dir`;
 	    

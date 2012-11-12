@@ -10,6 +10,7 @@ from   el_utils.ensembl import  get_compara_name, get_description, gene2exon_lis
 from   el_utils.ensembl import  get_exon_pepseq, genome_db_id2species
 from   el_utils.utils   import  erropen
 from   el_utils.map     import  Map
+from   el_utils.tree    import  Tree, Node
 #########################################
 def main():
 
@@ -22,7 +23,7 @@ def main():
     # find db ids adn common names for each species db
 
 
-    # build a tree, and sort all species according to how they are from human
+    # build a tree, and sort all species according to how far they are from human
     # sorted_species = species_sort(all_species)
 
     species='homo_sapiens'

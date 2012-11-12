@@ -74,20 +74,20 @@ def get_exon_pepseq (cursor, exon_id, db_name=None):
 
 
 #########################################
-def get_exon_seqs (cursor, exon_id, db_name=None):
+def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
 
     if (db_name):
         if not switch_to_db(cursor, db_name):
             return False
 
-    qry  = "select protein_seq, left_flank, right_flank, dna_seq  "
-    qry += "from  exon_seq where exon_id = %d " % exon_id
+    qry  = "select exon_seq_id, protein_seq, left_flank, right_flank, dna_seq  "
+    qry += "from  exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
     rows = search_db(cursor, qry)
     if (not rows):
         #rows = search_db(cursor, qry, verbose = True)
         return []
 
-    [protein_seq, left_flank, right_flank, dna_seq] = rows[0]
+    [exon_seq_id, protein_seq, left_flank, right_flank, dna_seq] = rows[0]
     if (protein_seq is None):
         protein_seq = ""
     if (left_flank is None):
@@ -97,7 +97,7 @@ def get_exon_seqs (cursor, exon_id, db_name=None):
     if (dna_seq is None):
         dna_seq = ""
     
-    return [protein_seq, left_flank, right_flank, dna_seq]
+    return [exon_seq_id, protein_seq, left_flank, right_flank, dna_seq]
 
 
 #########################################
@@ -117,7 +117,8 @@ def gene2exon_list (cursor, gene_id, db_name=None):
 
     for row in rows:
         exon = Exon()
-        exon.load_from_gene2exon(row)
+        if (not exon.load_from_gene2exon(row)):
+            continue
         exons.append(exon)
 
     return exons

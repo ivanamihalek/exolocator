@@ -7,7 +7,9 @@
 # I nevere really found use for - perhaps can be skipped during downloading, to make things faster
 # the sql script needs to be hacked (or does it - just leave the tables empty)
 
-$path_to_db = "/home/ivanam/databases/ensembl/mysql";
+$path_to_db = "/mnt/ensembl/release-69/mysql";
+
+$credentials = " -h jupiter.private.bii -P 3307 -u root -psqljupitersql  ";
 
 (-e $path_to_db) || die "$path_to_db not found\n";
 
@@ -20,6 +22,9 @@ chdir $path_to_db;
 
 foreach $db (@dbs) {
 
+    next if ( $db !~ /core/);
+
+
     print "************************\n";
     print $db, "\n";
     chdir "$path_to_db/$db";
@@ -27,13 +32,13 @@ foreach $db (@dbs) {
     `nice +20 gunzip *.gz`;
 
     print "making db  ... \n";
-    $cmd = "mysqladmin -u root create $db";
+    $cmd = "mysqladmin $credentials  create $db";
     (system $cmd) && warn "error running $cmd\n";
 
-    $cmd = "mysql -u root $db < $db.sql";
+    $cmd = "mysql $credentials $db < $db.sql";
     (system $cmd) && warn "error running $cmd\n";
 
-    $cmd = "mysqlimport -u root --fields_escaped_by=\\\\ $db -L *.txt";
+    $cmd = "mysqlimport $credentials --fields_escaped_by=\\\\ $db -L *.txt";
     (system $cmd) && die "error running $cmd\n";
 
     print "\n";	

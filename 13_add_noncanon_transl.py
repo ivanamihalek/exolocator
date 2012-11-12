@@ -4,7 +4,8 @@ import MySQLdb
 import commands
 from   el_utils.mysql   import connect_to_mysql, search_db, switch_to_db, check_null
 from   el_utils.mysql   import store_or_update
-from   el_utils.ensembl import get_species, is_mitochondrial
+from   el_utils.ensembl import get_gene_ids, get_species, is_mitochondrial
+from   el_utils.ensembl import gene2exon_list, get_exon_seqs, gene2stable
 from   el_utils.threads import parallelize
 # BioPython
 from Bio.Seq import Seq
@@ -44,7 +45,6 @@ def translation_bounds(cursor, exon_id):
 
     return [seq_start, seq_end]
 
-
 #########################################
 def phase2offset(phase):
     if phase > 2:
@@ -54,6 +54,7 @@ def phase2offset(phase):
     else:
         offset = 3-phase
     return offset
+
 #########################################
 def  translate (dna_seq, phase, mitochondrial=False):
     pepseq = ""
@@ -68,7 +69,7 @@ def  translate (dna_seq, phase, mitochondrial=False):
     if pepseq and pepseq[-1]=='*':
         pepseq = pepseq[:-1]
     if not '*' in pepseq:
-        return pepseq
+        return [phase, pepseq]
 
     phase = (phase+1)%3
     offset = phase2offset(phase)
@@ -81,7 +82,7 @@ def  translate (dna_seq, phase, mitochondrial=False):
     if pepseq and  pepseq[-1]=='*':
         pepseq = pepseq[:-1]
     if not '*' in pepseq:
-        return pepseq
+        return [phase, pepseq]
 
     phase = (phase+1)%3
     offset = phase2offset(phase)
@@ -94,9 +95,9 @@ def  translate (dna_seq, phase, mitochondrial=False):
     if pepseq and  pepseq[-1]=='*':
         pepseq = pepseq[:-1]
     if not '*' in pepseq:
-        return pepseq
+        return [phase, pepseq]
 
-    return pepseq
+    return [phase, pepseq]
 
 #########################################
 def pep_exon_seqs(species_list, ensembl_db_name):
@@ -106,7 +107,9 @@ def pep_exon_seqs(species_list, ensembl_db_name):
 
     for species in species_list:
         
-        if (not species == 'ailuropoda_melanoleuca'):
+        #if (not species == 'homo_sapiens'):
+        #    continue
+        if  (not  species == 'ailuropoda_melanoleuca'):
             continue
         print
         print "############################"
@@ -115,44 +118,52 @@ def pep_exon_seqs(species_list, ensembl_db_name):
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False
 
-        range_end = 205966
+        if (species=='homo_sapiens'):
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        else:
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
-        while True:
-            range_start = range_end   +   1
-            range_end   = range_start 
-            #range_end   = range_start + 999
 
-            qry  = "select exon_seq_id, exon_id, dna_seq, protein_seq "
-            qry += " from exon_seq  where exon_seq_id >= %d " % range_start
-            qry += " and exon_seq_id <= %d "  % range_end 
-            rows = search_db(cursor, qry, verbose=False)
 
-            if not rows:
-                break
+        tot         = 0
+        gene_ct     = 0
+        no_pepseq   = 0
+        pepseq_ok   = 0
+        short_dna   = 0
+        no_exon_seq = 0
+        translation_fail = 0
 
-            ct   = 0
-            fail = 0
-            for row in rows:
-                
-                [exon_seq_id, exon_id, dna_seq, protein_seq] = row
+        # for all protein coding genes in a species
+        for gene_id in gene_ids:
+
+            # for all exons in the gene
+            exons = gene2exon_list(cursor, gene_id)
+            if (not exons):
+                print 'no exons for gene', gene_id
+                sys.exit(1)
+
+            for exon in exons:
+
+                #####################################                
+                exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
+                if (not exon.is_coding or  exon.covering_exon > 0):
+                    continue 
+                tot += 1
+                if (not exon_seqs):
+                    no_exon_seq += 1
+                    continue                   
+                [exon_seq_id, protein_seq, left_flank, right_flank, dna_seq] = exon_seqs
+                if len(dna_seq)<3:
+                    short_dna += 1
+                    continue
                 protein_seq = check_null (protein_seq)
-
-                #if  not protein_seq is None and len(protein_seq)> 0:
+                #if ( protein_seq and len(protein_seq)>0):
+                #    pepseq_ok += 1
                 #    continue
 
-                if len(dna_seq)<3:
-                    continue
-                [is_coding, phase, gene_id] = get_phase (cursor, exon_id)
-
-                if not is_coding:
-                    continue
-
-                ct   += 1
-                mitochondrial = is_mitochondrial(cursor, gene_id)
-
-                # check if there is annotation about translation starting
-                # or ending in this exon
-                [seq_start, seq_end] = translation_bounds (cursor, exon_id)
+                #####################################                
+                mitochondrial        = is_mitochondrial(cursor, gene_id)
+                [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id)
                 seq_start = check_null(seq_start)
                 seq_end   = check_null(seq_end)
 
@@ -169,34 +180,36 @@ def pep_exon_seqs(species_list, ensembl_db_name):
                             dna_seq = dna_seq[seq_start-1:seq_end]
                         else:
                             dna_seq = dna_seq[:seq_end]
-   
-                pepseq = translate (dna_seq, phase, mitochondrial)
-            
+                [phase, pepseq] = translate (dna_seq, exon.phase, mitochondrial)
+
                 if ( not pepseq): # usually some short pieces (end in pos 4 and such)
-                    fail +=1
+                    translation_fail += 1
                     continue
  
                 if pepseq[-1] == '*':
                     pepseq = pepseq[:-1]
 
-                if  not '*' in pepseq: #store
-                    qry  = "update exon_seq "
-                    qry += "set protein_seq='%s' "   % pepseq
-                    qry += "where exon_seq_id = %d " % exon_seq_id
-                    rows = search_db (cursor, qry)
-                    if (rows):
-                        rows = search_db (cursor, qry, verbose = True)
-                        exit(1)
-                else: 
-                    fail +=1
-                    #if seq_start: print "start ", seq_start, 
-                    #if seq_end:   print "end ", seq_end, 
-                    #print "exon_id ", exon_id,
-                    #print "phase ", phase 
-                    #print "new pepseq ", pepseq
-                    #pass
-            break
-            print species, range_start, range_end, "\n\t", ct, fail
+                if  '*' in pepseq: #store
+                    translation_fail += 1
+                    continue
+
+                qry  = "update exon_seq "
+                qry += "set protein_seq='%s' "   % pepseq
+                qry += "where exon_seq_id = %d " % exon_seq_id
+                rows = search_db (cursor, qry)
+                if (rows):
+                    rows = search_db (cursor, qry, verbose = True)
+                    exit(1)
+             
+                pepseq_ok += 1
+           
+
+        print species
+        print "total coding exons ", tot
+        print "no exon seq info   ", no_exon_seq
+        print "short dna          ", short_dna
+        print "transl failure     ", translation_fail
+        print "pepseq ok          ", pepseq_ok
             
 
 #########################################

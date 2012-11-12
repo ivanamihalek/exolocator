@@ -17,7 +17,6 @@ def main():
     db     = connect_to_mysql()
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
-    ensembl_compara_name           = get_compara_name(cursor)
     
     tree   = Tree()
     for species in all_species:
@@ -29,7 +28,7 @@ def main():
     print
     print tree.nhx_string()
     print
-
+    
     cursor.close()
     db.close()
 

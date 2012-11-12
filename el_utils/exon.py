@@ -67,7 +67,7 @@ class Exon:
 
         if ( len(gene2exon_row) < 17):
             print "error loading exon: the in list must be",
-            print " at least 13 elements long"
+            print " at least 17 elements long"
             return False
         
         self.gene_id             = gene2exon_row[1]

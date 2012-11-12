@@ -1,5 +1,5 @@
-from mysql  import search_db
-
+from mysql   import search_db, switch_to_db
+from ensembl import species2taxid, get_compara_name
 
 
 ########
@@ -30,3 +30,21 @@ def get_ncbi_tax_name (cursor):
         return ""
 
     return rows[0][0]
+
+########
+def get_common_name (cursor, species):
+    switch_to_db(cursor, get_compara_name(cursor))
+    tax_id = species2taxid (cursor, species)
+    switch_to_db(cursor,get_ncbi_tax_name (cursor))
+    qry   = "select name_txt from names where "
+    qry  += "tax_id = %d and " % tax_id
+    qry  += "name_class = 'genbank common name'"
+    rows = search_db (cursor, qry)
+    if rows:
+        if ('ERROR' in rows[0]):
+            search_db (cursor, qry, verbose = True)
+            return ""
+        else:
+            return rows[0][0]
+
+    return ""

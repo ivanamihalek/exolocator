@@ -2,6 +2,7 @@
 
 import MySQLdb
 import sys, commands
+from   random                 import  choice
 from   el_utils.mysql         import  connect_to_mysql, search_db, switch_to_db, check_null
 from   el_utils.ensembl       import  get_species, get_gene_ids, gene2stable
 from   el_utils.ensembl       import  gene2exon_list, get_exon_seqs, is_mitochondrial
@@ -105,7 +106,7 @@ def main():
 
     for species in all_species:
 
-        if (not species=='cavia_porcellus'): continue
+        if (not species=='ailuropoda_melanoleuca'): continue
 
         switch_to_db (cursor,  ensembl_db_name[species])
 
@@ -118,10 +119,11 @@ def main():
         tot       = 0
         ct        = 0
         no_pepseq = 0
+        exon_seq_ok = 0
         #for gene_id in gene_ids:
-        for gene_id in [19079]:
+        for tot in range(500):
  
-
+            gene_id = choice(gene_ids)
 
             # get _all_ exons
             exons = gene2exon_list(cursor, gene_id)
@@ -130,7 +132,7 @@ def main():
                 sys.exit(1)
 
             for exon in exons:
-                tot += 1
+                #tot += 1
                 if (not  tot%10000):
                     print species, ct, no_pepseq,  tot
                 # exons seqs are its aa translation, left_flank, right_flank, and dna_seq
@@ -141,48 +143,51 @@ def main():
                     #sys.exit(1)
                     continue
 
-                elif (exon.is_coding and exon.covering_exon < 0 and not exon_seqs[0]):
-
-                    [protein_seq, left_flank, right_flank, dna_seq] = exon_seqs
-                    mitochondrial =  is_mitochondrial(cursor, gene_id)
-                    print "no translation "
-                    print "gene id ", gene_id, gene2stable(cursor, gene_id), " exon_id ", exon.exon_id
-                    print "mitochondrial: ", mitochondrial
+                elif (exon.is_coding and exon.covering_exon < 0):
                     
-                    # check if there is annotation about translation starting
-                    # or ending in this exon
-                    [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id)
-                    seq_start = check_null(seq_start)
-                    seq_end   = check_null(seq_end)
-
-                    if seq_start is None and  seq_end is None:
-                        pass
+                    if ( exon_seqs[0]):
+                        exon_seq_ok += 1
                     else:
-                        if seq_start is None:
-                            dna_seq = dna_seq[:seq_end]
-                        elif seq_end is None:
-                            if seq_start>0:
-                                dna_seq = dna_seq[seq_start-1:]
+
+                        [protein_seq, left_flank, right_flank, dna_seq] = exon_seqs
+                        mitochondrial =  is_mitochondrial(cursor, gene_id)
+                        print "no translation "
+                        print "gene id ", gene_id, gene2stable(cursor, gene_id), " exon_id ", exon.exon_id
+                        print "mitochondrial: ", mitochondrial
+
+                        # check if there is annotation about translation starting
+                        # or ending in this exon
+                        [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id)
+                        seq_start = check_null(seq_start)
+                        seq_end   = check_null(seq_end)
+
+                        if seq_start is None and  seq_end is None:
+                            pass
                         else:
-                            if seq_start>0:
-                                dna_seq = dna_seq[seq_start-1:seq_end]
-                            else:
+                            if seq_start is None:
                                 dna_seq = dna_seq[:seq_end]
+                            elif seq_end is None:
+                                if seq_start>0:
+                                    dna_seq = dna_seq[seq_start-1:]
+                            else:
+                                if seq_start>0:
+                                    dna_seq = dna_seq[seq_start-1:seq_end]
+                                else:
+                                    dna_seq = dna_seq[:seq_end]
 
-                    pepseq = translate (dna_seq, exon.phase, mitochondrial)
-                    
-                    print " ** ", pepseq
-                    print
-                    print
-                    no_pepseq += 1
+                        pepseq = translate (dna_seq, exon.phase, mitochondrial)
 
-                    #if (no_pepseq==10): exit(1)
-                    continue
+                        print " ** ", pepseq
+                        print
+                        print
+                        no_pepseq += 1
 
+ 
         print
         print species
-        print "tot exons: ", tot
+        print "tot genes: ", tot
         print "no seq:    ", ct
+        print "exon pepseq ok: ", exon_seq_ok
         print "no pepseq: ", no_pepseq
 
     cursor.close()
