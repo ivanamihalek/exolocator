@@ -174,8 +174,22 @@ def make_exon_map_table (cursor):
     if (rows):
         return False
 
-    for column_name in ['exon_id', 'cognate_exon_id', 'alignment_id']:
+    for column_name in ['exon_id', 'cognate_exon_id']:
         qry = "ALTER TABLE %s add %s INT(10)" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
+
+    for column_name in ['msa_bitstring']:
+        qry = "ALTER TABLE %s add %s varbinary(1000)" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
+
+    for column_name in ['exon_known', 'cognate_exon_known']:
+        qry = "ALTER TABLE %s add %s tinyint" % (table, column_name)
         rows = search_db (cursor, qry)
         if (rows):
             return False
@@ -257,7 +271,8 @@ def modify_filename_column (cursor, db_name):
 #########################################
 def main():
     
-    db     = connect_to_mysql()
+    #db     = connect_to_mysql()
+    db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 

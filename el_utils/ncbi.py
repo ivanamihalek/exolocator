@@ -4,12 +4,26 @@ from ensembl import species2taxid, get_compara_name
 
 ########
 def taxid2name (cursor, tax_id):
-    qry = "select name_txt from names where tax_id= %d " % tax_id
+    switch_to_db (cursor, get_ncbi_tax_name (cursor))
+    qry  = "select name_txt from names where tax_id= %d " % tax_id
+    qry += " and name_class = 'scientific name'";
     rows = search_db (cursor, qry)
     if (not rows):
         rows = search_db (cursor, qry, verbose = True)
         return ""
     return rows[0][0]
+
+########
+def taxid2trivial (cursor, tax_id):
+    switch_to_db (cursor, get_ncbi_tax_name (cursor))
+    qry  = "select name_txt from names where tax_id= %d " % tax_id
+    qry += " and name_class = 'trivial'";
+    rows = search_db (cursor, qry)
+    if (not rows or 'ERROR' in rows[0]):
+        rows = search_db (cursor, qry, verbose = True)
+        return ""
+    return rows[0][0]
+
 
 ########
 def taxid2parentid (cursor, tax_id):

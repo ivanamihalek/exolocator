@@ -3,7 +3,7 @@
 import MySQLdb
 import commands
 from   el_utils.mysql   import  connect_to_mysql, search_db, store_or_update
-from   el_utils.ensembl import  get_species, get_gene_ids
+from   el_utils.ensembl import  get_species, get_gene_ids, get_logic_name
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
@@ -232,16 +232,6 @@ def fill_in_annotation_info (cursor, gene_id, exons):
         else:
             exon.analysis_id = rows[0][0]
 
-###################################
-def get_logic_name(analysis_id, cursor):
-        qry = "SELECT logic_name FROM analysis WHERE analysis_id = %d" % analysis_id
-        rows    = search_db (cursor, qry)
-        if (not rows):
-            logic_name = ''
-        else:
-            logic_name = rows[0][0]
-        return logic_name 
-
 #########################################
 def get_transcript_ids(cursor, gene_id, species):
 
@@ -430,7 +420,7 @@ def sort_out_covering_exons (cursor, exons):
     is_ensembl = {}
     is_havana  = {}
     for exon in exons:
-        logic_name = get_logic_name(exon.analysis_id, cursor)
+        logic_name = get_logic_name(cursor, exon.analysis_id)
         is_ensembl[exon] = ('ensembl' in logic_name)
         is_havana [exon] = ('havana'  in logic_name)
 
@@ -559,10 +549,15 @@ def store_exon (cursor, exon):
 
 
 #########################################
-def gene2exon(species_list, ensembl_db_name):
+def gene2exon(species_list, db_info):
 
-    db     = connect_to_mysql()
+    [local_db, ensembl_db_name] = db_info
+    if local_db:
+        db = connect_to_mysql()
+    else:
+        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
+
 
     for species in species_list:
 
@@ -602,15 +597,19 @@ def gene2exon(species_list, ensembl_db_name):
 #########################################
 def main():
 
-    no_threads = 5
+    no_threads = 10
+    local_db   = False
 
-    db     = connect_to_mysql()
+    if local_db:
+        db     = connect_to_mysql()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
     cursor.close()
     db    .close()
 
-    parallelize (no_threads, gene2exon, all_species, ensembl_db_name)
+    parallelize (no_threads, gene2exon, all_species,  [local_db, ensembl_db_name])
 
 
 

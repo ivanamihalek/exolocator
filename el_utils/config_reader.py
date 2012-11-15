@@ -6,7 +6,7 @@ Created on Apr 15, 2012
 '''
 # Python imports
 import os, sys, re
-from mysql import connect_to_mysql, connect_to_db, search_db
+from mysql import connect_to_mysql, search_db, switch_to_db
 
        
 class ConfigurationReader:
@@ -14,7 +14,7 @@ class ConfigurationReader:
     Loads configuration files from the cfg database - which is assumend to be named '%exoloc%config%'
     '''
 
-    def __init__ (self, user=None, passwd=None, check=True):
+    def __init__ (self, user=None, passwd=None, host=None, port =None, check=True):
         
         self.util_path        = {}
         self.dir_path         = {}
@@ -22,13 +22,15 @@ class ConfigurationReader:
         self.cfg_db_name      = ""
         self.user             = user
         self.passwd           = passwd
+        self.host             = host
+        self.port             = port
         self.check            = check
         self.get_cfg_db()
         self.load_cfg()
         
         
     def get_cfg_db(self):
-        db     = connect_to_mysql(self.user, self.passwd)
+        db     = connect_to_mysql(self.user, self.passwd, self.host, self.port)
         cursor = db.cursor()
         qry    = "show databases like'%exoloc%config%'" 
         rows   = search_db (cursor, qry, verbose=False)
@@ -49,8 +51,9 @@ class ConfigurationReader:
         Load a configuration file and add the
         key, value pairs to the internal configuration dictionary
         '''
-        db     = connect_to_db(self.cfg_db_name,self.user, self.passwd)
+        db     = connect_to_mysql(self.user, self.passwd, self.host, self.port)
         cursor = db.cursor()
+        switch_to_db (cursor, self.cfg_db_name)
         
         # utils
         qry = "select name, path from util_path"

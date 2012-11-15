@@ -2,9 +2,10 @@
 
 use strict;
 use Net::FTP;
+$release_num = 69;
 
 my $local_repository = 
-    "/mnt/ensembl-mirror/release-69/mysql";
+    "/mnt/ensembl-mirror/release-".$release_num."/mysql";
 
 (-e  $local_repository) ||
     die "$local_repository not found.\n";
@@ -32,7 +33,7 @@ my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
 	    "ciona_savignyi", "drosophila_melanogaster",
 	    "saccharomyces_cerevisiae");
 my @dirs_I_need = ();
-my $compara_dir = "ensembl_compara_69"; # take care of it separately
+my $compara_dir = "ensembl_compara_".$release_num; # take care of it separately
 
 foreach $dir ( @farm ) {
     ($dir =~ /core/) || next;
@@ -117,8 +118,11 @@ $foreign_dir = "$topdir/$dir";
 $ftp->cwd($foreign_dir)
     or die "Cannot cwd to $foreign_dir: ", $ftp->message;
 @contents =  $ftp->ls;
+
+$compara_sql = 'ensembl_compara_'.$release_num.'.sql.gz';
  
-foreach $item ('homology.txt.gz', 'homology_member.txt.gz', 'member.txt.gz', 'genome_db.txt.gz') {
+foreach $item ('homology.txt.gz', 'homology_member.txt.gz', 
+	       'member.txt.gz', 'genome_db.txt.gz', $compara_sql) {
 
     (grep {/$item/} @contents) || die "$item not found in $foreign_dir\n";
     

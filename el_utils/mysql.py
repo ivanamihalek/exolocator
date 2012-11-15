@@ -188,12 +188,15 @@ def search_db (cursor, qry, verbose=False):
 
 
 ########
-def connect_to_mysql (user=None, passwd=None):
+def connect_to_mysql (user=None, passwd=None, host=None, port=None):
     try:
         if (user is None):
-            db =MySQLdb.connect(user="root")
+            db = MySQLdb.connect(user="root")
+        elif (host is None):
+            db = MySQLdb.connect(user=user, passwd=passwd)
         else:
-            db =MySQLdb.connect(user=user, passwd=passwd)
+            db = MySQLdb.connect(user=user, passwd=passwd, host=host, port=port)
+            
     except  MySQLdb.Error, e:
         print "Error connecting to mysql as root (%s) " % (e.args[1])
         exit(1)

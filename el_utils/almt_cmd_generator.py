@@ -28,7 +28,7 @@ class AlignmentCommandGenerator(object):
     Generates commands for utilities that are used (blast, sw, genewise, fastacmd, formatdb)
     '''
 
-    def __init__(self):
+    def __init__(self, user=None, passwd=None, host=None, port =None, check=True):
         '''
         Loads the utils configuration (utils.cfg)
         
@@ -39,7 +39,7 @@ class AlignmentCommandGenerator(object):
         config.read("../utils.cfg")
         '''
         
-        self.configReader = ConfigurationReader()
+        self.configReader = ConfigurationReader(user, passwd, host, port, check)
         # blast tools
         
         

@@ -4,7 +4,7 @@ import MySQLdb
 import commands
 from   random import choice
 from   el_utils.mysql   import  connect_to_mysql, search_db
-from   el_utils.ensembl import  get_species, get_gene_ids
+from   el_utils.ensembl import  get_species, get_gene_ids, get_logic_name
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
@@ -422,7 +422,7 @@ def sort_out_covering_exons (cursor, exons):
     is_ensembl = {}
     is_havana  = {}
     for exon in exons:
-        logic_name = get_logic_name(exon.analysis_id, cursor)
+        logic_name = get_logic_name(cursor, exon.analysis_id)
         is_ensembl[exon] = ('ensembl' in logic_name)
         is_havana [exon] = ('havana'  in logic_name)
 
@@ -522,18 +522,25 @@ def find_exons (cursor, gene_id, species):
     return exons
 
 #########################################
-def gene2exon(species_list, ensembl_db_name):
+def gene2exon(species_list, db_info):
 
-    db     = connect_to_mysql()
+    [local_db, ensembl_db_name] = db_info
+    if local_db:
+        db     = connect_to_mysql()
+        acg    = AlignmentCommandGenerator()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    acg = AlignmentCommandGenerator()
+
+
     for species in species_list:
+        #if (not species == 'homo_sapiens'):
+        #    continue
         print
         print "############################"
         print  species
-        if (not species == 'homo_sapiens'):
-            continue
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
 
@@ -626,13 +633,19 @@ def main():
 
     no_threads = 1
 
-    db     = connect_to_mysql()
+    local_db = False
+
+   
+    if local_db:
+        db     = connect_to_mysql()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
     cursor.close()
     db    .close()
 
-    parallelize (no_threads, gene2exon, all_species, ensembl_db_name)
+    parallelize (no_threads, gene2exon, all_species, [local_db, ensembl_db_name])
 
 
 

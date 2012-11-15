@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w 
 
  $local_repository = 
-    "/mnt/ensembl-mirror/release-68/fasta";
+    "/mnt/ensembl-mirror/release-69/fasta";
 
 chdir $local_repository;
 
@@ -12,13 +12,11 @@ foreach $animal (@farm) {
     print $animal, "\n";
 
 
-    #foreach $dir  ( "pep",  "dna" ){
-    foreach  $dir  ( "dna" ){
+    foreach $dir  ( "pep",  "dna" ){
 
 	chdir $local_repository;
 	chdir "$animal/$dir";
 	
-	( $dir eq "dna") && `rm *.fa.*.p*`;
 	@fastas = split "\n",  `ls *.fa`;
 	for $fasta (@fastas) {
 	    print "\t $fasta\n";

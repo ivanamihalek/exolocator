@@ -58,6 +58,7 @@ class Node:
         self.name      = name
 
         self.tax_id    = None
+        self.parent    = None
         self.parent_id = None
         self.is_leaf   = False
         self.is_root   = False
@@ -143,6 +144,17 @@ class Tree:
         for node_id in del_ids:
             del self.node[node_id]
                               
+        self.__set_parent_ids__ (self.root)
+
+    ###################################
+    def __set_parent_ids__ (self, node):
+        if node.is_leaf:
+            return
+        for child in node.children:
+            child.parent_id = node.tax_id
+            child.parent    = node
+            self.__set_parent_ids__ (child)
+        return
 
 
     ###################################
@@ -155,4 +167,47 @@ class Tree:
 
     
 
+
+#########################################
+def subtree_leafs (node):
+
+    leafs = []
+    if node.is_leaf:
+        leafs.append (node.name)
+    else:
+        for child in node.children:
+            leafs += subtree_leafs(child)
+    return leafs
+    
+#########################################
+def  find_cousins (qry_node):
+    
+    cousins = []
+    if not qry_node.parent:
+        return cousins
+    else:
+        for sibling in qry_node.parent.children:
+            if sibling == qry_node: continue
+            cousins += subtree_leafs(sibling)
+
+    cousins += find_cousins (qry_node.parent)
+        
+    return cousins
+
+#########################################
+def  species_sort(cursor, all_species, qry_species):
+
+    cousins = []
+    tree   = Tree()
+    for species in all_species:
+        leaf = Node(species)
+        tree.leafs.append(leaf)
+        if leaf.name == qry_species:
+            qry_leaf = leaf
+
+    tree.build(cursor)
+    #find cousins for the qry leaf (recursively)
+    cousins = find_cousins (qry_leaf) 
+    
+    return [qry_species]+cousins
 

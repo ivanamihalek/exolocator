@@ -16,14 +16,14 @@ def get_description (cursor, gene_id):
 
 
 ###################################
-def get_logic_name(analysis_id, cursor):
+def get_logic_name(cursor, analysis_id):
         qry = "SELECT logic_name FROM analysis WHERE analysis_id = %d" % analysis_id
         rows    = search_db (cursor, qry)
         if (not rows):
             logic_name = ''
         else:
             logic_name = rows[0][0]
-        return logic_name
+        return logic_name 
 
 #########################################
 def is_mitochondrial (cursor, gene_id):
@@ -51,14 +51,14 @@ def is_mitochondrial (cursor, gene_id):
 
 
 #########################################
-def get_exon_pepseq (cursor, exon_id, db_name=None):
+def get_exon_pepseq (cursor, exon_id, is_known, db_name=None):
 
     if (db_name):
         if not switch_to_db(cursor, db_name):
             return False
 
     qry  = "select protein_seq  "
-    qry += "from  exon_seq where exon_id = %d " % exon_id
+    qry += "from  exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
 
     rows = search_db(cursor, qry)
     if (not rows):
@@ -210,7 +210,7 @@ def gene2canon_transl(cursor, gene_id, db_name=None,):
 
 
 ########
-def stable2gene (cursor, stable_id=None, db_name=None, ):
+def stable2gene (cursor, stable_id=None, db_name=None):
 
     if (not stable_id):
         return 0
@@ -312,9 +312,13 @@ def get_species (cursor):
         return 1
 
     for row in rows:
-        db_name = row[0]
-        name_tokens = db_name.split ('_')
-        species = name_tokens[0]+'_'+ name_tokens[1]
+        db_name    = row[0]
+        name_token = db_name.split ('_')
+        species = name_token[0]
+        i = 1
+        while not name_token[i] == 'core':
+            species += "_"+ name_token[i]
+            i       += 1
         ensembl_db_name[species] = db_name
         all_species.append(species)
 
@@ -323,7 +327,7 @@ def get_species (cursor):
 ########
 def get_compara_name (cursor, version=68):
 
-    qry = "show databases like '%compara%{0}%'" .format(version)
+    qry = "show databases like '%compara%'"
     rows = search_db (cursor, qry)
     if (not rows):
         rows = search_db (cursor, qry, verbose = True)
@@ -334,7 +338,7 @@ def get_compara_name (cursor, version=68):
 ########
 def species2taxid (cursor, species):
 
-
+    switch_to_db (cursor, get_compara_name (cursor))
     qry  = "select taxon_id from genome_db where name = '%s'" % species
     rows = search_db (cursor, qry)
     if (not rows):
@@ -342,6 +346,21 @@ def species2taxid (cursor, species):
         return ""
     
     return rows[0][0]
+
+########
+def species2genome_db_id (cursor, species):
+
+
+    switch_to_db (cursor, get_compara_name (cursor))
+
+    qry  = "select genome_db_id from genome_db where name = '%s'" % species
+
+    rows = search_db (cursor, qry)
+    if (not rows):
+        search_db (cursor, qry, verbose = True)
+        return 0
+    
+    return int(rows[0][0])
 
 ########
 def genome_db_id2species (cursor, genome_db_id):
