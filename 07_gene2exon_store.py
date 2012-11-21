@@ -4,7 +4,7 @@ import MySQLdb
 import commands
 from   el_utils.mysql   import  connect_to_mysql, search_db, store_or_update
 from   el_utils.ensembl import  get_species, get_gene_ids, get_logic_name
-from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
+from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl, gene2exon_list
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
@@ -395,13 +395,13 @@ def find_master (exon_1, exon_2, is_ensembl, is_havana):
     elif (exon_2.is_known and not exon_1.is_known):
         known_exon = exon_2
 
-    if havana_exon is not None:
+    if havana_exon     is not None:
         master_exon = havana_exon
     elif canonical_exon is not None:
         master_exon = canonical_exon
-    elif ensembl_exon is not None:
+    elif ensembl_exon  is not None:
         master_exon = ensembl_exon
-    elif known_exon is not None:
+    elif known_exon    is not None:
         master_exon = known_exon
     elif superset_exon is not None:
         master_exon = superset_exon
@@ -506,9 +506,9 @@ def find_exons (cursor, gene_id, species):
     exons = get_exons (cursor, gene_id, species, 'exon')
     # get all exons from the 'predicted_exon' table
     if (not species == 'homo_sapiens'):
-        exons += get_exons (cursor, gene_id, species, 'prediction_exon')
+        exons += get_exons  (cursor, gene_id, species, 'prediction_exon')
     # mark the exons belonging to canonical transcript
-    mark_canonical (cursor, gene_id, exons)
+    mark_canonical          (cursor, gene_id, exons)
     # get annotation info
     fill_in_annotation_info (cursor, gene_id, exons)
     # find covering exons
@@ -575,7 +575,13 @@ def gene2exon(species_list, db_info):
         number_of_genes = len(gene_ids)
         ct = 0
         for gene_id in gene_ids:
-            # find all exons associated with the gene id
+            ct += 1 
+            if (not ct%1000):
+                print  "%s  %5d    (%5.2f) " % (species, ct, float(ct)/number_of_genes)
+            # see if we looked into this gene already
+            if (gene2exon_list(cursor, gene_id, db_name=ensembl_db_name[species])):
+                continue
+            # find all exons associated with the gene id 
             exons = find_exons (cursor, gene_id, species)
             if (not exons):
                 print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
@@ -584,9 +590,6 @@ def gene2exon(species_list, db_info):
             # store into gene2exon table
             for exon in exons:
                 store_exon (cursor, exon)
-            ct += 1 
-            if (not ct%100):
-                print  "%s  %5d    (%5.2f) " % (species, ct, float(ct)/number_of_genes)
     cursor.close()
     db.close()
 

@@ -3,7 +3,7 @@
 
 import MySQLdb
 from   el_utils.mysql         import  connect_to_mysql, search_db
-from   el_utils.ensembl       import  get_species
+from   el_utils.ensembl       import  *
 
 ####################################################
 def get_seq_region_info(cursor, name):
@@ -16,19 +16,24 @@ def get_seq_region_info(cursor, name):
 
 ####################################################
 def main():
-    db     = connect_to_mysql()
+
+    local_db = False
+
+    if local_db:
+        db     = connect_to_mysql()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
 
-    for species in ['danio_rerio']:
-    #for species in all_species:
+    #for species in ['danio_rerio']:
+    for species in all_species:
         print species
 
-        qry = "use "+ensembl_db_name[species]
-        search_db (cursor, qry)
+        switch_to_db (cursor, ensembl_db_name[species])
 
         qry  = "select seq_region.name, seq_region.file_name from seq_region, gene "
         qry += " where gene.biotype='protein_coding' and gene.seq_region_id =  seq_region.seq_region_id "

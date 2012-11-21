@@ -512,15 +512,19 @@ def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_peps
 
 
 #########################################
-def store_exon_seqs(species_list, ensembl_db_name):
+def store_exon_seqs(species_list, db_info):
 
-    db     = connect_to_mysql()
+    [local_db, ensembl_db_name] = db_info
+    if local_db:
+        db     = connect_to_mysql()
+        acg    = AlignmentCommandGenerator()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
-    acg     = AlignmentCommandGenerator()
-
+    species_list = ['tupaia_belangeri']
     for species in species_list:
-        if (species == 'homo_sapiens'):
-            continue
+
         print
         print "############################"
         print  species
@@ -550,6 +554,7 @@ def store_exon_seqs(species_list, ensembl_db_name):
                 print 'no sequence found for ', gene_id, "   ",   ct, "out of ", tot
                 seqs_not_found.append(gene_id)
                 continue
+
             # get _all_ exons
             exons = gene2exon_list(cursor, gene_id, ensembl_db_name[species])
             if (not exons):
@@ -561,6 +566,7 @@ def store_exon_seqs(species_list, ensembl_db_name):
             [exon_seq, left_flank, right_flank] = get_exon_seqs (gene_seq, exons)
             # store (exons, dna, protein)
             store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
+
 
         print species, ct, tot
         if (seqs_not_found):
@@ -578,15 +584,20 @@ def store_exon_seqs(species_list, ensembl_db_name):
 #########################################
 def main():
 
-    no_threads = 5
+    no_threads = 1
 
-    db     = connect_to_mysql()
+    local_db = False
+
+    if local_db:
+        db     = connect_to_mysql()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
     cursor.close()
     db    .close()
 
-    parallelize (no_threads, store_exon_seqs, all_species, ensembl_db_name)
+    parallelize (no_threads, store_exon_seqs, all_species, [local_db, ensembl_db_name])
 
 
 

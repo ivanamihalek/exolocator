@@ -5,7 +5,7 @@ import MySQLdb
 import commands, os
 from   el_utils.mysql         import  connect_to_mysql, search_db, store_or_update
 from   el_utils.config_reader import  ConfigurationReader
-from   el_utils.ensembl       import  get_species, get_gene_ids
+from   el_utils.ensembl       import  *
 
 
 ####################################################
@@ -19,19 +19,26 @@ def store_seq_filenames (cursor, name, file_names):
 
 ####################################################
 def main():
-    cr = ConfigurationReader()
-    fasta_path = cr.get_path('ensembl_fasta')
 
-    db     = connect_to_mysql()
+
+    local_db = False
+
+    if local_db:
+        db     = connect_to_mysql()
+        cr     = ConfigurationReader()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cr     = ConfigurationReader(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+
     cursor = db.cursor()
-
+    fasta_path = cr.get_path('ensembl_fasta')
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    #for species in all_species:
-    for species in ['danio_rerio']:
+    for species in all_species:
+    #for species in ['danio_rerio']:
         print species
-        dna_path = "{0}{1}/dna".format(fasta_path, species)
+        dna_path = "{0}/{1}/dna".format(fasta_path, species)
         if (not os.path.exists(dna_path)):
             print "problem:", dna_path, "not found"
             exit(1)

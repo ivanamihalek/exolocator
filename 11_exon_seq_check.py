@@ -2,6 +2,7 @@
 
 import MySQLdb
 import commands
+from random import choice
 from   el_utils.mysql   import  connect_to_mysql, search_db
 from   el_utils.ensembl import  get_species, get_gene_ids, gene2exon_list
 from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl, stable2gene
@@ -366,17 +367,19 @@ def compare_seqs (canonical_translation, translated_seq, verbose=False):
     return comparison_ok
 
 #########################################
-def check_canonical_sequence(species_list, ensembl_db_name):
+def check_canonical_sequence(local_db, species_list, ensembl_db_name):
 
     verbose = False
 
-    db     = connect_to_mysql()
+    if local_db:
+        db     = connect_to_mysql()
+        acg    = AlignmentCommandGenerator()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
-    acg    = AlignmentCommandGenerator()
-
+    species_list = ['tetraodon_nigroviridis']
     for species in species_list:
-        if (not species == 'cavia_porcellus'):
-             continue
         print
         print "############################"
         print  species
@@ -394,11 +397,13 @@ def check_canonical_sequence(species_list, ensembl_db_name):
         #gene_ids = [stable2gene(cursor,'ENSG00000156970')] # BUB1B
         #gene_ids = [19079]
         
-        for gene_id in gene_ids:
+        #for gene_id in gene_ids:
+        for tot in range(10):
 
-            tot +=1 
-            if (not  tot%10):
-                print ct, tot
+            gene_id = choice(gene_ids)
+            #tot +=1 
+            if (not  tot%100):
+               print ct, tot
             # find canonical translation
             canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
 
@@ -420,6 +425,11 @@ def check_canonical_sequence(species_list, ensembl_db_name):
             # reconstruct the translation from the raw gene_seq and exon boundaries
             translated_seq = transl_reconstruct (cursor, gene_id, gene_seq, 
                                                  canonical_coding_exons, verbose = verbose)
+            print "==========================================="
+            print canonical_translation
+            print "========"
+            print translated_seq
+
             if (translated_seq):
                 # compare the two sequences and cry foul if they are not the same:
                 comparison_ok = compare_seqs (canonical_translation, translated_seq, verbose = verbose)
@@ -467,13 +477,21 @@ def check_canonical_sequence(species_list, ensembl_db_name):
 #########################################
 def main():
 
-    db     = connect_to_mysql()
+    local_db = False
+
+    if local_db:
+        db     = connect_to_mysql()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    cursor = db.cursor()
+  
+
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
     cursor.close()
     db    .close()
 
-    check_canonical_sequence (all_species, ensembl_db_name)
+    check_canonical_sequence (local_db, all_species, ensembl_db_name)
 
 
 

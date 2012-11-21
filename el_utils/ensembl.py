@@ -4,6 +4,40 @@ import MySQLdb
 from   mysql import search_db, switch_to_db
 from   exon  import Exon
 
+
+#########################################
+def  exon_id2gene_id (cursor, ensembl_db_name, exon_id, is_known):
+
+    switch_to_db(cursor, ensembl_db_name)
+    qry  = "select gene_id from gene2exon where "
+    qry += "exon_id = %d and is_known = %d " % (exon_id, is_known)
+    
+    rows = search_db (cursor, qry)
+    if (not rows or 'ERROR' in rows[0]):
+        return 0
+
+    return rows[0][0]
+    
+#########################################
+def  get_orthos (cursor, gene_id, table):
+
+    orthos = []
+    qry  = "select cognate_gene_id, cognate_genome_db_id from "+table
+    qry += " where gene_id = %d"% gene_id
+    
+    rows = search_db (cursor, qry)
+    if (not rows):
+        return []
+
+    for row in rows:
+        ortho_gene_id   = row[0]
+        ortho_genome_db = row[1]
+        # note: the cursor will be pointing to compara db after this
+        species = genome_db_id2species (cursor, ortho_genome_db)
+        orthos.append([ortho_gene_id,species] )
+    
+    return orthos
+
 #########################################
 def get_description (cursor, gene_id):
 
@@ -368,7 +402,7 @@ def genome_db_id2species (cursor, genome_db_id):
 
     switch_to_db (cursor, get_compara_name (cursor))
 
-    qry  = "select name from genome_db where genome_db_id = %d" % genome_db_id
+    qry  = "select name from genome_db where genome_db_id = %d" % int(genome_db_id)
 
     rows = search_db (cursor, qry)
     if (not rows):

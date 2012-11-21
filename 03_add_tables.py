@@ -180,14 +180,6 @@ def make_exon_map_table (cursor):
         if (rows):
             return False
 
-
-    for column_name in ['msa_bitstring']:
-        qry = "ALTER TABLE %s add %s varbinary(1000)" % (table, column_name)
-        rows = search_db (cursor, qry)
-        if (rows):
-            return False
-
-
     for column_name in ['exon_known', 'cognate_exon_known']:
         qry = "ALTER TABLE %s add %s tinyint" % (table, column_name)
         rows = search_db (cursor, qry)
@@ -217,6 +209,13 @@ def make_exon_map_table (cursor):
         rows = search_db (cursor, qry)
         if (rows):
             return False
+
+    for column_name in ['msa_bitstring']:
+        qry = "ALTER TABLE %s add %s varbinary(1000)" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
 
 #########################################
 def make_table (cursor, db_name, table):

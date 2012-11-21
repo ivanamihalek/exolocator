@@ -98,15 +98,18 @@ def  translate (dna_seq, phase, mitochondrial=False):
 #########################################
 def main():
 
-    no_threads = 1
+    local_db = False
 
-    db     = connect_to_mysql()
+    if local_db:
+        db     = connect_to_mysql()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
-    [all_species, ensembl_db_name] = get_species (cursor)
+
+    [all_species, ensembl_db_name] = get_species (cursor)    
+    all_species = ['tupaia_belangeri', 'tetraodon_nigroviridis']
 
     for species in all_species:
-
-        if (not species=='ailuropoda_melanoleuca'): continue
 
         switch_to_db (cursor,  ensembl_db_name[species])
 
@@ -115,12 +118,11 @@ def main():
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
-
-        tot       = 0
-        ct        = 0
-        no_pepseq = 0
+        tot         = 0
+        ct          = 0
+        no_pepseq   = 0
         exon_seq_ok = 0
-        #for gene_id in gene_ids:
+       
         for tot in range(500):
  
             gene_id = choice(gene_ids)
@@ -132,11 +134,9 @@ def main():
                 sys.exit(1)
 
             for exon in exons:
-                #tot += 1
-                if (not  tot%10000):
-                    print species, ct, no_pepseq,  tot
+
                 # exons seqs are its aa translation, left_flank, right_flank, and dna_seq
-                exon_seqs = get_exon_seqs(cursor, exon.exon_id)
+                exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     ct += 1
                     #print  'no exon seq for exon',  exon.exon_id
@@ -185,10 +185,10 @@ def main():
  
         print
         print species
-        print "tot genes: ", tot
-        print "no seq:    ", ct
-        print "exon pepseq ok: ", exon_seq_ok
-        print "no pepseq: ", no_pepseq
+        print "tot number of genes checked: ", tot
+        print "            without dna seq: ", ct
+        print "   exons with petide seq ok: ", exon_seq_ok
+        print "   exons without petide seq: ", no_pepseq
 
     cursor.close()
     db    .close()

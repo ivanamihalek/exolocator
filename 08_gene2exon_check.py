@@ -2,9 +2,9 @@
 
 import MySQLdb
 import commands
+from   random import choice
 from   el_utils.mysql   import  connect_to_mysql, search_db
-from   el_utils.ensembl import  get_species, get_gene_ids, gene2exon_list
-from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
+from   el_utils.ensembl import  *
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
@@ -16,13 +16,21 @@ from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
 
 #########################################
-def check_exons(species_list, ensembl_db_name):
+def main():
 
-    db     = connect_to_mysql()
+    local_db = False
+
+    if local_db:
+        db     = connect_to_mysql()
+        acg    = AlignmentCommandGenerator()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+
     cursor = db.cursor()
+    [all_species, ensembl_db_name] = get_species (cursor)
 
-    acg = AlignmentCommandGenerator()
-    species_list = ['homo_sapiens']
+    species_list = all_species
     #species_list = ['callithrix_jacchus']
     #species_list = ['ailuropoda_melanoleuca']
     for species in species_list:
@@ -32,8 +40,7 @@ def check_exons(species_list, ensembl_db_name):
         #if (species in ['ailuropoda_melanoleuca', 'anolis_carolinensis', 
         #                'bos_taurus','danio_rerio']):
         #    continue
-        qry = "use " + ensembl_db_name[species]
-        search_db(cursor, qry)
+        switch_to_db (cursor, ensembl_db_name[species])
 
         if (species=='homo_sapiens'):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
@@ -42,9 +49,9 @@ def check_exons(species_list, ensembl_db_name):
         
         ct = 0
         tot = 0
-        #for gene_id in [1]:
-        for gene_id in [355489]:
-        #for gene_id in gene_ids:
+        for tot in range(1000):
+
+            gene_id = choice(gene_ids)
 
             tot += 1
             # find all exons associated with the gene id
@@ -63,19 +70,14 @@ def check_exons(species_list, ensembl_db_name):
                 
                 if (not exon.is_coding): 
                     continue
-                
 
-                #print
-                #print exon
-                #print exon.start_in_gene, exon.end_in_gene
-
-                if (exon.translation_ends is None):
+                if (exon.canon_transl_end is None):
                     length += exon.end_in_gene - exon.start_in_gene + 1
                 else:
-                    length += exon.translation_ends + 1
+                    length += exon.canon_transl_end + 1
 
-                if (not exon.translation_starts is None):
-                    length -= exon.translation_starts
+                if (not exon.canon_transl_start is None):
+                    length -= exon.canon_transl_start
             
             if (not length):
                 print gene2stable (cursor, gene_id = gene_id), " no exons marked as canonical"
@@ -87,7 +89,6 @@ def check_exons(species_list, ensembl_db_name):
             if ( not canonical_transl_id):
                 print "no canonical transl id found for ", gene_id
                 continue
-
 
             # get canonical transcript from ensembl fasta database
             cmd = acg.generate_fastacmd_protein_command (canonical_transl_id, species, 
@@ -111,11 +112,6 @@ def check_exons(species_list, ensembl_db_name):
                 print "exon length ", length/3, " transl len ", translation_length,
                 print "(", ct, " out of ", tot, ")"
             
-
-            #if (tot==1000):
-            #    break
-            #print fasta
-   
         print species, tot, ct
 
     cursor.close()
@@ -123,20 +119,6 @@ def check_exons(species_list, ensembl_db_name):
 
     return True
 
-
-
-#########################################
-def main():
-
-    no_threads = 1
-
-    db     = connect_to_mysql()
-    cursor = db.cursor()
-    [all_species, ensembl_db_name] = get_species (cursor)
-    cursor.close()
-    db    .close()
-
-    parallelize (no_threads, check_exons, all_species, ensembl_db_name)
 
 
 

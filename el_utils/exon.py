@@ -126,7 +126,7 @@ class Exon:
         self.covering_exon       = None
         self.covering_exon_known = None
         self.analysis_id         = None
-
+        self.pepseq              = None
 
 
 

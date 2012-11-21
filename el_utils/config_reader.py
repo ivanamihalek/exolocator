@@ -126,6 +126,11 @@ class ConfigurationReader:
         
         
 if __name__ == '__main__':
-    cr = ConfigurationReader()
-    cr.spill_all()
-    print " ** ", cr.get_path('mafft')
+
+    local_db = False
+    if local_db:
+        cfg      = ConfigurationReader()
+    else:
+        cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    cfg.spill_all()
+    print " ** ", cfg.get_path('mafft')

@@ -161,7 +161,7 @@ class AlignmentCommandGenerator(object):
                              output_file = None):
         cmd  = "{0} --verbose 0 --matrix-file {1}  ".format(self.sw_sharp, self.blosum_matrix)
         cmd += " -j {0} -i {1} ".format(query_sequence_file, target_fasta_db_file)
-        cmd += " --out-type 1 --gap-open 3.0 "
+        cmd += " --out-type 1 --gap-open 3.0   "
         if output_file:
             cmd += " --out {0} ".format(output_file)
         return cmd
@@ -177,7 +177,13 @@ class AlignmentCommandGenerator(object):
         return cmd
     
     def generate_mafft_command (self, input_file, output_file):
-        return "{0} --quiet {1} > {2}".format(self.mafft, input_file, output_file)
+        '''
+        If there are unusual characters (e.g., U as selenocysteine in protein sequence), 
+        use the --anysymbol option. It accepts any printable characters (U, O, #, $, %, etc.; 
+        0x21-0x7e in the ASCII code), execpt for > (0x3e).  
+        They are scored equivalently to X.  Gap is - (0x2d), as in the default mode. 
+        '''
+        return "{0} --quiet --anysymbol {1} > {2}".format(self.mafft, input_file, output_file)
         
     
     def _generate_genedb_file_name (self, species, sequence_type, sequence_id, masked):

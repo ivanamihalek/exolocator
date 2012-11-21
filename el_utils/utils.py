@@ -12,11 +12,11 @@ def erropen (file,mode):
     return of
 
 #########################################
-def output_fasta (filename, headers, sequences):
+def output_fasta (filename, headers, sequence):
     outf = erropen (filename, "w")
-    for i in range (len(headers)):
-        print >> outf, ">"+headers[i]
-        print >> outf, sequences[i]
+    for header  in  headers:
+        print >> outf, ">"+header
+        print >> outf, sequence[header]
     outf.close()
 
     return

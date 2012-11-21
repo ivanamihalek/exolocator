@@ -208,7 +208,7 @@ def main():
     dir_path['ensembl_fasta'] = '/mnt/ensembl-mirror/release-69/fasta'
     # local juggling of data from one database base to the other
     dir_path['afs_dumps']  = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
-    dir_path['afs_dumps'] += 'ExoLocator/results/dumpster/'
+    dir_path['afs_dumps'] += 'ExoLocator/results/dumpster'
     dir_path['resources']  = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
     dir_path['resources'] += 'pypeworks/exolocator/resources'
     dir_path['scratch']    = '/tmp'

@@ -7,6 +7,7 @@ from   el_utils.mysql   import store_or_update
 from   el_utils.ensembl import get_gene_ids, get_species, is_mitochondrial
 from   el_utils.ensembl import gene2exon_list, get_exon_seqs, gene2stable
 from   el_utils.threads import parallelize
+from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 # BioPython
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
@@ -100,17 +101,20 @@ def  translate (dna_seq, phase, mitochondrial=False):
     return [phase, pepseq]
 
 #########################################
-def pep_exon_seqs(species_list, ensembl_db_name):
+def pep_exon_seqs(species_list, db_info):
 
-    db     = connect_to_mysql()
+    [local_db, ensembl_db_name] = db_info
+    if local_db:
+        db     = connect_to_mysql()
+        acg    = AlignmentCommandGenerator()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
+    species_list = ['tetraodon_nigroviridis']
     for species in species_list:
         
-        #if (not species == 'homo_sapiens'):
-        #    continue
-        if  (not  species == 'ailuropoda_melanoleuca'):
-            continue
         print
         print "############################"
         print  species
@@ -144,11 +148,11 @@ def pep_exon_seqs(species_list, ensembl_db_name):
 
             for exon in exons:
 
+                tot += 1
                 #####################################                
-                exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon.is_coding or  exon.covering_exon > 0):
                     continue 
-                tot += 1
+                exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     no_exon_seq += 1
                     continue                   
@@ -157,9 +161,9 @@ def pep_exon_seqs(species_list, ensembl_db_name):
                     short_dna += 1
                     continue
                 protein_seq = check_null (protein_seq)
-                #if ( protein_seq and len(protein_seq)>0):
-                #    pepseq_ok += 1
-                #    continue
+                if ( protein_seq and len(protein_seq)>0):
+                    pepseq_ok += 1
+                    continue
 
                 #####################################                
                 mitochondrial        = is_mitochondrial(cursor, gene_id)
@@ -194,8 +198,8 @@ def pep_exon_seqs(species_list, ensembl_db_name):
                     continue
 
                 qry  = "update exon_seq "
-                qry += "set protein_seq='%s' "   % pepseq
-                qry += "where exon_seq_id = %d " % exon_seq_id
+                qry += "set protein_seq   = '%s' " % pepseq
+                qry += "where exon_seq_id =  %d  " % exon_seq_id
                 rows = search_db (cursor, qry)
                 if (rows):
                     rows = search_db (cursor, qry, verbose = True)
@@ -214,16 +218,20 @@ def pep_exon_seqs(species_list, ensembl_db_name):
 
 #########################################
 def main():
-
     no_threads = 1
 
-    db     = connect_to_mysql()
+    local_db = False
+
+    if local_db:
+        db     = connect_to_mysql()
+    else:
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
     cursor.close()
     db    .close()
 
-    parallelize (no_threads, pep_exon_seqs, all_species, ensembl_db_name)
+    parallelize (no_threads, pep_exon_seqs, all_species, [local_db, ensembl_db_name] )
 
 
 
