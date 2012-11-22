@@ -2,6 +2,8 @@
 
 
 import MySQLdb, commands, re, sys
+from hashlib import sha1
+from random  import random
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
@@ -9,7 +11,8 @@ from   el_utils.utils   import  erropen, output_fasta
 from   el_utils.threads import  parallelize
 from   el_utils.map     import  Map
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
-from   el_utils.config_reader      import  ConfigurationReader
+from   el_utils.config_reader      import ConfigurationReader
+from   el_utils.alignment          import smith_waterman, exon_aware_smith_waterman
 
 
 #########################################
@@ -316,35 +319,101 @@ def find_relevant_exons (cursor, all_exons):
 
     return relevant_exons
 
+#########################################
+def mafft_align (cfg, acg, seq1, seq2):
+
+    aligned_seqs = []
+
+    # generate rand string for the name
+    name = sha1(str(random())).hexdigest()[:15]
+    # output
+    fastafile = "{0}/{1}.fa".format  (cfg.dir_path['scratch'], name)
+    output_fasta (fastafile, ['seq1', 'seq2'], {'seq1':seq1, 'seq2':seq2}) 
+    # align
+    mafftcmd = acg.generate_mafft_command (fastafile)
+    almt     = commands.getoutput(mafftcmd)
+
+    seq = ""
+    for line in almt.split('\n'):
+        if '>' in line: 
+            if seq:
+                aligned_seqs.append(seq)
+                seq = ""
+        else:
+            seq += line
+    aligned_seqs.append(seq)
+    
+    commands.getoutput("rm "+fastafile)
+ 
+
+    return aligned_seqs
 
 #########################################
+def  pairwise_fract_identity (seqs):
+    
+    fract_identity = 0.0
+    [seq1, seq2]   = seqs
+    if ( not len(seq1)):
+        return fract_identity
+
+    for i in range(len(seq1)):
+        if (seq1[i] == '-'): continue
+        if seq1[i] == seq2[i]: fract_identity += 1.0
+    
+    fract_identity /= float(len(seq1))
+    return fract_identity
+
+##########################################
 def align_exonwise (cfg, acg, human_exons, ortho_exons, ortho_species ):
 
     almt = ""
-
-    # concatenate exons' seqs
-    human_seq = decorate_and_concatenate (human_exons)
-    if not human_seq:
-        return []
-    # concatenate exons' seqs
-    ortho_seq  = decorate_and_concatenate (ortho_exons)
-    if not ortho_seq:
-        return []
-
-    # output
-    fastafile1 = "{0}/{1}.1.fa".format ( cfg.dir_path['scratch'], human_exons[0].exon_id)
-    output_fasta (fastafile1, ['homo_sapiens'], {'homo_sapiens':human_seq})
-    # 
-    fastafile2 = "{0}/{1}.2.fa".format ( cfg.dir_path['scratch'], ortho_exons[0].exon_id)
-    output_fasta (fastafile2, [ortho_species], {ortho_species:ortho_seq})
-
-    # align
-    swsharpcmd = acg.generate_SW_peptide (fastafile1, fastafile2)
-    almt       = commands.getoutput(swsharpcmd)
-
-    commands.getoutput("rm "+fastafile1+" "+fastafile2)
-       
+    sim_matrix  = [[0.0]*len(ortho_exons) for x in xrange(len(human_exons) )]
+    aligned_pep_seqs  = [[ ["",""] ]*len(ortho_exons) for x in xrange(len(human_exons) )]
     
+    for h in range(len(human_exons)):
+        h_exon = human_exons[h]
+        for o in range(len(ortho_exons)):
+            o_exon = ortho_exons[o]
+            aligned_pep_seqs[h][o] = mafft_align (cfg, acg, h_exon.pepseq, o_exon.pepseq)
+            sim_matrix[h][o]       = pairwise_fract_identity (aligned_pep_seqs[h][o])
+            
+    [human2ortho_map, ortho2human_map] = smith_waterman (sim_matrix)
+
+    # now, the exons can be split in some species,
+    # or be simply mislabeled or misread as being two exons
+    h = 0
+    unmapped_human = []
+    while   h <  len(human2ortho_map):
+        if (human2ortho_map[h] < 0):
+            unmapped_human.append(h)
+        else:
+            if unmapped_human:
+                print " unmapped human:", unmapped_human
+            unmapped_human = []
+        h += 1
+        
+    o = 0
+    unmapped_ortho = []
+    while   o <  len(ortho2human_map):
+        if ( ortho2human_map[o] < 0):
+            unmapped_ortho.append(o)
+        else:
+            if unmapped_ortho:
+                print " unmapped ortho:", unmapped_ortho
+            unmapped_ortho = []
+        o += 1
+        
+
+    for h in range(len(human2ortho_map)):
+        o = human2ortho_map[h]
+        if o<0: continue
+        print h, o
+        for seq in aligned_pep_seqs[h][o]:
+            print seq
+
+       
+    exit(1)
+
     return almt
 
 #########################################
@@ -358,12 +427,18 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
 
     #print "##############################", ortho_species
     switch_to_db(cursor,  ensembl_db_name[ortho_species])
-    relevant_ortho_exons  = find_relevant_exons (cursor, ortho_exons)
+    relevant_ortho_exons = find_relevant_exons (cursor, ortho_exons)
   
-    almt = align_exonwise(cfg, acg, relevant_human_exons, relevant_ortho_exons, ortho_species )
-    if not almt:
-        return maps
-    
+    #almt = align_exonwise (cfg, acg, relevant_human_exons, relevant_ortho_exons, ortho_species)
+    # if not almt:
+    #    return maps
+
+
+    human_seq = decorate_and_concatenate (relevant_human_exons)
+    ortho_seq = decorate_and_concatenate (relevant_ortho_exons)
+
+    exon_aware_smith_waterman (human_seq, ortho_seq)
+
     print almt
 
     # read in the almt
@@ -409,9 +484,9 @@ def store (cursor, maps, ensembl_db_name):
         update_fields = {}
         fixed_fields ['exon_id']              = map.exon_id_1
         fixed_fields ['exon_known']           = map.exon_known_1
-        fixed_fields ['cognate_exon_id']      = map.exon_id_2
-        fixed_fields ['cognate_exon_known']   = map.exon_known_2
         fixed_fields ['cognate_genome_db_id'] = species2genome_db_id(cursor, map.species_2)
+        update_fields['cognate_exon_id']      = map.exon_id_2
+        update_fields['cognate_exon_known']   = map.exon_known_2
         update_fields['cigar_line']           = map.cigar_line
         update_fields['similarity']           = map.similarity
         update_fields['source']               = 'ensembl'
@@ -463,7 +538,9 @@ def maps_for_gene_list(gene_list, db_info):
         unresolved_orthologues = get_orthos (cursor, gene_id, 'unresolved_ortho')
         # 
         for [ortho_gene_id, ortho_species] in known_orthologues+unresolved_orthologues:
+            #if not ortho_species == 'petromyzon_marinus': continue
             #if not ortho_species == 'tursiops_truncatus': continue
+            if not ortho_species == 'callithrix_jacchus': continue
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
             if not ortho_exons:
                 missing_exon_info += 1
