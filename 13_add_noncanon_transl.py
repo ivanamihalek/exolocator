@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import MySQLdb
-import commands
+import commands, sys
 from   el_utils.mysql   import connect_to_mysql, search_db, switch_to_db, check_null
 from   el_utils.mysql   import store_or_update
 from   el_utils.ensembl import get_gene_ids, get_species, is_mitochondrial
@@ -112,7 +112,6 @@ def pep_exon_seqs(species_list, db_info):
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    species_list = ['tetraodon_nigroviridis']
     for species in species_list:
         
         print
@@ -139,6 +138,9 @@ def pep_exon_seqs(species_list, db_info):
 
         # for all protein coding genes in a species
         for gene_id in gene_ids:
+            gene_ct += 1
+            if (not  gene_ct%1000):
+                print species, "tot:", gene_ct
 
             # for all exons in the gene
             exons = gene2exon_list(cursor, gene_id)
@@ -218,7 +220,7 @@ def pep_exon_seqs(species_list, db_info):
 
 #########################################
 def main():
-    no_threads = 1
+    no_threads = 5
 
     local_db = False
 
@@ -231,6 +233,8 @@ def main():
     cursor.close()
     db    .close()
 
+    all_species = ['equus_caballus', 'echinops_telfairi', 'oryctolagus_cuniculus', 
+                   'ornithorhynchus_anatinus', 'oryzias_latipes']
     parallelize (no_threads, pep_exon_seqs, all_species, [local_db, ensembl_db_name] )
 
 

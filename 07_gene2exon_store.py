@@ -558,11 +558,7 @@ def gene2exon(species_list, db_info):
         db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-
     for species in species_list:
-
-        #if (not species == 'homo_sapiens'):
-        #    continue
 
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
@@ -579,8 +575,8 @@ def gene2exon(species_list, db_info):
             if (not ct%1000):
                 print  "%s  %5d    (%5.2f) " % (species, ct, float(ct)/number_of_genes)
             # see if we looked into this gene already
-            if (gene2exon_list(cursor, gene_id, db_name=ensembl_db_name[species])):
-                continue
+            #if (gene2exon_list(cursor, gene_id, db_name=ensembl_db_name[species])):
+            #    continue
             # find all exons associated with the gene id 
             exons = find_exons (cursor, gene_id, species)
             if (not exons):
@@ -600,7 +596,7 @@ def gene2exon(species_list, db_info):
 #########################################
 def main():
 
-    no_threads = 10
+    no_threads = 1
     local_db   = False
 
     if local_db:
@@ -611,7 +607,7 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
     cursor.close()
     db    .close()
-
+    
     parallelize (no_threads, gene2exon, all_species,  [local_db, ensembl_db_name])
 
 

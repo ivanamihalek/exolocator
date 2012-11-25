@@ -1,0 +1,534 @@
+#include <Python.h>
+
+#define METH_VARARGS  0x0001
+
+
+/* gcc -shared -I/usr/include/python2.6/ -lpython2.6 -o alignment.so alignment.c -fPIC */
+
+# define ASCII_SIZE  128
+
+
+/***************************************************/
+void * emalloc(int	size)
+{
+    void * ptr;
+    if ((ptr = calloc(size, 1)) == NULL) {
+	fprintf (stderr,  "emalloc: no memory for %u bytes", size);
+	return NULL;
+    }
+
+    return ptr;
+}
+/***************************************************/
+char **cmatrix(int rows, int columns){
+    char **m;
+    int i;
+        /* allocate pointers to rows */
+    m=(char **) malloc(rows*sizeof(char*));
+    if (!m)  {
+	fprintf (stderr,"row allocation failure  in chmatrix().\n");
+	return NULL;
+    }
+    /* allocate rows and set pointers to them */
+    m[0]=(char *) calloc( rows*columns, sizeof(char));
+    if (!m[0]) {
+	fprintf (stderr,"column allocation failure in chmatrix().\n");
+ 	return NULL;
+    }
+    for( i=1; i < rows; i++)  m[i] = m[i-1] + columns;
+    /* return pointer to array of pointers to rows */ 
+    return m; 
+}
+int **imatrix(int rows, int columns){
+    int **m;
+    int i;
+        /* allocate pointers to rows */
+    m=(int **) malloc(rows*sizeof(int*));
+    if (!m)  {
+	fprintf (stderr,"row allocation failure  in chmatrix().\n");
+	return NULL;
+    }
+    /* allocate rows and set pointers to them */
+    m[0]=(int *) calloc( rows*columns, sizeof(int));
+    if (!m[0]) {
+	fprintf (stderr,"column allocation failure in chmatrix().\n");
+ 	return NULL;
+    }
+    for( i=1; i < rows; i++)  m[i] = m[i-1] + columns;
+    /* return pointer to array of pointers to rows */ 
+    return m; 
+}
+/***************************************************/
+void free_imatrix(int **m)
+{
+    free(m[0]);
+    free(m);
+}
+void free_cmatrix(char **m)
+{
+    free(m[0]);
+    free(m);
+}
+/***************************************************/
+int load_sim_matrix (int ** similarity) {
+    
+    char *amino_acid_order = "ABCDEFGHIKLMNPQRSTVWXYZ";
+    char *digits           = "0123456789";
+    int aao_strlen, ctr, i, j;
+    int char_i, char_j;
+    
+    int blosum62[]={
+	 4,
+	-2,  4,
+	 0, -3,  9,
+	-2,  4, -3,  6,
+	-1,  1, -4,  2,  5,
+	-2, -3, -2, -3, -3,  6,
+  	 0, -1, -3, -1, -2, -3,  6,
+	-2,  0, -3, -1,  0, -1, -2,  8,
+	-1, -3, -1, -3, -3,  0, -4, -3,  4,
+	-1,  0, -3, -1,  1, -3, -2, -1, -3,  5,
+	-1, -4, -1, -4, -3,  0, -4, -3,  2, -2,  4,
+	-1, -3, -1, -3, -2,  0, -3, -2,  1, -1,  2,  5,
+	-2,  3, -3,  1,  0, -3,  0,  1, -3,  0, -3, -2,  6,
+	-1, -2, -3, -1, -1, -4, -2, -2, -3, -1, -3, -2, -2,  7,
+	-1,  0, -3,  0,  2, -3, -2,  0, -3,  1, -2,  0,  0, -1,  5,
+	-1, -1, -3, -2,  0, -3, -2,  0, -3,  2, -2, -1,  0, -2,  1,  5,
+	 1,  0, -1,  0,  0, -2,  0, -1, -2,  0, -2, -1,  1, -1,  0, -1,  4,
+	 0, -1, -1, -1, -1, -2, -2, -2, -1, -1, -1, -1,  0, -1, -1, -1,  1,  5,
+	 0, -3, -1, -3, -2, -1, -3, -3,  3, -2,  1,  1, -3, -2, -2, -3, -2,  0,  4,
+	-3, -4, -2, -4, -3,  1, -2, -2, -3, -3, -2, -1, -4, -4, -2, -3, -3, -2, -3, 11,
+	 0, -1, -2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -1, -1,  0,  0, -1, -2, -1,
+	-2, -3, -2, -3, -2,  3, -3,  2, -1, -2, -1, -1, -2, -3, -1, -2, -2, -2, -1,  2, -1,  7,
+	-1,  1, -3,  1,  4, -3, -2,  0, -3,  1, -3, -1,  0, -1,  3,  0,  0, -1, -2, -3, -1, -2,  4};
+
+
+    /*get the similarity matrix to a usable form */
+    aao_strlen = strlen(amino_acid_order);
+    
+    ctr = 0;
+    for(i=0;i<aao_strlen;i++){
+	char_i = (int) amino_acid_order [i];
+	for (j=0;j<=i;j++){
+	    char_j = (int) amino_acid_order [j];
+	    similarity[char_i][char_j] = similarity[char_j][char_i] = blosum62[ctr];
+	    ctr++;
+	}
+    }
+
+    /* special treatment for B, Z */
+    char_i = (int) 'B';
+    for (j=0;j<=i;j++){
+	char_j = (int) amino_acid_order [j];
+	if ( char_j == 'B' ) {
+	    similarity[char_i][char_j] = similarity[char_j][char_i] =  30;
+	} else if ( char_j == 'Z' ) {
+	    similarity[char_i][char_j] = similarity[char_j][char_i] = -30;
+	} else {
+	    similarity[char_i][char_j] = similarity[char_j][char_i] =   0;
+	}
+    }
+    char_i = (int) 'Z';
+    for (j=0;j<=i;j++){
+	char_j = (int) amino_acid_order [j];
+	if ( char_j == 'Z' ) {
+	    similarity[char_i][char_j] = similarity[char_j][char_i] =  30;
+	} else if ( char_j == 'B' ) {
+	    similarity[char_i][char_j] = similarity[char_j][char_i] = -30;
+	} else {
+	    similarity[char_i][char_j] = similarity[char_j][char_i] =   0;
+	}
+    }
+
+    int digit_strlen = strlen(digits);
+    
+    for(i=0;i<digit_strlen;i++){
+	char_i = digits[i];
+	for(j=0;j<digit_strlen;j++){
+	    char_j = digits[j];
+	    similarity[char_i][char_j] = similarity[char_j][char_i] = 10;
+	}
+	for(j=0;j<aao_strlen;j++){
+	    char_j = amino_acid_order[j];
+	    similarity[char_i][char_j] = similarity[char_j][char_i] =  0;
+	}
+    }
+
+    return 0;
+}
+
+/***************************************************/
+/*
+ * Function to be called from Python
+ */
+static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
+{
+    char *seq1 = NULL;
+    char *seq2 = NULL;
+    char retstr[100]   = {'\0'};
+    int  len1, len2;
+    int i, j;
+    static int ** similarity = NULL;
+    
+
+    
+    PyArg_ParseTuple(args, "s#s#", &seq1, &len1, &seq2, &len2);
+
+    if (!seq1 || !seq2) {
+	sprintf (retstr, "no seq in py_smith_waterman_context");
+	return Py_BuildValue("s", retstr);
+    }
+
+    /* passing a matrix this way is all to painful, so we'll elegantyly hardcode it: */
+    if ( !similarity) {
+	similarity = imatrix(ASCII_SIZE, ASCII_SIZE);
+	if (!similarity) {
+	    sprintf (retstr, "error alloc matrix space");
+	    return Py_BuildValue("s", retstr);
+	}
+	load_sim_matrix (similarity);
+	
+    } 
+
+    
+    /**********************************************************************************/
+    int gap_opening   =  5;
+    int gap_extension =  3;
+    int endgap        =  0;
+    int use_endgap    =  0;
+
+    int far_away = -1;
+
+    int max_i    = len1;
+    int max_j    = len2;
+
+    // allocation, initialization
+    int  **F         = NULL;
+    char **direction = NULL;
+    int *map_i2j     = NULL;
+    int *map_j2i     = NULL;
+
+    if ( ! (F= imatrix (max_i+1, max_j+1)) ) {
+	sprintf (retstr, "error alloc matrix space");
+	return Py_BuildValue("s", retstr);
+    }
+    if ( ! (direction = cmatrix (max_i+1, max_j+1)) ) {
+	sprintf (retstr, "error alloc matrix space");
+	return Py_BuildValue("s", retstr);
+    }
+    if (! (map_i2j = emalloc( (max_i+1)*sizeof(int))) ) {
+	sprintf (retstr, "error alloc matrix space");
+	return Py_BuildValue("s", retstr);
+    }
+    if (! (map_j2i = emalloc( (max_j+1)*sizeof(int))) ) {
+	sprintf (retstr, "error alloc matrix space");
+	return Py_BuildValue("s", retstr);
+    }
+    for (i=0; i<=max_i; i++) map_i2j[i]=far_away;
+    for (j=0; j<=max_j; j++) map_j2i[j]=far_away;
+
+    
+    int F_max   = far_away;
+    int F_max_i = 0;
+    int F_max_j = 0;
+    int penalty = 0;
+    int i_sim, j_sim, diag_sim, max_sim;
+    
+    int i_between_exons = 1;
+    int j_between_exons = 1;
+    //
+    for (i=0; i<=max_i; i++) {
+
+        if (i > 0) {
+            if (seq1[i-1] == 'B') {
+		i_between_exons = 0;
+            } else if ( seq1[i-1] == 'Z'){
+		i_between_exons = 1;
+	    }
+	}
+	for (j=0; j<=max_j; j++) {
+
+            if (j > 0) {
+                if (seq2[j-1] == 'B') {
+                    j_between_exons = 0;
+		} else if (seq2[j-1] == 'Z') {
+                    j_between_exons = 1;
+		}
+	    }
+               
+	    if ( !i && !j ){
+		F[0][0] = 0;
+		direction[i][j] = 'd';
+		continue;
+	    }
+	    
+	    if ( i && j ){
+
+		/**********************************/
+		penalty =  0;
+		if ( direction[i-1][j] == 'i' ) {
+		    //  gap extension
+		    if  (j_between_exons) {
+			penalty =  0;
+                    } else {
+			if (use_endgap && j==max_j){
+                            penalty = endgap;
+			} else {
+                            penalty = gap_extension;
+			}
+		    }
+                } else {
+		    //  gap opening  */
+		    if  (j_between_exons) {
+			penalty =  0;
+		    } else {
+			if (use_endgap && j==max_j){
+			    penalty = endgap;
+			} else{
+			    penalty = gap_opening;
+			}
+		    }
+		}
+                i_sim =  F[i-1][j] + penalty;
+		
+		/**********************************/
+		penalty =  0;
+		if ( direction[i][j-1] == 'j' ) {
+		    //  gap extension
+		    if (i_between_exons) {
+			    penalty = 0;
+		    } else {
+                        if (use_endgap && i==max_i){
+                            penalty = endgap;
+                        } else{
+                            penalty = gap_extension;
+			}
+		    }
+		} else {
+		    //  gap opening  */
+		    if  (i_between_exons) {
+			penalty =  0;
+		    } else {
+			if (use_endgap && i==max_i){
+			    penalty = endgap;
+			} else {
+			    penalty = gap_opening;
+			}
+		    }
+
+		}
+		j_sim = F[i][j-1] + penalty;
+
+		/**********************************/
+		diag_sim =  F[i-1][j-1] + similarity [seq1[i-1]][seq2[j-1]];
+		
+		/**********************************/
+		max_sim         = diag_sim;
+		direction[i][j] = 'd';
+		if ( i_sim > max_sim ){
+		    max_sim = i_sim;
+		    direction[i][j] = 'i';
+		}
+		if ( j_sim > max_sim ) {
+		    max_sim = j_sim;
+		    direction[i][j] = 'j';
+		}
+		
+
+		
+		
+            } else if (j) {
+		
+		penalty =  0;
+		if (j_between_exons) {
+		    penalty = 0;
+                } else {
+		    if (use_endgap) {
+			penalty = endgap;
+                    } else {
+			if ( direction[i][j-1] =='j' ) {
+			    penalty = gap_extension;
+                        } else {
+			    penalty = gap_opening;
+			}
+		    }
+		}
+		j_sim   = F[i][j-1] + penalty;
+		max_sim = j_sim;
+		direction[i][j] = 'j';
+
+
+            } else if (i) {
+		
+		penalty =  0;
+		if (i_between_exons) {
+		    penalty = 0;
+                } else {
+		    if ( use_endgap) {
+			penalty = endgap;
+                    } else {
+			if ( direction[i-1][j] == 'i' ) {
+			    penalty =  gap_extension;
+                        } else {
+			    penalty =  gap_opening;
+			
+			}
+		    }
+		}
+		i_sim   = F[i-1][j] + penalty;
+		max_sim = i_sim;
+		direction[i][j] = 'i';
+	    }
+	    
+	    if (max_sim < 0.0 ) max_sim = 0.0;
+	    
+	    F[i][j] = max_sim;
+	    if ( F_max < max_sim ) {
+		// TODO{ tie break here */
+		F_max = max_sim;
+		F_max_i = i;
+		F_max_j = j;
+	    }
+
+
+	}
+   }
+		
+    sprintf (retstr, "eblah");
+    return Py_BuildValue("s", retstr);
+    
+
+		
+	 
+    i = F_max_i;
+    j = F_max_j;
+    // aln_score = F[i][j] ;
+
+
+    while ( i>0 || j >0 ){
+
+	if ( i<0 || j<0 ){
+	    sprintf (retstr, "Retracing error");
+	    return Py_BuildValue("s", retstr);
+	}
+	
+        if (direction[i][j] == 'd'){
+	    map_i2j [i-1] = j-1;
+	    map_j2i [j-1] = i-1;
+	    i-= 1;
+	    j-= 1;
+	} else if (direction[i][j] == 'i') {
+	    map_i2j [i-1] = far_away;
+	    i-= 1 ;
+	   
+	} else if (direction[i][j] == 'j') {
+	    map_j2i [j-1] = far_away;
+	    j-= 1 ;
+	   
+	} else{ 
+  	    sprintf (retstr, "Retracing error");
+	    return Py_BuildValue("s", retstr);
+	}
+    }
+	
+    char * aligned_seq_1 = NULL;
+    char * aligned_seq_2 = NULL;
+
+    /* (lets hope it gets properly freed in the main program */
+    if (! (aligned_seq_1 = emalloc( (len1+len2)*sizeof(char))) ) {
+	sprintf (retstr, "error alloc array space");
+	return Py_BuildValue("s", retstr);
+    }
+    if (! (aligned_seq_2 = emalloc( (len1+len2)*sizeof(char))) ) {
+	sprintf (retstr, "error alloc array space");
+	return Py_BuildValue("s", retstr);
+    }
+    
+    
+    i = 0;
+    j = 0;
+    int done = 0;
+
+# if 0
+	
+    while !done{
+
+        if (j>=max_j && i>=max_i){
+            done = 1;
+
+        else if (j<max_j && i<max_i){
+
+            if (map_i2j[i] == j){
+                aligned_seq_1 += seq1[i]
+                aligned_seq_2 += seq2[j]
+                i += 1
+                j += 1
+            else if (map_i2j[i] < 0){
+                aligned_seq_1 += seq1[i]
+                aligned_seq_2 += '-'
+                i += 1
+            else if (map_j2i[j] < 0){
+                aligned_seq_1 += '-'
+                aligned_seq_2 += seq2[j]
+                j += 1
+
+
+        else  (j<max_j){
+            aligned_seq_1 += '-'
+            aligned_seq_2 += seq2[j]
+            j += 1
+        else{
+            aligned_seq_1 += seq1[i]
+            aligned_seq_2 += '-'
+            i += 1
+           
+ 
+# endif
+	    
+    free_imatrix(F);
+    free_cmatrix(direction);
+    free(map_i2j);
+    free(map_j2i);
+    
+    return Py_BuildValue("ss", aligned_seq_1, aligned_seq_2 );
+    
+}
+
+
+
+/*
+ * Bind Python function names to our C functions
+ */
+static PyMethodDef alignment_methods[] = {
+	{"smith_waterman_context", py_smith_waterman_context, METH_VARARGS},
+	{NULL, NULL}
+};
+
+
+/*
+ * Python calls this to let us initialize our module
+ */
+void initalignment()
+{
+	(void) Py_InitModule("alignment", alignment_methods);
+}
+
+
+
+
+
+/* junkyard
+    //printf (" >>>>>   %d  %d \n", len1, len2); python will intercept the output
+else {
+    
+	for (i=0; i <ASCII_SIZE; i++) {
+	    if ( ! similarity[i][i]) continue;
+	    for (j=i; j <ASCII_SIZE; j++) {
+		if ( ! similarity[j][j]) continue;
+		printf ( " %c  %c   %4d \n", (char)i, (char)j, similarity[i][j]);
+	    }
+	}
+	printf (" >>>>>  the second time around .\n");
+    }
+
+*/  

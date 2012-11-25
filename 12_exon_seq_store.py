@@ -215,8 +215,8 @@ def  get_canonical_exons (cursor, gene_id):
 
     canonical_coding_exons = []
     reading = False
-    for exon in exons:
-        if (not exon.is_canonical): 
+    for exon in exons:        
+        if (not exon.is_canonical or  not exon.is_coding): 
              continue
         if (not exon.canon_transl_start is None):
             reading = True
@@ -246,7 +246,6 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
     ok_so_far = True
     # sanity checking
     for exon in canonical_coding_exons:
-
         #print
         #print "exon", exon.exon_id
         #find exon sequence within the gene
@@ -522,9 +521,8 @@ def store_exon_seqs(species_list, db_info):
         db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
-    species_list = ['tupaia_belangeri']
-    for species in species_list:
 
+    for species in species_list:
         print
         print "############################"
         print  species
@@ -544,8 +542,8 @@ def store_exon_seqs(species_list, db_info):
         for gene_id in gene_ids:
             tot += 1
             if (not  tot%1000):
-                print species, ct, tot
-                
+                print species, "tot:", tot, " fail:", ct
+               
             # extract raw gene  region - bonus return from checking whether the 
             # sequence is correct: translation of canonical exons
             [gene_seq, canonical_exon_pepseq] = get_gene_seq(acg, cursor, gene_id, species)
@@ -568,7 +566,7 @@ def store_exon_seqs(species_list, db_info):
             store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
 
 
-        print species, ct, tot
+        print species, "tot:", tot, " fail:", ct
         if (seqs_not_found):
             outf = open(species+".seqs_not_found", "w")
             for not_found in seqs_not_found:
@@ -584,7 +582,7 @@ def store_exon_seqs(species_list, db_info):
 #########################################
 def main():
 
-    no_threads = 1
+    no_threads = 5
 
     local_db = False
 
@@ -597,6 +595,8 @@ def main():
     cursor.close()
     db    .close()
 
+    all_species = ['equus_caballus', 'echinops_telfairi', 'oryctolagus_cuniculus', 
+                   'ornithorhynchus_anatinus', 'oryzias_latipes']
     parallelize (no_threads, store_exon_seqs, all_species, [local_db, ensembl_db_name])
 
 

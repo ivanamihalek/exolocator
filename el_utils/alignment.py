@@ -4,6 +4,11 @@ from Bio.SubsMat import MatrixInfo as matlist
 #########################################
 def exon_aware_smith_waterman (seq1, seq2):
 
+    aligned_seq_epmty = ['','']
+
+    if (not seq1 or not seq2):
+        print "empty seqs in sw (?)"
+        return aligned_seq_epmty
 
     matrix   = matlist.blosum62
     alphabet = map(chr, range(65, 91))
@@ -50,10 +55,9 @@ def exon_aware_smith_waterman (seq1, seq2):
                     matrix[(any1, any2)] = 0
                 else:
                     matrix[(any1, any2)] = matrix[(any2, any1)]
+                    
 
     ######################################################3
-    custom_gap_penalty_x = False
-    custom_gap_penalty_y = False
     gap_opening   =  -5.0
     gap_extension =  -3.0
     endgap        = 0.0
@@ -67,8 +71,8 @@ def exon_aware_smith_waterman (seq1, seq2):
     # allocation, initialization
     F         = [[0.0]*(max_j+1) for x in xrange(max_i+1)]
     direction = [[''] *(max_j+1) for x in xrange(max_i+1)]
-    map_i2j   = [far_away]*max_i
-    map_j2i   = [far_away]*max_j
+    map_i2j   = [far_away]*(max_i+1)
+    map_j2i   = [far_away]*(max_j+1)
 
 
     F_max   = far_away
@@ -148,7 +152,6 @@ def exon_aware_smith_waterman (seq1, seq2):
 		
 		diag_sim =  F[i-1][j-1] + matrix[(seq1[i-1], seq2[j-1])]
 		
-
 		max_sim = diag_sim
 		direction[i][j] = 'd'
 		if ( i_sim > max_sim ):
@@ -162,10 +165,10 @@ def exon_aware_smith_waterman (seq1, seq2):
 		
             elif j:
 		
-		if ( custom_gap_penalty_y and custom_gap_penalty_y[j-1] < 0 ) :
-		    penalty = custom_gap_penalty_y[j-1]
+		if (j_between_exons) :
+		    penalty = 0
                 else:
-		    if ( use_endgap) :
+		    if (use_endgap) :
 			penalty = endgap
                     else:
 			if ( direction[i][j-1] =='j' ) :
@@ -173,8 +176,6 @@ def exon_aware_smith_waterman (seq1, seq2):
                         else :
 			    penalty = gap_opening
 			
-		    
-		
 		j_sim = F[i][j-1] + penalty
 		max_sim = j_sim
 		direction[i][j] = 'j'
@@ -182,8 +183,8 @@ def exon_aware_smith_waterman (seq1, seq2):
 		
             elif i:
 		
-		if ( custom_gap_penalty_x and custom_gap_penalty_x[i-1] < 0 ) :
-		    penalty = custom_gap_penalty_x[i-1]
+		if (i_between_exons) :
+		    penalty = 0
                 else :
 		    if ( use_endgap) :
 			penalty = endgap
@@ -193,14 +194,10 @@ def exon_aware_smith_waterman (seq1, seq2):
                         else :
 			    penalty =  gap_opening
 			
-		    
-		
 		i_sim = F[i-1][j] + penalty
 		max_sim = i_sim
 		direction[i][j] = 'i'
 		
-
-	     
 
 	    if (max_sim < 0.0 ): max_sim = 0.0
 	    
@@ -212,12 +209,6 @@ def exon_aware_smith_waterman (seq1, seq2):
 		F_max_j = j
 		
 	 
-    # retrace
-    for i in range (F_max_i, max_i+1):
-        map_i2j[i-1] = far_away
-    for j in range (F_max_j, max_j+1):
-        map_j2i[j-1] = far_away
-
     i = F_max_i
     j = F_max_j
     aln_score = F[i][j] 
@@ -227,7 +218,7 @@ def exon_aware_smith_waterman (seq1, seq2):
 
 	if ( i<0 or j<0 ):
 	    print "Retracing error"
-            exit(1)
+            return aligned_seq_epmty	
 	
         if direction[i][j] == 'd':
 	    map_i2j [i-1] = j-1
@@ -245,44 +236,47 @@ def exon_aware_smith_waterman (seq1, seq2):
 	   
         else: 
             print "Retracing error"
-            exit(1)	
+            return aligned_seq_epmty
 	
-    
-    print aln_score
-
     i = 0
     j = 0
     done = False
     aligned_seq_1 = ""
     aligned_seq_2 = ""
     while not done:
-        if (map_i2j[i] == j):
-            aligned_seq_1 += seq1[i]
-            aligned_seq_2 += seq2[j]
-            i += 1
-            j += 1
-        elif (map_i2j[i] < 0 ):
-            aligned_seq_1 += seq1[i]
-            aligned_seq_2 += '-'
-            i += 1
-        elif (map_j2i[j] < 0 ):
+
+        if (j>=max_j and i>=max_i):
+            done = True
+
+        elif (j<max_j and i<max_i):
+
+            if (map_i2j[i] == j):
+                aligned_seq_1 += seq1[i]
+                aligned_seq_2 += seq2[j]
+                i += 1
+                j += 1
+            elif (map_i2j[i] < 0):
+                aligned_seq_1 += seq1[i]
+                aligned_seq_2 += '-'
+                i += 1
+            elif (map_j2i[j] < 0):
+                aligned_seq_1 += '-'
+                aligned_seq_2 += seq2[j]
+                j += 1
+
+
+        elif (j<max_j):
             aligned_seq_1 += '-'
             aligned_seq_2 += seq2[j]
             j += 1
+        else:
+            aligned_seq_1 += seq1[i]
+            aligned_seq_2 += '-'
+            i += 1
            
-        done = ( j>=max_j and i >= max_i)
+            
 
-
-
-    print ">seq1"
-    print aligned_seq_1
-    print ">seq2"
-    print aligned_seq_2
-
-    exit(1)
-
- 
-    return [map_i2j, map_j2i]
+    return [aligned_seq_1, aligned_seq_2]
 
 
    
@@ -481,3 +475,62 @@ def smith_waterman (similarity):
 
  
     return [map_i2j, map_j2i]
+
+##########################################
+#########################################
+#########################################
+#########################################
+#########################################
+#########################################
+def align_exonwise (cfg, acg, human_exons, ortho_exons, ortho_species ):
+
+    almt = ""
+    sim_matrix  = [[0.0]*len(ortho_exons) for x in xrange(len(human_exons) )]
+    aligned_pep_seqs  = [[ ["",""] ]*len(ortho_exons) for x in xrange(len(human_exons) )]
+    
+    for h in range(len(human_exons)):
+        h_exon = human_exons[h]
+        for o in range(len(ortho_exons)):
+            o_exon = ortho_exons[o]
+            aligned_pep_seqs[h][o] = mafft_align (cfg, acg, h_exon.pepseq, o_exon.pepseq)
+            sim_matrix[h][o]       = pairwise_fract_identity (aligned_pep_seqs[h][o])
+            
+    [human2ortho_map, ortho2human_map] = smith_waterman (sim_matrix)
+
+    # now, the exons can be split in some species,
+    # or be simply mislabeled or misread as being two exons
+    h = 0
+    unmapped_human = []
+    while   h <  len(human2ortho_map):
+        if (human2ortho_map[h] < 0):
+            unmapped_human.append(h)
+        else:
+            if unmapped_human:
+                print " unmapped human:", unmapped_human
+            unmapped_human = []
+        h += 1
+        
+    o = 0
+    unmapped_ortho = []
+    while   o <  len(ortho2human_map):
+        if ( ortho2human_map[o] < 0):
+            unmapped_ortho.append(o)
+        else:
+            if unmapped_ortho:
+                print " unmapped ortho:", unmapped_ortho
+            unmapped_ortho = []
+        o += 1
+        
+
+    for h in range(len(human2ortho_map)):
+        o = human2ortho_map[h]
+        if o<0: continue
+        print h, o
+        for seq in aligned_pep_seqs[h][o]:
+            print seq
+
+       
+    exit(1)
+
+    return almt
+

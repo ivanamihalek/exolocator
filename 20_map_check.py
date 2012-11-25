@@ -29,32 +29,48 @@ def main():
     cursor = db.cursor()
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
-    for gene_id in [412667]: #  wls
+    species                        = 'homo_sapiens'
+    switch_to_db (cursor,  ensembl_db_name[species])
+    gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+    with_map = 0
+    tot = 0
+    #or gene_id in [412667]: #  wls
+    for gene_id in gene_list: 
         
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        print  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+        #print  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
         # find all exons we are tracking in the database
         human_exons = gene2exon_list(cursor, gene_id)
         human_exons.sort(key=lambda exon: exon.start_in_gene)
+        has_a_map = False
         for human_exon in human_exons:
             if ( not human_exon.is_canonical or  not human_exon.is_coding): continue
-            print  
-            print "\t human",   human_exon.exon_id,  human_exon.is_known
-            print "\t", get_exon_pepseq(cursor, human_exon.exon_id, human_exon.is_known, 
-                                                     ensembl_db_name['homo_sapiens'])
+            #print  
+            #print "\t human",   human_exon.exon_id,  human_exon.is_known
+            #print "\t", get_exon_pepseq(cursor, human_exon.exon_id, human_exon.is_known, 
+            #                                         ensembl_db_name['homo_sapiens'])
+            #print "checking maps ..."
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
-            for map in maps:
-                species = map.species_2
-                if (not species == 'tursiops_truncatus'): 
-                    continue
-                unaligned_sequence = get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, 
-                                                     ensembl_db_name[map.species_2])
-                print "\t", species, map.exon_id_2, map.exon_known_2
-                print "\t", unaligned_sequence
+            if maps:
+                has_a_map = True
+            #else:
+            #print"no maps"
+            if 0:
+                for map in maps:
+                    species = map.species_2
+                    unaligned_sequence = get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, 
+                                                         ensembl_db_name[map.species_2])
+                    print "\t", species, map.exon_id_2, map.exon_known_2
+                    print "\t", unaligned_sequence
+        if has_a_map: with_map +=1
+        tot += 1
+        print gene_id, tot, with_map
 
     cursor.close()
     db.close()
+
+    print tot, with_map
             
 
 #########################################

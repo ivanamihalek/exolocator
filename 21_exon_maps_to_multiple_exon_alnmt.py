@@ -46,11 +46,13 @@ def main():
     ok   = 0
     no_pepseq      = 0
     no_orthologues = 0
-    # for gene_id in gene_ids:
-    for gene_id in [412667]: #  wls
+    #for gene_id in gene_ids:
+    # for gene_id in [412667]: #  wls
+    #for gene_id in [378768]: #  p53
+    for gene_id in [378766]: #  dynein
         gene_ct += 1
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        print gene_ct, len(gene_ids),  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+        #print gene_ct, len(gene_ids),  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
         # find all exons we are tracking in the database
         human_exons = gene2exon_list(cursor, gene_id)
@@ -59,6 +61,7 @@ def main():
             tot += 1
             # find all orthologous exons the human exon  maps to
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
+            if not maps: continue
             # output to fasta:
             seqname   = "{0}:{1}:{2}".format('homo_sapiens', human_exon.exon_id, human_exon.is_known)
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
@@ -66,10 +69,10 @@ def main():
                 = get_exon_seqs (cursor, human_exon.exon_id, human_exon.is_known)
             if (not pepseq):
                 if ( human_exon.is_coding and  human_exon.covering_exon <0): # this should be a master exon
-                    no_pepseq += 1
                     print "no pep seq for",  human_exon.exon_id, "coding ", human_exon.is_coding,
                     print "canonical: ",  human_exon.is_canonical
                     print "length of dna ", len(dna_seq)
+                no_pepseq += 1
                 continue
             headers   = [seqname]
             sequences = {seqname:pepseq}
@@ -112,8 +115,6 @@ def main():
                 switch_to_db(cursor, ensembl_db_name['homo_sapiens']) # so move it back to homo sapiens
                 # Write the bitmap to the database
                 #if (cognate_species == 'homo_sapiens'):
-                print "storing ", cognate_species, cognate_genome_db_id, cognate_exon_id, cognate_exon_known,
-                print human_exon.exon_id, human_exon.is_known
                 store_or_update(cursor, "exon_map",    {"cognate_genome_db_id":cognate_genome_db_id,
                    "cognate_exon_id":cognate_exon_id   ,"cognate_exon_known"  :cognate_exon_known,
                    "exon_id"        :human_exon.exon_id,"exon_known"          :human_exon.is_known},

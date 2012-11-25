@@ -74,7 +74,7 @@ def merged_sequence (template_seq, sequence_pieces):
         tmp = index.split()
         i = int(tmp[0])
         j = int(tmp[1])
-        print "overlap: ", i, j 
+        #print "overlap: ", i, j 
         if ( fract_identity (template_seq, sequence_pieces[i]) < 
              fract_identity (template_seq, sequence_pieces[j]) ):
             to_delete.append(i)
@@ -83,9 +83,10 @@ def merged_sequence (template_seq, sequence_pieces):
 
     if (to_delete):
         to_delete.sort()
-        to_delete.reverse
+        to_delete.reverse()
         for i in range(len(to_delete)):
             deletable = to_delete[i]
+            print i, deletable
             del sequence_pieces[deletable]
 
     # if not, go ahead and merge
@@ -106,7 +107,7 @@ def merged_sequence (template_seq, sequence_pieces):
 #########################################
 def main():
 
-    verbose  = True
+    verbose  = False
     local_db = False
 
     if local_db:
@@ -131,9 +132,11 @@ def main():
     gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
 
     # for each human gene
-    #for gene_id in gene_ids:
-    for gene_id in [412667]: #  wls
-        
+    for gene_id in gene_ids:
+    #for gene_id in [412667]: #  wls
+    #for gene_id in [378768]: #  p53
+    #for gene_id in [378766]: #  dynein
+       
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
         if verbose: print gene_id, stable_id, get_description (cursor, gene_id)
@@ -158,21 +161,26 @@ def main():
         # reconstruct the alignment with orthologues
         sequence  = {}
         seq_name  = {}
+        has_a_map = False
         for human_exon in canonical_exons:
 
             # find all entries in the exon_map with this exon id
             # (= find all orthologous exons that the human exon maps to)
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
+            if not maps:
+                continue
+            else:
+                has_a_map = True
             for map in maps:
                 species = map.species_2
                 # get the unaligned sequence
                 unaligned_sequence = get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, 
                                                      ensembl_db_name[map.species_2])
-                print "###################################"
-                print map
-                print get_exon_pepseq(cursor, map.exon_id_1, map.exon_known_1, ensembl_db_name['homo_sapiens'])
-                print get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[species])
-                print 
+                #print "###################################"
+                #print map
+                #print get_exon_pepseq(cursor, map.exon_id_1, map.exon_known_1, ensembl_db_name['homo_sapiens'])
+                #print get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[species])
+                #print 
 
                 if map.bitmap and unaligned_sequence:
                     bs = Bits(bytes=map.bitmap)
@@ -223,7 +231,9 @@ def main():
                     else: # we need to start storing as a list
                         tmp = sequence[sequence_name][human_exon]
                         sequence[sequence_name][human_exon] = [tmp, reconstructed_sequence]
-                        
+
+        if not has_a_map: continue
+
         # how the hell this happened:
         if not sequence.has_key('homo_sapiens'):
             print "no human seq found in the alignment!!!!!!!"
