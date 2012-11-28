@@ -13,6 +13,7 @@ from   el_utils.map     import  get_maps, Map
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.alignment          import smith_waterman, exon_aware_smith_waterman
+from   alignment import * # C implementation of smith waterman
 
 
 #########################################
@@ -377,10 +378,16 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
     human_seq = decorate_and_concatenate (relevant_human_exons)
     ortho_seq = decorate_and_concatenate (relevant_ortho_exons)
     
+    if (not human_seq or not ortho_seq):
+        return maps
     
     aligned_seq = {}
-    [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
-        = exon_aware_smith_waterman (human_seq, ortho_seq)
+    if 0:
+        [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
+            = exon_aware_smith_waterman (human_seq, ortho_seq)
+    else: # C implementation
+        [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
+            = smith_waterman_context (human_seq, ortho_seq)
 
     if (not aligned_seq['homo_sapiens'] or 
         not aligned_seq[ortho_species]):
@@ -407,9 +414,9 @@ def store (cursor, maps, ensembl_db_name):
         update_fields = {}
         fixed_fields ['exon_id']              = map.exon_id_1
         fixed_fields ['exon_known']           = map.exon_known_1
-        fixed_fields ['cognate_genome_db_id'] = species2genome_db_id(cursor, map.species_2)
-        fixed_fields ['cognate_exon_id']      = map.exon_id_2
-        fixed_fields ['cognate_exon_known']   = map.exon_known_2
+        update_fields['cognate_genome_db_id'] = species2genome_db_id(cursor, map.species_2)
+        update_fields['cognate_exon_id']      = map.exon_id_2
+        update_fields['cognate_exon_known']   = map.exon_known_2
         update_fields['cigar_line']           = map.cigar_line
         update_fields['similarity']           = map.similarity
         update_fields['source']               = 'ensembl'
@@ -455,7 +462,9 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
     
 
-    for gene_id in gene_list:
+    #for gene_id in gene_list:
+    #for gene_id in [378768]: #  p53
+    for gene_id in [378766]: #  dynein
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -468,8 +477,8 @@ def maps_for_gene_list(gene_list, db_info):
             print 'no exons for ', gene_id
             sys.exit(1)
         # check maps
-        if gene_has_a_map (cursor, ensembl_db_name, human_exons):
-            continue
+        # if gene_has_a_map (cursor, ensembl_db_name, human_exons):
+        #     continue
 
         # one2one   orthologues
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
@@ -515,14 +524,14 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 15
+    no_threads = 1
 
     local_db = False
 
     if local_db:
-        db     = connect_to_mysql()
+        db = connect_to_mysql()
     else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)

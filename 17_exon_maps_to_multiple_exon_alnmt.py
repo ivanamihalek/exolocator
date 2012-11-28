@@ -12,16 +12,21 @@ from   el_utils.tree    import  species_sort
 from   el_utils.ncbi    import  taxid2trivial
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
+from   el_utils.threads import  parallelize
 
 
-from Bio       import SeqIO
-from bitstring import Bits
+from time      import  time
+from Bio       import  SeqIO
+from bitstring import  Bits
 
 
 #########################################
-def main():
+def multiple_exon_alnmt(gene_list, db_info):
 
-    local_db = False
+
+    [local_db, ensembl_db_name] = db_info
+
+    verbose  = False
 
     if local_db:
         db     = connect_to_mysql()
@@ -32,6 +37,7 @@ def main():
         cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
+
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
     
@@ -46,19 +52,20 @@ def main():
     ok   = 0
     no_pepseq      = 0
     no_orthologues = 0
-    #for gene_id in gene_ids:
-    # for gene_id in [412667]: #  wls
-    #for gene_id in [378768]: #  p53
-    for gene_id in [378766]: #  dynein
+    for gene_id in gene_list:
+        start = time()
         gene_ct += 1
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        #print gene_ct, len(gene_ids),  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+        if  not gene_ct%100: print gene_ct, " out of", len(gene_list)
 
-        # find all exons we are tracking in the database
+        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+        if verbose: print gene_ct, len(gene_ids),  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+
+        # find all human exons we are tracking in the database
         human_exons = gene2exon_list(cursor, gene_id)
         for human_exon in human_exons:
            
             tot += 1
+            #if verbose: print "\texon no.", tot
             # find all orthologous exons the human exon  maps to
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
             if not maps: continue
@@ -122,11 +129,47 @@ def main():
 
             ok += 1
             commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
-    
+        if verbose: print " time: %8.3f\n" % ( time()-start);
+
     print "tot: ", tot, "ok: ", ok
     print "no pepseq ", no_pepseq
-    print "no_orthologues  ", no_orthologues
+    print "no orthologues  ", no_orthologues
+
+
+
+#########################################
+def main():
+    
+    no_threads = 15
+
+    local_db = False
+
+    if local_db:
+        db = connect_to_mysql()
+    else:
+        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    cursor = db.cursor()
+
+    [all_species, ensembl_db_name] = get_species (cursor)
+
+
+    species                        = 'homo_sapiens'
+    switch_to_db (cursor,  ensembl_db_name[species])
+    gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+    cursor.close()
+    db.close()
+
+    parallelize (no_threads, multiple_exon_alnmt, gene_list, [local_db, ensembl_db_name])
+    
+    return True
 
 #########################################
 if __name__ == '__main__':
     main()
+
+'''
+    #for gene_id in [412667]: #  wls
+    #for gene_id in [378768]: #  p53
+    #for gene_id in [378766]: #  dynein
+'''
+

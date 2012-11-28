@@ -86,7 +86,8 @@ def merged_sequence (template_seq, sequence_pieces):
         to_delete.reverse()
         for i in range(len(to_delete)):
             deletable = to_delete[i]
-            print i, deletable
+            # not sure what is this:
+            if deletable >= len(sequence_pieces): continue
             del sequence_pieces[deletable]
 
     # if not, go ahead and merge
@@ -132,6 +133,7 @@ def main():
     gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
 
     # for each human gene
+    gene_ct = 0
     for gene_id in gene_ids:
     #for gene_id in [412667]: #  wls
     #for gene_id in [378768]: #  p53
@@ -139,6 +141,9 @@ def main():
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
+
+        gene_ct += 1
+        if (not gene_ct%100): print gene_ct, "out of ", len(gene_ids)
         if verbose: print gene_id, stable_id, get_description (cursor, gene_id)
 
         # find all exons we are tracking in the database
@@ -173,7 +178,7 @@ def main():
                 has_a_map = True
             for map in maps:
                 species = map.species_2
-                # get the unaligned sequence
+                # get the raw (unaligned) sequence for the exon that maps onto human
                 unaligned_sequence = get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, 
                                                      ensembl_db_name[map.species_2])
                 #print "###################################"
@@ -182,6 +187,7 @@ def main():
                 #print get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[species])
                 #print 
 
+                # inflate the compressed sequence
                 if map.bitmap and unaligned_sequence:
                     bs = Bits(bytes=map.bitmap)
                     # check bitmap has correct number of 1s
@@ -294,7 +300,7 @@ def main():
         # find place for best_afa -- for the moment can put it to the scratch space:
         afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
         output_fasta (afa_fnm, headers, output_seq)
-        print afa_fnm
+        #print afa_fnm
 
         # reconstruct the dna alignment - output (? how are we going to do that?)
         # there is exon_seq table in each genome database, containing both the dna and the peptide sequence ...

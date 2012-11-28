@@ -202,7 +202,7 @@ def main():
     util_path['mafft']    = '/usr/bin/mafft'
     util_path['blastall'] = '/usr/bin/blastall'
     util_path['fastacmd'] = '/usr/bin/fastacmd'
-    util_path['sw#']      = '/home/ivanam/third/swsharp/swsharp'
+    util_path['sw#']      = '/usr/bin/swsharp'
 
     dir_path = {}
     dir_path['ensembl_fasta'] = '/mnt/ensembl-mirror/release-69/fasta'
@@ -232,7 +232,7 @@ def main():
             
     db     = connect_to_mysql()
     #db     = connect_to_mysql(user="marioot", passwd="tooiram")
-    #db      = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db      = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
 

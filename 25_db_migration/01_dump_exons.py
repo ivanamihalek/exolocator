@@ -42,20 +42,25 @@ def exon_tabstring(exon, stable_id, species, analysis, exon_seqs):
 
   
 #########################################
-def dump_exons (species_list,  ensembl_db_name):
+def dump_exons (species_list, db_info):
 
-    cfg      = ConfigurationReader()
+    
+    [local_db, ensembl_db_name] = db_info
+    if local_db:
+        db     = connect_to_mysql()
+        cfg      = ConfigurationReader()
+    else:
+        db     = connect_to_mysql         (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    cursor   = db.cursor()
+
     out_path = cfg.get_path('afs_dumps')
-
-    db     = connect_to_mysql()
-    cursor = db.cursor()
-
     for species in species_list:
         #if (not species=='homo_sapiens'):
         #    continue
-        outfile  = out_path+species+"_exon_dump.txt"
+        outfile  = "{0}/{1}_exon_dump.txt".format(out_path, species)
         of       = erropen (outfile,"w")
-  
+        print of
         switch_to_db (cursor,  ensembl_db_name[species])
 
         if (species=='homo_sapiens'):
@@ -64,6 +69,7 @@ def dump_exons (species_list,  ensembl_db_name):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
         source = get_analysis_dict(cursor)
+
         tot    = 0
         ct     = 0
         for gene_id in gene_ids:
@@ -79,13 +85,14 @@ def dump_exons (species_list,  ensembl_db_name):
 
             for exon in exons:
                 # exons seqs are its aa translation, left_flank, right_flank, and dna_seq
-                exon_seqs = get_exon_seqs(cursor, exon.exon_id)
+                exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     ct += 1
                     continue
                 # human readable string describing the source of annotation for this exon
                 analysis  = source[exon.analysis_id] 
-                print >> of, exon_tabstring (exon, gene2stable(cursor,gene_id), species, analysis, exon_seqs)
+                # the first field return by get_exon_seqs is the exon_seq_id, so get rid of it
+                print >> of, exon_tabstring (exon, gene2stable(cursor,gene_id), species, analysis, exon_seqs[1:])
 
         of.close()
 
@@ -95,15 +102,21 @@ def dump_exons (species_list,  ensembl_db_name):
 #########################################
 def main():
 
-    no_threads = 5
+    no_threads = 10
 
-    db     = connect_to_mysql()
+    local_db = False
+
+    if local_db:
+        db = connect_to_mysql()
+    else:
+        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
-    [all_species, ensembl_db_name] = get_species (cursor)
-    cursor.close()
-    db    .close()
 
-    parallelize (no_threads, dump_exons, all_species, ensembl_db_name)
+    [all_species, ensembl_db_name] = get_species (cursor)
+
+    parallelize (no_threads, dump_exons, all_species, [local_db, ensembl_db_name])
+
+
 
 #########################################
 if __name__ == '__main__':

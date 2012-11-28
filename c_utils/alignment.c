@@ -152,7 +152,12 @@ int load_sim_matrix (int ** similarity) {
 	    char_j = amino_acid_order[j];
 	    similarity[char_i][char_j] = similarity[char_j][char_i] =  0;
 	}
-    }
+	char_j = 'Z';
+	similarity[char_i][char_j] = similarity[char_j][char_i] = -30;
+	char_j = 'B';
+	similarity[char_i][char_j] = similarity[char_j][char_i] = -30;
+	
+     }
 
     return 0;
 }
@@ -192,8 +197,8 @@ static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
 
     
     /**********************************************************************************/
-    int gap_opening   =  5;
-    int gap_extension =  3;
+    int gap_opening   =  -5;
+    int gap_extension =  -3;
     int endgap        =  0;
     int use_endgap    =  0;
 
@@ -394,10 +399,6 @@ static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
 	}
    }
 		
-    sprintf (retstr, "eblah");
-    return Py_BuildValue("s", retstr);
-    
-
 		
 	 
     i = F_max_i;
@@ -444,51 +445,51 @@ static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
 	return Py_BuildValue("s", retstr);
     }
     
-    
+
+   
     i = 0;
     j = 0;
     int done = 0;
-
-# if 0
-	
-    while !done{
+    int pos  = 0;
+    while (!done) {
 
         if (j>=max_j && i>=max_i){
             done = 1;
-
-        else if (j<max_j && i<max_i){
+	} else if (j<max_j && i<max_i){
 
             if (map_i2j[i] == j){
-                aligned_seq_1 += seq1[i]
-                aligned_seq_2 += seq2[j]
-                i += 1
-                j += 1
-            else if (map_i2j[i] < 0){
-                aligned_seq_1 += seq1[i]
-                aligned_seq_2 += '-'
-                i += 1
-            else if (map_j2i[j] < 0){
-                aligned_seq_1 += '-'
-                aligned_seq_2 += seq2[j]
-                j += 1
+                aligned_seq_1[pos] = seq1[i];
+                aligned_seq_2[pos] = seq2[j];
+                i += 1;
+                j += 1;
+	    } else if (map_i2j[i] < 0){
+                aligned_seq_1[pos] = seq1[i];
+                aligned_seq_2[pos] = '-';
+                i += 1;
+	    } else if (map_j2i[j] < 0){
+                aligned_seq_1[pos] = '-';
+                aligned_seq_2[pos] = seq2[j];
+                j += 1;
+	    }
 
-
-        else  (j<max_j){
-            aligned_seq_1 += '-'
-            aligned_seq_2 += seq2[j]
-            j += 1
-        else{
-            aligned_seq_1 += seq1[i]
-            aligned_seq_2 += '-'
-            i += 1
+	} else if (j<max_j){
+	    aligned_seq_1[pos] = '-';
+	    aligned_seq_2[pos] = seq2[j];
+	    j += 1;
+	} else {
+            aligned_seq_1[pos] = seq1[i];
+            aligned_seq_2[pos] = '-';
+            i += 1;
+	}
+	pos ++;
+    }
            
- 
-# endif
-	    
+    
     free_imatrix(F);
     free_cmatrix(direction);
     free(map_i2j);
     free(map_j2i);
+
     
     return Py_BuildValue("ss", aligned_seq_1, aligned_seq_2 );
     

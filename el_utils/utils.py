@@ -1,4 +1,4 @@
-import sys
+import sys, os
 
 #########################################
 def erropen (file,mode):
@@ -10,6 +10,13 @@ def erropen (file,mode):
         sys.exit(1)
 
     return of
+
+#########################################
+def mkdir_p (path):
+    try:
+        os.makedirs(path)
+    except: 
+        sys.exit(1) 
 
 #########################################
 def output_fasta (filename, headers, sequence):

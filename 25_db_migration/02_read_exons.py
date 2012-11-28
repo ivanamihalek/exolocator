@@ -3,16 +3,14 @@
 import MySQLdb
 import os, commands, sys
 from   time import clock, time 
-from   el_utils.mysql         import connect_to_mysql, search_db, switch_to_db
-from   el_utils.mysql         import store_or_update, check_table_exists
+from   el_utils.mysql         import *
 from   el_utils.config_reader import ConfigurationReader
 from   el_utils.utils         import erropen
+from   el_utils.threads       import  parallelize
 
 
 ########################################
-def make_exon_table (cursor):
-
-    table = 'exon'
+def make_exon_table (cursor, table):
 
     qry  = "CREATE TABLE " + table + "  (id INT(10) PRIMARY KEY AUTO_INCREMENT)"
     rows = search_db (cursor, qry)
@@ -46,14 +44,15 @@ def make_exon_table (cursor):
 
 
 #########################################
-def check_exon_table(cursor, db_name):
-    table = 'exon'
+def check_exon_table(cursor, db_name, species):
+    table =  'exon_' + species
     if ( check_table_exists (cursor, db_name, table)):
         print table, " found in ", db_name
     else:
         print table, " not found in ", db_name
-        make_exon_table (cursor)
-        create_index (cursor, db_name,'exon_key_idx', table, ['exon_key'])
+        make_exon_table (cursor, table)
+        #create_index (cursor, db_name,'exon_key_idx', table, ['exon_key'])
+        #create_index (cursor, db_name,'gene_id_idx', table, ['ensembl_gene_id'])
 
 #########################################
 def get_exon_dump_files(in_path):
@@ -64,11 +63,10 @@ def get_exon_dump_files(in_path):
     return infiles
 
 #########################################
-def store(cursor, in_path, infile):
+def store(cursor, in_path, infile, species):
 
-    fields  = infile.split("_")
-    species = "_".join(fields[0:2])
-    inf     = erropen (in_path+"/"+infile, "r")
+    table =  'exon_' + species
+    inf   = erropen (in_path+"/"+infile, "r")
 
     print
     print "storing contents of ", infile
@@ -80,6 +78,7 @@ def store(cursor, in_path, infile):
         ct += 1
         if (not ct%1000):
             print "   %s   %5d    %8.3f" % (species, ct,  time()-start);
+            start = time()
         line   = line.rstrip()
         field  = line.split("\t")
 
@@ -120,14 +119,38 @@ def store(cursor, in_path, infile):
         update_fields['right_flank']     =  right_flank  
         update_fields['dna_seq']         =  dna_seq     
 
-        store_or_update (cursor, 'exon', fixed_fields, update_fields)
+        store_or_update (cursor, table, fixed_fields, update_fields)
 
 
     inf.close()
     
 #########################################
+def load_from_infiles (infiles, in_path):
+    
+    db_name =  "exolocator_db"
+    db      = connect_to_mysql(user="marioot", passwd="tooiram")
+    cursor  = db.cursor()
+    switch_to_db (cursor, db_name)
+    
+    ###############
+    for infile in infiles:
+        if ('homo_sapiens' in infile): continue
+        
+        fields = infile.split ("_")
+        species = fields[0] + "_" + fields[1] 
+        if ('mustela') in fields[0]:
+            species += "_" + fields[2]
+            
+        check_exon_table(cursor, db_name, species)
+        store           (cursor, in_path, infile, species)
+
+    
+#########################################
 def main():
 
+    
+    no_threads = 5
+    
     db_name =  "exolocator_db"
     db      = connect_to_mysql(user="marioot", passwd="tooiram")
     cursor  = db.cursor()
@@ -138,18 +161,15 @@ def main():
     if (not os.path.exists(in_path)):
         print in_path, "not found"
 
-    ###############
-    check_exon_table(cursor, db_name)
+    
+    cursor.close()
+    db    .close()
     
     ###############
     infiles = get_exon_dump_files(in_path)
 
-    ###############
-    for infile in infiles:
-        store(cursor, in_path, infile)
 
-    cursor.close()
-    db    .close()
+    parallelize (no_threads, load_from_infiles, infiles, in_path)
 
 
 

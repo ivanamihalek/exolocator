@@ -37,6 +37,7 @@ def exon_aware_smith_waterman (seq1, seq2):
         
         for digit2 in digits:
             matrix[(digit1, digit2)] = 10
+            matrix[(digit2, digit1)] = 10
 
         for character in alphabet:
             matrix[(digit1, character)] = 0
@@ -56,7 +57,6 @@ def exon_aware_smith_waterman (seq1, seq2):
                 else:
                     matrix[(any1, any2)] = matrix[(any2, any1)]
                     
-
     ######################################################3
     gap_opening   =  -5.0
     gap_extension =  -3.0
@@ -165,7 +165,7 @@ def exon_aware_smith_waterman (seq1, seq2):
 		
             elif j:
 		
-		if (j_between_exons) :
+		if (i_between_exons) :
 		    penalty = 0
                 else:
 		    if (use_endgap) :
@@ -183,7 +183,7 @@ def exon_aware_smith_waterman (seq1, seq2):
 		
             elif i:
 		
-		if (i_between_exons) :
+		if (j_between_exons) :
 		    penalty = 0
                 else :
 		    if ( use_endgap) :
