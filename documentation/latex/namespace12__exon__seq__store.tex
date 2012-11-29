@@ -1,0 +1,179 @@
+\hypertarget{namespace12__exon__seq__store}{\section{12\-\_\-exon\-\_\-seq\-\_\-store Namespace Reference}
+\label{namespace12__exon__seq__store}\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespace12__exon__seq__store_aa683a56ce5b02b6140dcff8940a5fd7e}{get\-\_\-primary\-\_\-seq\-\_\-info}
+\item 
+def \hyperlink{namespace12__exon__seq__store_a7e07147d33945c4af6b7ad2abaf3cd85}{get\-\_\-alt\-\_\-seq\-\_\-info}
+\item 
+def \hyperlink{namespace12__exon__seq__store_a6e2645c20b8ecb2f7644276caa025214}{extract\-\_\-gene\-\_\-seq}
+\item 
+def \hyperlink{namespace12__exon__seq__store_aba2efa8f46ef665d66b5f51a0deac1a0}{strip\-\_\-stop}
+\item 
+def \hyperlink{namespace12__exon__seq__store_a0b65b4fd52a3291d2086528cc1f47858}{canonical\-\_\-transl\-\_\-info}
+\item 
+def \hyperlink{namespace12__exon__seq__store_acf44dc16c6b297ff8db54e486dfd0fba}{get\-\_\-canonical\-\_\-transl}
+\item 
+def \hyperlink{namespace12__exon__seq__store_a9573a058a9f0bde8a68724ce31cc3093}{get\-\_\-canonical\-\_\-exons}
+\item 
+def \hyperlink{namespace12__exon__seq__store_a163f10dd9974fa59e5dcb0702b722de6}{transl\-\_\-reconstruct}
+\item 
+def \hyperlink{namespace12__exon__seq__store_acf9f17f2aa3d0f54e3662c145a606a32}{compare\-\_\-seqs}
+\item 
+def \hyperlink{namespace12__exon__seq__store_a0a266b0c76b80904008c1ac963e9d8d4}{get\-\_\-gene\-\_\-seq}
+\item 
+def \hyperlink{namespace12__exon__seq__store_abf226158714d028315bb8905415f81f7}{get\-\_\-exon\-\_\-seqs}
+\item 
+def \hyperlink{namespace12__exon__seq__store_a6c9dc3a2f058425a6a487fc8b868d658}{store}
+\begin{DoxyCompactList}\small\item\em Calls \hyperlink{namespaceel__utils_1_1mysql_ad1dbce5e2a628225a3aee9f4bb002d4b}{store\-\_\-or\-\_\-update()} from el\-\_\-utils.\-mysql.\-py\-: It sets the fixed fields to be exon\-\_\-id, is\-\_\-known, and is\-\_\-sw; The rest of the exon info is updateable. \end{DoxyCompactList}\item 
+def \hyperlink{namespace12__exon__seq__store_a60046448e48836673785b159fbe34282}{store\-\_\-exon\-\_\-seqs}
+\begin{DoxyCompactList}\small\item\em The core of the operation\-: species-\/-\/$>$genes-\/-\/$>$gene seq + exon list -\/-\/$>$ exon\-\_\-seqs. \end{DoxyCompactList}\item 
+def \hyperlink{namespace12__exon__seq__store_a8517b3ef4d3826fd5ed3ee3b1bf8d539}{main}
+\begin{DoxyCompactList}\small\item\em Main entry point, but in reality does nothing except taking care of the parallelization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{namespace12__exon__seq__store_a0b65b4fd52a3291d2086528cc1f47858}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!canonical\-\_\-transl\-\_\-info@{canonical\-\_\-transl\-\_\-info}}
+\index{canonical\-\_\-transl\-\_\-info@{canonical\-\_\-transl\-\_\-info}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{canonical\-\_\-transl\-\_\-info}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-canonical\-\_\-transl\-\_\-info (
+\begin{DoxyParamCaption}
+\item[{}]{cursor, }
+\item[{}]{gene\-\_\-id}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_a0b65b4fd52a3291d2086528cc1f47858}
+\hypertarget{namespace12__exon__seq__store_acf9f17f2aa3d0f54e3662c145a606a32}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!compare\-\_\-seqs@{compare\-\_\-seqs}}
+\index{compare\-\_\-seqs@{compare\-\_\-seqs}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{compare\-\_\-seqs}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-compare\-\_\-seqs (
+\begin{DoxyParamCaption}
+\item[{}]{canonical\-\_\-translation, }
+\item[{}]{translated\-\_\-seq, }
+\item[{}]{verbose = {\ttfamily False}}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_acf9f17f2aa3d0f54e3662c145a606a32}
+\hypertarget{namespace12__exon__seq__store_a6e2645c20b8ecb2f7644276caa025214}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!extract\-\_\-gene\-\_\-seq@{extract\-\_\-gene\-\_\-seq}}
+\index{extract\-\_\-gene\-\_\-seq@{extract\-\_\-gene\-\_\-seq}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{extract\-\_\-gene\-\_\-seq}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-extract\-\_\-gene\-\_\-seq (
+\begin{DoxyParamCaption}
+\item[{}]{acg, }
+\item[{}]{species, }
+\item[{}]{seq\-\_\-name, }
+\item[{}]{file\-\_\-names, }
+\item[{}]{seq\-\_\-region\-\_\-strand, }
+\item[{}]{seq\-\_\-region\-\_\-start, }
+\item[{}]{seq\-\_\-region\-\_\-end}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_a6e2645c20b8ecb2f7644276caa025214}
+\hypertarget{namespace12__exon__seq__store_a7e07147d33945c4af6b7ad2abaf3cd85}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!get\-\_\-alt\-\_\-seq\-\_\-info@{get\-\_\-alt\-\_\-seq\-\_\-info}}
+\index{get\-\_\-alt\-\_\-seq\-\_\-info@{get\-\_\-alt\-\_\-seq\-\_\-info}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{get\-\_\-alt\-\_\-seq\-\_\-info}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-get\-\_\-alt\-\_\-seq\-\_\-info (
+\begin{DoxyParamCaption}
+\item[{}]{cursor, }
+\item[{}]{gene\-\_\-id, }
+\item[{}]{species}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_a7e07147d33945c4af6b7ad2abaf3cd85}
+\hypertarget{namespace12__exon__seq__store_a9573a058a9f0bde8a68724ce31cc3093}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!get\-\_\-canonical\-\_\-exons@{get\-\_\-canonical\-\_\-exons}}
+\index{get\-\_\-canonical\-\_\-exons@{get\-\_\-canonical\-\_\-exons}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{get\-\_\-canonical\-\_\-exons}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-get\-\_\-canonical\-\_\-exons (
+\begin{DoxyParamCaption}
+\item[{}]{cursor, }
+\item[{}]{gene\-\_\-id}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_a9573a058a9f0bde8a68724ce31cc3093}
+\hypertarget{namespace12__exon__seq__store_acf44dc16c6b297ff8db54e486dfd0fba}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!get\-\_\-canonical\-\_\-transl@{get\-\_\-canonical\-\_\-transl}}
+\index{get\-\_\-canonical\-\_\-transl@{get\-\_\-canonical\-\_\-transl}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{get\-\_\-canonical\-\_\-transl}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-get\-\_\-canonical\-\_\-transl (
+\begin{DoxyParamCaption}
+\item[{}]{acg, }
+\item[{}]{cursor, }
+\item[{}]{gene\-\_\-id, }
+\item[{}]{species}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_acf44dc16c6b297ff8db54e486dfd0fba}
+\hypertarget{namespace12__exon__seq__store_abf226158714d028315bb8905415f81f7}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!get\-\_\-exon\-\_\-seqs@{get\-\_\-exon\-\_\-seqs}}
+\index{get\-\_\-exon\-\_\-seqs@{get\-\_\-exon\-\_\-seqs}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{get\-\_\-exon\-\_\-seqs}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-get\-\_\-exon\-\_\-seqs (
+\begin{DoxyParamCaption}
+\item[{}]{gene\-\_\-seq, }
+\item[{}]{exons}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_abf226158714d028315bb8905415f81f7}
+\hypertarget{namespace12__exon__seq__store_a0a266b0c76b80904008c1ac963e9d8d4}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!get\-\_\-gene\-\_\-seq@{get\-\_\-gene\-\_\-seq}}
+\index{get\-\_\-gene\-\_\-seq@{get\-\_\-gene\-\_\-seq}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{get\-\_\-gene\-\_\-seq}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-get\-\_\-gene\-\_\-seq (
+\begin{DoxyParamCaption}
+\item[{}]{acg, }
+\item[{}]{cursor, }
+\item[{}]{gene\-\_\-id, }
+\item[{}]{species}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_a0a266b0c76b80904008c1ac963e9d8d4}
+\hypertarget{namespace12__exon__seq__store_aa683a56ce5b02b6140dcff8940a5fd7e}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!get\-\_\-primary\-\_\-seq\-\_\-info@{get\-\_\-primary\-\_\-seq\-\_\-info}}
+\index{get\-\_\-primary\-\_\-seq\-\_\-info@{get\-\_\-primary\-\_\-seq\-\_\-info}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{get\-\_\-primary\-\_\-seq\-\_\-info}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-get\-\_\-primary\-\_\-seq\-\_\-info (
+\begin{DoxyParamCaption}
+\item[{}]{cursor, }
+\item[{}]{gene\-\_\-id, }
+\item[{}]{species}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_aa683a56ce5b02b6140dcff8940a5fd7e}
+\hypertarget{namespace12__exon__seq__store_a8517b3ef4d3826fd5ed3ee3b1bf8d539}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!main@{main}}
+\index{main@{main}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-main (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_a8517b3ef4d3826fd5ed3ee3b1bf8d539}
+
+
+Main entry point, but in reality does nothing except taking care of the parallelization. 
+
+The parallelization here is per-\/species. \hypertarget{namespace12__exon__seq__store_a6c9dc3a2f058425a6a487fc8b868d658}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!store@{store}}
+\index{store@{store}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{store}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-store (
+\begin{DoxyParamCaption}
+\item[{}]{cursor, }
+\item[{}]{exons, }
+\item[{}]{exon\-\_\-seq, }
+\item[{}]{left\-\_\-flank, }
+\item[{}]{right\-\_\-flank, }
+\item[{}]{canonical\-\_\-exon\-\_\-pepseq}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_a6c9dc3a2f058425a6a487fc8b868d658}
+
+
+Calls \hyperlink{namespaceel__utils_1_1mysql_ad1dbce5e2a628225a3aee9f4bb002d4b}{store\-\_\-or\-\_\-update()} from el\-\_\-utils.\-mysql.\-py\-: It sets the fixed fields to be exon\-\_\-id, is\-\_\-known, and is\-\_\-sw; The rest of the exon info is updateable. 
+
+\hypertarget{namespace12__exon__seq__store_a60046448e48836673785b159fbe34282}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!store\-\_\-exon\-\_\-seqs@{store\-\_\-exon\-\_\-seqs}}
+\index{store\-\_\-exon\-\_\-seqs@{store\-\_\-exon\-\_\-seqs}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{store\-\_\-exon\-\_\-seqs}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-store\-\_\-exon\-\_\-seqs (
+\begin{DoxyParamCaption}
+\item[{}]{species\-\_\-list, }
+\item[{}]{db\-\_\-info}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_a60046448e48836673785b159fbe34282}
+
+
+The core of the operation\-: species-\/-\/$>$genes-\/-\/$>$gene seq + exon list -\/-\/$>$ exon\-\_\-seqs. 
+
+For each species retrieves all protein coding genes, and for each of the genes its full sequence and the list of the known exons; assigns dna and protein sequence to each exon and stores it in db. \hypertarget{namespace12__exon__seq__store_aba2efa8f46ef665d66b5f51a0deac1a0}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!strip\-\_\-stop@{strip\-\_\-stop}}
+\index{strip\-\_\-stop@{strip\-\_\-stop}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{strip\-\_\-stop}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-strip\-\_\-stop (
+\begin{DoxyParamCaption}
+\item[{}]{pepseq}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_aba2efa8f46ef665d66b5f51a0deac1a0}
+\hypertarget{namespace12__exon__seq__store_a163f10dd9974fa59e5dcb0702b722de6}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!transl\-\_\-reconstruct@{transl\-\_\-reconstruct}}
+\index{transl\-\_\-reconstruct@{transl\-\_\-reconstruct}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
+\subsubsection[{transl\-\_\-reconstruct}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-transl\-\_\-reconstruct (
+\begin{DoxyParamCaption}
+\item[{}]{cursor, }
+\item[{}]{gene\-\_\-id, }
+\item[{}]{gene\-\_\-seq, }
+\item[{}]{canonical\-\_\-coding\-\_\-exons, }
+\item[{}]{is\-\_\-mitochondrial, }
+\item[{}]{verbose = {\ttfamily False}}
+\end{DoxyParamCaption}
+)}}\label{namespace12__exon__seq__store_a163f10dd9974fa59e5dcb0702b722de6}

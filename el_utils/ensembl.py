@@ -48,8 +48,7 @@ def get_description (cursor, gene_id):
 
     return ""
 
-
-###################################
+#########################################
 def get_logic_name(cursor, analysis_id):
         qry = "SELECT logic_name FROM analysis WHERE analysis_id = %d" % analysis_id
         rows    = search_db (cursor, qry)
@@ -81,8 +80,6 @@ def is_mitochondrial (cursor, gene_id):
     is_mitochondrial = (seq_name == 'MT')
 
     return is_mitochondrial
-
-
 
 #########################################
 def get_exon_pepseq (cursor, exon_id, is_known, db_name=None):

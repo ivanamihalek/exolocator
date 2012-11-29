@@ -107,9 +107,11 @@ def main():
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)    
-    all_species = ['tupaia_belangeri', 'tetraodon_nigroviridis']
+    #all_species = ['tupaia_belangeri', 'tetraodon_nigroviridis']
 
     for species in all_species:
+
+        print species
 
         switch_to_db (cursor,  ensembl_db_name[species])
 
@@ -122,6 +124,7 @@ def main():
         ct          = 0
         no_pepseq   = 0
         exon_seq_ok = 0
+        mismatch    = 0
        
         for tot in range(500):
  
@@ -144,12 +147,16 @@ def main():
                     continue
 
                 elif (exon.is_coding and exon.covering_exon < 0):
-                    
-                    if ( exon_seqs[0]):
-                        exon_seq_ok += 1
-                    else:
 
-                        [protein_seq, left_flank, right_flank, dna_seq] = exon_seqs
+                    [exon_seq_id, protein_seq, left_flank, right_flank, dna_seq] = exon_seqs
+
+                    if ( protein_seq and len(protein_seq) ):
+                        exon_seq_ok += 1
+                        if (not len(protein_seq)*3 >= len(dna_seq)-4):
+                            mismatch += 1
+                    else:
+                        
+                        '''       
                         mitochondrial =  is_mitochondrial(cursor, gene_id)
                         print "no translation "
                         print "gene id ", gene_id, gene2stable(cursor, gene_id), " exon_id ", exon.exon_id
@@ -180,6 +187,7 @@ def main():
                         print " ** ", pepseq
                         print
                         print
+                        '''
                         no_pepseq += 1
 
  
@@ -188,6 +196,7 @@ def main():
         print "tot number of genes checked: ", tot
         print "            without dna seq: ", ct
         print "   exons with petide seq ok: ", exon_seq_ok
+        print "    dna seq length mismatch: ", mismatch
         print "   exons without petide seq: ", no_pepseq
 
     cursor.close()

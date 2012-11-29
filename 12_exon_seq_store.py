@@ -489,6 +489,12 @@ def get_exon_seqs (gene_seq, exons):
 #########################################
 def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq):
     
+    """
+    Calls store_or_update() from el_utils.mysql.py:
+    It sets the fixed fields to be exon_id, is_known, and is_sw;
+    The rest of the exon info is updateable.
+    """
+
     for exon in exons:
         exon_id = exon.exon_id
         #####
@@ -512,6 +518,15 @@ def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_peps
 
 #########################################
 def store_exon_seqs(species_list, db_info):
+
+    """
+    The core of the operation: species-->genes-->gene seq + exon list --> exon_seqs.
+    For each species retrieves all protein coding genes, 
+    and for each of the genes its full sequence and  the list of the known exons;  
+    assigns dna and protein sequence to each exon and stores it in db.
+
+    """
+    
 
     [local_db, ensembl_db_name] = db_info
     if local_db:
@@ -581,6 +596,12 @@ def store_exon_seqs(species_list, db_info):
 
 #########################################
 def main():
+
+    """
+    Main entry point, but in reality does nothing except taking care of the parallelization.
+    The parallelization here is per-species.
+    """
+
 
     no_threads = 5
 

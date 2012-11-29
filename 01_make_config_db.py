@@ -1,17 +1,28 @@
 #!/usr/bin/python
 
+""" 
+@package 01_make_config_db.py
+@brief  Creating ad filling the configuration database. Hardcoded stuff is here.
+@author Ivana
+@date   2012
+"""
 import MySQLdb
 import os, sys
 from   el_utils.mysql   import  connect_to_mysql, search_db
 from   el_utils.mysql   import  check_table_exists, store_or_update
 from   el_utils.ensembl import  get_species, get_compara_name, species2taxid
 from   el_utils.ncbi    import  get_ncbi_tax_name
-'''
-  Set paths to Ensembl directories and to various utility programs.
-'''
+
+
 #########################################
 def  make_parameter_table (cursor):
 
+    """
+    Creates parameter table in the config database.
+    @param [cursor] db cursor, assumed top be pointing to the config database
+    @retval True  on success
+    @retval False on failure;  in that case the seach_db() call is repeated in verbose mode.
+    """
 
     table = 'parameter'
 
@@ -28,7 +39,7 @@ def  make_parameter_table (cursor):
         rows = search_db (cursor, qry, verbose=True)
         if (rows):
             return False
-
+    return False
  
 #########################################
 def  make_path_table (cursor, table):

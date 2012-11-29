@@ -29,7 +29,7 @@ def translate_to_trivial(cursor, all_species):
     return trivial_name
 
 #########################################
-def  fract_identity (seq1, seq2):
+def fract_identity (seq1, seq2):
     
     fract_identity = 0.0
     if ( not len(seq1)):
@@ -43,7 +43,7 @@ def  fract_identity (seq1, seq2):
     return fract_identity
 
 #########################################
-def merged_sequence (template_seq, sequence_pieces):
+def merged_sequence (template_seq, sequence_pieces, nucseq_pieces):
     
     template_length = len(template_seq)
     merged = '-'*template_length
@@ -67,7 +67,6 @@ def merged_sequence (template_seq, sequence_pieces):
                     overlap.append(index)
                 break
 
-    
     # if yes, get rid of the less similar one
     to_delete = []
     for index in overlap:
@@ -89,21 +88,80 @@ def merged_sequence (template_seq, sequence_pieces):
             # not sure what is this:
             if deletable >= len(sequence_pieces): continue
             del sequence_pieces[deletable]
+            del nucseq_pieces[deletable]
 
     # if not, go ahead and merge
-    merged = ""
+    merged     = ""
+    merged_dna = ""
     for pos in range(template_length):
-        new_char = '-'
-        for piece in sequence_pieces:
-            if piece[pos] == '-': 
+        new_char  = '-'
+        new_codon = '---'
+        
+        for piece_ct in range(len(sequence_pieces)):
+            pep_piece = sequence_pieces[piece_ct]
+            dna_piece = nucseq_pieces  [piece_ct]
+            if pep_piece[pos] == '-': 
                 continue
             else:
-                new_char =  piece[pos]
+                new_char  =  pep_piece[pos]
+                new_codon =  dna_piece[pos*3:pos*3+3]
                 break
-        merged += new_char
+        merged     += new_char
+        merged_dna += new_codon
     
-    return merged   
+    return [merged, merged_dna]   
 
+
+#########################################
+def align_nucseq_by_pepseq(aligned_pepseq, nucseq):
+    assert(len(aligned_pepseq.replace('-',''))*3 == len(nucseq))
+    codons = iter(map(''.join, zip(*[iter(nucseq)]*3)))
+    aligned_nucseq = ''.join(('---' if c=='-' else next(codons) for c in aligned_pepseq))
+    return aligned_nucseq
+
+#########################################
+def print_notes (notes_fnm, orthologues, exons, sorted_species, specid2name, human_stable_id, source):
+
+    # write to string
+    out_string  = "% Notes to accompany the alignment of (tentative) orthologues\n"
+    out_string += "%% for the canonical transcript of the human gene %s," %  human_stable_id
+    out_string += "\n" 
+    out_string += "% The alignment shows the exons that correspond to human transcript,\n" 
+    out_string += "% from the following genes: \n" 
+    out_string += "%% %7s  %25s  %30s \n" % ('name_short', 'name_long', 'stable_id')
+
+    for species in sorted_species:
+        [orth_id, spec_id] =  used_orthologue[species]
+        spec_long = specid2name[spec_id]
+        stable_id = get_stable_id (orth_id, spec_long)
+        out_string += "%7s %30s  %30s \n" % (species, specid2name[spec_id], stable_id)
+
+    out_string += "\n" 
+    out_string += "% The following exons were used in the alignment\n" 
+
+    for i in range(len(used_exons['HOM_SAP'])):
+        out_string += "%% exon %3d\n" % i
+        out_string += "%% %7s  %15s %15s  %40s\n" % ('name_short', 'gene_from', 'gene_to', 'source')
+        for species in sorted_species:
+            if ( used_exons.has_key(species) and i < len(used_exons[species])):
+                ret =  used_exons[species][i]
+                if ret:
+                    [exon_id, is_known,  is_canonical, start_in_gene, end_in_gene, protein_seq, analysis_id] = ret
+                
+                    out_string += "%7s  %15d %15d  %40s \n" % (species, start_in_gene,
+                                                           end_in_gene, source[species][analysis_id])
+                else:
+                    out_string += "%7s  %15s %15s  %40s \n" % (species, "-",  "-",  "-")
+            else:
+                out_string += "%7s  %15s %15s  %40s \n" % (species, "-",  "-",  "-")
+                
+                
+
+    of = open (notes_fnm, "w")
+    print >> of, out_string
+    of.close()
+
+    return True
 
 #########################################
 def main():
@@ -135,9 +193,6 @@ def main():
     # for each human gene
     gene_ct = 0
     for gene_id in gene_ids:
-    #for gene_id in [412667]: #  wls
-    #for gene_id in [378768]: #  p53
-    #for gene_id in [378766]: #  dynein
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
@@ -156,13 +211,6 @@ def main():
         # the exons are not guaranteed to be in order
         canonical_exons.sort(key=lambda exon: exon.start_in_gene)
 
-        # one2one   orthologues
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        known_orthologues      = get_orthos (cursor, gene_id, 'orthologue')
-        # not-clear orthologues
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        unresolved_orthologues = get_orthos (cursor, gene_id, 'unresolved_ortho')
-
         # reconstruct the alignment with orthologues
         sequence  = {}
         seq_name  = {}
@@ -176,17 +224,12 @@ def main():
                 continue
             else:
                 has_a_map = True
+
             for map in maps:
                 species = map.species_2
                 # get the raw (unaligned) sequence for the exon that maps onto human
-                unaligned_sequence = get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, 
-                                                     ensembl_db_name[map.species_2])
-                #print "###################################"
-                #print map
-                #print get_exon_pepseq(cursor, map.exon_id_1, map.exon_known_1, ensembl_db_name['homo_sapiens'])
-                #print get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[species])
-                #print 
-
+                [exon_seq_id, unaligned_sequence, left_flank, right_flank, nucseq] = \
+                    get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
                 # inflate the compressed sequence
                 if map.bitmap and unaligned_sequence:
                     bs = Bits(bytes=map.bitmap)
@@ -197,10 +240,9 @@ def main():
                     # rebuild aligned sequence
                     usi = iter(unaligned_sequence)
                     reconstructed_sequence = "".join(('-' if c=='0' else next(usi) for c in bs.bin))
+                    # rebuild aligned dna sequence, while we are at that
+                    reconstructed_nucseq   = align_nucseq_by_pepseq(reconstructed_sequence, nucseq)
                 else:
-                    #print " No bitmap! Error in the database! Skip past this entry"
-                    #print map.species_2
-                    #print map.exon_id_2
                     continue
 
                 # come up with a unique name for this sequence
@@ -225,18 +267,23 @@ def main():
                 # use human exon as a label, no matter which species the sequence is
                 # actually coming from 
                 if not sequence.has_key(sequence_name):
-                    sequence[sequence_name] = {}
+                    sequence[sequence_name]     = {}
+                    dna_sequence[sequence_name] = {}
  
                 if not sequence[sequence_name].has_key(human_exon):
-                    sequence[sequence_name][human_exon] = reconstructed_sequence
-                    
+                    sequence[sequence_name][human_exon]     = reconstructed_sequence
+                    dna_sequence[sequence_name][human_exon] = reconstructed_nucseq
                 else:
                     # there is a number of sequences that map onto this human sequence
                     if type(sequence[sequence_name][human_exon]) is list:
                         sequence[sequence_name][human_exon].append(reconstructed_sequence)
+                        dna_sequence[sequence_name][human_exon].append(reconstructed_nucseq)
                     else: # we need to start storing as a list
                         tmp = sequence[sequence_name][human_exon]
-                        sequence[sequence_name][human_exon] = [tmp, reconstructed_sequence]
+                        sequence[sequence_name][human_exon]     = [tmp, reconstructed_sequence]
+                        
+                        tmp = dna_sequence[sequence_name][human_exon]
+                        dna_sequence[sequence_name][human_exon] = [tmp, reconstructed_nucseq]
 
         if not has_a_map: continue
 
@@ -255,8 +302,8 @@ def main():
         for i in range( len(to_remove)-1, -1, -1):
             del canonical_exons[to_remove[i]]
 
-          
-        # stitch together different exons
+        ###############################################################
+        # stitch  the exons together
         headers        = []
         output_seq     = {}
         ortholog_count = {}
@@ -264,49 +311,79 @@ def main():
             if not seq_name.has_key(species):
                 continue
             trivial         = trivial_name[species]
+            # how many genes homologous to the humna query do we have in this particular species?
             number_of_genes = len(seq_name[species].keys())
             
             for ct in range (1,number_of_genes+1):
 
+                # construct the name for this gene (to be used in afa file), and put it in the header
                 sequence_name = species
-                if ( ct > 1):
+                if (ct > 1):
                     sequence_name = species + "_" + str(ct)
                 new_name      = trivial
-                if ( number_of_genes > 1):
-                    new_name = trivial + "_" + str(ct)
-                
+                if (number_of_genes > 1):
+                    new_name  = trivial + "_" + str(ct)                
                 headers.append(new_name)
-                output_seq[new_name] = ""
+
+                # reconstruct the full length alignment from exon alignments
+                output_pep[new_name] = ""
+                output_dna[new_name] = ""
                 first_exon = True
                 for  human_exon in canonical_exons:
                     if not first_exon:
-                        output_seq[new_name] += 'Z'
+                        output_pep[new_name] += 'Z'
+
+                    # this species has a counterpart human exon
                     if sequence[sequence_name].has_key(human_exon):
-                        if (  type(sequence[sequence_name][human_exon]) is list):
+
+                        # multiple candidates for the exon that the human exon maps to
+                        if ( type(sequence[sequence_name][human_exon]) is list):
                             template = sequence['homo_sapiens'][human_exon]
                             # merged will delete the pieces that are covered and less similar to the template
-                            output_seq[new_name] +=  merged_sequence (template, sequence[sequence_name][human_exon])
-
+                            # it will also return the dna version of the merged sequence
+                            [pep, dna] = merged_sequence (template, sequence[sequence_name][human_exon], 
+                                                          dna_sequence[sequence_name][human_exon])
+                            output_pep[new_name] += pep
+                            output_dna[new_name] += dna
+                        # a single homologue
                         else:
-                            output_seq[new_name] += sequence[sequence_name][human_exon]
+                            output_pep[new_name] +=     sequence[sequence_name][human_exon]
+                            output_dna[new_name] += dna_sequence[sequence_name][human_exon]
+
+                    # the exon in this species is an insert wrt human sequence
                     else:
                         if (not sequence['homo_sapiens'].has_key(human_exon) ):
                             print ct, human_exon
-                            exit
-                        output_seq[new_name] += '-'*len(sequence['homo_sapiens'][human_exon])
+                            exit(1)
+                        output_pep[new_name] += '-'*len(    sequence['homo_sapiens'][human_exon])
+                        output_seq[new_name] += '-'*len(dna_sequence['homo_sapiens'][human_exon])
                     first_exon = False
                     
 
         # find place for best_afa -- for the moment can put it to the scratch space:
         afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-        output_fasta (afa_fnm, headers, output_seq)
-        #print afa_fnm
+        output_fasta (afa_fnm, headers, output_pep)
+        print afa_fnm
+        afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+        output_fasta (afa_fnm, headers, output_dna)
+        print afa_fnm
 
-        # reconstruct the dna alignment - output (? how are we going to do that?)
-        # there is exon_seq table in each genome database, containing both the dna and the peptide sequence ...
-        # as well as the left and the right flanks of the exon
+        # notes to accompany the alignment:
+        notes_fnm  = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
+        print notes_fnm
+        print_notes (notes_fnm, orthologues, exons, sorted_species, specid2name, human_stable_id, source)
+        
+
+        exit (1)
+
 
 
 #########################################
 if __name__ == '__main__':
     main()
+
+'''
+    #for gene_id in [412667]: #  wls
+    #for gene_id in [378768]: #  p53
+    #for gene_id in [378766]: #  dynein
+'''

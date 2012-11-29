@@ -1,0 +1,141 @@
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader}{\section{el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader Class Reference}
+\label{classel__utils_1_1config__reader_1_1ConfigurationReader}\index{el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader@{el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader}}
+}
+
+
+Loads configuration files from the cfg database -\/ which is assumend to be named 'exolocconfig'.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a8c1205d168b6de542dd1b40ebd2a358e}{\-\_\-\-\_\-init\-\_\-\-\_\-}
+\item 
+def \hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a52652afac126ef0854ff8842bb72bcf1}{get\-\_\-cfg\-\_\-db}
+\item 
+def \hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a96bfeb84d77e45d402b60bc1d497a973}{load\-\_\-cfg}
+\begin{DoxyCompactList}\small\item\em Load a configuration file and add the key, value pairs to the internal configuration dictionary. \end{DoxyCompactList}\item 
+def \hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a947f4ac1426b820f38d95a83f1270a1d}{spill\-\_\-all}
+\item 
+def \hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_aad8349727d3ee0b3b5f8184401932625}{get\-\_\-path}
+\item 
+def \hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a4268336dae4d6a9031b1d71959396193}{get\-\_\-value}
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_afc84a6b37e7bb1cbc02889e1e0b82fc8}{util\-\_\-path}
+\item 
+\hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a2c815b532f9726b7c1f107b176fb4e9c}{dir\-\_\-path}
+\item 
+\hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a3742301e1c74431a62e2add169c61c6c}{parameter\-\_\-value}
+\item 
+\hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a2772d3603ee19298dd0b0b645fc391f8}{cfg\-\_\-db\-\_\-name}
+\item 
+\hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a2693245cf452f6a2679bb612a512c4ec}{user}
+\item 
+\hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a4ca8f69fc1f92b59646dfbcee9c5c98f}{passwd}
+\item 
+\hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a64babfab25620f80a3c3a305ae20f7a9}{host}
+\item 
+\hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_af72d3d48ad04f29b72cf6700b8316987}{port}
+\item 
+\hyperlink{classel__utils_1_1config__reader_1_1ConfigurationReader_a5b97b484b6913656e459f8d054112567}{check}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Loads configuration files from the cfg database -\/ which is assumend to be named 'exolocconfig'. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a8c1205d168b6de542dd1b40ebd2a358e}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!\-\_\-\-\_\-init\-\_\-\-\_\-@{\-\_\-\-\_\-init\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-init\-\_\-\-\_\-@{\-\_\-\-\_\-init\-\_\-\-\_\-}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{\-\_\-\-\_\-init\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}def {\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-\_\-\-\_\-init\-\_\-\-\_\-} (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{user = {\ttfamily None}, }
+\item[{}]{passwd = {\ttfamily None}, }
+\item[{}]{host = {\ttfamily None}, }
+\item[{}]{port = {\ttfamily None}, }
+\item[{}]{check = {\ttfamily True}}
+\end{DoxyParamCaption}
+)}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a8c1205d168b6de542dd1b40ebd2a358e}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a52652afac126ef0854ff8842bb72bcf1}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!get\-\_\-cfg\-\_\-db@{get\-\_\-cfg\-\_\-db}}
+\index{get\-\_\-cfg\-\_\-db@{get\-\_\-cfg\-\_\-db}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{get\-\_\-cfg\-\_\-db}]{\setlength{\rightskip}{0pt plus 5cm}def {\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-get\-\_\-cfg\-\_\-db} (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a52652afac126ef0854ff8842bb72bcf1}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_aad8349727d3ee0b3b5f8184401932625}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!get\-\_\-path@{get\-\_\-path}}
+\index{get\-\_\-path@{get\-\_\-path}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{get\-\_\-path}]{\setlength{\rightskip}{0pt plus 5cm}def {\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-get\-\_\-path} (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{name}
+\end{DoxyParamCaption}
+)}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_aad8349727d3ee0b3b5f8184401932625}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a4268336dae4d6a9031b1d71959396193}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!get\-\_\-value@{get\-\_\-value}}
+\index{get\-\_\-value@{get\-\_\-value}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{get\-\_\-value}]{\setlength{\rightskip}{0pt plus 5cm}def {\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-get\-\_\-value} (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{name}
+\end{DoxyParamCaption}
+)}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a4268336dae4d6a9031b1d71959396193}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a96bfeb84d77e45d402b60bc1d497a973}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!load\-\_\-cfg@{load\-\_\-cfg}}
+\index{load\-\_\-cfg@{load\-\_\-cfg}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{load\-\_\-cfg}]{\setlength{\rightskip}{0pt plus 5cm}def {\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-load\-\_\-cfg} (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a96bfeb84d77e45d402b60bc1d497a973}
+
+
+Load a configuration file and add the key, value pairs to the internal configuration dictionary. 
+
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a947f4ac1426b820f38d95a83f1270a1d}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!spill\-\_\-all@{spill\-\_\-all}}
+\index{spill\-\_\-all@{spill\-\_\-all}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{spill\-\_\-all}]{\setlength{\rightskip}{0pt plus 5cm}def {\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-spill\-\_\-all} (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a947f4ac1426b820f38d95a83f1270a1d}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a2772d3603ee19298dd0b0b645fc391f8}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!cfg\-\_\-db\-\_\-name@{cfg\-\_\-db\-\_\-name}}
+\index{cfg\-\_\-db\-\_\-name@{cfg\-\_\-db\-\_\-name}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{cfg\-\_\-db\-\_\-name}]{\setlength{\rightskip}{0pt plus 5cm}{\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-cfg\-\_\-db\-\_\-name}}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a2772d3603ee19298dd0b0b645fc391f8}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a5b97b484b6913656e459f8d054112567}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!check@{check}}
+\index{check@{check}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{check}]{\setlength{\rightskip}{0pt plus 5cm}{\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-check}}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a5b97b484b6913656e459f8d054112567}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a2c815b532f9726b7c1f107b176fb4e9c}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!dir\-\_\-path@{dir\-\_\-path}}
+\index{dir\-\_\-path@{dir\-\_\-path}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{dir\-\_\-path}]{\setlength{\rightskip}{0pt plus 5cm}{\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-dir\-\_\-path}}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a2c815b532f9726b7c1f107b176fb4e9c}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a64babfab25620f80a3c3a305ae20f7a9}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!host@{host}}
+\index{host@{host}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{host}]{\setlength{\rightskip}{0pt plus 5cm}{\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-host}}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a64babfab25620f80a3c3a305ae20f7a9}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a3742301e1c74431a62e2add169c61c6c}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!parameter\-\_\-value@{parameter\-\_\-value}}
+\index{parameter\-\_\-value@{parameter\-\_\-value}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{parameter\-\_\-value}]{\setlength{\rightskip}{0pt plus 5cm}{\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-parameter\-\_\-value}}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a3742301e1c74431a62e2add169c61c6c}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a4ca8f69fc1f92b59646dfbcee9c5c98f}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!passwd@{passwd}}
+\index{passwd@{passwd}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{passwd}]{\setlength{\rightskip}{0pt plus 5cm}{\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-passwd}}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a4ca8f69fc1f92b59646dfbcee9c5c98f}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_af72d3d48ad04f29b72cf6700b8316987}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!port@{port}}
+\index{port@{port}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{port}]{\setlength{\rightskip}{0pt plus 5cm}{\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-port}}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_af72d3d48ad04f29b72cf6700b8316987}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_a2693245cf452f6a2679bb612a512c4ec}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!user@{user}}
+\index{user@{user}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{user}]{\setlength{\rightskip}{0pt plus 5cm}{\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-user}}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_a2693245cf452f6a2679bb612a512c4ec}
+\hypertarget{classel__utils_1_1config__reader_1_1ConfigurationReader_afc84a6b37e7bb1cbc02889e1e0b82fc8}{\index{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}!util\-\_\-path@{util\-\_\-path}}
+\index{util\-\_\-path@{util\-\_\-path}!el_utils::config_reader::ConfigurationReader@{el\-\_\-utils\-::config\-\_\-reader\-::\-Configuration\-Reader}}
+\subsubsection[{util\-\_\-path}]{\setlength{\rightskip}{0pt plus 5cm}{\bf el\-\_\-utils.\-config\-\_\-reader.\-Configuration\-Reader.\-util\-\_\-path}}}\label{classel__utils_1_1config__reader_1_1ConfigurationReader_afc84a6b37e7bb1cbc02889e1e0b82fc8}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+el\-\_\-utils/\hyperlink{config__reader_8py}{config\-\_\-reader.\-py}\end{DoxyCompactItemize}

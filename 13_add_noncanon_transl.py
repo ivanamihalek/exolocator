@@ -112,6 +112,7 @@ def pep_exon_seqs(species_list, db_info):
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
+    #####################################
     for species in species_list:
         
         print
@@ -125,8 +126,6 @@ def pep_exon_seqs(species_list, db_info):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
-
-
 
         tot         = 0
         gene_ct     = 0
