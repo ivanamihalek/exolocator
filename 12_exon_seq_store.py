@@ -232,6 +232,15 @@ def  get_canonical_exons (cursor, gene_id):
 def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons, 
                          is_mitochondrial, verbose = False):
 
+    """
+    Given tha dna sequence, gene information an the list of its canonical exons, reconstruct canonical translation.
+
+    Pay attention to whether the gene is mitochondrial.
+    Here in particular we can catch the 'false stop codons' corresponding to selenocysteines. (Because they are stored by their position
+    in the translation.)
+
+    """
+
     canonical_exon_pepseq = {}
     translated_seq = "" 
 
@@ -365,6 +374,9 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
 #########################################
 def compare_seqs (canonical_translation, translated_seq, verbose=False):
 
+    """
+    Return true if the two input sequences differ in no more than two positions.
+    """
     comparison_ok = True
 
     while (len(translated_seq) and translated_seq[0] == 'X'):
@@ -407,6 +419,9 @@ def compare_seqs (canonical_translation, translated_seq, verbose=False):
 #########################################
 def  get_gene_seq (acg, cursor, gene_id, species):
 
+    """
+    Given gene_id, return dna region which reproduces the correct canonical translation.
+    """
     null = ["",{}]
 
     #########################################
@@ -418,7 +433,7 @@ def  get_gene_seq (acg, cursor, gene_id, species):
      seq_region_strand, is_mitochondrial] = ret
     # i'm not quite clear why Ensembl is doing this, but sometimes we need the alternative
     # region - ("PATCH" deposited as tte right sequence, but its missing most of the gene)
-    # so first establish that is it the case: find canonical translation
+    # so first establish whether it is the case: find canonical translation.
     canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
     # find all canonical exons associated with the gene id
     canonical_coding_exons = get_canonical_exons (cursor, gene_id)
@@ -445,9 +460,7 @@ def  get_gene_seq (acg, cursor, gene_id, species):
         return null
     [seq_name, file_names, seq_region_start, seq_region_end, 
      seq_region_strand, is_mitochondrial] = ret
-      # i'm not quite clear why Ensembl is doing this, but sometimes we need the alternative
-    # region - ("PATCH" deposited as tte right sequence, but its missing most of the gene)
-    # so first establish that is it the case: find canonical translation
+    # check  canonical translation
     canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
     # find all canonical exons associated with the gene id
     canonical_coding_exons = get_canonical_exons (cursor, gene_id)
@@ -471,6 +484,10 @@ def  get_gene_seq (acg, cursor, gene_id, species):
 
 #########################################
 def get_exon_seqs (gene_seq, exons):
+
+    """
+    Return dna sequences belonging to each exon in the input list, according to Ensembl.
+    """
 
     exon_seq    = {} 
     left_flank  = {}
@@ -520,10 +537,14 @@ def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_peps
 def store_exon_seqs(species_list, db_info):
 
     """
-    The core of the operation: species-->genes-->gene seq + exon list --> exon_seqs.
+    The core of the operation: for each exon find and store dna sequence; for canonical exons also add the translation.
     For each species retrieves all protein coding genes, 
     and for each of the genes its full sequence and  the list of the known exons;  
-    assigns dna and protein sequence to each exon and stores it in db.
+    assigns dna  sequence to each exon (+ the translation for the canonical exons) and stores it in db.
+
+    The reason why only the canonical exons get the translation at this point is that the canonical translation available in
+    Ensembl is used to make sure we are looking at the right genome region. Namely, some sequences have a "patch"
+    with a corrected or completed sequence. The info about that can be found in the assembly_exception table.
 
     """
     

@@ -4,12 +4,14 @@ import MySQLdb
 import commands, sys
 from   el_utils.mysql   import connect_to_mysql, search_db, switch_to_db, check_null
 from   el_utils.mysql   import store_or_update
-from   el_utils.ensembl import get_gene_ids, get_species, is_mitochondrial
-from   el_utils.ensembl import gene2exon_list, get_exon_seqs, gene2stable
-from   el_utils.threads import parallelize
+from   el_utils.ensembl import  *
+
+from   el_utils.translation import crop_dna, translation_bounds, translate
+
+from   el_utils.threads     import parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 # BioPython
-from Bio.Seq import Seq
+from Bio.Seq      import Seq
 from Bio.Alphabet import generic_dna
 
 #########################################
@@ -24,27 +26,6 @@ def get_phase(cursor, exon_id):
 
     return [is_coding, phase, gene_id]
 
-#########################################
-def translation_bounds(cursor, exon_id):
-
-    seq_start = None
-    seq_end   = None
-
-    qry  = "select seq_start, start_exon_id"
-    qry += " from translation "
-    qry += " where start_exon_id = %d"  % exon_id
-    rows = search_db(cursor, qry, verbose=False)
-    if rows:
-        [seq_start, start_exon_id] = rows[0]
-
-    qry  = "select seq_end, end_exon_id"
-    qry += " from translation "
-    qry += " where end_exon_id = %d"  % exon_id
-    rows = search_db(cursor, qry, verbose=False)
-    if rows:
-        [seq_end, end_exon_id] = rows[0]
-
-    return [seq_start, seq_end]
 
 #########################################
 def phase2offset(phase):
@@ -56,51 +37,7 @@ def phase2offset(phase):
         offset = 3-phase
     return offset
 
-#########################################
-def  translate (dna_seq, phase, mitochondrial=False):
-    pepseq = ""
-    if phase < 0: phase = 0
-    offset = phase2offset(phase)
-    dnaseq = Seq (dna_seq[offset:], generic_dna)
-    if mitochondrial:
-        pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
-    else:
-        pepseq = dnaseq.translate().tostring()
-
-    if pepseq and pepseq[-1]=='*':
-        pepseq = pepseq[:-1]
-    if not '*' in pepseq:
-        return [phase, pepseq]
-
-    phase = (phase+1)%3
-    offset = phase2offset(phase)
-    dnaseq = Seq (dna_seq[offset:], generic_dna)
-    if mitochondrial:
-        pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
-    else:
-        pepseq = dnaseq.translate().tostring()
-    
-    if pepseq and  pepseq[-1]=='*':
-        pepseq = pepseq[:-1]
-    if not '*' in pepseq:
-        return [phase, pepseq]
-
-    phase = (phase+1)%3
-    offset = phase2offset(phase)
-    dnaseq = Seq (dna_seq[offset:], generic_dna)
-    if mitochondrial:
-        pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
-    else:
-        pepseq = dnaseq.translate().tostring()
-    
-    if pepseq and  pepseq[-1]=='*':
-        pepseq = pepseq[:-1]
-    if not '*' in pepseq:
-        return [phase, pepseq]
-
-    return [phase, pepseq]
-
-#########################################
+########################################
 def pep_exon_seqs(species_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
@@ -169,23 +106,8 @@ def pep_exon_seqs(species_list, db_info):
                 #####################################                
                 mitochondrial        = is_mitochondrial(cursor, gene_id)
                 [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id)
-                seq_start = check_null(seq_start)
-                seq_end   = check_null(seq_end)
-
-                if seq_start is None and  seq_end is None:
-                    pass
-                else:
-                    if seq_start is None:
-                        dna_seq = dna_seq[:seq_end]
-                    elif seq_end is None:
-                        if seq_start>0:
-                            dna_seq = dna_seq[seq_start-1:]
-                    else:
-                        if seq_start>0:
-                            dna_seq = dna_seq[seq_start-1:seq_end]
-                        else:
-                            dna_seq = dna_seq[:seq_end]
-                [phase, pepseq] = translate (dna_seq, exon.phase, mitochondrial)
+                dna_cropped          = crop_dna (seq_start, seq_end, dna_seq)
+                [phase, pepseq]      = translate (dna_cropped, exon.phase, mitochondrial)
 
                 if ( not pepseq): # usually some short pieces (end in pos 4 and such)
                     translation_fail += 1

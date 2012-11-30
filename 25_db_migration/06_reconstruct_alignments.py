@@ -113,11 +113,45 @@ def merged_sequence (template_seq, sequence_pieces, nucseq_pieces):
 
 
 #########################################
-def align_nucseq_by_pepseq(aligned_pepseq, nucseq):
-    assert(len(aligned_pepseq.replace('-',''))*3 == len(nucseq))
-    codons = iter(map(''.join, zip(*[iter(nucseq)]*3)))
-    aligned_nucseq = ''.join(('---' if c=='-' else next(codons) for c in aligned_pepseq))
-    return aligned_nucseq
+def align_nucseq_by_pepseq(cursor, aligned_pepseq, exon_seqs,  exon_id, exon_is_known):
+
+
+    [unaligned_pepseq, left_flank, right_flank, dna_seq] = exon_seqs
+
+    aligned_dna_seq = '---'*len(unaligned_pepseq)
+
+    exon                 = get_exon           (cursor, exon_id, exon_is_known)
+    mitochondrial        = is_mitochondrial   (cursor, exon.gene_id)
+    [seq_start, seq_end] = translation_bounds (cursor, exon_id)
+    dna_cropped          = crop_dna           (seq_start, seq_end, dna_seq)
+    offset               = phase2offset       (exon.phase)
+
+    # this is kinda crass, but the most straightforward
+    # starting from the suggested phase, translate the
+    # the sequence in all three frames, until the unaligned_pepseq is found
+    done = False
+    ct   = 0
+    while not done:
+        offset = (offset+ct)%3
+        dnaseq = Seq (dna_cropped[offset:], generic_dna)
+        if mitochondrial:
+            pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
+        else:
+            pepseq = dnaseq.translate().tostring()
+            
+        ct  += 1
+        pattern = re.compile(pepseq)
+        for match in pattern.finditer(unaligned_seq):
+            print pepseq
+            print unaligned_seq
+            print match.start(), match.end()
+
+        done = (pepseq in unaligned_pepseq or ct==3)
+   
+    exit (1)
+    # whatever we return must be 3*the input peptide long + the flanks
+    return left.tolower()+aligned_dna_seq.toupper()+right.tolower()
+
 
 #########################################
 def print_notes (notes_fnm, orthologues, exons, sorted_species, specid2name, human_stable_id, source):
@@ -208,6 +242,7 @@ def main():
             if not human_exon.is_canonical:
                 continue
             canonical_exons.append(human_exon)
+
         # the exons are not guaranteed to be in order
         canonical_exons.sort(key=lambda exon: exon.start_in_gene)
 
@@ -227,10 +262,13 @@ def main():
 
             for map in maps:
                 species = map.species_2
+                switch_to_db (cursor,  ensembl_db_name[species])
                 # get the raw (unaligned) sequence for the exon that maps onto human
-                [exon_seq_id, unaligned_sequence, left_flank, right_flank, nucseq] = \
-                    get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
+                exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
+                exon_seqs = exon_seqs[1:] # the first entry is database id
+                [pep_seq, left_flank, right_flank, dna_seq] = exon_seqs
                 # inflate the compressed sequence
+                unaligned_sequence = pep_seq
                 if map.bitmap and unaligned_sequence:
                     bs = Bits(bytes=map.bitmap)
                     # check bitmap has correct number of 1s
@@ -239,9 +277,10 @@ def main():
                         continue
                     # rebuild aligned sequence
                     usi = iter(unaligned_sequence)
-                    reconstructed_sequence = "".join(('-' if c=='0' else next(usi) for c in bs.bin))
+                    aligned_pep_seq = "".join(('-' if c=='0' else next(usi) for c in bs.bin))
                     # rebuild aligned dna sequence, while we are at that
-                    reconstructed_nucseq   = align_nucseq_by_pepseq(reconstructed_sequence, nucseq)
+                    aligned_dna_seq = align_nucseq_by_pepseq (cursor, aligned_pep_seq, 
+                                                              exon_seqs, map.exon_id_2, map.exon_known_2)
                 else:
                     continue
 

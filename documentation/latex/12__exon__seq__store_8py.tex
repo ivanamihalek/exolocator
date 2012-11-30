@@ -30,10 +30,10 @@ def \hyperlink{namespace12__exon__seq__store_acf9f17f2aa3d0f54e3662c145a606a32}{
 def \hyperlink{namespace12__exon__seq__store_a0a266b0c76b80904008c1ac963e9d8d4}{12\-\_\-exon\-\_\-seq\-\_\-store.\-get\-\_\-gene\-\_\-seq}
 \item 
 def \hyperlink{namespace12__exon__seq__store_abf226158714d028315bb8905415f81f7}{12\-\_\-exon\-\_\-seq\-\_\-store.\-get\-\_\-exon\-\_\-seqs}
-\item 
+\begin{DoxyCompactList}\small\item\em Return dna sequences belonging to each exon in the input list, according to Ensembl. \end{DoxyCompactList}\item 
 def \hyperlink{namespace12__exon__seq__store_a6c9dc3a2f058425a6a487fc8b868d658}{12\-\_\-exon\-\_\-seq\-\_\-store.\-store}
 \begin{DoxyCompactList}\small\item\em Calls \hyperlink{namespaceel__utils_1_1mysql_ad1dbce5e2a628225a3aee9f4bb002d4b}{store\-\_\-or\-\_\-update()} from el\-\_\-utils.\-mysql.\-py\-: It sets the fixed fields to be exon\-\_\-id, is\-\_\-known, and is\-\_\-sw; The rest of the exon info is updateable. \end{DoxyCompactList}\item 
 def \hyperlink{namespace12__exon__seq__store_a60046448e48836673785b159fbe34282}{12\-\_\-exon\-\_\-seq\-\_\-store.\-store\-\_\-exon\-\_\-seqs}
-\begin{DoxyCompactList}\small\item\em The core of the operation\-: species-\/-\/$>$genes-\/-\/$>$gene seq + exon list -\/-\/$>$ exon\-\_\-seqs. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em The core of the operation\-: for each exon find and store dna sequence; for canonical exons also add the translation. \end{DoxyCompactList}\item 
 def \hyperlink{namespace12__exon__seq__store_a8517b3ef4d3826fd5ed3ee3b1bf8d539}{12\-\_\-exon\-\_\-seq\-\_\-store.\-main}
 \begin{DoxyCompactList}\small\item\em Main entry point, but in reality does nothing except taking care of the parallelization. \end{DoxyCompactList}\end{DoxyCompactItemize}

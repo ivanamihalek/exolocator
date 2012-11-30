@@ -55,7 +55,7 @@ def main():
                     map =  per_species_map[species][human_exon]
                     print "\t      %3d  %8.2f" % ( human_exon_ct, map.similarity)
                 else:
-                    print "\t      %3d  none" % ( human_exon_ct)
+                    print "\t      %3d  none " % ( human_exon_ct)
 
         exit (1)
 

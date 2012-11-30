@@ -25,11 +25,11 @@ def \hyperlink{namespace12__exon__seq__store_acf9f17f2aa3d0f54e3662c145a606a32}{
 def \hyperlink{namespace12__exon__seq__store_a0a266b0c76b80904008c1ac963e9d8d4}{get\-\_\-gene\-\_\-seq}
 \item 
 def \hyperlink{namespace12__exon__seq__store_abf226158714d028315bb8905415f81f7}{get\-\_\-exon\-\_\-seqs}
-\item 
+\begin{DoxyCompactList}\small\item\em Return dna sequences belonging to each exon in the input list, according to Ensembl. \end{DoxyCompactList}\item 
 def \hyperlink{namespace12__exon__seq__store_a6c9dc3a2f058425a6a487fc8b868d658}{store}
 \begin{DoxyCompactList}\small\item\em Calls \hyperlink{namespaceel__utils_1_1mysql_ad1dbce5e2a628225a3aee9f4bb002d4b}{store\-\_\-or\-\_\-update()} from el\-\_\-utils.\-mysql.\-py\-: It sets the fixed fields to be exon\-\_\-id, is\-\_\-known, and is\-\_\-sw; The rest of the exon info is updateable. \end{DoxyCompactList}\item 
 def \hyperlink{namespace12__exon__seq__store_a60046448e48836673785b159fbe34282}{store\-\_\-exon\-\_\-seqs}
-\begin{DoxyCompactList}\small\item\em The core of the operation\-: species-\/-\/$>$genes-\/-\/$>$gene seq + exon list -\/-\/$>$ exon\-\_\-seqs. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em The core of the operation\-: for each exon find and store dna sequence; for canonical exons also add the translation. \end{DoxyCompactList}\item 
 def \hyperlink{namespace12__exon__seq__store_a8517b3ef4d3826fd5ed3ee3b1bf8d539}{main}
 \begin{DoxyCompactList}\small\item\em Main entry point, but in reality does nothing except taking care of the parallelization. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
@@ -100,6 +100,10 @@ def \hyperlink{namespace12__exon__seq__store_a8517b3ef4d3826fd5ed3ee3b1bf8d539}{
 \item[{}]{exons}
 \end{DoxyParamCaption}
 )}}\label{namespace12__exon__seq__store_abf226158714d028315bb8905415f81f7}
+
+
+Return dna sequences belonging to each exon in the input list, according to Ensembl. 
+
 \hypertarget{namespace12__exon__seq__store_a0a266b0c76b80904008c1ac963e9d8d4}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!get\-\_\-gene\-\_\-seq@{get\-\_\-gene\-\_\-seq}}
 \index{get\-\_\-gene\-\_\-seq@{get\-\_\-gene\-\_\-seq}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
 \subsubsection[{get\-\_\-gene\-\_\-seq}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-get\-\_\-gene\-\_\-seq (
@@ -156,9 +160,11 @@ Calls \hyperlink{namespaceel__utils_1_1mysql_ad1dbce5e2a628225a3aee9f4bb002d4b}{
 )}}\label{namespace12__exon__seq__store_a60046448e48836673785b159fbe34282}
 
 
-The core of the operation\-: species-\/-\/$>$genes-\/-\/$>$gene seq + exon list -\/-\/$>$ exon\-\_\-seqs. 
+The core of the operation\-: for each exon find and store dna sequence; for canonical exons also add the translation. 
 
-For each species retrieves all protein coding genes, and for each of the genes its full sequence and the list of the known exons; assigns dna and protein sequence to each exon and stores it in db. \hypertarget{namespace12__exon__seq__store_aba2efa8f46ef665d66b5f51a0deac1a0}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!strip\-\_\-stop@{strip\-\_\-stop}}
+For each species retrieves all protein coding genes, and for each of the genes its full sequence and the list of the known exons; assigns dna sequence to each exon (+ the translation for the canonical exons) and stores it in db.
+
+The reason why onlt canonical exons get the translation at this point is that the canonical translation available in Ensembl is used to make sure we are looking at the right genome region. \hypertarget{namespace12__exon__seq__store_aba2efa8f46ef665d66b5f51a0deac1a0}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!strip\-\_\-stop@{strip\-\_\-stop}}
 \index{strip\-\_\-stop@{strip\-\_\-stop}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
 \subsubsection[{strip\-\_\-stop}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-strip\-\_\-stop (
 \begin{DoxyParamCaption}

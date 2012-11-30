@@ -132,6 +132,26 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
 
 
 #########################################
+def get_exon (cursor, exon_id, is_known, db_name=None):
+
+    exon = Exon ()
+
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return exon
+
+    qry  = "select * from gene2exon where exon_id = %d" %  exon_id
+    qry += "is_known = %s " % is_known
+    rows = search_db(cursor, qry)
+    if (not rows):
+        return exon
+        
+    exon.load_from_gene2exon (rows[0])
+
+    return exon
+
+
+#########################################
 def gene2exon_list (cursor, gene_id, db_name=None):
 
     exons = []
