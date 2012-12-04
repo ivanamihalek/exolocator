@@ -1,4 +1,4 @@
-import MySQLdb
+import MySQLdb, sys
 
 
 ########
@@ -88,7 +88,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
     if (rows):
         rows   = search_db (cursor, qry, verbose=True)
         return False
-
+    
     return True
 
 

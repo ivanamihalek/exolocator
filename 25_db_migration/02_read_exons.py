@@ -44,15 +44,27 @@ def make_exon_table (cursor, table):
 
 
 #########################################
-def check_exon_table(cursor, db_name, species):
+def check_exon_table(cursor, db_name, species, verbose = False):
     table =  'exon_' + species
+    
     if ( check_table_exists (cursor, db_name, table)):
-        print table, " found in ", db_name
+        if verbose: print table, " found in ", db_name
     else:
-        print table, " not found in ", db_name
+        if verbose: print table, " not found in ", db_name
         make_exon_table (cursor, table)
-        #create_index (cursor, db_name,'exon_key_idx', table, ['exon_key'])
-        #create_index (cursor, db_name,'gene_id_idx', table, ['ensembl_gene_id'])
+
+
+#########################################
+def check_exon_table_size(cursor, db_name, species):
+    table =  'exon_' + species
+
+    qry  = "select count(1) from " + table
+    rows = search_db(cursor, qry)
+
+    if rows:
+        return rows[0][0]
+    else:
+        return 0
 
 #########################################
 def get_exon_dump_files(in_path):
@@ -68,9 +80,7 @@ def store(cursor, in_path, infile, species):
     table =  'exon_' + species
     inf   = erropen (in_path+"/"+infile, "r")
 
-    print
     print "storing contents of ", infile
-    print species
 
     ct = 0
     start = time()
@@ -134,22 +144,25 @@ def load_from_infiles (infiles, in_path):
     
     ###############
     for infile in infiles:
-        if ('homo_sapiens' in infile): continue
+        #if (not 'sus_scrofa' in infile): continue
         
         fields = infile.split ("_")
         species = fields[0] + "_" + fields[1] 
         if ('mustela') in fields[0]:
             species += "_" + fields[2]
-            
         check_exon_table(cursor, db_name, species)
-        store           (cursor, in_path, infile, species)
+        
+        table_size = check_exon_table_size (cursor, db_name, species)
+        if table_size > 0: continue
+        
+        store  (cursor, in_path, infile, species)
 
     
 #########################################
 def main():
 
     
-    no_threads = 5
+    no_threads = 12
     
     db_name =  "exolocator_db"
     db      = connect_to_mysql(user="marioot", passwd="tooiram")
@@ -176,3 +189,19 @@ def main():
 #########################################
 if __name__ == '__main__':
     main()
+
+'''
+    if (0):
+    qry = "show columns from " + table + " like 'dna_seq'"
+    rows      =  search_db(cursor, qry)
+    seq_space =  rows[0][1]
+    print seq_space
+    if (not seq_space == 'blob'):
+        print "drop"
+        qry = "drop table "+table
+        print qry
+        rows      =  search_db(cursor, qry)
+        print rows
+        make_exon_table (cursor, table)
+    print
+'''

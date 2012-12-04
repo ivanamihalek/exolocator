@@ -141,8 +141,8 @@ def get_exon (cursor, exon_id, is_known, db_name=None):
             return exon
 
     qry  = "select * from gene2exon where exon_id = %d" %  exon_id
-    qry += "is_known = %s " % is_known
-    rows = search_db(cursor, qry)
+    qry += " and is_known = %s " % is_known
+    rows = search_db(cursor, qry, verbose=False)
     if (not rows):
         return exon
         
@@ -156,7 +156,7 @@ def gene2exon_list (cursor, gene_id, db_name=None):
 
     exons = []
 
-    if (db_name):
+    if (db_name): 
         if not switch_to_db(cursor, db_name):
             return False
 
