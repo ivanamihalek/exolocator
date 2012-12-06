@@ -22,11 +22,13 @@ var searchData=
   ['exon_5fknown_5f2',['exon_known_2',['../namespaceel__utils_1_1map.html#aa3500c2978312a322cd5bc8931332b4b',1,'el_utils::map']]],
   ['exon_5fseq_5fid',['exon_seq_id',['../classel__utils_1_1exon_1_1Exon.html#ac7492cb1d0a5da7105c9a91bfd79d73b',1,'el_utils::exon::Exon']]],
   ['exon_5ftabstring',['exon_tabstring',['../namespace01__dump__exons.html#a3206facf47b194c08cca97eae48537a3',1,'01_dump_exons']]],
+  ['expand_5faligned_5fpepseq',['expand_aligned_pepseq',['../namespace06__reconstruct__alignments.html#a6ac1969c80b126339217d639ede84ed8',1,'06_reconstruct_alignments']]],
   ['extract_5fgene_5fseq',['extract_gene_seq',['../namespace12__exon__seq__store.html#a6e2645c20b8ecb2f7644276caa025214',1,'12_exon_seq_store']]],
   ['map',['map',['../namespaceel__utils_1_1map.html',1,'el_utils']]],
   ['mysql',['mysql',['../namespaceel__utils_1_1mysql.html',1,'el_utils']]],
   ['ncbi',['ncbi',['../namespaceel__utils_1_1ncbi.html',1,'el_utils']]],
   ['threads',['threads',['../namespaceel__utils_1_1threads.html',1,'el_utils']]],
+  ['translation',['translation',['../namespaceel__utils_1_1translation.html',1,'el_utils']]],
   ['tree',['tree',['../namespaceel__utils_1_1tree.html',1,'el_utils']]],
   ['utils',['utils',['../namespaceel__utils_1_1utils.html',1,'el_utils']]]
 ];

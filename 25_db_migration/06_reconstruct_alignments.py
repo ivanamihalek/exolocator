@@ -2,7 +2,7 @@
 # make the best alignment we can using the maps
 # we currently have at hand
 
-import MySQLdb, commands, re
+import MySQLdb, commands, re, os
 
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
@@ -198,6 +198,9 @@ def expand_aligned_pepseq(cursor, aligned_pepseq, exon_seqs,  exon_id, exon_is_k
         else:
             pepseq = dnaseq.translate().tostring()
             
+        if (len(pepseq) <= 1):
+            return empty
+
         if ( pepseq[-1] == '*'):
             pepseq = pepseq[:-1]
 
@@ -377,6 +380,9 @@ def make_alignments ( gene_list, db_info):
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
+        afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+        if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0):
+            continue
 
         gene_ct += 1
         if (not gene_ct%100): print gene_ct, "out of ", len(gene_list)

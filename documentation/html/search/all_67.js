@@ -29,6 +29,7 @@ var searchData=
   ['get_5fcommon_5fname',['get_common_name',['../namespaceel__utils_1_1ncbi.html#aaeded3ae49f56272eab82591a053937e',1,'el_utils::ncbi']]],
   ['get_5fcompara_5fname',['get_compara_name',['../namespaceel__utils_1_1ensembl.html#a79999a873369b41eb3dc9bf1a0608606',1,'el_utils::ensembl']]],
   ['get_5fdescription',['get_description',['../namespaceel__utils_1_1ensembl.html#a1824e701d17b97129de2849ec3eddddb',1,'el_utils::ensembl']]],
+  ['get_5fexon',['get_exon',['../namespaceel__utils_1_1ensembl.html#a4d6de37a0ad76b8c0fcbd9e3c9856d5e',1,'el_utils::ensembl']]],
   ['get_5fexon_5fdump_5ffiles',['get_exon_dump_files',['../namespace02__read__exons.html#aa6088e9f00a27e242ff4aa086fd99b5a',1,'02_read_exons']]],
   ['get_5fexon_5fend',['get_exon_end',['../namespace06__gene2exon__check.html#a7721060679f4c6e475c3115980325160',1,'06_gene2exon_check.get_exon_end()'],['../namespace07__gene2exon__store.html#ab8fe3b69cf8f34503d02efcbcc20c8df',1,'07_gene2exon_store.get_exon_end()']]],
   ['get_5fexon_5fpepseq',['get_exon_pepseq',['../namespaceel__utils_1_1ensembl.html#a7209a32d240721b5cce913d005241621',1,'el_utils::ensembl']]],

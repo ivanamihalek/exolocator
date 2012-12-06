@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>exolocator: Main Page</title>
+<title>exolocator: Overview</title>
 
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
@@ -85,14 +85,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div class="header">
   <div class="headertitle">
-<div class="title">exolocator Documentation</div>  </div>
+<div class="title">Overview </div>  </div>
 </div><!--header-->
 <div class="contents">
-</div><!-- contents -->
+<div class="textblock"><h2><a class="anchor" id="Purpose"></a>
+Purpose</h2>
+<p>exolocator pipeline is intended to fill exolocator_db, the database behind the ExoLocator server.  ExoLocator server, in turn, is aimed at being a one-stop shopping point for comparative  analysis of protein sequences.  </p>
+<h2><a class="anchor" id="Design"></a>
+Design</h2>
+<p>The main aim in desinging the pipeline has been intuitive use and reproducibility:  by using the scripts in the order in which they are enumerated, the user should be able to  recreate and/or update exolocator_db.  </p>
+<h2><a class="anchor" id="Databases"></a>
+Databases</h2>
+<p>exolocator pipeline functions by manipulating databases: everything except full genomic sequences is  is stored in a database, from the configuration of the pipeline itself, to core anntotation data for each species  from Ensembl, and taxonomy information info from NCBI. </p>
+</div></div><!-- contents -->
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Nov 30 2012 11:07:18 for exolocator by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Dec 6 2012 18:32:44 for exolocator by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.0
 </small></address>

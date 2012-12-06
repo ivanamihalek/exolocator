@@ -115,7 +115,7 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
     qry += "from  exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
     rows = search_db(cursor, qry)
     if (not rows):
-        #rows = search_db(cursor, qry, verbose = True)
+        rows = search_db(cursor, qry, verbose = True)
         return []
 
     [exon_seq_id, protein_seq, left_flank, right_flank, dna_seq] = rows[0]

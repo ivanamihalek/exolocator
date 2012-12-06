@@ -19,11 +19,11 @@ def \hyperlink{namespace12__exon__seq__store_acf44dc16c6b297ff8db54e486dfd0fba}{
 def \hyperlink{namespace12__exon__seq__store_a9573a058a9f0bde8a68724ce31cc3093}{get\-\_\-canonical\-\_\-exons}
 \item 
 def \hyperlink{namespace12__exon__seq__store_a163f10dd9974fa59e5dcb0702b722de6}{transl\-\_\-reconstruct}
-\item 
+\begin{DoxyCompactList}\small\item\em Given tha dna sequence, gene information an the list of its canonical exons, reconstruct canonical translation. \end{DoxyCompactList}\item 
 def \hyperlink{namespace12__exon__seq__store_acf9f17f2aa3d0f54e3662c145a606a32}{compare\-\_\-seqs}
-\item 
+\begin{DoxyCompactList}\small\item\em Return true if the two input sequences differ in no more than two positions. \end{DoxyCompactList}\item 
 def \hyperlink{namespace12__exon__seq__store_a0a266b0c76b80904008c1ac963e9d8d4}{get\-\_\-gene\-\_\-seq}
-\item 
+\begin{DoxyCompactList}\small\item\em Given gene\-\_\-id, return dna region which reproduces the correct canonical translation. \end{DoxyCompactList}\item 
 def \hyperlink{namespace12__exon__seq__store_abf226158714d028315bb8905415f81f7}{get\-\_\-exon\-\_\-seqs}
 \begin{DoxyCompactList}\small\item\em Return dna sequences belonging to each exon in the input list, according to Ensembl. \end{DoxyCompactList}\item 
 def \hyperlink{namespace12__exon__seq__store_a6c9dc3a2f058425a6a487fc8b868d658}{store}
@@ -52,6 +52,10 @@ def \hyperlink{namespace12__exon__seq__store_a8517b3ef4d3826fd5ed3ee3b1bf8d539}{
 \item[{}]{verbose = {\ttfamily False}}
 \end{DoxyParamCaption}
 )}}\label{namespace12__exon__seq__store_acf9f17f2aa3d0f54e3662c145a606a32}
+
+
+Return true if the two input sequences differ in no more than two positions. 
+
 \hypertarget{namespace12__exon__seq__store_a6e2645c20b8ecb2f7644276caa025214}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!extract\-\_\-gene\-\_\-seq@{extract\-\_\-gene\-\_\-seq}}
 \index{extract\-\_\-gene\-\_\-seq@{extract\-\_\-gene\-\_\-seq}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
 \subsubsection[{extract\-\_\-gene\-\_\-seq}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-extract\-\_\-gene\-\_\-seq (
@@ -114,6 +118,10 @@ Return dna sequences belonging to each exon in the input list, according to Ense
 \item[{}]{species}
 \end{DoxyParamCaption}
 )}}\label{namespace12__exon__seq__store_a0a266b0c76b80904008c1ac963e9d8d4}
+
+
+Given gene\-\_\-id, return dna region which reproduces the correct canonical translation. 
+
 \hypertarget{namespace12__exon__seq__store_aa683a56ce5b02b6140dcff8940a5fd7e}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!get\-\_\-primary\-\_\-seq\-\_\-info@{get\-\_\-primary\-\_\-seq\-\_\-info}}
 \index{get\-\_\-primary\-\_\-seq\-\_\-info@{get\-\_\-primary\-\_\-seq\-\_\-info}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
 \subsubsection[{get\-\_\-primary\-\_\-seq\-\_\-info}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-get\-\_\-primary\-\_\-seq\-\_\-info (
@@ -164,7 +172,7 @@ The core of the operation\-: for each exon find and store dna sequence; for cano
 
 For each species retrieves all protein coding genes, and for each of the genes its full sequence and the list of the known exons; assigns dna sequence to each exon (+ the translation for the canonical exons) and stores it in db.
 
-The reason why onlt canonical exons get the translation at this point is that the canonical translation available in Ensembl is used to make sure we are looking at the right genome region. \hypertarget{namespace12__exon__seq__store_aba2efa8f46ef665d66b5f51a0deac1a0}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!strip\-\_\-stop@{strip\-\_\-stop}}
+The reason why only the canonical exons get the translation at this point is that the canonical translation available in Ensembl is used to make sure we are looking at the right genome region. Namely, some sequences have a \char`\"{}patch\char`\"{} with a corrected or completed sequence. The info about that can be found in the assembly\-\_\-exception table. \hypertarget{namespace12__exon__seq__store_aba2efa8f46ef665d66b5f51a0deac1a0}{\index{12\-\_\-exon\-\_\-seq\-\_\-store@{12\-\_\-exon\-\_\-seq\-\_\-store}!strip\-\_\-stop@{strip\-\_\-stop}}
 \index{strip\-\_\-stop@{strip\-\_\-stop}!12_exon_seq_store@{12\-\_\-exon\-\_\-seq\-\_\-store}}
 \subsubsection[{strip\-\_\-stop}]{\setlength{\rightskip}{0pt plus 5cm}def 12\-\_\-exon\-\_\-seq\-\_\-store.\-strip\-\_\-stop (
 \begin{DoxyParamCaption}
@@ -183,3 +191,8 @@ The reason why onlt canonical exons get the translation at this point is that th
 \item[{}]{verbose = {\ttfamily False}}
 \end{DoxyParamCaption}
 )}}\label{namespace12__exon__seq__store_a163f10dd9974fa59e5dcb0702b722de6}
+
+
+Given tha dna sequence, gene information an the list of its canonical exons, reconstruct canonical translation. 
+
+Pay attention to whether the gene is mitochondrial. Here in particular we can catch the 'false stop codons' corresponding to selenocysteines. (Because they are stored by their position in the translation.) 

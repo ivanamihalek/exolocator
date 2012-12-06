@@ -5,6 +5,19 @@
 @brief  Creating ad filling the configuration database. Hardcoded stuff is here.
 @author Ivana
 @date   2012
+@mainpage Overview
+@main @section Purpose
+@main  exolocator pipeline is intended to fill exolocator_db, the database behind the ExoLocator server. 
+@main  ExoLocator server, in turn, is aimed at being a one-stop shopping point for comparative 
+@main analysis of protein sequences.
+@main @section  Design
+@main  The main aim in desinging the pipeline has been intuitive use and reproducibility:  
+@main by using the scripts in the order in which they are enumerated, the user should be able to
+@main  recreate and/or update exolocator_db.
+@main  @section Databases
+@main exolocator pipeline functions by manipulating databases: everything except full genomic sequences is 
+@main is stored in a database, from the configuration of the pipeline itself, to core anntotation data for each species
+@main from Ensembl, and taxonomy information info from NCBI.
 """
 import MySQLdb
 import os, sys

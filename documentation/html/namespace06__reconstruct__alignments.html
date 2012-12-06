@@ -103,7 +103,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ab0c8f2f192c154ff5262067d16509312"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace06__reconstruct__alignments.html#ab0c8f2f192c154ff5262067d16509312">fract_identity</a></td></tr>
 <tr class="memitem:a4353cf09066cac44249567007ac97363"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace06__reconstruct__alignments.html#a4353cf09066cac44249567007ac97363">merged_sequence</a></td></tr>
 <tr class="memitem:ac8f6c6cfa49162a99d41f892651b8104"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace06__reconstruct__alignments.html#ac8f6c6cfa49162a99d41f892651b8104">align_nucseq_by_pepseq</a></td></tr>
+<tr class="memitem:a6ac1969c80b126339217d639ede84ed8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace06__reconstruct__alignments.html#a6ac1969c80b126339217d639ede84ed8">expand_aligned_pepseq</a></td></tr>
 <tr class="memitem:aa1e7de847b48c4db41cfb1b20a080c29"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace06__reconstruct__alignments.html#aa1e7de847b48c4db41cfb1b20a080c29">print_notes</a></td></tr>
+<tr class="memitem:a448266142413b7c20a2c9318f94afdd7"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace06__reconstruct__alignments.html#a448266142413b7c20a2c9318f94afdd7">make_alignments</a></td></tr>
 <tr class="memitem:a275d31f1f804039829052ec7f21867c9"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace06__reconstruct__alignments.html#a275d31f1f804039829052ec7f21867c9">main</a></td></tr>
 </table>
 <hr/><h2>Function Documentation</h2>
@@ -122,6 +124,57 @@ Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>nucseq</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a6ac1969c80b126339217d639ede84ed8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def 06_reconstruct_alignments.expand_aligned_pepseq </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>cursor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>aligned_pepseq</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>exon_seqs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>exon_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>exon_is_known</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>flank_length</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -177,6 +230,33 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a448266142413b7c20a2c9318f94afdd7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def 06_reconstruct_alignments.make_alignments </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>gene_list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>db_info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a4353cf09066cac44249567007ac97363"></a>
 <div class="memitem">
 <div class="memproto">
@@ -197,7 +277,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>nucseq_pieces</em>&#160;</td>
+          <td class="paramname"><em>nucseq_pieces</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>flank_length</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -298,7 +384,7 @@ Functions</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Nov 30 2012 11:07:18 for exolocator by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Dec 6 2012 18:32:43 for exolocator by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.0
 </small></address>

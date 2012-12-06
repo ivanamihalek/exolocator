@@ -107,8 +107,11 @@ Functions</h2></td></tr>
 <tr class="memitem:acf44dc16c6b297ff8db54e486dfd0fba"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace12__exon__seq__store.html#acf44dc16c6b297ff8db54e486dfd0fba">get_canonical_transl</a></td></tr>
 <tr class="memitem:a9573a058a9f0bde8a68724ce31cc3093"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace12__exon__seq__store.html#a9573a058a9f0bde8a68724ce31cc3093">get_canonical_exons</a></td></tr>
 <tr class="memitem:a163f10dd9974fa59e5dcb0702b722de6"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace12__exon__seq__store.html#a163f10dd9974fa59e5dcb0702b722de6">transl_reconstruct</a></td></tr>
+<tr class="memdesc:a163f10dd9974fa59e5dcb0702b722de6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given tha dna sequence, gene information an the list of its canonical exons, reconstruct canonical translation.  <a href="#a163f10dd9974fa59e5dcb0702b722de6"></a><br/></td></tr>
 <tr class="memitem:acf9f17f2aa3d0f54e3662c145a606a32"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace12__exon__seq__store.html#acf9f17f2aa3d0f54e3662c145a606a32">compare_seqs</a></td></tr>
+<tr class="memdesc:acf9f17f2aa3d0f54e3662c145a606a32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if the two input sequences differ in no more than two positions.  <a href="#acf9f17f2aa3d0f54e3662c145a606a32"></a><br/></td></tr>
 <tr class="memitem:a0a266b0c76b80904008c1ac963e9d8d4"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace12__exon__seq__store.html#a0a266b0c76b80904008c1ac963e9d8d4">get_gene_seq</a></td></tr>
+<tr class="memdesc:a0a266b0c76b80904008c1ac963e9d8d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given gene_id, return dna region which reproduces the correct canonical translation.  <a href="#a0a266b0c76b80904008c1ac963e9d8d4"></a><br/></td></tr>
 <tr class="memitem:abf226158714d028315bb8905415f81f7"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace12__exon__seq__store.html#abf226158714d028315bb8905415f81f7">get_exon_seqs</a></td></tr>
 <tr class="memdesc:abf226158714d028315bb8905415f81f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return dna sequences belonging to each exon in the input list, according to Ensembl.  <a href="#abf226158714d028315bb8905415f81f7"></a><br/></td></tr>
 <tr class="memitem:a6c9dc3a2f058425a6a487fc8b868d658"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace12__exon__seq__store.html#a6c9dc3a2f058425a6a487fc8b868d658">store</a></td></tr>
@@ -176,6 +179,8 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
+
+<p>Return true if the two input sequences differ in no more than two positions. </p>
 
 </div>
 </div>
@@ -401,6 +406,8 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
+<p>Given gene_id, return dna region which reproduces the correct canonical translation. </p>
+
 </div>
 </div>
 <a class="anchor" id="aa683a56ce5b02b6140dcff8940a5fd7e"></a>
@@ -535,7 +542,7 @@ Functions</h2></td></tr>
 
 <p>The core of the operation: for each exon find and store dna sequence; for canonical exons also add the translation. </p>
 <p>For each species retrieves all protein coding genes, and for each of the genes its full sequence and the list of the known exons; assigns dna sequence to each exon (+ the translation for the canonical exons) and stores it in db.</p>
-<p>The reason why onlt canonical exons get the translation at this point is that the canonical translation available in Ensembl is used to make sure we are looking at the right genome region. </p>
+<p>The reason why only the canonical exons get the translation at this point is that the canonical translation available in Ensembl is used to make sure we are looking at the right genome region. Namely, some sequences have a "patch" with a corrected or completed sequence. The info about that can be found in the assembly_exception table. </p>
 
 </div>
 </div>
@@ -605,13 +612,16 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
+<p>Given tha dna sequence, gene information an the list of its canonical exons, reconstruct canonical translation. </p>
+<p>Pay attention to whether the gene is mitochondrial. Here in particular we can catch the 'false stop codons' corresponding to selenocysteines. (Because they are stored by their position in the translation.) </p>
+
 </div>
 </div>
 </div><!-- contents -->
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Nov 30 2012 11:07:18 for exolocator by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Dec 6 2012 18:32:44 for exolocator by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.0
 </small></address>

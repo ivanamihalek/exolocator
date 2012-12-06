@@ -11,8 +11,9 @@ var searchData=
   ['pep_5fexon_5fseqs',['pep_exon_seqs',['../namespace13__add__noncanon__transl.html#a112a64de0605bdb5b9c761fd88f49a02',1,'13_add_noncanon_transl']]],
   ['pepseq',['pepseq',['../classel__utils_1_1exon_1_1Exon.html#a5fb3c326a800e425470541a893efde31',1,'el_utils::exon::Exon']]],
   ['phase',['phase',['../classel__utils_1_1exon_1_1Exon.html#a700b1bbd77b24dc43501bd6909bc16b2',1,'el_utils::exon::Exon']]],
-  ['phase2offset',['phase2offset',['../namespace13__add__noncanon__transl.html#a46049f89993a4844046f924c0efb5e5e',1,'13_add_noncanon_transl.phase2offset()'],['../namespace14__exon__seq__check.html#adeaabe13a4d2e0bc8acc15d5f88c9dd0',1,'14_exon_seq_check.phase2offset()']]],
+  ['phase2offset',['phase2offset',['../namespace13__add__noncanon__transl.html#a46049f89993a4844046f924c0efb5e5e',1,'13_add_noncanon_transl.phase2offset()'],['../namespaceel__utils_1_1translation.html#a6ef56208d3a144e87bf2a91674f58f1d',1,'el_utils.translation.phase2offset()']]],
   ['port',['port',['../classel__utils_1_1config__reader_1_1ConfigurationReader.html#af72d3d48ad04f29b72cf6700b8316987',1,'el_utils::config_reader::ConfigurationReader']]],
+  ['print_5falignment',['print_alignment',['../namespace18__find__missing__exons.html#a958e9c538d7e195a560d890f70f69003',1,'18_find_missing_exons']]],
   ['print_5fleafs',['print_leafs',['../classel__utils_1_1tree_1_1Tree.html#ae5597f9564d23ca8e5e3e991f11a0161',1,'el_utils::tree::Tree']]],
   ['print_5fnotes',['print_notes',['../namespace06__reconstruct__alignments.html#aa1e7de847b48c4db41cfb1b20a080c29',1,'06_reconstruct_alignments']]]
 ];
