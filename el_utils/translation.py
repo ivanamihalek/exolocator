@@ -76,7 +76,7 @@ def  translate (dna_seq, phase, mitochondrial=False):
     if pepseq and pepseq[-1]=='*':
         pepseq = pepseq[:-1]
     if not '*' in pepseq:
-        return [phase, pepseq]
+        return [offset, pepseq]
 
     phase = (phase+1)%3
     offset = phase2offset(phase)
@@ -89,7 +89,7 @@ def  translate (dna_seq, phase, mitochondrial=False):
     if pepseq and  pepseq[-1]=='*':
         pepseq = pepseq[:-1]
     if not '*' in pepseq:
-        return [phase, pepseq]
+        return [offset, pepseq]
 
     phase = (phase+1)%3
     offset = phase2offset(phase)
@@ -102,7 +102,7 @@ def  translate (dna_seq, phase, mitochondrial=False):
     if pepseq and  pepseq[-1]=='*':
         pepseq = pepseq[:-1]
     if not '*' in pepseq:
-        return [phase, pepseq]
+        return [offset, pepseq]
 
-    return [phase, pepseq]
+    return [-1, ""]
 

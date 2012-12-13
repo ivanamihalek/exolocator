@@ -414,9 +414,9 @@ def store (cursor, maps, ensembl_db_name):
         update_fields = {}
         fixed_fields ['exon_id']              = map.exon_id_1
         fixed_fields ['exon_known']           = map.exon_known_1
-        update_fields['cognate_genome_db_id'] = species2genome_db_id(cursor, map.species_2)
-        update_fields['cognate_exon_id']      = map.exon_id_2
-        update_fields['cognate_exon_known']   = map.exon_known_2
+        fixed_fields ['cognate_genome_db_id'] = species2genome_db_id(cursor, map.species_2)
+        fixed_fields ['cognate_exon_id']      = map.exon_id_2
+        fixed_fields ['cognate_exon_known']   = map.exon_known_2
         update_fields['cigar_line']           = map.cigar_line
         update_fields['similarity']           = map.similarity
         update_fields['source']               = 'ensembl'
@@ -462,9 +462,7 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
     
 
-    #for gene_id in gene_list:
-    #for gene_id in [378768]: #  p53
-    for gene_id in [378766]: #  dynein
+    for gene_id in gene_list:
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -477,8 +475,8 @@ def maps_for_gene_list(gene_list, db_info):
             print 'no exons for ', gene_id
             sys.exit(1)
         # check maps
-        # if gene_has_a_map (cursor, ensembl_db_name, human_exons):
-        #     continue
+        if gene_has_a_map (cursor, ensembl_db_name, human_exons):
+            continue
 
         # one2one   orthologues
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
@@ -488,8 +486,6 @@ def maps_for_gene_list(gene_list, db_info):
         unresolved_orthologues = get_orthos (cursor, gene_id, 'unresolved_ortho')
         # 
         for [ortho_gene_id, ortho_species] in known_orthologues+unresolved_orthologues:
-            #print "\t", ortho_species
-
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
             if not ortho_exons:
                 missing_exon_info += 1
@@ -502,13 +498,6 @@ def maps_for_gene_list(gene_list, db_info):
                 #print "\t", ortho_species, "no maps"
                 continue
             no_maps += len(maps)
-            
-            #for map in maps:
-            #    print "###################################"
-            #    print map
-            #    print get_exon_pepseq(cursor, map.exon_id_1, map.exon_known_1, ensembl_db_name['homo_sapiens'])
-            #    print get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[ortho_species])
-            #    print 
             
             store (cursor, maps, ensembl_db_name)
 
@@ -524,7 +513,7 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 7
 
     local_db = False
 
@@ -543,7 +532,7 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, maps_for_gene_list, gene_list, [local_db, ensembl_db_name])
+    parallelize (no_threads, maps_for_gene_list, gene_list[15000:], [local_db, ensembl_db_name])
     
     return True
 
@@ -555,6 +544,7 @@ if __name__ == '__main__':
 
     for gene_id in [412667]: #  wls
     for gene_id in [378768]: #  p53
+     #for gene_id in [378766]: #  dynein
  
 
 

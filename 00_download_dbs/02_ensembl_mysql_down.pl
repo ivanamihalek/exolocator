@@ -74,7 +74,7 @@ foreach $dir ( @dirs_I_need) {
 	next if ($item !~ /\.gz$/);
 	next if ($item eq 'assembly.txt.gz');
 	next if ($item eq 'dna.txt.gz');
-	next if ($item eq 'dna_align_feature.txt.gz');
+	next if ($item eq 'dna_align_feature.txt.gz'); # might need it to find CCDS info ..
 	next if ($item eq 'protein_align_feature.txt.gz');
 	next if ($item eq 'repeat_feature.txt.gz');
 	print "\t$item\n";

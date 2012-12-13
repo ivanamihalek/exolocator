@@ -118,6 +118,8 @@ class Exon:
         self.strand              = None
         self.phase               = None
         self.end_phase           = None
+        self.pepseq_transl_start = None
+        self.pepseq_transl_end   = None
         self.canon_transl_start  = None
         self.canon_transl_end    = None
         self.is_known            = None

@@ -59,6 +59,33 @@ def get_logic_name(cursor, analysis_id):
         return logic_name 
 
 #########################################
+def is_coding (cursor, exon_id, db_name=None):
+    
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+
+    qry = "select is_coding from gene where gene_id = %d " % id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+        return False
+
+    return rows[0][0]>0
+    
+#########################################
+def is_coding_exon (cursor, exon_id, is_known, db_name=None):
+    
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+    qry = "select is_coding from gene2exon where exon_id = %d and is_known = %d" % (exon_id, is_known)
+    rows = search_db (cursor, qry)
+    if ( not rows):
+        return False
+
+    return rows[0][0]>0
+
+#########################################
 def is_mitochondrial (cursor, gene_id):
 
     # seq identifier from gene table
@@ -111,14 +138,16 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
         if not switch_to_db(cursor, db_name):
             return False
 
-    qry  = "select exon_seq_id, protein_seq, left_flank, right_flank, dna_seq  "
-    qry += "from  exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
+    qry  = "select exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, "
+    qry += " left_flank, right_flank, dna_seq  "
+    qry += " from  exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
     rows = search_db(cursor, qry)
     if (not rows):
-        rows = search_db(cursor, qry, verbose = True)
+        #rows = search_db(cursor, qry, verbose = True)
         return []
 
-    [exon_seq_id, protein_seq, left_flank, right_flank, dna_seq] = rows[0]
+    [exon_seq_id, protein_seq, pepseq_transl_start, 
+     pepseq_transl_end, left_flank, right_flank, dna_seq] = rows[0]
     if (protein_seq is None):
         protein_seq = ""
     if (left_flank is None):
@@ -128,7 +157,7 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
     if (dna_seq is None):
         dna_seq = ""
     
-    return [exon_seq_id, protein_seq, left_flank, right_flank, dna_seq]
+    return [exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, dna_seq]
 
 
 #########################################
@@ -294,6 +323,30 @@ def gene2stable (cursor, gene_id=None, db_name=None, ):
 
 
     qry = "select stable_id from gene where gene_id=%d" % gene_id
+    rows = search_db (cursor, qry, verbose = False)
+    
+    if (not rows):
+        rows = search_db (cursor, qry, verbose = True)
+        return ""
+
+    return rows[0][0]
+    
+########
+def exon2stable (cursor, exon_id=None, db_name=None, ):
+
+    if (not exon_id):
+        return ""
+
+    if  (db_name):
+        qry  = "use %s " % db_name
+        rows = search_db (cursor, qry)
+        if (rows):
+            rows = search_db (cursor, qry, verbose = True)
+            print rows
+            exit (1)
+
+
+    qry = "select stable_id from exon where exon_id=%d" % exon_id
     rows = search_db (cursor, qry, verbose = False)
     
     if (not rows):

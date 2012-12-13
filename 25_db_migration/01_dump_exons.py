@@ -3,7 +3,7 @@
 import MySQLdb
 import sys, commands
 from   el_utils.mysql         import  connect_to_mysql, search_db, switch_to_db
-from   el_utils.ensembl       import  get_species, get_gene_ids, gene2stable, gene2exon_list, get_exon_seqs
+from   el_utils.ensembl       import  *
 from   el_utils.exon          import  Exon
 from   el_utils.config_reader import  ConfigurationReader
 from   el_utils.threads       import  parallelize
@@ -22,11 +22,12 @@ def  get_analysis_dict(cursor):
     return source
 
 #########################################
-def exon_tabstring(exon, stable_id, species, analysis, exon_seqs):
+def exon_tabstring(exon, gene_stable_id, exon_stable_id, species, analysis, exon_seqs):
     
     ret  = ""
     ret += str(exon.exon_id) +"\t"
-    ret += stable_id +"\t"
+    ret += gene_stable_id +"\t"
+    ret += exon_stable_id +"\t"
     ret += str(exon.start_in_gene)   +"\t"
     ret += str(exon.end_in_gene)     +"\t"
     ret += str(exon.strand)          +"\t"
@@ -36,7 +37,9 @@ def exon_tabstring(exon, stable_id, species, analysis, exon_seqs):
     ret += str(exon.is_constitutive) +"\t"
     ret += species                   +"\t"
     ret += analysis +"\t"
-    ret += "\t".join(exon_seqs)
+
+
+    ret += "\t".join( map((lambda token:  type(token) is str and token or str(token)), exon_seqs) )
 
     return ret
 
@@ -84,25 +87,34 @@ def dump_exons (species_list, db_info):
                 sys.exit(1)
 
             for exon in exons:
+
+                if exon.covering_exon  > 0: continue
                 # exons seqs are its aa translation, left_flank, right_flank, and dna_seq
                 exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     ct += 1
                     continue
                 # human readable string describing the source of annotation for this exon
-                analysis  = source[exon.analysis_id] 
+                analysis       = source[exon.analysis_id] 
                 # the first field return by get_exon_seqs is the exon_seq_id, so get rid of it
-                print >> of, exon_tabstring (exon, gene2stable(cursor,gene_id), species, analysis, exon_seqs[1:])
+                gene_stable_id = gene2stable(cursor,gene_id)
+                if ( exon.is_known):
+                    exon_stable_id = exon2stable(cursor,exon.exon_id)
+                else:
+                    exon_stable_id = "anon"
+
+                print >> of, exon_tabstring (exon, gene_stable_id, exon_stable_id, species, analysis, exon_seqs[1:])
+
 
         of.close()
-
+    
     cursor.close()
     db    .close()
 
 #########################################
 def main():
 
-    no_threads = 10
+    no_threads = 15
 
     local_db = False
 

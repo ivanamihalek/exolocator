@@ -2,12 +2,12 @@
 
 import MySQLdb
 import commands, sys
+from   random           import choice
 from   el_utils.mysql   import connect_to_mysql, search_db, switch_to_db, check_null
 from   el_utils.mysql   import store_or_update
 from   el_utils.ensembl import  *
 
 from   el_utils.translation import crop_dna, translation_bounds, translate
-
 from   el_utils.threads     import parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 # BioPython
@@ -45,8 +45,8 @@ def pep_exon_seqs(species_list, db_info):
         db     = connect_to_mysql()
         acg    = AlignmentCommandGenerator()
     else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db     = connect_to_mysql          (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        acg    = AlignmentCommandGenerator (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     #####################################
@@ -72,11 +72,14 @@ def pep_exon_seqs(species_list, db_info):
         no_exon_seq = 0
         translation_fail = 0
 
-        # for all protein coding genes in a species
+        #for all protein coding genes in a species
         for gene_id in gene_ids:
             gene_ct += 1
             if (not  gene_ct%1000):
                 print species, "tot:", gene_ct
+
+        #for tot in range(500):
+        #    gene_id = choice(gene_ids)
 
             # for all exons in the gene
             exons = gene2exon_list(cursor, gene_id)
@@ -86,62 +89,77 @@ def pep_exon_seqs(species_list, db_info):
 
             for exon in exons:
 
-                tot += 1
                 #####################################                
                 if (not exon.is_coding or  exon.covering_exon > 0):
                     continue 
+                tot += 1
                 exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     no_exon_seq += 1
                     continue                   
-                [exon_seq_id, protein_seq, left_flank, right_flank, dna_seq] = exon_seqs
+                [exon_seq_id, pepseq, pepseq_transl_start, 
+                 pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs
                 if len(dna_seq)<3:
                     short_dna += 1
                     continue
-                protein_seq = check_null (protein_seq)
-                if ( protein_seq and len(protein_seq)>0):
-                    pepseq_ok += 1
-                    continue
+                if 0:
+                    protein_seq = check_null (protein_seq)
+                    if ( protein_seq and len(protein_seq)>0):
+                        pepseq_ok += 1
+                        continue
 
                 #####################################                
                 mitochondrial        = is_mitochondrial(cursor, gene_id)
                 [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id)
                 dna_cropped          = crop_dna (seq_start, seq_end, dna_seq)
-                [phase, pepseq]      = translate (dna_cropped, exon.phase, mitochondrial)
+                [offset, pepseq]     = translate (dna_cropped, exon.phase, mitochondrial)
 
                 if ( not pepseq): # usually some short pieces (end in pos 4 and such)
                     translation_fail += 1
                     continue
  
-                if pepseq[-1] == '*':
-                    pepseq = pepseq[:-1]
+                if seq_start is None: seq_start = 1
+                if seq_start == 0: seq_start = 1
+                start = seq_start+offset-1
+                end   = start + 3*len(pepseq)
+                
+                dnaseq  = Seq (dna_seq[start:end], generic_dna)
+                if (mitochondrial):
+                    pepseq2 = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
+                else:
+                    pepseq2 = dnaseq.translate().tostring()
 
-                if  '*' in pepseq: #store
+                if (not pepseq == pepseq2):
+                    start = -10
+                    end   = -10
                     translation_fail += 1
-                    continue
+                else:
+                    pepseq_ok += 1
 
                 qry  = "update exon_seq "
-                qry += "set protein_seq   = '%s' " % pepseq
-                qry += "where exon_seq_id =  %d  " % exon_seq_id
+                qry += "set protein_seq   = '%s',  "  %  pepseq
+                qry += " pepseq_transl_start =  %d, " %  start
+                qry += " pepseq_transl_end   =  %d  " %  end
+                qry += " where exon_seq_id =  %d  "   %  exon_seq_id
                 rows = search_db (cursor, qry)
                 if (rows):
                     rows = search_db (cursor, qry, verbose = True)
-                    exit(1)
-             
-                pepseq_ok += 1
-           
+                    continue
 
+                
+           
+ 
+                
         print species
         print "total coding exons ", tot
         print "no exon seq info   ", no_exon_seq
         print "short dna          ", short_dna
         print "transl failure     ", translation_fail
         print "pepseq ok          ", pepseq_ok
-            
 
 #########################################
 def main():
-    no_threads = 5
+    no_threads = 20
 
     local_db = False
 
@@ -154,9 +172,7 @@ def main():
     cursor.close()
     db    .close()
 
-    all_species = ['equus_caballus', 'echinops_telfairi', 'oryctolagus_cuniculus', 
-                   'ornithorhynchus_anatinus', 'oryzias_latipes']
-    parallelize (no_threads, pep_exon_seqs, all_species, [local_db, ensembl_db_name] )
+    parallelize (no_threads, pep_exon_seqs, all_species[40:], [local_db, ensembl_db_name] )
 
 
 
@@ -175,4 +191,23 @@ if __name__ == '__main__':
                     print "    ", pepseq
                     exit(1)
                     continue
+
+
+                dnaseq  = Seq (dna_cropped[start:end], generic_dna)
+                pepseq2 = dnaseq.translate().tostring()
+                if ( not pepseq2== pepseq):
+                    print gene_ct, exon.exon_id
+                    print seq_start, seq_end
+                    print offset
+                    print pepseq
+                    print pepseq2
+                    dnaseq  = Seq (dna_cropped[start+1:end], generic_dna)
+                    pepseq2 = dnaseq.translate().tostring()
+                    print pepseq2
+                    dnaseq  = Seq (dna_cropped[start-1:end], generic_dna)
+                    pepseq2 = dnaseq.translate().tostring()
+                    print pepseq2
+                    print 
+                    exit(1)
+
 '''

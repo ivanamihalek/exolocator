@@ -490,7 +490,8 @@ def mark_coding (cursor, gene_id, species, exons):
         else: # exons belongs to a  predicted transcript 
             # == we don't know if it is coding or not
             exon.is_coding = 0
-            
+            # if it is covered by a coding exon, it is coding
+           
 
     return True
 

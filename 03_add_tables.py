@@ -112,6 +112,17 @@ def make_exon_seq_table (cursor):
         if (rows):
             return False
 
+    qry  = "alter TABLE " + table + "  add column pepseq_transl_start int(10)"
+    rows = search_db (cursor, qry)
+    if (rows):
+        return False
+
+    qry  = "alter TABLE " + table + "  add column pepseq_transl_end int(10)"
+    rows = search_db (cursor, qry)
+    if (rows):
+        return False
+
+
 #########################################
 def make_coding_region_table(cursor):
 
@@ -287,7 +298,7 @@ def main():
             else:
                 print table, " not found in ", db_name
                 make_table (cursor, db_name, table)
-        
+ 
         create_index (cursor, db_name, 'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
         create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
         create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])

@@ -53,6 +53,7 @@ def multiple_exon_alnmt(gene_list, db_info):
     no_pepseq      = 0
     no_orthologues = 0
     for gene_id in gene_list:
+    #for gene_id in [378766]: #  dynein
         start = time()
         gene_ct += 1
         if  not gene_ct%100: print gene_ct, " out of", len(gene_list)
@@ -72,8 +73,8 @@ def multiple_exon_alnmt(gene_list, db_info):
             # output to fasta:
             seqname   = "{0}:{1}:{2}".format('homo_sapiens', human_exon.exon_id, human_exon.is_known)
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-            [exon_seq_id, pepseq, left_flank, right_flank, dna_seq]  \
-                = get_exon_seqs (cursor, human_exon.exon_id, human_exon.is_known)
+            [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, 
+             left_flank, right_flank, dna_seq] = get_exon_seqs (cursor, human_exon.exon_id, human_exon.is_known)
             if (not pepseq):
                 if ( human_exon.is_coding and  human_exon.covering_exon <0): # this should be a master exon
                     print "no pep seq for",  human_exon.exon_id, "coding ", human_exon.is_coding,
@@ -130,6 +131,7 @@ def multiple_exon_alnmt(gene_list, db_info):
             ok += 1
             commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
         if verbose: print " time: %8.3f\n" % ( time()-start);
+        #exit (1)
 
     print "tot: ", tot, "ok: ", ok
     print "no pepseq ", no_pepseq
@@ -159,7 +161,7 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, multiple_exon_alnmt, gene_list, [local_db, ensembl_db_name])
+    parallelize (no_threads, multiple_exon_alnmt, gene_list[0:15000], [local_db, ensembl_db_name])
     
     return True
 
