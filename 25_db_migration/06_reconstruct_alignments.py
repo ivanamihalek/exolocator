@@ -47,7 +47,7 @@ def fract_identity (seq1, seq2):
     return fract_identity
 
 #########################################
-def merged_sequence (template_seq, sequence_pieces, nucseq_pieces):
+def merged_sequence (template_seq, sequence_pieces, nucseq_pieces, flank_length=10):
     
     template_length = len(template_seq)
     merged = '-'*template_length
@@ -94,18 +94,15 @@ def merged_sequence (template_seq, sequence_pieces, nucseq_pieces):
             del sequence_pieces[deletable]
             del nucseq_pieces[deletable]
 
-    # a piece of fudge - will I evr come backt to clean it up ...
+    # a piece of fudge - will I ever come backt to clean it up ...
     # remove flanking regions that ended up inside - this is a multiple seq alignment now
-    # that neds to be fixed
+    # this needs to be fixed
     # replace the match(es) in the middle with empty strings
+    left_flank  = nucseq_pieces [0][0:flank_length]
+    right_flank = nucseq_pieces[-1][-flank_length:]
     for piece_ct in range(len(sequence_pieces)):
         dna_piece = nucseq_pieces  [piece_ct]
-        if ( piece_ct < len(sequence_pieces) -1):
-            # delete right flank"
-            nucseq_pieces  [piece_ct] = dna_piece[:-flank_length]
-        elif (piece_ct > 0 ):
-            # delete left flank
-            nucseq_pieces  [piece_ct] = dna_piece[flank_length:]
+        nucseq_pieces  [piece_ct] = dna_piece[flank_length:-flank_length]
 
     # if not, go ahead and merge
     merged     = ""
@@ -126,7 +123,7 @@ def merged_sequence (template_seq, sequence_pieces, nucseq_pieces):
         merged     += new_char
         merged_dna += new_codon
 
-
+    merged_dna = left_flank+merged_dna+right_flank
     return [merged, merged_dna]   
 
 #########################################
@@ -190,6 +187,32 @@ def expand_pepseq (reconstructed_pep_sequence, exon_seqs):
     return dna_aln_expanded
 
 #########################################
+def strip_gaps (sequence):
+    
+    seq_stripped = {}
+
+    all_gaps = {}  
+    
+    for name, seq in sequence.iteritems():
+        aln_length = len(seq)
+        break
+
+    for pos in range(aln_length):
+        all_gaps[pos] = True
+        for name, seq in sequence.iteritems():
+            if (not seq[pos]=='-'):
+                all_gaps[pos] = False
+                break
+
+    for name, seq in sequence.iteritems():
+        seq_stripped[name] = ""
+        for pos in range(aln_length):
+            if all_gaps[pos]: continue
+            seq_stripped[name] += seq[pos]
+
+    return seq_stripped
+
+#########################################
 def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial):
 
     sequence_pep = {}
@@ -197,11 +220,10 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial):
     shortest_l = -1 # Uninitialized leading padding length
     shortest_r = -1 # Uninitialized trailing padding length
 
-    # where is human sequence?
-
+    pep_aln_length = 0
+    dna_aln_length = 0
     # find all other exons that map to the human exon
     maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
-
     for map in maps:
         # get the raw (unaligned) sequence for the exon that maps onto human
         exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
@@ -210,6 +232,8 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial):
             exit (1)
         [pepseq, pepseq_transl_start, 
          pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs[1:]
+
+        if len(pepseq)<2: continue
 
         # check
         dnaseq  = Seq (dna_seq[pepseq_transl_start:pepseq_transl_end], generic_dna)
@@ -243,38 +267,10 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial):
                 sequence_dna[sequence_name] = reconst_ntseq
                 dna_aln_length = len(reconst_ntseq)
 
-
     # strip common gaps
-    all_gaps = {}  
-    for pos in range(pep_aln_length):
-        all_gaps[pos] = True
-        for name, seq in sequence_pep.iteritems():
-            if (not seq[pos]=='-'):
-                all_gaps[pos] = False
-                break
-
-    sequence_stripped_pep = {}
-    for name, seq in sequence_pep.iteritems():
-        sequence_stripped_pep[name] = ""
-        for pos in range(pep_aln_length):
-            if all_gaps[pos]: continue
-            sequence_stripped_pep[name] += seq[pos]
-
+    sequence_stripped_pep = strip_gaps (sequence_pep)
     # strip common gaps
-    all_gaps = {}  
-    for pos in range(dna_aln_length):
-        all_gaps[pos] = True
-        for name, seq in sequence_dna.iteritems():
-            if (not seq[pos]=='-'):
-                all_gaps[pos] = False
-                break
-
-    sequence_stripped_dna = {}
-    for name, seq in sequence_dna.iteritems():
-        sequence_stripped_dna[name] = ""
-        for pos in range(dna_aln_length):
-            if all_gaps[pos]: continue
-            sequence_stripped_dna[name] += seq[pos]
+    sequence_stripped_dna = strip_gaps (sequence_dna)
 
     return [sequence_stripped_pep, sequence_stripped_dna]
 
@@ -352,6 +348,53 @@ def get_name (seq_name, species, ortho_gene_id):
     return sequence_name
 
 #########################################
+def  find_human_template(exon_alignment):
+
+    template_name = filter (lambda spec: 'homo_sapiens' in spec, exon_alignment.keys())[0]
+    template_seq  = exon_alignment[template_name]
+
+    return [template_name, template_seq]
+
+#########################################
+def sort_names (sorted_species, alignment):
+
+    sorted_names = []
+    for species in sorted_species:
+        for seq_name  in alignment.keys():
+            if (species in seq_name):
+                sorted_names.append(seq_name)
+    return sorted_names
+
+#########################################
+def gapped_exon (exon_alignment_pep, exon_almt_dna):
+    [pep, dna] = ["",""]
+    [template_name, template_pep] = find_human_template(exon_alignment_pep)
+    pep = '-'*len(template_pep)
+    template_dna = exon_almt_dna[template_name]
+    dna = '-'*len(template_dna)
+    return [pep, dna]
+                     
+#########################################
+def flags_init( flags, seq_name, flag_name):
+    if not flags.has_key(seq_name): 
+        flags[seq_name] = {}
+    if not flags[seq_name].has_key(flag_name):
+        flags[seq_name][flag_name] = []
+    return
+
+#########################################
+def fix_one2many (seq_to_fix, list_of_human_exons, seqid, output_pep ):
+    
+    new_alignment = {}
+
+    print seq_to_fix
+    print map (lambda ex: seqid[ex], list_of_human_exons)
+
+    
+    return new_alignment
+
+
+#########################################
 
 def make_alignments ( gene_list, db_info):
 
@@ -384,7 +427,9 @@ def make_alignments ( gene_list, db_info):
     # for each human gene
     gene_ct = 0
     #for gene_id in gene_list:
-    for gene_id in [412667]: #  wls       
+    #for gene_id in [412667]: #  wls   
+    for gene_id in [378768]: #  p53
+
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
         afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
@@ -398,70 +443,155 @@ def make_alignments ( gene_list, db_info):
         human_exons = gene2exon_list(cursor, gene_id)
         canonical_exons = []
         for human_exon in human_exons:
-            if not human_exon.is_canonical:
+            if not human_exon.is_canonical or  not human_exon.is_coding:
                 continue
             canonical_exons.append(human_exon)
 
         # the exons are not guaranteed to be in order
         canonical_exons.sort(key=lambda exon: exon.start_in_gene)
 
-        # reconstruct the alignment with orthologues
-        mitochondrial        = is_mitochondrial(cursor, gene_id)
+        # >>>>>>>>>>>>>>>>>>
+        # reconstruct the per-exon alignment with orthologues
+        mitochondrial = is_mitochondrial(cursor, gene_id)
  
-        alnmt_pep    = {}
-        alnmt_dna    = {}
-        has_a_map    = False
+        alnmt_pep = {}
+        alnmt_dna = {}
+        has_a_map = False
+        ct        = 0
+        seqid     = {}
         for human_exon in canonical_exons:
             [alnmt_pep[human_exon], alnmt_dna[human_exon]]  = \
                 make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial)   
             if alnmt_pep[human_exon]: has_a_map=True
+            seqid[human_exon] = ct
+            ct += 1
+
+        # do we have a sequence mapping to multiple human exons?
+        ortho_exon_to_human_exon = {}
+        for human_exon in canonical_exons:
+            for exon_seq_name in alnmt_pep[human_exon].keys():
+                if not ortho_exon_to_human_exon.has_key(exon_seq_name):
+                    ortho_exon_to_human_exon[exon_seq_name] = [human_exon]
+                else:
+                    ortho_exon_to_human_exon[exon_seq_name].append(human_exon)
 
         # >>>>>>>>>>>>>>>>>>
         if not has_a_map: continue
 
-        # find which species we have in this story
+        # >>>>>>>>>>>>>>>>>>
+        # find which species we have, and for how many exons
+        # we may have two rothologues for the same species
         dna_sequence = {}
         pep_sequence = {}
         seq_name     = {}
+        flags        = {}
+        parent_seq_name = {}
         for human_exon in canonical_exons:
-            for name,seq in alnmt_pep[human_exon].iteritems():
-                (species, exon_id, exon_known) = parse_aln_name(name)
+            for exon_seq_name, exon_seq in alnmt_pep[human_exon].iteritems():
+                (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
                 ortho_gene_id = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
                 # gene --> name -- retrieve old name, or construct new one
-                sequence_name = get_name (seq_name, trivial_name[species], ortho_gene_id) 
-                if not pep_sequence.has_key(sequence_name): 
-                    pep_sequence[sequence_name] = {}
-                if not pep_sequence[sequence_name].has_key(human_exon): 
-                    pep_sequence[sequence_name][human_exon] = []
-                pep_sequence[sequence_name][human_exon].append(seq)
+                parent_seq_name[exon_seq_name] = get_name (seq_name, trivial_name[species], ortho_gene_id) 
+                
 
-        for sequence_name in pep_sequence.keys():
-            print sequence_name
+        # >>>>>>>>>>>>>>>>>>
+        # flag the cases when one ortho exon maps to many human for later
+        for exon_seq_name, concat_seq_name  in parent_seq_name.iteritems():
+            if ( len(ortho_exon_to_human_exon[exon_seq_name]) > 1):
+                flags_init(flags, concat_seq_name, 'one_ortho2many_human')
+                to_fix = [exon_seq_name, ortho_exon_to_human_exon[exon_seq_name]]
+                flags[concat_seq_name]['one_ortho2many_human'].append(to_fix)
+
+        # >>>>>>>>>>>>>>>>>>
+        for human_exon in canonical_exons:
+            for exon_seq_name, exon_seq in alnmt_pep[human_exon].iteritems():
+                concat_seq_name = parent_seq_name[exon_seq_name]
+                if not pep_sequence.has_key(concat_seq_name): 
+                    pep_sequence[concat_seq_name] = {}
+                    dna_sequence[concat_seq_name] = {}
+                if not pep_sequence[concat_seq_name].has_key(human_exon): 
+                    pep_sequence[concat_seq_name][human_exon] = []
+                    dna_sequence[concat_seq_name][human_exon] = []
+                pep_sequence[concat_seq_name][human_exon].append(exon_seq)
+                dna_sequence[concat_seq_name][human_exon].append(alnmt_dna[human_exon][exon_seq_name])
+  
+        # >>>>>>>>>>>>>>>>>>
+        # concatenate the aligned exons for each species, taking into account that the alignment
+        # doesn't have to be one to one
+        headers     = []
+        output_pep  = {}
+        output_dna  = {}
+        for concat_seq_name in pep_sequence.keys():
+            output_pep[concat_seq_name] = ""
+            output_dna[concat_seq_name] = ""
+            flagged_exons = []
+            if concat_seq_name in flags.keys() and flags[concat_seq_name].has_key('one_ortho2many_human'):
+                for to_fix in flags[concat_seq_name]['one_ortho2many_human']:
+                    flagged_exons = flagged_exons+to_fix[1]
             for human_exon in canonical_exons:
-                if pep_sequence[sequence_name].has_key(human_exon):
-                    if ( len(pep_sequence[sequence_name][human_exon]) == 1):
-                        print human_exon.start_in_gene, pep_sequence[sequence_name][human_exon][0]
+                if human_exon in flagged_exons:
+                    # one ortho seq maps to multiple human exons
+                    [pep, dna] = gapped_exon (alnmt_pep[human_exon], alnmt_dna[human_exon])
+                elif pep_sequence[concat_seq_name].has_key(human_exon):
+                    if ( len(pep_sequence[concat_seq_name][human_exon]) == 1):
+                        # we have a neat one-to-one mapping
+                        pep = pep_sequence[concat_seq_name][human_exon][0]
+                        dna = dna_sequence[concat_seq_name][human_exon][0]
                     else:
                         # if two sequences map to the same human exon, merge
-                        template = alnmt_pep[human_exon]['homo_sapiens']
-                        [pep, dna] = merged_sequence (template, alnmt_pep[sequence_name][human_exon], 
-                                                       alnmt_dna[sequence_name][human_exon])
-                        print human_exon.start_in_gene, pep_sequence[sequence_name][human_exon]
-        exit(1)
-        # stich the exons together, this time taking into account that the alignment
-        # doesn't have to be one to one
-                       
-        headers        = []
-        output_pep     = {}
-        output_dna     = {}
-        ortholog_count = {}
-        exit(1)
+                        [pep, dna] = gapped_exon (alnmt_pep[human_exon], alnmt_dna[human_exon])
+                        # flag for later
+                        flags_init(flags, concat_seq_name, 'many_ortho2one_human')
+                        to_fix = [human_exon, pep_sequence[concat_seq_name][human_exon]]
+                        flags[concat_seq_name]['many_ortho2one_human'].append(to_fix)
+                else: 
+                    # no exon in this species
+                    [pep, dna] = gapped_exon (alnmt_pep[human_exon], alnmt_dna[human_exon])
+
+                if output_pep[concat_seq_name]: output_pep[concat_seq_name] += '-Z-'
+                output_pep[concat_seq_name] += pep
+                if output_dna[concat_seq_name]: output_dna[concat_seq_name] += '---Z---'
+                output_dna[concat_seq_name] += dna
+                   
+            headers.append(concat_seq_name)
+
+        # clean all gaps
+        output_pep = strip_gaps(output_pep)
+        output_dna = strip_gaps(output_dna)
+
+        # >>>>>>>>>>>>>>>>>>
+        # cleanup for the case when the match is not one-to-one
+        # take out the slice of the alignment
+        # re-align the slice
+        # put the slice back in the alignment
+        # figure out how to expand DNA too
+        for seq_to_fix in flags.keys():
+            print seq_to_fix
+            if flags[seq_to_fix].has_key('one_ortho2many_human'): 
+                print "\t", 'one_ortho2many_human'
+                for to_fix in flags[seq_to_fix]['one_ortho2many_human']:
+                    list_of_human_exons = to_fix[1]
+                    print "\t", to_fix
+                    output_pep = fix_one2many (seq_to_fix, list_of_human_exons, seqid, output_pep)
+
+                    exit(1)
+                #    [human_exon, ortho_seqs] = to_fix
+                #    fix_many2one (seqs_to_fix, human_exon_no, ortho_seqs)
+
+        #exit (1)
+
+ 
+        # >>>>>>>>>>>>>>>>>>
         # find place for best_afa -- for the moment can put it to the scratch space:
-        afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-        output_fasta (afa_fnm, headers, output_pep)
+        #afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+        afa_fnm  = 'test.afa'
+        sorted_trivial_names = map(lambda species: trivial_name[species], sorted_species)
+        sorted_seq_names = sort_names (sorted_trivial_names, output_pep)
+        output_fasta (afa_fnm, sorted_seq_names, output_pep)
         print afa_fnm
-        afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-        output_fasta (afa_fnm, headers, output_dna)
+        # afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+        afa_fnm  = 'test.nt.afa'
+        output_fasta (afa_fnm, sorted_seq_names, output_dna)
         print afa_fnm
 
         exit(1)
@@ -508,4 +638,7 @@ if __name__ == '__main__':
     #for gene_id in [412667]: #  wls
     #for gene_id in [378768]: #  p53
     #for gene_id in [378766]: #  dynein
-'''
+    #[template_name, template_seq] = find_human_template(alnmt_pep[human_exon])
+    #[pep, dna] = merged_sequence (template_seq, pep_sequence[concat_seq_name][human_exon], 
+    #                               dna_sequence[concat_seq_name][human_exon])
+ '''
