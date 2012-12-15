@@ -383,13 +383,91 @@ def flags_init( flags, seq_name, flag_name):
     return
 
 #########################################
-def fix_one2many (seq_to_fix, list_of_human_exons, seqid, output_pep ):
+def fix_one2many (cfg, acg, exon_seq_name, concat_name, list_of_human_exons, seqid, alnmt_pep, output_pep ):
     
     new_alignment = {}
 
-    print seq_to_fix
-    print map (lambda ex: seqid[ex], list_of_human_exons)
+    exon_numbers = map (lambda ex: seqid[ex], list_of_human_exons)
+    smallest_id  = exon_numbers[0]
+    largest_id   = exon_numbers[-1]
+    # sanity
+    prev = ""
+    for human_exon in list_of_human_exons:
+        current = alnmt_pep[human_exon][exon_seq_name].replace ("-", "")
+        if prev and not prev == current: # should be all one and the same
+            print "oink? "
+            exit (1)
+        prev = current
+    seq_to_fix = current
+    # pull  the slice out of the alignment
+    slice_seq = {}
+    # exon boundaries:
+    delimiter = re.compile("Z")
+    exon_aln_start = []
+    exon_aln_end   = []
+    start          =  0
+    prev_end       =  0
+    # use human as the reference - in other species the boundaries might
+    # be at different positions
+    for match in delimiter.finditer(output_pep['human']):
+        
+        start = prev_end 
+        end   = match.start()
+        exon_aln_start.append(start)
+        exon_aln_end.append(end)
+        prev_end   =  match.end()
 
+    start = prev_end + 1
+    end   = len(output_pep['human'])
+    exon_aln_start.append(start)
+    exon_aln_end.append(end)
+    ####################################
+    slice_start = exon_aln_start[smallest_id]
+    slice_end   = exon_aln_end  [largest_id]
+    for name, seq in output_pep.iteritems():
+        if (name== concat_name): continue
+        slice_seq[name] = seq[slice_start:slice_end]
+        
+        
+    tmp_name = exon_seq_name+"_"+"_".join(map (lambda x: str(x), exon_numbers))
+    afa_fnm  = "{0}/{1}.afa".format(cfg.dir_path['scratch'], tmp_name)
+    output_fasta (afa_fnm, slice_seq.keys(), slice_seq)
+
+    tmp_name  = exon_seq_name
+    fasta_fnm = "{0}/{1}.fa".format(cfg.dir_path['scratch'], tmp_name)
+    output_fasta (fasta_fnm, [concat_name], {concat_name:seq_to_fix})
+
+    tmp_name = exon_seq_name+"_"+"_".join(map (lambda x: str(x), exon_numbers))
+    out_fnm  = "{0}/{1}.out.afa".format(cfg.dir_path['scratch'], tmp_name)
+
+    mafftcmd = acg.generate_mafft_profile (afa_fnm, fasta_fnm, out_fnm)
+    ret      = commands.getoutput(mafftcmd)
+    ret      = commands.getoutput("cat "+out_fnm)
+
+    realigned = {}
+    seq = ""
+    for line in ret.split('\n'):
+        if '>' in line:
+            if ( seq ):
+                realigned[name] = seq
+            name = line.replace (">", "")
+            name = name.replace (" ", "")
+            seq = ""
+        else:
+            seq += line
+    if seq: realigned[name] = seq
+
+    # replace the slice with the re-aligned one
+    new_alignment = {}
+    for name, seq in output_pep.iteritems():
+        new_alignment[name]  = ""
+        new_alignment[name] += seq[:slice_start] # this should presumable include "Z"
+        new_alignment[name] += realigned[name]
+        new_alignment[name] += seq[slice_end:]
+ 
+    tmp_name  = exon_seq_name
+    fasta_fnm = "{0}/{1}.ctrl.afa".format(cfg.dir_path['scratch'], tmp_name)
+    output_fasta (fasta_fnm, new_alignment.keys(), new_alignment)
     
     return new_alignment
 
@@ -440,7 +518,7 @@ def make_alignments ( gene_list, db_info):
         if verbose: print gene_id, stable_id, get_description (cursor, gene_id)
 
         # find all exons we are tracking in the database
-        human_exons = gene2exon_list(cursor, gene_id)
+        human_exons     = gene2exon_list(cursor, gene_id)
         canonical_exons = []
         for human_exon in human_exons:
             if not human_exon.is_canonical or  not human_exon.is_coding:
@@ -480,7 +558,7 @@ def make_alignments ( gene_list, db_info):
 
         # >>>>>>>>>>>>>>>>>>
         # find which species we have, and for how many exons
-        # we may have two rothologues for the same species
+        # we may have two orthologues for the same species
         dna_sequence = {}
         pep_sequence = {}
         seq_name     = {}
@@ -565,18 +643,14 @@ def make_alignments ( gene_list, db_info):
         # re-align the slice
         # put the slice back in the alignment
         # figure out how to expand DNA too
-        for seq_to_fix in flags.keys():
-            print seq_to_fix
-            if flags[seq_to_fix].has_key('one_ortho2many_human'): 
-                print "\t", 'one_ortho2many_human'
-                for to_fix in flags[seq_to_fix]['one_ortho2many_human']:
-                    list_of_human_exons = to_fix[1]
-                    print "\t", to_fix
-                    output_pep = fix_one2many (seq_to_fix, list_of_human_exons, seqid, output_pep)
-
-                    exit(1)
-                #    [human_exon, ortho_seqs] = to_fix
-                #    fix_many2one (seqs_to_fix, human_exon_no, ortho_seqs)
+        if 1:
+            for seq_to_fix in flags.keys():
+                 if flags[seq_to_fix].has_key('one_ortho2many_human'): 
+                    for to_fix in flags[seq_to_fix]['one_ortho2many_human']:
+                        exon_seq_name       = to_fix[0]
+                        list_of_human_exons = to_fix[1]
+                        output_pep = fix_one2many (cfg, acg, exon_seq_name, seq_to_fix, 
+                                                   list_of_human_exons, seqid, alnmt_pep, output_pep)
 
         #exit (1)
 
@@ -589,6 +663,7 @@ def make_alignments ( gene_list, db_info):
         sorted_seq_names = sort_names (sorted_trivial_names, output_pep)
         output_fasta (afa_fnm, sorted_seq_names, output_pep)
         print afa_fnm
+        exit(1)
         # afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
         afa_fnm  = 'test.nt.afa'
         output_fasta (afa_fnm, sorted_seq_names, output_dna)

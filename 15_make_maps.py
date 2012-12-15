@@ -229,12 +229,21 @@ def  fract_identity (cigar_line):
         
     return  fraction
 
+#########################################
+def overlap (start, end, other_start, other_end):
+    if ( other_end < start): 
+        return False
+    elif ( end < other_start):
+        return False
+    else:
+        return True
+
 
 #########################################
 def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
 
     maps = []
-
+   
     if len(aligned_seq.keys()) > 2:
         print "right now the mapping implemented for two species only"
         exit (1)
@@ -259,21 +268,20 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
                 continue
             [other_start, other_end] = exon_positions[other_species][padded_count_ortho]
 
-            if ( human_start <= other_start <= human_end or
-                 human_start <= other_end <= human_end):
+            if ( overlap (human_start, human_end, other_start, other_end) ):
                 
                 map = Map()
-                map.species_1 = 'homo_sapiens'
-                map.species_2 = other_species
+                map.species_1    = 'homo_sapiens'
+                map.species_2    = other_species
                 
-                map.exon_id_1 = human_exons[human_exon_ct].exon_id
-                map.exon_id_2 = ortho_exons[ortho_exon_ct].exon_id
+                map.exon_id_1    = human_exons[human_exon_ct].exon_id
+                map.exon_id_2    = ortho_exons[ortho_exon_ct].exon_id
 
                 map.exon_known_1 = human_exons[human_exon_ct].is_known
                 map.exon_known_2 = ortho_exons[ortho_exon_ct].is_known
 
-                exon_seq_human = aligned_seq['homo_sapiens'][human_start:human_end]
-                exon_seq_other = aligned_seq[other_species][other_start:other_end]
+                exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end]
+                exon_seq_other   = aligned_seq[other_species][other_start:other_end]
                 [seq_human, seq_other] = pad_the_alnmt (exon_seq_human,human_start,
                                                         exon_seq_other, other_start)
 
@@ -284,6 +292,8 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
                 map.similarity = fract_identity (ciggy)
                 
                 maps.append(map)
+
+
     return maps
 
 #########################################
@@ -382,7 +392,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
         return maps
     
     aligned_seq = {}
-    if 0:
+    if 0:# python implementation
         [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
             = exon_aware_smith_waterman (human_seq, ortho_seq)
     else: # C implementation
@@ -391,7 +401,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
 
     if (not aligned_seq['homo_sapiens'] or 
         not aligned_seq[ortho_species]):
-        return maps # this is empty
+        return []
 
     # find the positions of the exons in the alignment
     exon_positions = {}
@@ -423,6 +433,18 @@ def store (cursor, maps, ensembl_db_name):
         #####
         switch_to_db(cursor,ensembl_db_name['homo_sapiens']) 
         store_or_update (cursor, 'exon_map', fixed_fields, update_fields)
+
+    return True
+
+#########################################
+def  map_cleanup (cursor, ensembl_db_name, human_exons):
+    
+    switch_to_db(cursor,ensembl_db_name['homo_sapiens']) 
+    for exon in human_exons:
+        qry  = "delete from exon_map where exon_id = %d " % exon.exon_id
+        qry += " and exon_known = %d " % exon.is_known
+        rows = search_db (cursor, qry, verbose=False)
+
 
     return True
 
@@ -462,7 +484,9 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
     
 
-    for gene_id in gene_list:
+    #pfor gene_id in gene_list:
+    for gene_id in [378768]: #  p53
+    #for gene_id in [412667]: #  wls   
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -474,9 +498,14 @@ def maps_for_gene_list(gene_list, db_info):
         if (not human_exons):
             print 'no exons for ', gene_id
             sys.exit(1)
+    
         # check maps
-        if gene_has_a_map (cursor, ensembl_db_name, human_exons):
-            continue
+        #if gene_has_a_map (cursor, ensembl_db_name, human_exons):
+        #    continue
+
+        # get rid of the old maps
+        map_cleanup (cursor, ensembl_db_name, human_exons)
+        
 
         # one2one   orthologues
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
@@ -513,7 +542,7 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 7
+    no_threads = 1
 
     local_db = False
 

@@ -76,7 +76,7 @@ int load_sim_matrix (int ** similarity) {
     char *digits           = "0123456789";
     int aao_strlen, ctr, i, j;
     int char_i, char_j;
-    
+    int DELIMITER_SCORE = 5;
     int blosum62[]={
 	 4,
 	-2,  4,
@@ -121,9 +121,9 @@ int load_sim_matrix (int ** similarity) {
     for (j=0;j<=i;j++){
 	char_j = (int) amino_acid_order [j];
 	if ( char_j == 'B' ) {
-	    similarity[char_i][char_j] = similarity[char_j][char_i] =  30;
+	    similarity[char_i][char_j] = similarity[char_j][char_i] =  DELIMITER_SCORE;
 	} else if ( char_j == 'Z' ) {
-	    similarity[char_i][char_j] = similarity[char_j][char_i] = -30;
+	    similarity[char_i][char_j] = similarity[char_j][char_i] = -2*DELIMITER_SCORE;
 	} else {
 	    similarity[char_i][char_j] = similarity[char_j][char_i] =   0;
 	}
@@ -132,9 +132,9 @@ int load_sim_matrix (int ** similarity) {
     for (j=0;j<=i;j++){
 	char_j = (int) amino_acid_order [j];
 	if ( char_j == 'Z' ) {
-	    similarity[char_i][char_j] = similarity[char_j][char_i] =  30;
+	    similarity[char_i][char_j] = similarity[char_j][char_i] =  DELIMITER_SCORE;
 	} else if ( char_j == 'B' ) {
-	    similarity[char_i][char_j] = similarity[char_j][char_i] = -30;
+	    similarity[char_i][char_j] = similarity[char_j][char_i] = -2*DELIMITER_SCORE;
 	} else {
 	    similarity[char_i][char_j] = similarity[char_j][char_i] =   0;
 	}
@@ -144,18 +144,21 @@ int load_sim_matrix (int ** similarity) {
     
     for(i=0;i<digit_strlen;i++){
 	char_i = digits[i];
+	/* award to align digit to digit */
 	for(j=0;j<digit_strlen;j++){
 	    char_j = digits[j];
-	    similarity[char_i][char_j] = similarity[char_j][char_i] = 10;
+	    similarity[char_i][char_j] = similarity[char_j][char_i] = DELIMITER_SCORE;
 	}
+	/* digit to amino acid */
 	for(j=0;j<aao_strlen;j++){
 	    char_j = amino_acid_order[j];
-	    similarity[char_i][char_j] = similarity[char_j][char_i] =  0;
+	    similarity[char_i][char_j] = similarity[char_j][char_i] =  -DELIMITER_SCORE/2;
 	}
+	/* Z and B to digit*/
 	char_j = 'Z';
-	similarity[char_i][char_j] = similarity[char_j][char_i] = -30;
+	similarity[char_i][char_j] = similarity[char_j][char_i] = -3*DELIMITER_SCORE;
 	char_j = 'B';
-	similarity[char_i][char_j] = similarity[char_j][char_i] = -30;
+	similarity[char_i][char_j] = similarity[char_j][char_i] = -3*DELIMITER_SCORE;
 	
      }
 

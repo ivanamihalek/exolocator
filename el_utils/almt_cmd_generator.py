@@ -68,7 +68,7 @@ class AlignmentCommandGenerator(object):
                                    sequence_start = None, sequence_stop = None, 
                                    output_file_path = None):
         
-        if (isinteger(seq_name)):
+        if (seq_name.isdigit()):
             seq_id_cmd = "-s 'lcl|%s' " % seq_name
         else:
             seq_id_cmd = "-s %s" % seq_name
@@ -149,10 +149,11 @@ class AlignmentCommandGenerator(object):
 
     
     def generate_SW_nt (self, query_sequence_file, target_fasta_db_file, 
-                             output_file, supress_stdout = True):
+                             output_file = None, supress_stdout = False):
         # Matija's current implementation is switching the order
-        cmd = "{0} -j {1} -i {2} --out {3}".format(self.sw_sharp, query_sequence_file, 
-                                                   target_fasta_db_file, output_file)
+        cmd = "{0} --verbose 0 -j {1} -i {2}".format(self.sw_sharp, query_sequence_file, target_fasta_db_file)
+        if not output_file == None:
+            cmd +=  " --out " + output_file
         if supress_stdout:
             cmd += " > /dev/null"
         return cmd
@@ -187,6 +188,12 @@ class AlignmentCommandGenerator(object):
             return "{0} --quiet --anysymbol {1} > {2}".format(self.mafft, input_file, output_file)
         else:
             return "{0} --quiet --anysymbol {1} ".format(self.mafft, input_file)
+    
+    def generate_mafft_profile (self, input_file_1, input_file_2, output_file=None):
+        if output_file:
+            return "{0}-profile {1} {2} > {3}".format(self.mafft, input_file_1, input_file_2, output_file)
+        else:
+            return "{0}-profile {1} {2} ".format(self.mafft, input_file_1, input_file_2)
     
     def _generate_genedb_file_name (self, species, sequence_type, sequence_id, masked):
         '''

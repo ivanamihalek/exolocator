@@ -52,8 +52,9 @@ def multiple_exon_alnmt(gene_list, db_info):
     ok   = 0
     no_pepseq      = 0
     no_orthologues = 0
-    for gene_id in gene_list:
+    #for gene_id in gene_list:
     #for gene_id in [378766]: #  dynein
+    for gene_id in [378768]:  #  p53
         start = time()
         gene_ct += 1
         if  not gene_ct%100: print gene_ct, " out of", len(gene_list)
@@ -142,7 +143,7 @@ def multiple_exon_alnmt(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 15
+    no_threads = 1
 
     local_db = False
 
