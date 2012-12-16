@@ -50,14 +50,16 @@ def multiple_exon_alnmt(gene_list, db_info):
     gene_ct = 0
     tot  = 0
     ok   = 0
+    no_maps        = 0
     no_pepseq      = 0
     no_orthologues = 0
     #for gene_id in gene_list:
     #for gene_id in [378766]: #  dynein
-    for gene_id in [378768]:  #  p53
+    #for gene_id in [378768]:  #  p53
+    for gene_id in [412667]: #  wls   
         start = time()
         gene_ct += 1
-        if  not gene_ct%100: print gene_ct, " out of", len(gene_list)
+        if  not gene_ct%100: print "thread ", thread(), ", ", gene_ct, "genes out of", len(gene_list)
 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         if verbose: print gene_ct, len(gene_ids),  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
@@ -70,7 +72,9 @@ def multiple_exon_alnmt(gene_list, db_info):
             #if verbose: print "\texon no.", tot
             # find all orthologous exons the human exon  maps to
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
-            if not maps: continue
+            if not maps: 
+                no_maps += 1
+                continue
             # output to fasta:
             seqname   = "{0}:{1}:{2}".format('homo_sapiens', human_exon.exon_id, human_exon.is_known)
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
@@ -131,13 +135,14 @@ def multiple_exon_alnmt(gene_list, db_info):
 
             ok += 1
             commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
-        if verbose: print " time: %8.3f\n" % ( time()-start);
+        if verbose: print " time: %8.3f\n" % (time()-start);
         #exit (1)
 
     print "tot: ", tot, "ok: ", ok
+    print "no maps ", no_pepseq
     print "no pepseq ", no_pepseq
     print "no orthologues  ", no_orthologues
-
+    print
 
 
 #########################################
@@ -162,7 +167,7 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, multiple_exon_alnmt, gene_list[0:15000], [local_db, ensembl_db_name])
+    parallelize (no_threads, multiple_exon_alnmt, gene_list[15000:], [local_db, ensembl_db_name])
     
     return True
 

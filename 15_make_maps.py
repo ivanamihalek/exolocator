@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 
+import StringIO
 import MySQLdb, commands, re, sys
 from hashlib import sha1
 from random  import random
@@ -484,8 +485,8 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
     
 
-    #pfor gene_id in gene_list:
-    for gene_id in [378768]: #  p53
+    for gene_id in gene_list:
+    #for gene_id in [378768]: #  p53
     #for gene_id in [412667]: #  wls   
 
         ct += 1
@@ -503,6 +504,7 @@ def maps_for_gene_list(gene_list, db_info):
         #if gene_has_a_map (cursor, ensembl_db_name, human_exons):
         #    continue
 
+        # COMMENT THIS OUT PERHAPS?
         # get rid of the old maps
         map_cleanup (cursor, ensembl_db_name, human_exons)
         
@@ -531,9 +533,10 @@ def maps_for_gene_list(gene_list, db_info):
             store (cursor, maps, ensembl_db_name)
 
         if (not ct%10):
-            print "processed ", ct, "genes,  out of ", len(gene_list), "  ",
-            print no_maps, " maps;   no_exon_info: ", missing_exon_info , "no_seq_info:", missing_seq_info 
- 
+            datastring = StringIO.StringIO()
+            print >> datastring, "processed ", ct, "genes,  out of ", len(gene_list), "  ",
+            print >> datastring, no_maps, " maps;   no_exon_info: ", missing_exon_info , "no_seq_info:", missing_seq_info 
+            print datastring.getvalue()
     cursor.close()
     db.close()
 
@@ -542,7 +545,7 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 15
 
     local_db = False
 
@@ -561,7 +564,7 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, maps_for_gene_list, gene_list[15000:], [local_db, ensembl_db_name])
+    parallelize (no_threads, maps_for_gene_list, gene_list[0:15000], [local_db, ensembl_db_name])
     
     return True
 
