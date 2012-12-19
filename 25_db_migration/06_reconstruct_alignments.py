@@ -47,25 +47,37 @@ def fract_identity (seq1, seq2):
     return fract_identity
 
 #########################################
-def merged_sequence (template_seq, sequence_pieces):
+def check_seq_length(sequence, msg):
+
+    aln_length = len(sequence.values()[0] )
+    for name, seq in sequence.iteritems():
+        if not len(seq) == aln_length:
+            print msg
+            print "seq length check failure: ",  name, len(seq),  aln_length
+            return False
+    return True
+
+#########################################
+def merged_sequence (template_seq, pep_seq_pieces, dna_seq_pieces, flank_length):
     
     template_length = len(template_seq)
-    merged = '-'*template_length
 
-    for piece in sequence_pieces:
+    for piece in pep_seq_pieces:
         if (not len(piece) == template_length):
             print "length mismatch for aligned exons (?)"
-            return merged
+            pep_merged = '-'*template_length
+            dna_merged = "-"*( 3*template_length+2*flank_length)
+            return [pep_merged, dna_merged]
 
     # check whether any two pieces overlap
     overlap = []
     for pos in range(template_length): 
 
-        for i in range(len(sequence_pieces)):
-            if (sequence_pieces[i][pos] == '-'): continue
+        for i in range(len(pep_seq_pieces)):
+            if (pep_seq_pieces[i][pos] == '-'): continue
 
-            for j in range (i+1, len(sequence_pieces)):
-                if (sequence_pieces[j][pos] == '-'): continue
+            for j in range (i+1, len(pep_seq_pieces)):
+                if (pep_seq_pieces[j][pos] == '-'): continue
                 index = str(i) + " " + str(j)
                 if not index in overlap:
                     overlap.append(index)
@@ -78,8 +90,8 @@ def merged_sequence (template_seq, sequence_pieces):
         i = int(tmp[0])
         j = int(tmp[1])
         #print "overlap: ", i, j 
-        if ( fract_identity (template_seq, sequence_pieces[i]) < 
-             fract_identity (template_seq, sequence_pieces[j]) ):
+        if ( fract_identity (template_seq, pep_seq_pieces[i]) < 
+             fract_identity (template_seq, pep_seq_pieces[j]) ):
             to_delete.append(i)
         else:
             to_delete.append(j)
@@ -90,14 +102,16 @@ def merged_sequence (template_seq, sequence_pieces):
         for i in range(len(to_delete)):
             deletable = to_delete[i]
             # not sure what is this:
-            if deletable >= len(sequence_pieces): continue
-            del sequence_pieces[deletable]
+            if deletable >= len(pep_seq_pieces): continue
+            del pep_seq_pieces[deletable]
+            del dna_seq_pieces[deletable]
  
 
     # if not, go ahead and merge
-    merged = "ZZZZZZZZZZZZ".join(sequence_pieces)
+    pep_merged = "ZZZZZZ".join(pep_seq_pieces)
+    dna_merged = "Z".join(dna_seq_pieces)
 
-    return merged
+    return [pep_merged, dna_merged]
 
 
 #########################################
@@ -106,8 +120,47 @@ def align_nucseq_by_pepseq(aligned_pepseq, nucseq):
         print aligned_pepseq.replace('-','')
         print "length mismatch: ", len(aligned_pepseq.replace('-',''))*3, len(nucseq)
         return ""
-    codons = iter(map(''.join, zip(*[iter(nucseq)]*3)))
-    aligned_nucseq = ''.join(('---' if c=='-' else next(codons) for c in aligned_pepseq))
+    codon = iter(map(''.join, zip(*[iter(nucseq)]*3)))
+    aligned_nucseq = ''.join(('---' if c=='-' else next(codon) for c in aligned_pepseq))
+    return aligned_nucseq
+
+#########################################
+def aligned_nt_length ( aligned_pepseq_template,  aligned_pepseq, flank_length):
+
+    length = 0
+    for pos in range(len(aligned_pepseq) ):
+
+        if aligned_pepseq_template[pos]=='Z':
+            length += (2*flank_length+1)
+        else:
+            length += 3
+       
+    return  length
+
+#########################################
+def align_nucseq_by_pepseq_w_template( aligned_pepseq_template,  aligned_pepseq, nucseq, flank_length):
+
+    if (not len(aligned_pepseq.replace('-',''))*3 == len(nucseq)):
+        print aligned_pepseq.replace('-','')
+        print "length mismatch: ", len(aligned_pepseq.replace('-',''))*3, len(nucseq)
+        return ""
+
+    codon         = iter(map(''.join, zip(*[iter(nucseq)]*3)))
+
+    aligned_nucseq = ""
+    for pos in range(len(aligned_pepseq) ):
+
+        if aligned_pepseq_template[pos]=='Z':
+            if (aligned_pepseq[pos] == '-'):
+                aligned_nucseq += "-"*(2*flank_length+1)
+            else:
+                aligned_nucseq += "-"*(2*flank_length-2)
+                aligned_nucseq +=  next(codon)
+        elif (aligned_pepseq[pos] == '-'):
+            aligned_nucseq +=  "---"
+        else:
+            aligned_nucseq +=  next(codon)
+       
     return aligned_nucseq
 
 #########################################
@@ -162,6 +215,7 @@ def expand_pepseq (reconstructed_pep_sequence, exon_seqs):
 
 #########################################
 def strip_gaps (sequence):
+
     
     seq_stripped = {}
 
@@ -178,15 +232,21 @@ def strip_gaps (sequence):
     for pos in range(aln_length):
         all_gaps[pos] = True
         for name, seq in sequence.iteritems():
-            if not len(seq): continue
+            if not len(seq): 
+                continue
             if pos >=  len(seq): continue
             if (not seq[pos]=='-'):
                 all_gaps[pos] = False
                 break
 
+    if not check_seq_length (sequence, "in strip gaps"): exit (1)
+
+
     for name, seq in sequence.iteritems():
-        if not len(seq): continue
-        if pos >=  len(seq): continue
+        if not len(seq): 
+            continue
+        if aln_length >   len(seq): 
+            continue
         seq_stripped[name] = ""
         for pos in range(aln_length):
             if all_gaps[pos]: continue
@@ -428,88 +488,162 @@ def cleanup_exon_boundaries(sequence):
             sequence[name] = new_seq
 
 #########################################
-def expand (aligned_peptide, unaligned_dna):   
+def expand_w_exon_bdries (aligned_peptide_human, aligned_nt_human,  aligned_peptide, old_aligned_dna, flank_length):   
     output_dna = {}
 
-    left_flank_pattern  = re.compile('[atcgn]+[ACTGN]')
-    right_flank_pattern = re.compile('[ACTGN][actgn]+')
+    aligned_exons         = aligned_peptide.split('Z')
+    old_aligned_exons_dna = old_aligned_dna.split('Z')
 
-    aligned_peptide = re.sub('Z+', 'Z',aligned_peptide)
-    aligned_exons          = aligned_peptide.split('Z')
-    aligned_exons_stripped = map (lambda aln: aln.replace("-",""), aligned_exons) 
+    if  not len(aligned_exons) ==  len(old_aligned_exons_dna):
+        print
+        print aligned_peptide
+        print
+        print old_aligned_dna
+        print 
+        print aligned_exons
+        print
+        print old_aligned_exons_dna
+        print
+        exit(1)
 
-    unaligned_dna          = re.sub('Z+', 'Z', unaligned_dna)
-    unaligned_exons_dna    = unaligned_dna.split('Z')
+    expected_lenth = 0
+    aligned_dna = ""
+    for ct in range(len(aligned_exons)):
 
-    print aligned_exons_stripped
-    print unaligned_exons_dna
+        aligned_peptide  = aligned_exons[ct]
+        peptide_stripped = aligned_peptide.replace("-","")
 
-    if 0:
-        for human_exon, exon_names in exon_dict.iteritems():
-            for exon_name in exon_names:
-                peptide         = alnmt_pep[human_exon][exon_name].replace("-","")
-                aligned_peptide = ""
-                for ct in range(len(aligned_exons_stripped)):
-                    if (aligned_exons_stripped[ct] == peptide):
-                        aligned_peptide = aligned_exons[ct]
-                        break
-                if not aligned_peptide: continue
-                dna             = alnmt_dna[human_exon][exon_name].replace("-","")
-                left_flank = ""
-                for match in left_flank_pattern.finditer(dna):
-                    start = match.start()
-                    end   = match.end() - 1 # for the capital letter in the regex
-                    left_flank =  dna[start:end]
-                right_flank = ""
-                for match in right_flank_pattern.finditer(dna):
-                    start = match.start()+ 1
-                    end   = match.end()
-                    right_flank = dna[start:end]
+        nt_length  = aligned_nt_length(aligned_peptide_human,aligned_peptide, flank_length) + 2*flank_length        
 
-                if ( left_flank):
-                    len_left = len(left_flank)
-                else:
-                    len_left = 0
+        if (not peptide_stripped):
+            aligned_exon = "-"*nt_length
+    
+        else:
+            dna                = old_aligned_exons_dna[ct].replace("-","")
 
-                if ( right_flank):
-                    len_right = -len(right_flank)
-                else:
-                    len_right = len(dna)
+            left_flank_pattern  = re.compile('[atcgn]+[ACTGN]')
+            right_flank_pattern = re.compile('[ACTGN][actgn]+')
 
 
-                aligned_dna   = align_nucseq_by_pepseq(aligned_peptide, dna[len_left:len_right])
+            left_flank = ""
+            for match in left_flank_pattern.finditer(dna):
+                start = match.start()
+                end   = match.end() - 1 # for the capital letter in the regex
+                left_flank =  dna[start:end]
+            right_flank = ""
+            for match in right_flank_pattern.finditer(dna):
+                start = match.start()+ 1
+                end   = match.end()
+                right_flank = dna[start:end]
 
-                if not aligned_dna:
-                    print concat_name
-                    print peptide
-                    print aligned_exons_stripped
-                    print aligned_peptide
-                    print "dna:", dna
-                    print "dna no flanks:",dna[len_left:len_right]
-                    print left_flank
-                    print right_flank
-                    exit(1)
+            if ( left_flank):
+                len_left = len(left_flank)
+            else:
+                len_left = 0
 
-                left_flank  =  left_flank.rjust (flank_length, '-')
-                right_flank =  right_flank.ljust(flank_length, '-')
-                if output_dna[concat_name]:  output_dna[concat_name] += "-Z-"
-                output_dna[concat_name] += left_flank + aligned_dna + right_flank
+            if ( right_flank):
+                len_right = -len(right_flank)
+            else:
+                len_right = len(dna)
 
-                print ">> %35s   %5d  %5d " % (concat_name, len(aligned_peptide)*3+20, len( left_flank + aligned_dna + right_flank ))
+            left_flank   = left_flank.rjust (flank_length, '-')
+            right_flank  = right_flank.ljust(flank_length, '-')
+            aligned_exon = left_flank + align_nucseq_by_pepseq_w_template(aligned_peptide_human,  aligned_peptide, 
+                                                               dna[len_left:len_right], flank_length) + right_flank
+        if aligned_dna: aligned_dna += 'Z'
 
-        for concat_name  in concatenated_exons.keys():
-            print "%35s   %5d  %5d " % (concat_name, len(output_pep[concat_name])*3+240, len(output_dna[concat_name]))
-          
+        if not len(aligned_exon) == nt_length:
+            print "nt length mismatch "
+            print aligned_peptide
+            print aligned_exon
+            exit(1)
 
-    exit(1)
-
-
-    return output_dna
+        aligned_dna +=  aligned_exon
+       
+ 
+    return  aligned_dna
 
 
 #########################################
-def fix_one2many (cfg, acg, sorted_trivial_names, exon_seq_names, concat_name, 
-                  list_of_human_exons, seqid, alnmt_pep, output_pep, alnmt_dna, output_dna):
+def expand (aligned_peptide, old_aligned_dna, flank_length):   
+    output_dna = {}
+
+    aligned_exons          = aligned_peptide.split('Z')
+    old_aligned_exons_dna  = old_aligned_dna.split('Z')
+
+    if  not len(aligned_exons) ==  len(old_aligned_exons_dna):
+        print
+        print aligned_peptide
+        print
+        print old_aligned_dna
+        print 
+        print aligned_exons
+        print
+        print old_aligned_exons_dna
+        print
+        exit(1)
+
+    expected_lenth = 0
+    aligned_dna = ""
+    for ct in range(len(aligned_exons)):
+
+        aligned_peptide  = aligned_exons[ct]
+        peptide_stripped = aligned_peptide.replace("-","")
+
+        
+        nt_length = 3*len(aligned_peptide)+2*flank_length
+
+        if (not peptide_stripped):
+            aligned_exon = "-"*nt_length
+    
+        else:
+            dna                = old_aligned_exons_dna[ct].replace("-","")
+
+            left_flank_pattern  = re.compile('[atcgn]+[ACTGN]')
+            right_flank_pattern = re.compile('[ACTGN][actgn]+')
+
+
+            left_flank = ""
+            for match in left_flank_pattern.finditer(dna):
+                start = match.start()
+                end   = match.end() - 1 # for the capital letter in the regex
+                left_flank =  dna[start:end]
+            right_flank = ""
+            for match in right_flank_pattern.finditer(dna):
+                start = match.start()+ 1
+                end   = match.end()
+                right_flank = dna[start:end]
+
+            if ( left_flank):
+                len_left = len(left_flank)
+            else:
+                len_left = 0
+
+            if ( right_flank):
+                len_right = -len(right_flank)
+            else:
+                len_right = len(dna)
+
+            left_flank   = left_flank.rjust (flank_length, '-')
+            right_flank  = right_flank.ljust(flank_length, '-')
+            aligned_exon = left_flank + align_nucseq_by_pepseq(aligned_peptide, dna[len_left:len_right]) + right_flank
+             
+        if aligned_dna: aligned_dna += 'Z'
+
+        if not len(aligned_exon) == nt_length:
+            print aligned_peptide
+            print aligned_exon
+            exit(1)
+
+        aligned_dna +=  aligned_exon
+       
+ 
+    return  aligned_dna
+
+
+#########################################
+def fix_many2one (cfg, acg, sorted_trivial_names, exon_seq_names, concat_name, 
+                  list_of_human_exons, seqid, alnmt_pep, output_pep, alnmt_dna, output_dna, flank_length):
     
     new_alignment_pep = {}
     new_alignment_dna = {}
@@ -530,7 +664,8 @@ def fix_one2many (cfg, acg, sorted_trivial_names, exon_seq_names, concat_name,
             sequence_pieces.append( alnmt_pep[human_exon][exon_seq_name])
             sequence_pieces_dna.append(alnmt_dna[human_exon][exon_seq_name])
         [template_name, template_seq] = find_human_template(alnmt_pep[human_exon])
-        [seq_to_fix, seq_to_fix_dna]  = merged_sequence (template_seq, sequence_pieces, sequence_pieces_dna)
+        [pep_seq_to_fix, dna_seq_to_fix]  = merged_sequence (template_seq, sequence_pieces, 
+                                                         sequence_pieces_dna, flank_length)
     else: # one ortho to many human -- the more complicated cases I pretend I do not see
         # sanity
         many2one = False
@@ -541,18 +676,235 @@ def fix_one2many (cfg, acg, sorted_trivial_names, exon_seq_names, concat_name,
             if prev and not prev == current: # should be all one and the same
                 print "oink? "
                 exit (1)
-                prev = current
-        seq_to_fix = current
-        seq_to_fix_dna = alnmt_dna[human_exon][exon_seq_name].replace ("-", "")
+            prev = current
+        pep_seq_to_fix = current
+        dna_seq_to_fix = alnmt_dna[human_exon][exon_seq_name].replace ("-", "")
 
-    print seq_to_fix
-    print seq_to_fix_dna
 
     # pull  the slice out of the alignment
     # use human as the reference - in other species the boundaries might
     # be at different positions
     # 
-    slice_seq = {}
+    delimiter = re.compile("Z")
+
+    # slice position in the peptide alignment
+    exon_aln_start_pep = []
+    exon_aln_end_pep   = []
+    start              = 0
+    prev_end           = 0
+    for match in delimiter.finditer(output_pep['human']):
+        start = prev_end 
+        end   = match.start()
+        exon_aln_start_pep.append(start)
+        exon_aln_end_pep.append(end)
+        prev_end   =  match.end()
+
+    start = prev_end + 1
+    end   = len(output_pep['human'])
+    exon_aln_start_pep.append(start)
+    exon_aln_end_pep.append(end)
+
+    if len(exon_aln_start_pep) <= smallest_id or  len(exon_aln_start_pep) <= largest_id:
+        return [output_pep, output_dna]
+
+    # slice position in the dna alignment
+    exon_aln_start_dna = []
+    exon_aln_end_dna   = []
+    start              =  0
+    prev_end           =  0
+    for match in delimiter.finditer(output_dna['human']):
+        start = prev_end 
+        end   = match.start()
+        exon_aln_start_dna.append(start)
+        exon_aln_end_dna.append(end)
+        prev_end   =  match.end()
+
+    start = prev_end + 1
+    end   = len(output_dna['human'])
+    exon_aln_start_dna.append(start)
+    exon_aln_end_dna.append(end)
+
+    if len(exon_aln_start_dna) <= smallest_id or  len(exon_aln_start_dna) <= largest_id:
+        return [output_pep, output_dna]
+
+
+
+    ####################################
+    pep_slice_start = exon_aln_start_pep[smallest_id]
+    pep_slice_end   = exon_aln_end_pep  [largest_id]
+    dna_slice_start = exon_aln_start_dna[smallest_id]
+    dna_slice_end   = exon_aln_end_dna  [largest_id]
+    pep_slice = {}
+    dna_slice = {}
+    
+    for name in output_pep.keys():            
+        if (name== concat_name): continue
+        pep_slice[name] = output_pep[name][pep_slice_start:pep_slice_end]
+        dna_slice[name] = output_dna[name][dna_slice_start:dna_slice_end]
+        
+    pep_slice[concat_name] = pep_seq_to_fix
+    dna_slice[concat_name] = dna_seq_to_fix
+
+
+
+    ####################################
+    exon_seq_name = exon_seq_names[0]
+    tmp_name  = exon_seq_name+"_"+"_".join(map (lambda x: str(x), exon_numbers))
+    if len(tmp_name) > 50: tmp_name= tmp_name[0:50]
+    afa_fnm   = "{0}/{1}.afa".format(cfg.dir_path['scratch'], tmp_name)
+
+    tmp_name = exon_seq_name+"_"+"_".join(map (lambda x: str(x), exon_numbers))
+    if len(tmp_name) > 50: tmp_name= tmp_name[0:50]
+    out_fnm  = "{0}/{1}.out.afa".format(cfg.dir_path['scratch'], tmp_name)
+
+
+    output_fasta (afa_fnm, pep_slice.keys()+[concat_name], pep_slice) 
+    mafftcmd = acg.generate_mafft_command (afa_fnm)
+    ret      = commands.getoutput(mafftcmd)
+        
+    pep_slice_realigned = {}
+    pepseq = ""
+    for line in ret.split('\n'):
+        if '>' in line:
+            if ( pepseq ):
+                pep_slice_realigned[name] = pepseq
+            name = line.replace (">", "")
+            name = name.replace (" ", "")
+            pepseq = ""
+        else:
+            pepseq += line
+    if pepseq: pep_slice_realigned[name] = pepseq
+
+
+
+
+
+
+    print " >>> ", pep_slice_start, pep_slice_end
+    print " >>> ", dna_slice_start, dna_slice_end
+
+    print "********************"
+    for name in output_pep.keys():            
+        slice_pep =  output_pep[name]
+        slice_dna =  output_dna[name]
+        print "%35s  %10s %10s " % (name, slice_pep[:10], slice_dna[:10]),
+        print " %4d  %4d " % (len( slice_pep.split('Z')), len( slice_dna.split('Z')))
+        if  not len( slice_pep.split('Z'))== len( slice_dna.split('Z')): 
+            print "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            exit (1)
+
+
+    
+    print "********************"
+    print "********************"
+    for name in pep_slice.keys():            
+        slice_pep =  pep_slice[name]
+        slice_dna =  dna_slice[name]
+        print "%35s  %10s %10s " % (name, slice_pep[:10], slice_dna[:10]),
+        print " %4d  %4d " % (len( slice_pep.split('Z')), len( slice_dna.split('Z')))
+        if  not len( slice_pep.split('Z'))== len( slice_dna.split('Z')): 
+            print
+            print output_pep[name]
+            print
+            print slice_pep
+            print
+            print slice_dna
+            print
+            print "--------------------"
+            exit (1)
+    print "--------------------"
+
+    if 0:
+        print ">>", concat_name
+        print
+
+        for name in pep_slice_realigned.keys():            
+            slice_pep =  pep_slice_realigned[name]
+            slice_dna =  dna_slice[name]
+            print "%35s  %10s %10s " % (name, slice_pep[:10], slice_dna[:10]),
+            print " %4d  %4d " % (len( slice_pep.split('Z')), len( slice_dna.split('Z')))
+            if not len(slice_pep.split('Z')) == len(slice_dna.split('Z')):
+                print
+                print  " %4d  %4d  %4d " % (len( slice_pep.split('Z')), 
+                                       len( pep_slice[name].split('Z')),
+                                       len( slice_dna.split('Z')))
+                print
+                print slice_pep
+                print
+                print pep_slice[name]
+                print 
+                print
+                print slice_dna
+                print
+                print pep_seq_to_fix
+                print
+                print dna_seq_to_fix
+                print
+                exit(1)
+    #exit(1)
+
+
+
+    # replace the slice with the re-aligned one
+    new_alignment_pep = {}
+    for name, pepseq in output_pep.iteritems():
+        if pep_slice_realigned.has_key(name):
+            new_alignment_pep[name]  = pepseq[:pep_slice_start] # this should presumably include "Z"
+            new_alignment_pep[name] += pep_slice_realigned[name]
+            new_alignment_pep[name] += pepseq[pep_slice_end:]
+        else:
+            new_alignment_pep[name]  = pepseq    
+
+    # replace the slice with the re-aligned one
+    new_alignment_dna = {}
+    for name, pepseq in output_pep.iteritems():
+        if pep_slice_realigned.has_key(name):
+            new_alignment_dna[name]  = output_dna[name][:dna_slice_start]
+            new_alignment_dna[name] += expand (pep_slice_realigned[name], 
+                                               dna_slice[name], flank_length)
+            new_alignment_dna[name] += output_dna[name][dna_slice_end:]
+        else:
+            new_alignment_dna[name]  = output_dna[name]
+    
+    return [new_alignment_pep, new_alignment_dna]
+
+#########################################
+#########################################
+#########################################
+#########################################
+def fix_one2many (cfg, acg, sorted_trivial_names, exon_seq_names, concat_name, 
+                  list_of_human_exons, seqid, alnmt_pep, output_pep, alnmt_dna, output_dna, flank_length):
+    
+    new_alignment_pep = {}
+    new_alignment_dna = {}
+
+    exon_numbers = map (lambda ex: seqid[ex], list_of_human_exons)
+    smallest_id  = exon_numbers[0]
+    largest_id   = exon_numbers[-1]
+
+    if len(list_of_human_exons) == 0: # error
+        return [output_pep, output_dna] # the same thing that came in 
+    elif len(list_of_human_exons) == 1: # many ortho to one human -- error
+        return [output_pep, output_dna] # the same thing that came in 
+    else: # one ortho to many human -- the more complicated cases I pretend I do not see
+        # sanity
+        many2one = False
+        prev = ""
+        exon_seq_name =  exon_seq_names[0]
+        for human_exon in list_of_human_exons:
+            current = alnmt_pep[human_exon][exon_seq_name].replace ("-", "")
+            if prev and not prev == current: # should be all one and the same
+                print "oink? "
+                exit (1)
+            prev = current
+        pep_seq_to_fix = current
+        dna_seq_to_fix = alnmt_dna[human_exon][exon_seq_name].replace ("-", "")
+
+
+    # pull  the slice out of the alignment
+    # use human as the reference - in other species the boundaries might
+    # be at different positions
+    # 
     delimiter = re.compile("Z")
 
     # slice position in the peptide alignment
@@ -596,12 +948,21 @@ def fix_one2many (cfg, acg, sorted_trivial_names, exon_seq_names, concat_name,
         return [output_pep, output_dna]
 
     ####################################
-    slice_start = exon_aln_start_pep[smallest_id]
-    slice_end   = exon_aln_end_pep  [largest_id]
-    for name, seq in output_pep.iteritems():
+    pep_slice_start = exon_aln_start_pep[smallest_id]
+    pep_slice_end   = exon_aln_end_pep  [largest_id]
+    dna_slice_start = exon_aln_start_dna[smallest_id]
+    dna_slice_end   = exon_aln_end_dna  [largest_id]
+    pep_slice = {}
+    dna_slice = {}
+    
+    for name in output_pep.keys():            
         if (name== concat_name): continue
-        slice_seq[name] = seq[slice_start:slice_end]
-        
+        pep_slice[name] = output_pep[name][pep_slice_start:pep_slice_end]
+        dna_slice[name] = output_dna[name][dna_slice_start:dna_slice_end]
+    pep_slice[concat_name] = pep_seq_to_fix
+    dna_slice[concat_name] = dna_seq_to_fix
+
+    ####################################
     exon_seq_name = exon_seq_names[0]
     tmp_name  = exon_seq_name+"_"+"_".join(map (lambda x: str(x), exon_numbers))
     if len(tmp_name) > 50: tmp_name= tmp_name[0:50]
@@ -611,57 +972,68 @@ def fix_one2many (cfg, acg, sorted_trivial_names, exon_seq_names, concat_name,
     if len(tmp_name) > 50: tmp_name= tmp_name[0:50]
     out_fnm  = "{0}/{1}.out.afa".format(cfg.dir_path['scratch'], tmp_name)
 
-    if 0: # profile alignment - makes mistakes ...
-        output_fasta (afa_fnm, slice_seq.keys(), slice_seq) 
 
-        tmp_name  = exon_seq_name
-        if len(tmp_name) > 50: tmp_name= tmp_name[0:50]
-        fasta_fnm = "{0}/{1}.fa".format(cfg.dir_path['scratch'], tmp_name)
-        output_fasta (fasta_fnm, [concat_name], {concat_name:seq_to_fix})
-
-        mafftcmd = acg.generate_mafft_profile (afa_fnm, fasta_fnm, out_fnm)
-        ret      = commands.getoutput(mafftcmd)
-        ret      = commands.getoutput("cat "+out_fnm)
-
-    else:
-        slice_seq[concat_name] = seq_to_fix
-        output_fasta (afa_fnm, slice_seq.keys()+[concat_name], slice_seq) 
-        mafftcmd = acg.generate_mafft_command (afa_fnm)
-        ret      = commands.getoutput(mafftcmd)
+    output_fasta (afa_fnm, pep_slice.keys()+[concat_name], pep_slice) 
+    mafftcmd = acg.generate_mafft_command (afa_fnm)
+    ret      = commands.getoutput(mafftcmd)
         
-    realigned = {}
+    pep_slice_realigned = {}
     pepseq = ""
     for line in ret.split('\n'):
         if '>' in line:
             if ( pepseq ):
-                realigned[name] = pepseq
+                pep_slice_realigned[name] = pepseq
             name = line.replace (">", "")
             name = name.replace (" ", "")
             pepseq = ""
         else:
             pepseq += line
-    if pepseq: realigned[name] = pepseq
+    if pepseq: pep_slice_realigned[name] = pepseq
+
 
     # replace the slice with the re-aligned one
     new_alignment_pep = {}
-    new_alignment_dna = {}
-    dna_slice_start = exon_aln_start_dna[smallest_id]
-    dna_slice_end   = exon_aln_end_dna  [largest_id]
     for name, pepseq in output_pep.iteritems():
-        if realigned.has_key(name):
-            new_alignment_pep[name]  = pepseq[:slice_start] # this should presumably include "Z"
-            new_alignment_pep[name] += realigned[name]
-            new_alignment_pep[name] += pepseq[slice_end:]
-            # cook up dna
+        if pep_slice_realigned.has_key(name):
+            new_alignment_pep[name]  = pepseq[:pep_slice_start] # this should presumably include "Z"
+            new_alignment_pep[name] += pep_slice_realigned[name]
+            new_alignment_pep[name] += pepseq[pep_slice_end:]
+        else:
+            new_alignment_pep[name]  = pepseq    
+
+    # replace the slice with the re-aligned one
+    new_alignment_dna = {}
+    prev_nt = ""        
+    for name, pepseq in output_pep.iteritems():
+        if pep_slice_realigned.has_key(name):
             new_alignment_dna[name]  = output_dna[name][:dna_slice_start]
-            new_alignment_dna[name] += expand (realigned[name], seq_to_fix_dna)
+            if name == concat_name:
+                nt_template =  expand (pep_slice_realigned['human'], dna_slice['human'], flank_length)
+                nt = expand_w_exon_bdries (pep_slice_realigned['human'], nt_template , 
+                                           pep_slice_realigned[name],  
+                                           dna_slice[name], flank_length)
+            else:
+                nt = expand (pep_slice_realigned[name], dna_slice[name], flank_length)
+            new_alignment_dna[name] +=  nt
+            if prev_nt and not len(prev_nt)== len(nt):
+                print " >>>> ", len(prev_nt), prev_nt
+                print " >>>> ", len(nt), nt
+                print " >>>> ", len(prev_pep_slice),   prev_pep_slice
+                print " >>>> ", len(pep_slice_realigned[name]),   pep_slice_realigned[name]
+                exit(1)
+            prev_nt = nt
+            prev_pep_slice = pep_slice_realigned[name]
             new_alignment_dna[name] += output_dna[name][dna_slice_end:]
         else:
-            new_alignment_pep[name]  = pepseq
             new_alignment_dna[name]  = output_dna[name]
-    
-    return [new_alignment_pep, new_alignment_dna]
 
+
+
+    if not check_seq_length(new_alignment_pep, "new_alignment_pep"): exit (1)
+    if not check_seq_length(new_alignment_dna, "new_alignment_dna"): exit (1)
+
+    print " BBBBBBBBBBBBBBBBBBBBBBBB "
+    return [new_alignment_pep, new_alignment_dna]
 
 #########################################
 def  sort_concatenated_exons( cursor, ensebl_db_name, concatenated_exons):
@@ -867,23 +1239,53 @@ def make_alignments ( gene_list, db_info):
             for seq_to_fix in flags.keys():
                 if flags[seq_to_fix].has_key('one_ortho2many_human'): 
                     for to_fix in flags[seq_to_fix]['one_ortho2many_human']:
-                        exon_seq_name       = to_fix[0]
-                        list_of_human_exons = to_fix[1]
-                        [output_pep, output_dna]  = fix_one2many (cfg, acg, sorted_trivial_names, [exon_seq_name], seq_to_fix, 
-                                                   list_of_human_exons, seqid, alnmt_pep, output_pep, alnmt_dna, output_dna)
-        if 1:
+                        exon_seq_name            = to_fix[0]
+                        list_of_human_exons      = to_fix[1]
+                        [output_pep, output_dna] = fix_one2many (cfg, acg, sorted_trivial_names, [exon_seq_name], seq_to_fix, 
+                                                                 list_of_human_exons, seqid, alnmt_pep, 
+                                                                 output_pep, alnmt_dna, output_dna, flank_length)
+        if 0:
             for seq_to_fix in flags.keys():
-                 if flags[seq_to_fix].has_key('many_ortho2one_human'): 
+                if flags[seq_to_fix].has_key('many_ortho2one_human'): 
+                    print  'many_ortho2one_human'
                     for to_fix in flags[seq_to_fix]['many_ortho2one_human']:
                         human_exon          = to_fix[0]
                         list_of_ortho_exon_seq_names = to_fix[1]
-                        [output_pep, output_dna] = fix_one2many (cfg, acg, sorted_trivial_names, list_of_ortho_exon_seq_names, 
-                                                   seq_to_fix, [human_exon], seqid, alnmt_pep, output_pep, alnmt_dna, output_dna)
+                        [output_pep, output_dna] = fix_one2many (cfg, acg, sorted_trivial_names, 
+                                                                 list_of_ortho_exon_seq_names, seq_to_fix, [human_exon], 
+                                                                 seqid, alnmt_pep, output_pep, alnmt_dna, output_dna, flank_length)
+                        for name in output_pep.keys():            
+                            slice_pep =  output_pep[name]
+                            slice_dna =  output_dna[name]
+                            print "%35s  %10s %10s " % (name, slice_pep[:10], slice_dna[:10]),
+                            print " %4d  %4d " % (len( slice_pep.split('Z')), len( slice_dna.split('Z')))
+                            if not len( slice_pep.split('Z'))== len( slice_dna.split('Z')): 
+                                print " !!!!!  !!!!! "
+                                exit (1)
+
+        
+        if not check_seq_length (output_pep, "ouput_pep"): exit (1)
+        if not check_seq_length (output_dna, "ouput_dna"): exit (1)
+
+
+        if 0:
+            for name in output_pep.keys():            
+                slice_pep =  output_pep[name]
+                slice_dna =  output_dna[name]
+                print "%35s  %10s %10s " % (name, slice_pep[:10], slice_dna[:10]),
+                print " %4d  %4d " % (len( slice_pep.split('Z')), len( slice_dna.split('Z')))
+                if not len( slice_pep.split('Z'))== len( slice_dna.split('Z')): 
+                    print " !!!!! "
+                    exit (1)
+
+
         # cleanup
         cleanup_exon_boundaries(output_pep)
         output_pep = strip_gaps(output_pep)
         output_dna = strip_gaps(output_dna)
 
+
+ 
         # >>>>>>>>>>>>>>>>>>
         # find place for best_afa -- for the moment can put it to the scratch space:
         afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
@@ -893,6 +1295,23 @@ def make_alignments ( gene_list, db_info):
         output_fasta (afa_fnm, sorted_seq_names, output_pep)
         print afa_fnm
         afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+
+
+        print
+        print "   4 "
+        print output_dna['sloth']
+        if 0:
+            for name in output_pep.keys():            
+                slice_pep =  output_pep[name]
+                slice_dna =  output_dna[name]
+                print "%35s  %10s %10s " % (name, slice_pep[:10], slice_dna[:10]),
+                print " %4d  %4d " % (len( slice_pep.split('Z')), len( slice_dna.split('Z')))
+                if not len( slice_pep.split('Z'))== len( slice_dna.split('Z')): 
+                    print " !!!!! "
+                    exit (1)
+
+
+
         output_fasta (afa_fnm, sorted_seq_names, output_dna)
         print afa_fnm
 
@@ -951,4 +1370,33 @@ if __name__ == '__main__':
         #else:
         #    base_name = concat_name
         #sorted_names   = sort_names (sorted_trivial_names[base_name], slice_seq)
+
+
+    if 0: # profile alignment - makes mistakes ...
+        output_fasta (afa_fnm, slice_seq.keys(), slice_seq) 
+
+        tmp_name  = exon_seq_name
+        if len(tmp_name) > 50: tmp_name= tmp_name[0:50]
+        fasta_fnm = "{0}/{1}.fa".format(cfg.dir_path['scratch'], tmp_name)
+        output_fasta (fasta_fnm, [concat_name], {concat_name:seq_to_fix})
+
+        mafftcmd = acg.generate_mafft_profile (afa_fnm, fasta_fnm, out_fnm)
+        ret      = commands.getoutput(mafftcmd)
+        ret      = commands.getoutput("cat " + out_fnm)
+
+
+
+    print "++++++++++++++++++++++++++++++++++++++++++"
+    print
+    print aligned_pepseq_template
+    print
+    print aligned_pepseq
+    print
+    print nucseq
+    print
+    print aligned_nucseq
+
+    exit (1)
+
+
   '''
