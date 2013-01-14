@@ -433,83 +433,146 @@ def sort_names (sorted_species, alignment):
                 sorted_names.append(seq_name)
     return sorted_names
                      
+            
+#########################################
+def move_Z (peptide_alnmt, global_bdry_position, template_name):
+
+    # see which boundaries can be re-aligned with human
+    for name, seq in peptide_alnmt.iteritems():
+        if name==template_name: continue
+        pep_exons = peptide_alnmt[name].split ('-Z-')
+        
+        bdry_position  = 0
+        for exon_ct in range(1,len(pep_exons)):
+            bdry_position += len(pep_exons[exon_ct-1])
+            if not bdry_position in global_bdry_position:
+                for pos in global_bdry_position:
+                    if bdry_position < pos:
+                        gaps ='-'*(pos-bdry_position)
+                        if peptide_alnmt[name][bdry_position+3:pos+3] ==gaps:
+                            pepseq  = peptide_alnmt[name][:bdry_position]
+                            pepseq += gaps+'-Z-'
+                            pepseq += peptide_alnmt[name][pos+3:]
+                            peptide_alnmt[name] = pepseq
+                            bdry_new = False
+                            break
+                    else:
+                       gaps ='-'*(bdry_position - pos) 
+                       if peptide_alnmt[name][pos:bdry_position] ==gaps:
+                            pepseq  = peptide_alnmt[name][:pos]
+                            pepseq += '-Z-'+gaps
+                            pepseq += peptide_alnmt[name][bdry_position+3:]
+                            peptide_alnmt[name] = pepseq
+                            bdry_new = False
+                            break
+            bdry_position += 3
+    
 
 #########################################
-def expand_w_exon_bdries (aligned_peptide_human, aligned_nt_human,  aligned_peptide, old_aligned_dna, flank_length):   
-    output_dna = {}
+def  correct_overlap_Z(peptide_alnmt, name, pos, global_bdry_position):
 
-    aligned_exons         = aligned_peptide.split('Z')
-    old_aligned_exons_dna = old_aligned_dna.split('Z')
+    length       = len(peptide_alnmt[name])
+    triple       = not '-' in peptide_alnmt[name][pos:pos+3]
+    insert_left  = peptide_alnmt[name][pos] == '-' 
+    insert_left  = insert_left or  triple and (not pos or  peptide_alnmt[name][pos-1]=='-')
+    insert_right = peptide_alnmt[name][pos+2] == '-'
+    insert_right = insert_right or  triple and (not pos>=length-3 or peptide_alnmt[name][pos+3]=='-')
+    #pdb.set_trace()
+    if insert_left:
+        # insert gaps on the left
+        if triple:
+            insert = '---'
+            insert_start = pos
 
-    if not len(aligned_exons) ==  len(old_aligned_exons_dna):
-        print
-        print aligned_peptide
-        print
-        print old_aligned_dna
-        print 
-        print aligned_exons
-        print
-        print old_aligned_exons_dna
-        print
-        exit(1)
-
-    expected_lenth = 0
-    aligned_dna = ""
-    for ct in range(len(aligned_exons)):
-
-        aligned_peptide  = aligned_exons[ct]
-        peptide_stripped = aligned_peptide.replace("-","")
-
-        nt_length  = aligned_nt_length(aligned_peptide_human,aligned_peptide, flank_length) + 2*flank_length        
-
-        if (not peptide_stripped):
-            aligned_exon = "-"*nt_length
-    
+        elif peptide_alnmt[name][pos:pos+2] == '--':
+            insert = '-'
+            insert_start = pos+2
         else:
-            dna                = old_aligned_exons_dna[ct].replace("-","")
+            insert = '--'
+            insert_start = pos+1
 
-            left_flank_pattern  = re.compile('[atcgn]+[ACTGN]')
-            right_flank_pattern = re.compile('[ACTGN][actgn]+')
-
-            left_flank = ""
-            for match in left_flank_pattern.finditer(dna):
-                start = match.start()
-                end   = match.end() - 1 # for the capital letter in the regex
-                left_flank =  dna[start:end]
-            right_flank = ""
-            for match in right_flank_pattern.finditer(dna):
-                start = match.start()+ 1
-                end   = match.end()
-                right_flank = dna[start:end]
-
-            if ( left_flank):
-                len_left = len(left_flank)
+        for name2, seq2 in peptide_alnmt.iteritems():
+            if peptide_alnmt[name2][pos:pos+3] == '-Z-':
+                pepseq  = seq2[:pos+3]
+                pepseq += insert
+                pepseq += seq2[pos+3:]
+                peptide_alnmt[name2] = pepseq
             else:
-                len_left = 0
+                pepseq  = seq2[:insert_start]
+                pepseq += insert
+                pepseq += seq2[insert_start:]
+                peptide_alnmt[name2] = pepseq
+        # also: shift the boundary positions
+        for i in range(len(global_bdry_position) ):
+            if global_bdry_position[i] <= pos: continue
+            global_bdry_position[i] += len(insert)
 
-            if ( right_flank):
-                len_right = -len(right_flank)
+    elif insert_right:
+
+        # insert gaps on the right
+        if triple:
+            insert = '---'
+            insert_start = pos+3
+        elif peptide_alnmt[name][pos+1:pos+3] == '--':
+            insert = '-'
+            insert_start = pos+1
+        else:
+            insert = '--'
+            insert_start = pos+2
+
+
+        for name2, seq2 in peptide_alnmt.iteritems():
+            if peptide_alnmt[name2][pos:pos+3] == '-Z-':
+                pepseq  = seq2[:pos]
+                pepseq += insert
+                pepseq += seq2[pos:]
+                peptide_alnmt[name2] = pepseq
             else:
-                len_right = len(dna)
+                pepseq  = seq2[:insert_start]
+                pepseq += insert
+                pepseq += seq2[insert_start:]
+                peptide_alnmt[name2] = pepseq
 
-            left_flank   = left_flank.rjust (flank_length, '-')
-            right_flank  = right_flank.ljust(flank_length, '-')
-            aligned_exon = left_flank + align_nucseq_by_pepseq_w_template(aligned_peptide_human, aligned_peptide, 
-                                                                          dna[len_left:len_right], flank_length) + right_flank
-        if aligned_dna: aligned_dna += 'Z'
+        # also: shift the boundary positions
+        for i in range(len(global_bdry_position) ):
+            if global_bdry_position[i] < pos: continue
+            global_bdry_position[i] += len(insert)
 
-        if not len(aligned_exon) == nt_length:
-            print "nt length mismatch "
-            print aligned_peptide
-            print aligned_exon
-            exit(1)
 
-        aligned_dna +=  aligned_exon
-       
+#########################################
+# what I really need is the alignment program that enforces boundaries ...
+def boundary_cleanup(peptide_alnmt, sorted_seq_names): 
+
+    global_bdry_position = []
+    # now use remaining species as anchors
+    for sorted_seq_name in sorted_seq_names:
+        pep_exons = peptide_alnmt[sorted_seq_name].split ('-Z-')
+        bdry_position  = 0
+        for exon_ct in range(1,len(pep_exons)):
+            bdry_position += len(pep_exons[exon_ct-1])
+            global_bdry_position.append(bdry_position)
+            bdry_position += 3
  
-    return  aligned_dna
+        global_bdry_position = sorted(global_bdry_position)
+        # see which boundaries can be re-aligned with human
+        move_Z (peptide_alnmt, global_bdry_position, sorted_seq_name)
 
+        for name, seq in peptide_alnmt.iteritems():
+            if name==sorted_seq_name: continue
 
+            for pos in global_bdry_position:
+
+                if 'Z' in peptide_alnmt[name][pos:pos+3]:
+                    continue
+
+                if peptide_alnmt[name][pos:pos+3] == '---':
+                    continue
+
+                correct_overlap_Z(peptide_alnmt, name, pos, global_bdry_position)
+
+        # see which boundaries can be re-aligned with human
+        move_Z (peptide_alnmt, global_bdry_position, sorted_seq_name)
+            
 #########################################
 def expand (aligned_peptide, old_aligned_dna, flank_length):   
     output_dna = {}
@@ -646,7 +709,7 @@ def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_trivi
     global_exon_position = []
     for concat_name, seq in output_pep.iteritems():
 
-        pep_exons = seq.split ('Z')
+        pep_exons = seq.split ('-Z-')
 
         conc_exons_names = []
         dna     = {}
@@ -695,92 +758,31 @@ def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_trivi
     global_exon_position = sorted(global_exon_position)
 
     # comb one more time to insert the flanking regions
-    if 0:
-        for concat_name, seq in output_pep.iteritems():
-            prev_pos = 0
-            output_dna[concat_name] = ""
-            for pos in global_exon_position:
+    for concat_name, seq in output_pep.iteritems():
+        prev_pos = 0
+        if  left_flank[concat_name].has_key(prev_pos):
+            output_dna[concat_name] = left_flank[concat_name][prev_pos]
+        else:
+            output_dna[concat_name] = '-'*flank_length 
 
-                boundary = ""
+        for pos in global_exon_position:
 
-                if pos in local_exon_position[concat_name]:
-                    boundary += '-Z-'
-                #else:
-                #    boundary = '---'
-
-                output_dna[concat_name] += dna_wo_exon_bdries[concat_name][prev_pos:pos]
-                output_dna[concat_name] += boundary
-                prev_pos = pos
-
-            output_dna[concat_name] += dna_wo_exon_bdries[concat_name][prev_pos:]
-
-            if not  len(output_dna[concat_name]) == len(output_pep[concat_name])*3:
-                print concat_name
-                print len(output_dna[concat_name]), len(output_pep[concat_name])*3
-                for i in range( len(output_pep[concat_name]) ):
-                    frm = i*10
-                    to  = frm+10
-                    print frm, to
-                    print " "+"  ".join (output_pep[concat_name][frm:to])
-                    print output_dna[concat_name][frm*3:to*3]
-                    if to >=  len(output_pep[concat_name]): 
-                        break
-                exit (1)
-    else:
-        for concat_name, seq in output_pep.iteritems():
-            prev_pos = 0
-            if  left_flank[concat_name].has_key(prev_pos):
-                output_dna[concat_name] = left_flank[concat_name][prev_pos]
+            if pos in local_exon_position[concat_name]:
+                boundary = '-----'+'-Z-'+'-----'
             else:
-                output_dna[concat_name] = '-'*flank_length 
-            for pos in global_exon_position:
+                boundary = '----'
+            output_dna[concat_name] += dna_wo_exon_bdries[concat_name][prev_pos:pos]
+            output_dna[concat_name] += boundary
+            prev_pos = pos
 
-                boundary = ""
+ 
 
-                if pos in local_exon_position[concat_name]:
-                    boundary += '-Z-'
-                #else:
-                #    boundary = '---'
+        output_dna[concat_name] += dna_wo_exon_bdries[concat_name][prev_pos:]
+        if  right_flank[concat_name].has_key(prev_pos):
+            output_dna[concat_name] += right_flank[concat_name][prev_pos]
+        else:
+            output_dna[concat_name] += '-'*flank_length 
 
-                output_dna[concat_name] += dna_wo_exon_bdries[concat_name][prev_pos:pos]
-                output_dna[concat_name] += boundary
-                prev_pos = pos
-
-            output_dna[concat_name] += dna_wo_exon_bdries[concat_name][prev_pos:]
-            if  right_flank[concat_name].has_key(prev_pos):
-                output_dna[concat_name] += right_flank[concat_name][prev_pos]
-            else:
-                output_dna[concat_name] += '-'*flank_length 
-
-    # comb one more time to insert the flanking regions
-    if 0:
-        for concat_name, seq in output_pep.iteritems():
-            prev_pos = 0
-            if  left_flank[concat_name].has_key(prev_pos):
-                output_dna[concat_name] = left_flank[concat_name][prev_pos]
-            else:
-                output_dna[concat_name] = '-'*flank_length 
-            for pos in global_exon_position:
-                if pos in local_exon_position[concat_name]:
-                    # insert  right-Z-left
-                    if  right_flank[concat_name].has_key(prev_pos):
-                        output_dna[concat_name] += right_flank[concat_name][prev_pos]
-                    else:
-                        output_dna[concat_name] += '-'*flank_length 
-                    boundary += '-Z-'
-                    boundary  = left_flank[concat_name][pos]
-                else:
-                    boundary = '-'*flank_length + '---' + '-'*flank_length 
-
-                output_dna[concat_name] += dna_wo_exon_bdries[concat_name][prev_pos:pos]
-                output_dna[concat_name] += boundary
-                prev_pos = pos
-
-            output_dna[concat_name] += dna_wo_exon_bdries[concat_name][prev_pos:]
-            if  right_flank[concat_name].has_key(prev_pos):
-                output_dna[concat_name] += right_flank[concat_name][prev_pos]
-            else:
-                output_dna[concat_name] += '-'*flank_length 
     return output_dna
 
 
@@ -1063,9 +1065,9 @@ def make_alignments ( gene_list, db_info):
 
     # for each human gene
     gene_ct = 0
-    #for gene_id in gene_list:
+    for gene_id in gene_list:
     #for gene_id in [412667]: #  wls   
-    for gene_id in [378768]: #  p53
+    #for gene_id in [378768]: #  p53
     #for gene_id in [389337]: #inositol polyphosphate-4-phosphatase
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
@@ -1212,34 +1214,34 @@ def make_alignments ( gene_list, db_info):
         #########################################################
         # >>>>>>>>>>>>>>>>>>
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
-        #afa_fnm    = 'before_any.afa'
-        #output_pep = strip_gaps(output_pep)
-        #output_fasta (afa_fnm, sorted_seq_names, output_pep)
-        #print afa_fnm
 
 
         if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0):
             output_pep = input_fasta(afa_fnm)
         else:
             for seq_to_fix in flags.keys():
-                output_pep = fix_one2many (cfg, acg, sorted_trivial_names, canonical_human_exons, concatenated_exons,
-                                       seq_to_fix, flags[seq_to_fix], alnmt_pep, output_pep)
+                output_pep = fix_one2many (cfg, acg, sorted_trivial_names, 
+                                           canonical_human_exons, concatenated_exons,
+                                           seq_to_fix, flags[seq_to_fix], alnmt_pep, output_pep)
 
             if not check_seq_length (output_pep, "ouput_pep"): 
                 print "length check failure"
                 continue
 
 
-            # >>>>>>>>>>>>>>>>>>
-            # find place for best_afa -- for the moment can put it to the scratch space:
-            # afa_fnm  = 'test.afa'
-            output_pep = strip_gaps(output_pep)
-            output_fasta (afa_fnm, sorted_seq_names, output_pep)
-            print afa_fnm
-
         # >>>>>>>>>>>>>>>>>>
-        output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_trivial_names, concatenated_exons,  
-                                     alnmt_pep, output_pep, flank_length)
+        # find place for best_afa -- for the moment can put it to the scratch space:
+        boundary_cleanup(output_pep, sorted_seq_names)
+        output_pep = strip_gaps(output_pep)
+        #afa_fnm  = 'test.afa'
+        output_fasta (afa_fnm, sorted_seq_names, output_pep)
+        print afa_fnm
+        continue
+ 
+        # >>>>>>>>>>>>>>>>>>
+        output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
+                                                  sorted_trivial_names, concatenated_exons,  
+                                                  alnmt_pep, output_pep, flank_length)
         #output_dna = strip_gaps(output_dna)
 
         afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
@@ -1259,7 +1261,7 @@ def make_alignments ( gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 15
 
     local_db = False
 
