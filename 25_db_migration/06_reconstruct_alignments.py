@@ -737,118 +737,120 @@ def fill_hack(pep_slice, protected_name, exon_aln_start, exon_aln_end):
 
 
 #########################################
-def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_trivial_names, 
-                                 concatenated_exons, alnmt_pep, output_pep, flank_length):
+def find_exon_boundaries (peptide_alignment):
+
+    global_bdry_position = []
+    local_bdry_position  = {}
+
+    delimiter = re.compile("-Z-")
+    for name, seq in peptide_alignment.iteritems():
+        local_bdry_position[name] = []
+        for match in delimiter.finditer(seq):
+            if not match: continue
+            pos = match.start()
+            if not pos in global_bdry_position:
+                global_bdry_position.append(pos)
+            if not pos in local_bdry_position[name]:
+                local_bdry_position[name].append(pos)
+
+    global_bdry_position = sorted(global_bdry_position)
+
+    return global_bdry_position, local_bdry_position
+
+#########################################
+def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
+                                 names_of_exons, alnmt_pep, output_pep, flank_length):
+
+    afa_fnm  = 'test5.afa'
+    output_fasta (afa_fnm, output_pep.keys(), output_pep)
+    print afa_fnm
 
     output_dna         = {}
-
-    dna_wo_exon_bdries = {}
-    left_flank         = {}
-    right_flank        = {}
-    local_exon_position  = {}
-    global_exon_position = []
-    for concat_name, seq in output_pep.iteritems():
+    # sanity checking
+    for name, seq in output_pep.iteritems():
 
         pep_exons = seq.split ('-Z-')
+        exon_ct            = 0
+        nonempty_exon_ct   = 0
+        name_ct2exon_ct    = []
+        exon_ct2name_ct    = []
+        for pe in pep_exons:
+            exon_ct2name_ct.append(-1)
+            pe = pe.replace('-','')
+            if pe:
+                name_ct2exon_ct.append(exon_ct)
+                exon_ct2name_ct[exon_ct] = nonempty_exon_ct
+                nonempty_exon_ct += 1
+            exon_ct += 1
 
-        print len(pep_exons), len(concatenated_exons[concat_name])
-        continue
+        if not nonempty_exon_ct == len( names_of_exons[name]):
+            print " foul "
+            print species
+            return {}
 
-        conc_exons_names = []
-        dna     = {}
-        peptide = {}
+    # in the peptide alignment find exon positions that are  global exon boundaries, 
+    # and the ones that are local
+    [global_bdry_position, local_bdry_position] = find_exon_boundaries(output_pep)
+    # for each sequence
+    # 1) check whether there is a global positions (inserts) that need to be accomodated
+    # 2) cut according to local boundary positions
+    # 3) expand the exon
+    # 4) recalculate the position of the boundary in this exons frame
+    # 5) add extra space for the flanks
+    output_dna = {}
+    for name, seq in output_pep.iteritems():
+    # for name  in ['armadillo', 'macaque']:
+        # seq = output_pep[name]
 
-        for human_exon, list_of_exon_names in concatenated_exons[concat_name].iteritems():
-            print human_exon.exon_id
-            print list_of_exon_names
-            for exon_name in list_of_exon_names:
-                
-                tokens     = exon_name.split('_')
-                species    = "_".join(tokens[:-2])
-                exon_id    = int(tokens[-2])
-                exon_known = int(tokens[-1])
-                exon_seqs  = get_exon_seqs(cursor, exon_id, exon_known, ensembl_db_name[species])[1:]
-                print exon_name
-                print exon_seqs
-                print
-            print
+        output_dna[name] = ""
 
-        print len(pep_exons), len(concatenated_exons[concat_name])
+        prev_local_pos = 0
+        for local_pos in local_bdry_position[name]+[len(seq)]:
 
-        exit(1)
+            # find inserts
+            inserts          = []
+            inserts_relative = []
+            for global_pos in global_bdry_position:
+                if global_pos >= local_pos: break
+                if global_pos > prev_local_pos and global_pos< local_pos:
+                    inserts.append(global_pos)
 
-        for human_exon, list_of_exon_names in concatenated_exons[concat_name].iteritems():
-            for exon_name in list_of_exon_names:
-                if not exon_name in conc_exons_names:
-                    conc_exons_names.append(exon_name)
-                    peptide[exon_name]  =  alnmt_pep[human_exon][exon_name].replace ('-', '')
+            # cut
+            if prev_local_pos > 0:
+                peptide_seq  = 'f'*flank_length
+                peptide_seq += 'E'*3*len(seq[prev_local_pos+3:local_pos])
+                peptide_seq += 'f'*flank_length
+                if inserts:
+                    inserts_relative = map(lambda pos: flank_length + 3*(pos - prev_local_pos-3), inserts)
 
-        local_exon_position[concat_name] = []
-        left_flank [concat_name] = {}
-        right_flank[concat_name] = {}
-        dna_wo_exon_bdries[concat_name] = ""
-        for pep_exon in pep_exons:
-            pepe =  pep_exon.replace ('-', '')
-            if not pepe: 
-                dna_seq= '-'*(2*flank_length+3*len(pep_exon))
             else:
-                matching_exon_names = filter (lambda  exon_name: 
-                                              peptide[exon_name] == pepe, 
-                                              conc_exons_names)
-                if not matching_exon_names: 
-                    dna_seq= '-'*(2*flank_length+3*len(pep_exon))
-                else:
+                peptide_seq  = 'f'*flank_length
+                peptide_seq += 'E'*3*len(seq[prev_local_pos:local_pos])
+                peptide_seq += 'f'*flank_length
+                if inserts:
+                    inserts_relative = map(lambda pos: flank_length + 3*(pos - prev_local_pos), inserts)
+                
 
-                    # what if I have two matching seqs (?)
-                    tokens     = matching_exon_names[0].split('_')
-                    species    = "_".join(tokens[:-2])
-                    exon_id    = int(tokens[-2])
-                    exon_known = int(tokens[-1])
-                    exon_seqs  = get_exon_seqs(cursor, exon_id, exon_known, ensembl_db_name[species])[1:]
-                    dna_seq    = expand_pepseq (pep_exon, exon_seqs)
 
-            pos        = len(dna_wo_exon_bdries[concat_name])
+            prev_ins = 0
+            for ins in inserts_relative:
+                output_dna[name] += peptide_seq[prev_ins:ins]
+                output_dna[name] += 'g'*flank_length + '-Z-' + 'g'*flank_length
+                prev_ins          = ins+3
+            output_dna[name] += peptide_seq[prev_ins:]
 
-            dna_wo_exon_bdries[concat_name] += dna_seq[flank_length:-flank_length]
-            left_flank [concat_name][pos]    = dna_seq[:flank_length]
-            right_flank[concat_name][pos]    = dna_seq[-flank_length:]
+            if local_pos < len(seq):
+                output_dna[name] += '-Z-'
+ 
+            prev_local_pos = local_pos
 
-            if not pos: continue
-            local_exon_position[concat_name].append(pos) 
-            if not pos  in global_exon_position:
-                global_exon_position.append(pos)
-        
+
+    afa_fnm  = 'test6.afa'
+    output_fasta (afa_fnm, output_dna.keys(), output_dna)
+    print afa_fnm
+
     exit(1)
     
-    global_exon_position = sorted(global_exon_position)
-
-
-    # comb one more time to insert the flanking regions
-    for concat_name, seq in output_pep.iteritems():
-        prev_pos = 0
-        if  left_flank[concat_name].has_key(prev_pos):
-            output_dna[concat_name] = left_flank[concat_name][prev_pos]
-        else:
-            output_dna[concat_name] = '-'*flank_length 
-
-        for pos in global_exon_position:
-
-            if pos in local_exon_position[concat_name]:
-                boundary = '---'+'-Z-'+'---'
-            else:
-                boundary = ''
-            output_dna[concat_name] += dna_wo_exon_bdries[concat_name][prev_pos:pos]
-            output_dna[concat_name] += boundary
-            prev_pos = pos
-
- 
-
-        output_dna[concat_name] += dna_wo_exon_bdries[concat_name][prev_pos:]
-        if  right_flank[concat_name].has_key(prev_pos):
-            output_dna[concat_name] += right_flank[concat_name][prev_pos]
-        else:
-            output_dna[concat_name] += '-'*flank_length 
-
     return output_dna
 
 
@@ -953,9 +955,9 @@ def fix_one2many (cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_
 
     count = 0
 
-    if not overlapping_maps: return output_pep
+    if not overlapping_maps: return [output_pep, names_of_exons]
 
-    if not output_pep.has_key('human'): return output_pep
+    if not output_pep.has_key('human'): return  [output_pep, names_of_exons]
 
 
     new_alignment_pep = {}
@@ -1040,19 +1042,21 @@ def fix_one2many (cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_
 
         if len(exon_aln_start_pep) <= smallest_id or  len(exon_aln_start_pep) <= largest_id:
             print  len(exon_aln_start_pep), smallest_id, len(exon_aln_start_pep), largest_id
-            return False
+            return [output_pep, names_of_exons]
 
         ####################################
         # find the slice position
         pep_slice_start = exon_aln_start_pep[smallest_id]
         pep_slice_end   = exon_aln_end_pep  [largest_id]
+
         ####################################
         # if the slice size becomes comparable to the alignment size, drop the sequence
         if  number_of_human_exons > 3 and \
-                float(pep_slice_end-pep_slice_start)/len(output_pep['human']) > 0.6:
-            print "deleting", seq_to_fix
+                float(pep_slice_end-pep_slice_start)/len(output_pep['human']) > 0.3 or 'elephant' in seq_to_fix:
+            
+            #print "deleting", seq_to_fix
             del output_pep[seq_to_fix]
-            return False
+            return [output_pep, names_of_exons]
 
         ####################################
         # cut out the slice
@@ -1099,12 +1103,11 @@ def fix_one2many (cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_
 
         new_pep_slice['human'] = aligned_human.replace('#','-')
 
-
         # strip gaps and output
         boundary_cleanup(new_pep_slice, sorted_seq_names)
 
         if not check_seq_length(new_pep_slice, "new_pep_slice"):
-            return False
+            return [output_pep, names_of_exons]
 
         ####################################
  
@@ -1116,7 +1119,7 @@ def fix_one2many (cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_
             new_alignment_pep[name] += pepseq[pep_slice_end:] 
 
         if not check_seq_length(new_alignment_pep, "new_alignment_pep"):
-            return False
+            return [output_pep, names_of_exons]
 
         boundary_cleanup(new_alignment_pep, new_alignment_pep.keys())
         new_alignment_pep = strip_gaps(new_alignment_pep)
@@ -1131,17 +1134,20 @@ def fix_one2many (cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_
         if pe: 
             exon_ct += 1
 
+
+
     if not exon_ct == len(new_names_of_exons):
         print seq_to_fix, 'length mismatch'
         print "lengths:", exon_ct, len(new_names_of_exons)
         print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
         print new_names_of_exons
-        return False
+        return [output_pep, names_of_exons]
 
     output_pep = new_alignment_pep
     names_of_exons[seq_to_fix] = new_names_of_exons
 
-    return True
+                              
+    return [output_pep, names_of_exons]
 
 
 #########################################
@@ -1197,7 +1203,7 @@ def find_overlapping_maps (ortho_exon_to_human_exon, exon_seq_names, alnmt_pep):
 #########################################
 def remove_ghosts (output_pep, names_of_exons):
 
-    delimiter = re.compile("Z")
+    delimiter      = re.compile("Z")
 
     #find positions that are all-gaps-but-one
     for name, seq in output_pep.iteritems():
@@ -1229,6 +1235,7 @@ def remove_ghosts (output_pep, names_of_exons):
                         
             # if yes replace with gaps 
             if not is_ghost: continue
+
             # check the Z itself
             if start:
                 remove_start = True
@@ -1243,20 +1250,19 @@ def remove_ghosts (output_pep, names_of_exons):
                 remove_end = True
                 for name2, seq2 in output_pep.iteritems():
                     if name2==name: continue
-                    if not seq2[end+1] == '-':
+                    if not seq2[end] == '-':
                         remove_end = False
                         break
                 if remove_end: end += 1
 
             # remove
-            temp = seq
-            seq  = temp[:start]+'-'*(end-start)+temp[:end]
-
+            temp = output_pep[name]
+            output_pep[name] = temp[:start]+'-'*(end-start)+temp[end:]
             # which exon is it
             removed_exons.append(exon_ct)
             # remove the name from the list
             new_names = []
-            for exon_ct in tange(len(names_of_exons)):
+            for exon_ct in range(len(names_of_exons[name])):
                 if not exon_ct in removed_exons:
                     new_names.append(names_of_exons[name][exon_ct])
             names_of_exons[name] = new_names
@@ -1264,7 +1270,7 @@ def remove_ghosts (output_pep, names_of_exons):
     # strip gaps
     output_pep = strip_gaps(output_pep)
 
-    return True
+    return [output_pep, names_of_exons]
 
 
 
@@ -1309,12 +1315,12 @@ def make_alignments ( gene_list, db_info):
 
     # for each human gene
     gene_ct = 0
-    for gene_id in gene_list:
+    #for gene_id in gene_list:
     #for random_check in range(100):
     #    gene_id = choice(gene_list)
     #for gene_id in [412667]: #  wls   
     #for gene_id in [416066]:  #  BRCA1   
-    #for gene_id in [378768]: #  p53
+    for gene_id in [378768]:  #  p53
     #for gene_id in [389337]: #inositol polyphosphate-4-phosphatase
     #for gene_id in [418590]: # titin
 
@@ -1460,40 +1466,48 @@ def make_alignments ( gene_list, db_info):
 
         for seq_to_fix in overlapping_maps.keys():
             # fix_one2many changes bout output_pep and names_of_exons
-            fix_one2many (cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_map, names_of_exons,
-                          seq_to_fix, overlapping_maps[seq_to_fix], alnmt_pep, output_pep)
+            [output_pep, names_of_exons] = fix_one2many (cfg, acg, sorted_seq_names, 
+                                                         canonical_human_exons, human_exon_map, 
+                                                         names_of_exons, seq_to_fix, 
+                                                         overlapping_maps[seq_to_fix], 
+                                                         alnmt_pep, output_pep)
+ 
             # we may have chosen to delete some sequences
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
+
         if not check_seq_length (output_pep, "ouput_pep"): 
             print "length check failure"
             continue
         # >>>>>>>>>>>>>>>>>>
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
+
+        #for name, seq in output_pep.iteritems():
+        #    output_pep[name] = seq.replace('B', '-')
+        
         # get rid of the ghost exons that do not correpond to anything in any other species
-        remove_ghosts(output_pep, names_of_exons)
+        # [output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
+
         for name, seq in output_pep.iteritems():
             output_pep[name] = seq.replace('B', '-')
-        #afa_fnm  = 'test4.afa'
+        #afa_fnm  = 'test5.afa'
         output_fasta (afa_fnm, sorted_seq_names, output_pep)
         print afa_fnm
-        #exit(1)
-        continue
- 
 
 
         # >>>>>>>>>>>>>>>>>>
-        #output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
-        #                                          sorted_trivial_names, names_of_exons,  
-        #                                          alnmt_pep, output_pep, flank_length)
+        output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
+                                                  sorted_trivial_names, names_of_exons,  
+                                                  alnmt_pep, output_pep, flank_length)
         #output_dna = strip_gaps(output_dna)
 
         #afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+        afa_fnm  = 'test5.afa'
         output_fasta (afa_fnm, sorted_seq_names, output_dna)
         print afa_fnm
 
         #continue
-        exit(1)
+        #exit(1)
 
         # notes to accompany the alignment:
         notes_fnm  = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
@@ -1505,7 +1519,7 @@ def make_alignments ( gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 15
+    no_threads = 1
 
     local_db = False
 
@@ -1560,5 +1574,52 @@ if __name__ == '__main__':
                             break
                 print
         print "############################"
+
+    output_dna = {}
+    for name, seq in output_pep.iteritems():
+
+        output_dna[name] = ""
+
+        prev_local_pos = 0
+        for local_pos in local_bdry_position[name]+[len(seq)]:
+
+            # find inserts
+            inserts          = []
+            inserts_relative = []
+            for global_pos in global_bdry_position:
+                if global_pos >= local_pos: break
+                if global_pos > prev_local_pos and global_pos< local_pos:
+                    inserts.append(global_pos)
+
+            # cut
+            if prev_local_pos > 0:
+                peptide_seq  = 'f'*flank_length
+                peptide_seq += seq[prev_local_pos+3:local_pos]
+                peptide_seq += 'f'*flank_length
+                if inserts:
+                    inserts_relative = map(lambda pos: flank_length+(pos-prev_local_pos-3), inserts)
+            else:
+                peptide_seq  = 'f'*flank_length
+                peptide_seq += seq[prev_local_pos:local_pos]
+                peptide_seq += 'f'*flank_length
+                if inserts:
+                    inserts_relative = map(lambda pos: flank_length+(pos-prev_local_pos), inserts)
+
+
+            prev_ins = 0
+            for ins in inserts_relative:
+                output_dna[name] += peptide_seq[prev_ins:ins]
+                output_dna[name] += 'g'*flank_length + '-Z-' + 'g'*flank_length
+                prev_ins          = ins+3
+            output_dna[name] += peptide_seq[prev_ins:]
+
+            if local_pos < len(seq):
+                output_dna[name] += '-Z-'
+ 
+            prev_local_pos = local_pos
+
+
+ 
+
 
 '''
