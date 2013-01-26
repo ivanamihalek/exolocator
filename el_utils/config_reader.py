@@ -124,7 +124,7 @@ class ConfigurationReader:
         else:
             return ""
         
-        
+##############################################        
 if __name__ == '__main__':
 
     local_db = False

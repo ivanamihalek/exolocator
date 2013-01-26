@@ -23,7 +23,7 @@ void * emalloc(int	size)
 char **cmatrix(int rows, int columns){
     char **m;
     int i;
-        /* allocate pointers to rows */
+    /* allocate pointers to rows */
     m=(char **) malloc(rows*sizeof(char*));
     if (!m)  {
 	fprintf (stderr,"row allocation failure  in chmatrix().\n");
@@ -39,10 +39,11 @@ char **cmatrix(int rows, int columns){
     /* return pointer to array of pointers to rows */ 
     return m; 
 }
+/***************************************************/
 int **imatrix(int rows, int columns){
     int **m;
     int i;
-        /* allocate pointers to rows */
+    /* allocate pointers to rows */
     m=(int **) malloc(rows*sizeof(int*));
     if (!m)  {
 	fprintf (stderr,"row allocation failure  in chmatrix().\n");
@@ -200,10 +201,14 @@ static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
 
     
     /**********************************************************************************/
-    int gap_opening   =  -5;
-    int gap_extension =  -3;
-    int endgap        =  0;
-    int use_endgap    =  0;
+    //int gap_opening   =  -5; // used in 15_make_maps
+    //int gap_extension =  -3;
+    //char gap_character = '-'
+    int gap_opening    =  -3;  // used in 25_db_migration/06_make_alignments
+    int gap_extension  =   0;
+    char gap_character = '#';
+    int endgap         =   0;
+    int use_endgap     =   0;
 
     int far_away = -1;
 
@@ -467,21 +472,21 @@ static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
                 j += 1;
 	    } else if (map_i2j[i] < 0){
                 aligned_seq_1[pos] = seq1[i];
-                aligned_seq_2[pos] = '-';
+                aligned_seq_2[pos] = gap_character;
                 i += 1;
 	    } else if (map_j2i[j] < 0){
-                aligned_seq_1[pos] = '-';
+                aligned_seq_1[pos] = gap_character;
                 aligned_seq_2[pos] = seq2[j];
                 j += 1;
 	    }
 
 	} else if (j<max_j){
-	    aligned_seq_1[pos] = '-';
+	    aligned_seq_1[pos] = gap_character;
 	    aligned_seq_2[pos] = seq2[j];
 	    j += 1;
 	} else {
             aligned_seq_1[pos] = seq1[i];
-            aligned_seq_2[pos] = '-';
+            aligned_seq_2[pos] = gap_character;
             i += 1;
 	}
 	pos ++;
@@ -519,20 +524,3 @@ void initalignment()
 
 
 
-
-
-/* junkyard
-    //printf (" >>>>>   %d  %d \n", len1, len2); python will intercept the output
-else {
-    
-	for (i=0; i <ASCII_SIZE; i++) {
-	    if ( ! similarity[i][i]) continue;
-	    for (j=i; j <ASCII_SIZE; j++) {
-		if ( ! similarity[j][j]) continue;
-		printf ( " %c  %c   %4d \n", (char)i, (char)j, similarity[i][j]);
-	    }
-	}
-	printf (" >>>>>  the second time around .\n");
-    }
-
-*/  

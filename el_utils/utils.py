@@ -27,3 +27,18 @@ def output_fasta (filename, headers, sequence):
     outf.close()
 
     return
+#########################################
+def input_fasta (filename):
+    sequence = {}
+    header   = ""
+    inf = erropen (filename, "r")
+    for line  in  inf:
+        if '>' in line:
+            header   = line.rstrip().replace('>', "").replace(' ', "")
+            sequence[header] = ""
+        elif header: 
+            sequence[header] += line.rstrip()
+       
+    inf.close()
+
+    return sequence

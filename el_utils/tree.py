@@ -1,8 +1,9 @@
+#!/usr/bin/python
 
 import os
 from ncbi    import get_ncbi_tax_name, taxid2parentid, taxid2name
-from ensembl import get_compara_name, species2taxid
-from mysql   import switch_to_db
+from ensembl import get_compara_name, species2taxid, get_species
+from mysql   import switch_to_db, connect_to_mysql
 
 #########################################################
 class Node:
@@ -211,3 +212,25 @@ def  species_sort(cursor, all_species, qry_species):
     
     return [qry_species]+cousins
 
+
+
+#####################################        
+if __name__ == '__main__':
+    
+    local_db = False
+
+    if local_db:
+        db = connect_to_mysql()
+    else:
+        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    cursor = db.cursor()
+
+    [all_species, ensembl_db_name] = get_species (cursor)
+
+    tree   = Tree()
+    for species in all_species:
+        leaf = Node(species)
+        tree.leafs.append(leaf)
+    tree.build(cursor)
+
+    print tree.nhx_string()

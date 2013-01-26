@@ -29,7 +29,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
         if (not first):
             conditions += " and "
         if ( type (value) is int):
-            conditions += " %s=%d "   % (field, value)
+            conditions += " %s= %d "   % (field, value)
         else:
             conditions += " %s='%s' " % (field, value)
         first = False
@@ -83,7 +83,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
                 qry += " \'%s\'" % value
             first = False
         qry += ")"
-
+        
     rows   = search_db (cursor, qry)
     if (rows):
         rows   = search_db (cursor, qry, verbose=True)
@@ -157,9 +157,6 @@ def check_table_exists (cursor, db_name, table_name):
             return True
     else: 
         return False
-
-
-
 
 #######
 def search_db (cursor, qry, verbose=False):

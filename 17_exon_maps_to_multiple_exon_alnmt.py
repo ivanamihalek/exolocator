@@ -56,10 +56,10 @@ def multiple_exon_alnmt(gene_list, db_info):
     #for gene_id in gene_list:
     #for gene_id in [378766]: #  dynein
     #for gene_id in [378768]:  #  p53
-    for gene_id in [412667]: #  wls   
+    for gene_id in [387298]: #     
         start = time()
         gene_ct += 1
-        if  not gene_ct%100: print "thread ", thread(), ", ", gene_ct, "genes out of", len(gene_list)
+        if  not gene_ct%100: print gene_ct, "genes out of", len(gene_list)
 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         if verbose: print gene_ct, len(gene_ids),  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
@@ -102,16 +102,16 @@ def multiple_exon_alnmt(gene_list, db_info):
             output_fasta (fasta_fnm, headers, sequences)
             
             if (len(headers) <=1 ):
-                #print "single species in the alignment"
+                print "single species in the alignment"
                 no_orthologues += 1
                 continue
+
 
             # align
             afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], human_exon.exon_id)
             mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
             ret      = commands.getoutput(mafftcmd)
-           
-            
+
             # read in the alignment
             inf = erropen(afa_fnm, "r")
             human_seq_seen = False
@@ -167,7 +167,7 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, multiple_exon_alnmt, gene_list[15000:], [local_db, ensembl_db_name])
+    parallelize (no_threads, multiple_exon_alnmt, gene_list, [local_db, ensembl_db_name])
     
     return True
 

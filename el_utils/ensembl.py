@@ -161,7 +161,7 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
 
 
 #########################################
-def get_exon (cursor, exon_id, is_known, db_name=None):
+def get_exon (cursor, exon_id, is_known=None, db_name=None):
 
     exon = Exon ()
 
@@ -170,7 +170,7 @@ def get_exon (cursor, exon_id, is_known, db_name=None):
             return exon
 
     qry  = "select * from gene2exon where exon_id = %d" %  exon_id
-    qry += " and is_known = %s " % is_known
+    if is_known: qry += " and is_known = %s " % is_known
     rows = search_db(cursor, qry, verbose=False)
     if (not rows):
         return exon
@@ -429,7 +429,7 @@ def get_species (cursor):
     return all_species, ensembl_db_name
 
 ########
-def get_compara_name (cursor, version=68):
+def get_compara_name (cursor):
 
     qry = "show databases like '%compara%'"
     rows = search_db (cursor, qry)

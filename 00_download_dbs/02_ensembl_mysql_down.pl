@@ -2,7 +2,7 @@
 
 use strict;
 use Net::FTP;
-$release_num = 69;
+my $release_num = 69;
 
 my $local_repository = 
     "/mnt/ensembl-mirror/release-".$release_num."/mysql";
@@ -18,7 +18,8 @@ my $ftp = Net::FTP->new( $ftp_address , Debug => 0, Passive=> 1)
 $ftp->login("anonymous",'-anonymous@')
     or die "Cannot login ", $ftp->message;
 
-my $topdir = "/pub/current_mysql";
+my $topdir = "/pub/release-".$release_num."/mysql";
+
 $ftp->cwd($topdir)
     or die "Cannot cwd to $topdir: ", $ftp->message;
 $ftp->binary;
@@ -44,9 +45,6 @@ foreach $dir ( @farm ) {
     
     push @dirs_I_need, $dir;
 }
-
-
-
 
 
 open (LOG, ">log") || die "error opening log: $!\n";
@@ -119,7 +117,7 @@ $ftp->cwd($foreign_dir)
     or die "Cannot cwd to $foreign_dir: ", $ftp->message;
 @contents =  $ftp->ls;
 
-$compara_sql = 'ensembl_compara_'.$release_num.'.sql.gz';
+my $compara_sql = 'ensembl_compara_'.$release_num.'.sql.gz';
  
 foreach $item ('homology.txt.gz', 'homology_member.txt.gz', 
 	       'member.txt.gz', 'genome_db.txt.gz', $compara_sql) {

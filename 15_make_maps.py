@@ -485,9 +485,9 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
     
 
-    for gene_id in gene_list:
+    #for gene_id in gene_list:
     #for gene_id in [378768]: #  p53
-    #for gene_id in [412667]: #  wls   
+    for gene_id in [387298]: 
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -520,8 +520,9 @@ def maps_for_gene_list(gene_list, db_info):
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
             if not ortho_exons:
                 missing_exon_info += 1
-                print "\t", ortho_species, "no exon info"
+                #print "\t", ortho_species, "no exon info"
                 continue
+            #print 
             #print "\t", ortho_species, "making maps ..."
             maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons)   
             if not maps:
@@ -529,6 +530,9 @@ def maps_for_gene_list(gene_list, db_info):
                 #print "\t", ortho_species, "no maps"
                 continue
             no_maps += len(maps)
+            #for map in maps:
+            #    print map
+            
             
             store (cursor, maps, ensembl_db_name)
 
@@ -545,7 +549,7 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 15
+    no_threads = 1
 
     local_db = False
 
