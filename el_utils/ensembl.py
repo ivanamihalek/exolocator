@@ -19,6 +19,23 @@ def  exon_id2gene_id (cursor, ensembl_db_name, exon_id, is_known):
     return rows[0][0]
     
 #########################################
+def  get_paras (cursor, gene_id):
+
+    paras = []
+    qry  = "select cognate_gene_id from paralogue "
+    qry += " where gene_id = %d " % gene_id
+    
+    rows = search_db (cursor, qry)
+    if (not rows):
+        return []
+
+    for row in rows:
+        para_gene_id   = row[0]
+        paras.append(para_gene_id)
+    
+    return paras
+
+#########################################
 def  get_orthos (cursor, gene_id, table):
 
     orthos = []

@@ -39,6 +39,8 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
     rows   = search_db (cursor, qry)
     exists = rows and (type(rows[0][0]) is long) and (rows[0][0]==1)
 
+    if exists and not update_fields: return True
+
     if exists: # if it exists, update
         
         qry = "update %s set " % table
@@ -85,6 +87,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
         qry += ")"
         
     rows   = search_db (cursor, qry)
+
     if (rows):
         rows   = search_db (cursor, qry, verbose=True)
         return False

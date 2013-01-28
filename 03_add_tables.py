@@ -226,6 +226,51 @@ def make_exon_map_table (cursor):
         rows = search_db (cursor, qry)
         if (rows):
             return False
+#########################################
+def make_para_exon_map_table (cursor):
+    
+    table = 'para_exon_map'
+
+    qry  = "CREATE TABLE " + table + "  (exon_map_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
+    rows = search_db (cursor, qry)
+    if (rows):
+        return False
+
+    for column_name in ['exon_id', 'cognate_exon_id']:
+        qry = "ALTER TABLE %s add %s INT(10)" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
+    for column_name in ['exon_known', 'cognate_exon_known']:
+        qry = "ALTER TABLE %s add %s tinyint" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
+    for column_name in ['cigar_line']:
+        qry = "ALTER TABLE %s add %s blob" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+    
+    for column_name in ['similarity']:
+        qry = "ALTER TABLE %s add %s float" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+    
+    for column_name in ['source']:
+        qry = "ALTER TABLE %s add %s VARCHAR(20)" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
+    for column_name in ['msa_bitstring']:
+        qry = "ALTER TABLE %s add %s varbinary(1000)" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
 
 
 #########################################
@@ -250,6 +295,8 @@ def make_table (cursor, db_name, table):
         make_orthologue_table (cursor, table)
     elif table == 'exon_map':
         make_exon_map_table (cursor)
+    elif table == 'para_exon_map':
+        make_para_exon_map_table (cursor)
 
     else:
         print "I don't know how to make table '%s'" % table
@@ -286,7 +333,6 @@ def main():
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
-
     # add exon tables to all species
     for species in all_species:
         print species
@@ -298,7 +344,7 @@ def main():
             else:
                 print table, " not found in ", db_name
                 make_table (cursor, db_name, table)
- 
+
         create_index (cursor, db_name, 'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
         create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
         create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
@@ -314,8 +360,8 @@ def main():
         else:
             print "file_name  not found in seq_region, ", db_name
             add_filename_column (cursor, db_name)
-        
-    
+
+
     # add orthologue table to human - we are human-centered here
     # ditto for map (which exons from other species map onto human exons)
     print "adding orthologue to human"
@@ -332,7 +378,21 @@ def main():
         else:
             create_index (cursor, db_name,'gene_index', table, ['gene_id'])
 
-    
+    # for other species, add paralogue map pnly
+    for species in all_species:
+        db_name = ensembl_db_name[species]
+        for table in ['paralogue', 'para_exon_map']:
+            if ( check_table_exists (cursor, db_name, table)):
+                print table, " found in ", db_name
+            else:
+                print table, " not found in ", db_name
+                make_table (cursor, db_name, table)
+            if table == 'para_exon_map':
+                create_index (cursor, db_name,'gene_index', table, ['exon_id'])
+            else:
+                create_index (cursor, db_name,'gene_index', table, ['gene_id'])
+
+
 
     cursor.close()
     db.close()
