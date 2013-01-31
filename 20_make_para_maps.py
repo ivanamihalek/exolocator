@@ -421,10 +421,11 @@ def make_para_exon_maps(species_list, db_info):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         
         
-        for gene_id in gene_ids:
+        #for gene_id in gene_ids:
         #for gene_id in [638]: # caspase 8 in panda
         #for sampl_ct in range(10):
         #    gene_id = choice(gene_ids)
+        for gene_id in [378128]:
             ct += 1
             if not ct%100: print "\t", species, ct, " out of ", len(gene_ids)
             if verbose: 

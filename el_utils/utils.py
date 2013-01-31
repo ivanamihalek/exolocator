@@ -22,6 +22,7 @@ def mkdir_p (path):
 def output_fasta (filename, headers, sequence):
     outf = erropen (filename, "w")
     for header  in  headers:
+        if not sequence.has_key(header): continue
         print >> outf, ">"+header
         print >> outf, sequence[header]
     outf.close()

@@ -4,6 +4,17 @@ import MySQLdb
 from   mysql import search_db, switch_to_db
 from   exon  import Exon
 
+#########################################
+def  get_analysis_dict(cursor):
+    source = {}
+    qry  = "select analysis_id, logic_name  from analysis"
+    rows = search_db (cursor, qry)
+    if (not rows):
+        print "blah?"
+        return False
+    for row in rows:
+        source[row[0]] = row[1]
+    return source
 
 #########################################
 def  exon_id2gene_id (cursor, ensembl_db_name, exon_id, is_known):
@@ -66,14 +77,17 @@ def get_description (cursor, gene_id):
     return ""
 
 #########################################
-def get_logic_name(cursor, analysis_id):
-        qry = "SELECT logic_name FROM analysis WHERE analysis_id = %d" % analysis_id
-        rows    = search_db (cursor, qry)
-        if (not rows):
-            logic_name = ''
-        else:
-            logic_name = rows[0][0]
-        return logic_name 
+def get_logic_name(cursor, analysis_id, db_name = None):
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+    qry = "SELECT logic_name FROM analysis WHERE analysis_id = %d" % analysis_id
+    rows    = search_db (cursor, qry)
+    if (not rows):
+        logic_name = ''
+    else:
+        logic_name = rows[0][0]
+    return logic_name 
 
 #########################################
 def is_coding (cursor, exon_id, db_name=None):
@@ -325,7 +339,7 @@ def stable2gene (cursor, stable_id=None, db_name=None):
     return int(rows[0][0])
     
 ########
-def gene2stable (cursor, gene_id=None, db_name=None, ):
+def gene2stable (cursor, gene_id=None, db_name=None):
 
     if (not gene_id):
         return ""
@@ -349,7 +363,7 @@ def gene2stable (cursor, gene_id=None, db_name=None, ):
     return rows[0][0]
     
 ########
-def exon2stable (cursor, exon_id=None, db_name=None, ):
+def exon2stable (cursor, exon_id=None, db_name=None):
 
     if (not exon_id):
         return ""

@@ -13,6 +13,7 @@ from   el_utils.ncbi    import  taxid2trivial
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.threads import  parallelize
+from   el_utils.custom  import  get_theme_ids
 from   random           import  choice
 
 from time      import  time
@@ -41,13 +42,14 @@ def multiple_exon_alnmt(species_list, db_info):
 
 
     for species in species_list:
+        if species == 'homo_sapiens': continue
         print
         print "############################"
         print  species
 
         switch_to_db (cursor,  ensembl_db_name[species])
         gene_ids = get_gene_ids (cursor, biotype='protein_coding')
-
+        #gene_ids = get_theme_ids(cursor, cfg, 'wnt_pathway')
         if not gene_ids:
             print "no gene_ids"
             continue
@@ -59,8 +61,8 @@ def multiple_exon_alnmt(species_list, db_info):
         no_maps       = 0
         no_pepseq     = 0
         no_paralogues = 0
-        for gene_id in gene_ids:
-        #for gene_id in [387298]: #   
+        #for gene_id in gene_ids:
+        for gene_id in [378128]: #   
         #for sample_ct in range(10):
             #gene_id = choice(gene_ids)
 
@@ -150,6 +152,7 @@ def multiple_exon_alnmt(species_list, db_info):
                     if (label == 'template'):
                         template_seq_seen = True
                     # Write the bitmap to the database
+                    #print "updating: ", template_exon.exon_id
                     store_or_update(cursor, "para_exon_map", {"cognate_exon_id"    :cognate_exon_id,
                                                          "cognate_exon_known" :cognate_exon_known,
                                                          "exon_id"            :template_exon.exon_id,
@@ -169,7 +172,7 @@ def multiple_exon_alnmt(species_list, db_info):
 
 #########################################
 def main():
-    no_threads = 15
+    no_threads = 1
 
     local_db = False
 

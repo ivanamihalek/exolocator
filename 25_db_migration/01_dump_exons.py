@@ -9,17 +9,6 @@ from   el_utils.config_reader import  ConfigurationReader
 from   el_utils.threads       import  parallelize
 from   el_utils.utils         import  erropen
 
-#########################################
-def  get_analysis_dict(cursor):
-    source = {}
-    qry  = "select analysis_id, logic_name  from analysis"
-    rows = search_db (cursor, qry)
-    if (not rows):
-        print "blah?"
-        return False
-    for row in rows:
-        source[row[0]] = row[1]
-    return source
 
 #########################################
 def exon_tabstring(exon, gene_stable_id, exon_stable_id, species, analysis, exon_seqs):

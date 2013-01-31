@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import MySQLdb
+import MySQLdb, glob
 import os, commands, sys
 from   time import clock, time 
 from   el_utils.mysql         import *
@@ -73,13 +73,6 @@ def check_exon_table_size(cursor, db_name, species):
     else:
         return 0
 
-#########################################
-def get_exon_dump_files(in_path):
-    infiles = []
-    for dirname, dirnames, filenames in os.walk(in_path):
-        for filename in filenames:
-            if ('exon_dump' in filename): infiles.append(filename)
-    return infiles
 
 #########################################
 def store(cursor, in_path, infile, species):
@@ -88,7 +81,13 @@ def store(cursor, in_path, infile, species):
     inf   = erropen (in_path+"/"+infile, "r")
 
     print "storing contents of ", infile
-
+    if 0:
+        qry = "create index key_id on  " + table + "(exon_key)";
+        rows = search_db(cursor, qry)
+        if rows:
+            print rows
+            exit(1)
+    
     ct = 0
     start = time()
     for line in inf:
@@ -112,9 +111,10 @@ def store(cursor, in_path, infile, species):
         species         =     field[10]
         source          =     field[11]
         protein_seq     =     field[12]
-        left_flank      =     field[13]
-        right_flank     =     field[14]
-        dna_seq         =     field[15]
+        # here I have two fields showing where the peptide translation starts and where it ends
+        left_flank      =     field[15]
+        right_flank     =     field[16]
+        dna_seq         =     field[17]
 
         fixed_fields    = {}
         update_fields   = {}
@@ -151,26 +151,29 @@ def load_from_infiles (infiles, in_path):
     switch_to_db (cursor, db_name)
     
     ###############
+    infiles.reverse()
     for infile in infiles:
-        #if (not 'sus_scrofa' in infile): continue
-        
+        if 'homo_sapiens' in infile: continue
+        start = time()
+        print "reading ", infile
         fields = infile.split ("_")
         species = fields[0] + "_" + fields[1] 
         if ('mustela') in fields[0]:
             species += "_" + fields[2]
-        check_exon_table(cursor, db_name, species)
-        
-        table_size = check_exon_table_size (cursor, db_name, species)
-        if table_size > 0: continue
+            
+        #check_exon_table(cursor, db_name, species)        
+        #table_size = check_exon_table_size (cursor, db_name, species)
+        #if table_size > 0: continue
         
         store  (cursor, in_path, infile, species)
+        print "\t done in  %8.3f sec" % (time()-start) 
         
     
 #########################################
 def main():
 
     
-    no_threads = 12
+    no_threads = 1
     
     db_name =  "exolocator_db"
     db      = connect_to_mysql(user="marioot", passwd="tooiram")
@@ -187,10 +190,10 @@ def main():
     db    .close()
     
     ###############
-    infiles = get_exon_dump_files(in_path)
-
-
-    parallelize (no_threads, load_from_infiles, infiles, in_path)
+    os.chdir(in_path)
+    filenames = glob.glob("*exon_dump.txt")
+    
+    parallelize (no_threads, load_from_infiles, filenames, in_path)
 
 
 

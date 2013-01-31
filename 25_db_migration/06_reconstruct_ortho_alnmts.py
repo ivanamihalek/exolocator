@@ -138,6 +138,9 @@ def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_names_of
                 to_reorder.append(idx)
 
         for i in range(len(remaining_names)):
+            if i >= len(to_reorder): return new_names_of_exons
+
+        for i in range(len(remaining_names)):
             idx = to_reorder[i]
             reordered_name = remaining_names[a[i]]
             new_names_of_exons[idx] = reordered_name
@@ -322,53 +325,6 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
     #    exit(1)
 
     return [sequence_stripped_pep, sequence_stripped_dna]
-
-
-
-#########################################
-def print_notes (notes_fnm, orthologues, exons, sorted_species, specid2name, human_stable_id, source):
-
-    # write to string
-    out_string  = "% Notes to accompany the alignment of (tentative) orthologues\n"
-    out_string += "%% for the canonical transcript of the human gene %s," %  human_stable_id
-    out_string += "\n" 
-    out_string += "% The alignment shows the exons that correspond to human transcript,\n" 
-    out_string += "% from the following genes: \n" 
-    out_string += "%% %7s  %25s  %30s \n" % ('name_short', 'name_long', 'stable_id')
-
-    for species in sorted_species:
-        [orth_id, spec_id] =  used_orthologue[species]
-        spec_long = specid2name[spec_id]
-        stable_id = get_stable_id (orth_id, spec_long)
-        out_string += "%7s %30s  %30s \n" % (species, specid2name[spec_id], stable_id)
-
-    out_string += "\n" 
-    out_string += "% The following exons were used in the alignment\n" 
-
-    for i in range(len(used_exons['HOM_SAP'])):
-        out_string += "%% exon %3d\n" % i
-        out_string += "%% %7s  %15s %15s  %40s\n" % ('name_short', 'gene_from', 'gene_to', 'source')
-        for species in sorted_species:
-            if ( used_exons.has_key(species) and i < len(used_exons[species])):
-                ret =  used_exons[species][i]
-                if ret:
-                    [exon_id, is_known,  is_canonical, start_in_gene, end_in_gene, protein_seq, analysis_id] = ret
-                
-                    out_string += "%7s  %15d %15d  %40s \n" % (species, start_in_gene,
-                                                           end_in_gene, source[species][analysis_id])
-                else:
-                    out_string += "%7s  %15s %15s  %40s \n" % (species, "-",  "-",  "-")
-            else:
-                out_string += "%7s  %15s %15s  %40s \n" % (species, "-",  "-",  "-")
-                
-                
-
-    of = open (notes_fnm, "w")
-    print >> of, out_string
-    of.close()
-
-    return True
-
 #########################################
 def parse_aln_name (name):
     fields     = name.split("_")
@@ -376,6 +332,81 @@ def parse_aln_name (name):
     exon_known = int(fields[-1])
     species    =  "_".join(fields[:-2])
     return [species, exon_id, exon_known]
+
+
+#########################################
+def check_notes_directory (cfg):
+    
+    directory = "{0}/notes".format(cfg.dir_path['afs_dumps'])
+    if not os.path.exists(directory):
+        try:
+            os.makedirs(directory) 
+        except:
+            print "error making", directory
+            exit(1)
+
+    return directory
+
+#########################################
+def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sorted_seq_names, stable_id):
+
+    # write to string
+    out_string  = "% Notes to accompany the alignment of (tentative) orthologues\n"
+    out_string += "%% for the canonical transcript of the human gene %s," % stable_id
+    out_string += "\n" 
+    out_string += "% The alignment shows the exons that correspond to human transcript,\n" 
+    out_string += "% from the following genes: \n" 
+    out_string += "%% %-30s  %-30s  %-30s \n" % ('species', 'common_name', 'gene_id')
+
+    gene_id        = {}
+    stable_gene_id = {}
+    sci_name       = {}
+    for name in output_pep.keys():
+        for exon_name in names_of_exons[name]:
+            [species, exon_id, exon_known] = parse_aln_name(exon_name)
+            ortho_gene_id                  = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
+            if gene_id.has_key(name):
+                if not ortho_gene_id == gene_id[name]:
+                    print "error concatenating exons: ", name, gene_id.has_key(name), ortho_gene_id
+            else:
+                gene_id[name]        = ortho_gene_id
+                stable_gene_id[name] = gene2stable(cursor, ortho_gene_id, ensembl_db_name[species])
+                sci_name[name]       = species
+
+    sorted_seq_names = filter (lambda name: name in output_pep.keys(), sorted_seq_names)
+    for name in sorted_seq_names:
+        out_string += "%-30s %-30s  %-30s \n" % ( name, sci_name[name],  stable_gene_id[name])
+
+    out_string += "\n" 
+    out_string += "% The following exons were used in the alignment\n" 
+
+    for name in sorted_seq_names:
+        out_string += "%% %s   %s \n" % (name, stable_gene_id[name])
+        out_string += "%% %15s  %15s  %15s     %6s  %10s  %s \n" % \
+           ('exon_id', 'gene_from', 'gene_to', 'coding', 'cannonical', 'source')
+        for exon_name in names_of_exons[name]:
+            [species, exon_id, exon_known] = parse_aln_name(exon_name)
+            exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
+            if exon.is_known:
+                exon_stable_id = exon2stable(cursor, exon_id, ensembl_db_name[species])
+            else:
+                exon_stable_id = 'anon'
+
+            source = get_logic_name (cursor, exon.analysis_id,  ensembl_db_name[species])
+            out_string += "  %15s  %15s  %15s     %-6s  %-10s  %s \n" % \
+                (exon_stable_id, exon.start_in_gene, exon.end_in_gene,
+                 exon.is_coding, exon.is_canonical, source)
+               
+    
+    directory = check_notes_directory (cfg)
+    notes_fnm = directory + '/'+stable_id+'.txt'
+    print notes_fnm
+    of = erropen (notes_fnm, "w")
+    print >> of, out_string
+    of.close()
+
+    return True
+
 
 #########################################
 def get_name (seq_name, species, ortho_gene_id):
@@ -467,7 +498,7 @@ def correct_overlap_Z(peptide_alnmt, name, pos, global_bdry_position):
     #print name
     
     length       = len(peptide_alnmt[name])
-    if pos > length: return
+    if pos+3 >= length: return
     triple       = not '-' in peptide_alnmt[name][pos:pos+3]
     insert_left  = peptide_alnmt[name][pos] == '-' 
     insert_left  = insert_left or  triple and (not pos or  peptide_alnmt[name][pos-1]=='-')
@@ -549,7 +580,7 @@ def splice_gaps(alnmt, to_splice):
 
 #########################################
 # what I really need is the alignment program that enforces boundaries ...
-def boundary_cleanup(peptide_alnmt, sorted_seq_names): 
+def boundary_cleanup (peptide_alnmt, sorted_seq_names): 
 
     global_bdry_position = []
 
@@ -1171,7 +1202,7 @@ def make_alignments ( gene_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
 
-    verbose      = True
+    verbose      = False
     flank_length = 10
 
     if local_db:
@@ -1204,7 +1235,7 @@ def make_alignments ( gene_list, db_info):
 
     # for each human gene
     gene_ct = 0
-    #gene_list.reverse()
+    gene_list.reverse()
     for gene_id in gene_list:
     #for gene_id in [387298]:
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -1214,7 +1245,10 @@ def make_alignments ( gene_list, db_info):
 
         afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
         #afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-        if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0):
+        #if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0):
+        #     continue
+        notes_fnm = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
+        if (os.path.exists(notes_fnm) and os.path.getsize(notes_fnm) > 0):
             continue
 
         if verbose: 
@@ -1248,12 +1282,10 @@ def make_alignments ( gene_list, db_info):
 
         canonical_human_exons = filter (lambda x: not x in bad_exons, canonical_human_exons)
         
-
-
         # >>>>>>>>>>>>>>>>>>
         # bail out if there is a problem
         if not canonical_human_exons: 
-            print "\t botched"
+            #print "\t botched"
             continue
 
         # >>>>>>>>>>>>>>>>>>
@@ -1279,6 +1311,7 @@ def make_alignments ( gene_list, db_info):
                 # gene --> name -- retrieve old name, or construct new one
                 parent_seq_name[exon_seq_name] = get_name (seq_name, trivial_name[species], ortho_gene_id) 
                 
+        # >>>>>>>>>>>>>>>>>>
         names_of_exons = {}
         human_exon_map     = {}
         for human_exon in canonical_human_exons:
@@ -1366,41 +1399,40 @@ def make_alignments ( gene_list, db_info):
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
-            print "length check failure"
+            #print "length check failure"
             continue
 
-        # >>>>>>>>>>>>>>>>>>
-        boundary_cleanup(output_pep, sorted_seq_names)
-        output_pep = strip_gaps(output_pep)
-       
-        # get rid of the ghost exons that do not correpond to anything in any other species
-        #[output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
- 
-        afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-        output_fasta (afa_fnm, sorted_seq_names, output_pep)
-        print afa_fnm
+        if (0):
+            # >>>>>>>>>>>>>>>>>>
+            boundary_cleanup(output_pep, sorted_seq_names)
+            output_pep = strip_gaps(output_pep)
 
-        # >>>>>>>>>>>>>>>>>>
-        output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
-                                                  sorted_trivial_names, names_of_exons,  
-                                                  alnmt_pep, output_pep, flank_length)
-        if not output_dna:
-            continue
+            # get rid of the ghost exons that do not correpond to anything in any other species
+            #[output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
 
-        output_dna = strip_gaps(output_dna)
+            afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+            output_fasta (afa_fnm, sorted_seq_names, output_pep)
+            print afa_fnm
 
-        afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-        output_fasta (afa_fnm, sorted_seq_names, output_dna)
-        print afa_fnm
+            # >>>>>>>>>>>>>>>>>>
+            output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
+                                                      sorted_trivial_names, names_of_exons,  
+                                                      alnmt_pep, output_pep, flank_length)
+            if not output_dna:
+                continue
 
-        continue
+            output_dna = strip_gaps(output_dna)
+
+            afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+            output_fasta (afa_fnm, sorted_seq_names, output_dna)
+            print afa_fnm
+
+        #continue
 
         # notes to accompany the alignment:
-        notes_fnm  = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
-        print notes_fnm
-        print_notes (notes_fnm, orthologues, exons, sorted_species, specid2name, human_stable_id, source)
-        
-        
+        print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id)
+
+    return 
 
 #########################################
 def get_theme_ids(cursor, theme_name):
@@ -1431,7 +1463,7 @@ def get_theme_ids(cursor, theme_name):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 15
 
     local_db = False
 
@@ -1446,8 +1478,8 @@ def main():
 
     species                        = 'homo_sapiens'
     switch_to_db (cursor,  ensembl_db_name[species])
-    #gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-    gene_list                      =  get_theme_ids(cursor, 'wnt_pathway')
+    gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+    #gene_list                      =  get_theme_ids(cursor, 'wnt_pathway')
     cursor.close()
     db.close()
 
