@@ -484,7 +484,6 @@ def maps_for_gene_list(gene_list, db_info):
     ct                = 0
     no_maps           = 0
     
-
     #for gene_id in gene_list:
     #for gene_id in [378768]: #  p53
     for gene_id in [387298]: 
@@ -508,7 +507,6 @@ def maps_for_gene_list(gene_list, db_info):
         # get rid of the old maps
         map_cleanup (cursor, ensembl_db_name, human_exons)
         
-
         # one2one   orthologues
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         known_orthologues      = get_orthos (cursor, gene_id, 'orthologue')

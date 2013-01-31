@@ -29,7 +29,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
         if (not first):
             conditions += " and "
         if ( type (value) is int):
-            conditions += " %s= %d "   % (field, value)
+            conditions += " %s= %d "  % (field, value)
         else:
             conditions += " %s='%s' " % (field, value)
         first = False
@@ -91,6 +91,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
     if (rows):
         rows   = search_db (cursor, qry, verbose=True)
         return False
+       
     
     return True
 
