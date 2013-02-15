@@ -35,6 +35,7 @@ class Map:    # this particular map is between exons
         self.cigar_line         = None
         self.similarity         = None
         self.bitmap             = None
+        self.source             = None
 
     ###################################
     def load_from_db (self, db_row, cursor, paralogue=False):
@@ -55,6 +56,7 @@ class Map:    # this particular map is between exons
         self.exon_known_2       = cognate_exon_known  
         self.cigar_line         = cigar_line
         self.similarity         = similarity
+        self.source             = source
         self.bitmap             = msa_bitmap
        
 #########################################

@@ -42,7 +42,7 @@ def multiple_exon_alnmt(species_list, db_info):
 
 
     for species in species_list:
-        if species == 'homo_sapiens': continue
+        #if not species == 'homo_sapiens': continue
         print
         print "############################"
         print  species
@@ -61,8 +61,8 @@ def multiple_exon_alnmt(species_list, db_info):
         no_maps       = 0
         no_pepseq     = 0
         no_paralogues = 0
-        #for gene_id in gene_ids:
-        for gene_id in [378128]: #   
+        for gene_id in gene_ids:
+        #for gene_id in [378128]: #   
         #for sample_ct in range(10):
             #gene_id = choice(gene_ids)
 
@@ -99,9 +99,11 @@ def multiple_exon_alnmt(species_list, db_info):
                     continue
 
                 # output to fasta:
-                seqname   = "{0}:{1}:{2}".format('template', template_exon.exon_id, template_exon.is_known)
+                seqname        = "{0}:{1}:{2}".format('template', template_exon.exon_id, template_exon.is_known)
+                exon_seqs_info =  get_exon_seqs (cursor, template_exon.exon_id, template_exon.is_known)
+                if not exon_seqs_info: continue
                 [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, 
-                 left_flank, right_flank, dna_seq] = get_exon_seqs (cursor, template_exon.exon_id, template_exon.is_known)
+                 left_flank, right_flank, dna_seq] = exon_seqs_info
                 if (not pepseq):
                     if ( template_exon.is_coding and  template_exon.covering_exon <0): # this should be a master exon
                         print "no pep seq for",  template_exon.exon_id, "coding ", template_exon.is_coding,
@@ -172,7 +174,7 @@ def multiple_exon_alnmt(species_list, db_info):
 
 #########################################
 def main():
-    no_threads = 1
+    no_threads = 15
 
     local_db = False
 

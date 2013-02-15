@@ -17,6 +17,7 @@ from el_utils.ncbi    import  taxid2trivial
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from el_utils.config_reader      import ConfigurationReader
 from el_utils.translation        import phase2offset, translation_bounds, crop_dna, translate
+from el_utils.special_gene_sets  import get_theme_ids
 from el_utils.threads import parallelize
 from bitstring import Bits
 from alignment import * # C implementation of smith waterman
@@ -375,12 +376,14 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
 
     sorted_seq_names = filter (lambda name: name in output_pep.keys(), sorted_seq_names)
     for name in sorted_seq_names:
-        out_string += "%-30s %-30s  %-30s \n" % ( name, sci_name[name],  stable_gene_id[name])
+        if not sci_name.has_key(name) or not stable_gene_id.has_key(name): continue
+        out_string += " %-30s  %-30s  %-30s \n" % ( name, sci_name[name],  stable_gene_id[name])
 
     out_string += "\n" 
     out_string += "% The following exons were used in the alignment\n" 
 
     for name in sorted_seq_names:
+        if not stable_gene_id.has_key(name): continue
         out_string += "%% %s   %s \n" % (name, stable_gene_id[name])
         out_string += "%% %15s  %15s  %15s     %6s  %10s  %s \n" % \
            ('exon_id', 'gene_from', 'gene_to', 'coding', 'cannonical', 'source')
@@ -1202,7 +1205,7 @@ def make_alignments ( gene_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
 
-    verbose      = False
+    verbose      = True
     flank_length = 10
 
     if local_db:
@@ -1236,8 +1239,10 @@ def make_alignments ( gene_list, db_info):
     # for each human gene
     gene_ct = 0
     gene_list.reverse()
-    for gene_id in gene_list:
+    #for gene_id in gene_list:
     #for gene_id in [387298]:
+    for gene_id in [374433]:
+
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
 
@@ -1248,8 +1253,8 @@ def make_alignments ( gene_list, db_info):
         #if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0):
         #     continue
         notes_fnm = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
-        if (os.path.exists(notes_fnm) and os.path.getsize(notes_fnm) > 0):
-            continue
+        #if (os.path.exists(notes_fnm) and os.path.getsize(notes_fnm) > 0):
+        #    continue
 
         if verbose: 
             print gene_id, stable_id, get_description (cursor, gene_id)
@@ -1402,7 +1407,7 @@ def make_alignments ( gene_list, db_info):
             #print "length check failure"
             continue
 
-        if (0):
+        if (1):
             # >>>>>>>>>>>>>>>>>>
             boundary_cleanup(output_pep, sorted_seq_names)
             output_pep = strip_gaps(output_pep)
@@ -1410,10 +1415,12 @@ def make_alignments ( gene_list, db_info):
             # get rid of the ghost exons that do not correpond to anything in any other species
             #[output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
 
-            afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+            #afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+            afa_fnme = "test.afa"
             output_fasta (afa_fnm, sorted_seq_names, output_pep)
             print afa_fnm
 
+        if (0):
             # >>>>>>>>>>>>>>>>>>
             output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
                                                       sorted_trivial_names, names_of_exons,  
@@ -1430,40 +1437,15 @@ def make_alignments ( gene_list, db_info):
         #continue
 
         # notes to accompany the alignment:
-        print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id)
+        #print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id)
 
     return 
-
-#########################################
-def get_theme_ids(cursor, theme_name):
-
-    fnm = '../resources/'+theme_name+'.txt'
-    if not os.path.exists(fnm):
-        print fnm, "not found"
-        exit(1)
-
-    if not os.path.getsize(fnm) > 0:
-        print fnm, "empty"
-        exit(1)
-        
-    inf = erropen(fnm, "r")
-    gene_ids = []
-    for line in inf:
-        line.rstrip()
-        [stable_id, name] = line.split("\t")
-        qry = "select gene_id, description from gene where stable_id='%s'"% stable_id
-        rows = search_db (cursor, qry)
-        if not rows: continue
-        gene_ids.append(rows[0][0])
-    inf.close()
-
-    return gene_ids
 
 
 #########################################
 def main():
     
-    no_threads = 15
+    no_threads = 1
 
     local_db = False
 
@@ -1479,7 +1461,7 @@ def main():
     species                        = 'homo_sapiens'
     switch_to_db (cursor,  ensembl_db_name[species])
     gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-    #gene_list                      =  get_theme_ids(cursor, 'wnt_pathway')
+    #gene_list                     =  get_theme_ids(cursor, 'wnt_pathway')
     cursor.close()
     db.close()
 

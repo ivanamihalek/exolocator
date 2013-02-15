@@ -948,7 +948,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, template_
                 if not alnmt_pep[template_exon].has_key(exon_seq_name): continue
                 sequence_pieces.append(alnmt_pep[template_exon][exon_seq_name])
                 seq_piece_names.append(exon_seq_name)
-                new_names_of_exons = check_seq_overlap(template_exon_seq, sequence_pieces, seq_piece_names, new_names_of_exons)
+                new_names_of_exons = check_seq_overlap(template_exon_seq, sequence_pieces,
+                                                       seq_piece_names, new_names_of_exons)
 
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
@@ -1202,7 +1203,7 @@ def make_alignments (species_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
 
-    verbose      = True
+    verbose      = False
     flank_length = 10
 
     if local_db:
@@ -1220,7 +1221,7 @@ def make_alignments (species_list, db_info):
 
         
     for species in species_list:
-        if not species == 'homo_sapiens': continue
+        if species == 'homo_sapiens': continue
 
         pep_produced = 0
         dna_produced = 0
@@ -1236,9 +1237,9 @@ def make_alignments (species_list, db_info):
         # for each human gene
         gene_ct = 0
         #gene_list.reverse()
-        #for gene_id in gene_ids:
+        for gene_id in gene_ids:
         #for gene_id in [387298]:
-        for gene_id in [378128]:
+        #for gene_id in [378128]:
         #for sample_count in range(1000):
             #gene_id = choice(gene_ids)
 
@@ -1449,16 +1450,17 @@ def make_alignments (species_list, db_info):
             print notes_fnm
             print_notes (notes_fnm, paralogues, exons, sorted_species, specid2name, template_stable_id, source)
 
-        print species, "  has_paralogues = ", has_paralogues
-        print species, "  pep produced = ", pep_produced
-        print species, "  dna produced = ", dna_produced
+
+        print species, " has_paralogues = ", has_paralogues
+        print species, " pep produced   = ", pep_produced
+        print species, " dna produced   = ", dna_produced
 
 
 
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 10
 
     local_db = False
 

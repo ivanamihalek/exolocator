@@ -97,6 +97,7 @@ def store(cursor, in_path, infile, species):
             start = time()
         line   = line.rstrip()
         field  = line.split("\t")
+        if len(field) < 18: continue
 
         exon_id         = int(field[0])
         ensembl_gene_id =     field[1]
@@ -119,7 +120,7 @@ def store(cursor, in_path, infile, species):
         fixed_fields    = {}
         update_fields   = {}
 
-        exon_key = ensembl_gene_id +"_"+str(exon_id)+"_"+str(is_known)
+        exon_key = ensembl_gene_id + "_" + str(exon_id) + "_" + str(is_known)
         fixed_fields['exon_key']         = exon_key  
   
         update_fields['ensembl_gene_id'] = ensembl_gene_id
@@ -191,7 +192,7 @@ def main():
     
     ###############
     os.chdir(in_path)
-    filenames = glob.glob("*exon_dump.txt")
+    filenames = glob.glob("*sw_exons.txt")
     
     parallelize (no_threads, load_from_infiles, filenames, in_path)
 

@@ -407,6 +407,7 @@ def make_para_exon_maps(species_list, db_info):
     
 
     for species in species_list:
+    #for species in ['homo_sapiens']:
 
         print
         print "############################"
@@ -421,11 +422,11 @@ def make_para_exon_maps(species_list, db_info):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         
         
-        #for gene_id in gene_ids:
+        for gene_id in gene_ids:
         #for gene_id in [638]: # caspase 8 in panda
         #for sampl_ct in range(10):
         #    gene_id = choice(gene_ids)
-        for gene_id in [378128]:
+        #for gene_id in [378128, 398993]:
             ct += 1
             if not ct%100: print "\t", species, ct, " out of ", len(gene_ids)
             if verbose: 
@@ -445,11 +446,17 @@ def make_para_exon_maps(species_list, db_info):
             if (not template_exons):
                 if verbose: print 'no exons for ', gene_id
                 continue
+            if verbose:
+                print
+                print "template_exons"
+                for ex in template_exons:
+                    print ex.exon_id
+                print
 
             # check maps
-            if gene_has_a_para_map (cursor, species, ensembl_db_name, template_exons):
-                if verbose: print "\t has a map"
-                continue
+            # if gene_has_a_para_map (cursor, species, ensembl_db_name, template_exons):
+            #     if verbose: print "\t has a map"
+            #     continue
 
             if verbose: print "\t no map found - making new one"
 
@@ -475,9 +482,7 @@ def make_para_exon_maps(species_list, db_info):
 
                 if verbose: print "\t", description, "maps ok"
                 no_maps += len(maps)
-                #for exon_map in maps:
-                #    print exon_map
-
+ 
 
                 store (cursor, maps)
 
@@ -491,7 +496,7 @@ def make_para_exon_maps(species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 15
+    no_threads = 10
 
     local_db = False
 

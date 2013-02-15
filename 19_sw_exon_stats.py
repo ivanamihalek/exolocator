@@ -28,7 +28,7 @@ def main():
         rows = search_db(cursor, qry)
 
         if rows and rows[0][0]:
-            print species
+            print species,
             print "\t", rows[0][0]
             tot += int (rows[0][0])
 

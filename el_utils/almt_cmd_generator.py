@@ -28,6 +28,11 @@ class AlignmentCommandGenerator(object):
     Generates commands for utilities that are used (blast, sw, genewise, fastacmd, formatdb)
     '''
 
+    def _check_exists(self, item):
+        if not os.path.exists(item):
+            print item, " not found "
+            exit(1)
+
     def __init__(self, user=None, passwd=None, host=None, port =None, check=True):
         '''
         Loads the utils configuration (utils.cfg)
@@ -44,23 +49,28 @@ class AlignmentCommandGenerator(object):
         
         
         self.fastacmd  = self.configReader.get_path('fastacmd')
-        self.blastall  = self.configReader.get_path('mafft')
+        self._check_exists(self.fastacmd)
+
+        self.blastall  = self.configReader.get_path('blastall')
+        self._check_exists(self.blastall)
 
         self.blastp    = self.configReader.get_path('blastall')
         self.blastp    += " -p blastp -e "+ self.configReader.get_value('blastp_e_value')
-        
 
         # ensembl database
         self.ensembldb      = self.configReader.get_path('ensembl_fasta')
-        
+        self._check_exists(self.ensembldb)
+
         # Smith-Waterman
         self.sw_sharp       = self.configReader.get_path('sw#')
+        self._check_exists(self.sw_sharp)
+
         # hacked blast, to be used by swsharp to align exons while respecting the boundaries
         self.blosum_matrix  = "{0}/{1}".format(self.configReader.get_path('resources'),
                                                self.configReader.get_value('blosum_hacked'))
         # mafft
         self.mafft          = self.configReader.get_path('mafft')
-       
+        self._check_exists(self.mafft)
         
         
     def generate_fastacmd_gene_command (self, species, seq_name, fasta_db_file, 
@@ -81,11 +91,12 @@ class AlignmentCommandGenerator(object):
             strand_cmd = "-S 1"
         else:
             strand_cmd = "-S 2"
-            
-        if (sequence_start and sequence_stop):
-            location_cmd = "-L %s,%s" % (sequence_start, sequence_stop)
+
+        if not sequence_start and not sequence_stop:
+	    location_cmd = ""
         else:
-            location_cmd = ""
+            location_cmd = "-L %s,%s" % (sequence_start if sequence_start else "",
+					sequence_stop if sequence_stop else "")
             
         if output_file_path:
             output_cmd = "-o %s" % output_file_path
@@ -256,7 +267,7 @@ class AlignmentCommandGenerator(object):
     
 def main():
     acg = AlignmentCommandGenerator()
-    cmd = acg.generate_SW_command("query.fa", "target.fa", "output", True)
+    cmd = acg.generate_SW_nt("query.fa", "target.fa", "output", True)
     print cmd
     print
     for [key, val] in acg.__dict__.iteritems():

@@ -146,13 +146,13 @@ def search_for_exons(human_gene_list, db_info):
     # 
     [local_db, ensembl_db_name] = db_info
     if local_db:
-        db     = connect_to_mysql()
-        cfg      = ConfigurationReader()
-        acg    = AlignmentCommandGenerator()
+        db  = connect_to_mysql()
+        cfg = ConfigurationReader()
+        acg = AlignmentCommandGenerator()
     else:
-        db     = connect_to_mysql         (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql         (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        acg = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     # find db ids and common names for each species db
@@ -165,19 +165,24 @@ def search_for_exons(human_gene_list, db_info):
     for human_gene_id in human_gene_list:
     #for human_gene_id in [370495]: # Known hit
     #for human_gene_id in [378768,412667]: #  p53,wls
-	switch_to_db (cursor, ensembl_db_name['homo_sapiens'])        
+	switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
 
+	# Get stable id and description of this gene -- DEBUG
+	human_stable      = gene2stable    (cursor, human_gene_id)
+	human_description = get_description(cursor, human_gene_id)
+
+	# progress counter -- DEBUG
 	gene_ct += 1
 	if (not gene_ct%100): 
-		print gene_ct, "out of ", len(human_gene_list)
-	print human_gene_id, gene2stable(cursor, human_gene_id), get_description (cursor, human_gene_id)
+		print gene_ct, " out of ", len(human_gene_list)
 
-	# find all human exons we are tracking in the database
+	# find all human exons for this gene we are tracking in the database in order
 	human_exons = [e for e in gene2exon_list(cursor, human_gene_id) if e.covering_exon < 0 and e.is_canonical]
 	human_exons.sort(key=lambda exon: exon.start_in_gene)
 
-	maps = [get_maps(cursor, ensembl_db_name, he.exon_id, he.is_known) for he in human_exons]
-	regions = dict()
+	# get orthologs for each exon
+	maps = [get_maps(cursor, ensembl_db_name, he.exon_id, he.is_known) for he in human_exons] # exon data
+	regions = dict() # region data
 	for i,ms in enumerate(maps):
             for m in ms:
 	        gene_id = exon_id2gene_id(cursor, ensembl_db_name[m.species_2], m.exon_id_2, m.exon_known_2)
@@ -188,133 +193,156 @@ def search_for_exons(human_gene_list, db_info):
 		regions[m.species_2][gene_id][i].append(region)
 
 	for species in all_species:
-            if species == "homo_sapiens" or species not in regions: 
-                continue # Skip if homo_sapiens or no exons for this species at all
+            if species == "homo_sapiens" or species not in regions: continue # Skip if homo_sapiens or no exons for this species at all
 
-	    # Get sorted list of other species to search for exons
+	    # Get sorted list of other species to search for exons for this species
 	    switch_to_db (cursor, ensembl_db_name[species])
 	    sorted_species_list = species_sort(cursor,all_species,species)[1:]
 
-	    for i in xrange(1,len(human_exons)-1): # we cannot find first or last exon, so skip them
-		if any((species == m.species_2 for m in maps[i])): continue # exon exists, so skip
+	    #for i in xrange(1,len(human_exons)-1): # we cannot find first or last exon, so skip them -- DEBUG
+
+	    for i in xrange(len(human_exons)):
+		# skip if human exon not known or exon exists
+		if any((m.exon_known_1 == 0 or m.species_2 == species for m in maps[i])): continue
+		
 		for gene_id, rs in regions[species].iteritems():
-			positions = sorted(rs.keys())
-			p = bisect(positions, i)
-			if p == 0 or p == len(positions): 
-				continue # No preceding or following exon for this gene_id, so skip
-			# Get preceding and following exon regions for this gene_id
-			prev_seq_regions = rs[positions[p-1]]
-			next_seq_regions = rs[positions[p]]
-			# Get search name, filename and strand
-			searchname, searchfile, searchstrand = \
-			    prev_seq_regions[0].name, prev_seq_regions[0].filename, prev_seq_regions[0].strand
-			# Get search start and end points
-			if searchstrand == 1:
-				searchstart = max((sr.end for sr in prev_seq_regions)) + 1
-				searchend = min((sr.start for sr in next_seq_regions)) - 1
+		    # Get preceding and following exon regions for this gene_id
+		    positions = sorted(rs.keys())
+		    p = bisect(positions, i)
+		    if p == 0: prev_seq_regions = None
+		    else:      prev_seq_regions = rs[positions[p-1]]
+		    if p == len(positions): next_seq_regions = None
+		    else:                   next_seq_regions = rs[positions[p]]
+
+		    # Get search name, filename and strand
+		    if prev_seq_regions is not None: r = prev_seq_regions[0]
+		    else:                            r = next_seq_regions[0]
+		    searchname, searchfile, searchstrand = r.name, r.filename, r.strand
+
+		    # Get search start and end points
+		    endsearchlength = 100000 # how many bps to search for start and end exons
+		    if searchstrand == 1:
+			start_regions = prev_seq_regions
+			end_regions = next_seq_regions
+		    else:
+			start_regions = next_seq_regions
+			end_regions = prev_seq_regions
+		    if start_regions is not None:
+			searchstart = max((sr.end for sr in start_regions)) + 1
+		    else: searchstart = None
+		    if end_regions is not None:
+			searchend   = min((sr.start for sr in end_regions)) - 1
+		    else: searchend = searchstart + endsearchlength
+		    if searchstart is None: searchstart = searchend - endsearchlength
+		    if searchstart < 0: searchstart = 0
+
+		    # Skip if search region too short
+		    if searchend and searchstart and searchend - searchstart < 10: continue
+
+		    # Get template sequences
+		    for species2 in sorted_species_list:
+			nearestseqs  = [get_exon_seqs(cursor, m.exon_id_2, m.exon_known_2, ensembl_db_name[species2]) + [m.exon_id_2]
+					for m in maps[i] if species2 == m.species_2]
+			if nearestseqs:
+			    nearestspecies = species2
+			    break
+		    if not nearestseqs: break # No template sequences, so skip (should never happen, due to homo_sapiens)
+
+		    searchtmp = NamedTemporaryFile()
+		    querytmp = NamedTemporaryFile()
+		    # Write out sequences to search
+		    fastacmd = acg.generate_fastacmd_gene_command(species, searchname, searchfile, searchstrand, searchstart, searchend)
+		    #fasta = subprocess.check_output(fastacmd, shell=True)
+		    fasta  = commands.getoutput(fastacmd)
+		    searchtmp.write(fasta)
+		    searchtmp.flush()
+		    # Write out query sequences
+		    for seq in nearestseqs:
+			querytmp.write(">{0}\n{1}\n".format(seq[0],seq[6])) # exon_seq_id, dna_seq
+		    querytmp.flush()
+		    # Perform SW# search
+		    swsharpcmd = acg.generate_SW_nt(querytmp.name, searchtmp.name)
+		    resultstr  = commands.getoutput (swsharpcmd)
+		    searchtmp.close()
+		    querytmp.close()
+		    for r in (f.splitlines() for f in resultstr.split("#"*80+"\n")):
+			if len(r) < 14: continue # Skip blank or malformed results
+
+			# Parse result
+			seqlen = min(int(re.split('\D+',r[1])[1]),int(re.split('\D+',r[3])[1]))
+			identity, matchlen = map(int,re.split('\D+',r[7])[1:3])
+			#similarity = int(re.split('\D+',r[8])[1])
+			#gaps = int(re.split('\D+',r[9])[1])
+			#score = float(r[10].split()[1])
+
+			# Reject if identity too low or too short
+			if identity < 0.8 *seqlen or identity < 10: continue
+
+			# FOUND AN EXON!
+			search_start, search_end, template_start, template_end = map(int,re.split('\D+',r[6])[1:5])
+
+			# Lengthen find to align to coding frame in template
+			start_adjust    = (template_start-1) % 3
+			search_start   -= start_adjust + 1
+			template_start -= start_adjust + 1
+			end_adjust      = -template_end % 3
+			search_end     -= end_adjust
+			template_end   -= end_adjust
+
+			template_name      = int(r[2].split('>')[1])
+			template_seq       = [s for s in nearestseqs if s[0] == template_name][0] 
+			template_gene_id   = template_seq[7]
+			template_searchseq = template_seq[6]
+			template_dnaseq    = template_searchseq[template_start:template_end]
+
+			if is_mitochondrial(cursor, template_gene_id, ensembl_db_name[nearestspecies]):
+			    template_pepseq    = str(Seq(template_dnaseq,generic_dna).translate(table="Vertebrate Mitochondrial"))
 			else:
-				searchstart = max((sr.end for sr in next_seq_regions)) + 1
-				searchend = min((sr.start for sr in prev_seq_regions)) - 1
-			if searchend - searchstart < 10: continue # Search region too short, so skip
-			# Get template sequences
-			for species2 in sorted_species_list:
-				nearestseqs  = [get_exon_seqs(cursor, m.exon_id_2, 
-							      m.exon_known_2, ensembl_db_name[species2])
-						for m in maps[i] if species2 == m.species_2]
-				if nearestseqs:
-					nearestspecies = species2
-					break
-			if not nearestseqs: 
-				break # No template sequences, so skip (should never happen, due to homo_sapiens)
-			searchtmp = NamedTemporaryFile()
-			querytmp = NamedTemporaryFile()
-			# Write out sequences to search
-			fastacmd = acg.generate_fastacmd_gene_command(species, searchname, 
-								      searchfile, searchstrand, searchstart, searchend)
-			#fasta = subprocess.check_output(fastacmd, shell=True)
-			fasta  = commands.getoutput(fastacmd)
-			searchtmp.write(fasta)
-			searchtmp.flush()
-			# Write out query sequences
-			for seq in nearestseqs:
-				querytmp.write(">{0}\n{1}\n".format(seq[0],seq[6]))
-			querytmp.flush()
-			# Perform SW# search
-			swsharpcmd = acg.generate_SW_nt(querytmp.name, searchtmp.name)
-			#resultstr = subprocess.check_output(swsharpcmd, shell=True)
-			resultstr = commands.getoutput (swsharpcmd)
-			searchtmp.close()
-			querytmp.close()
-			for r in (f.splitlines() for f in resultstr.split("#"*80+"\n")):
-				if len(r) < 14: continue # Skip blank or malformed results
+			    template_pepseq    = str(Seq(template_dnaseq,generic_dna).translate())
 
-				# Parse result
-				seqlen = min(int(re.split('\D+',r[1])[1]),int(re.split('\D+',r[3])[1]))
-				identity, matchlen = map(int,re.split('\D+',r[7])[1:3])
-				#similarity = int(re.split('\D+',r[8])[1])
-				#gaps = int(re.split('\D+',r[9])[1])
-				#score = float(r[10].split()[1])
+			searchseq = "".join(fasta.splitlines()[1:])
+			dnaseq = searchseq[search_start:search_end]
+			if is_mitochondrial(cursor, gene_id, ensembl_db_name[species]):
+			    pepseq = str(Seq(dnaseq,generic_dna).translate(table="Vertebrate Mitochondrial"))
+			else:
+			    pepseq = str(Seq(dnaseq,generic_dna).translate())
+			flanklen = 60
+			left_flank = searchseq[search_start-flanklen if search_start>flanklen else 0 : search_start]
+			right_flank = searchseq[search_end : search_end+flanklen if search_end+flanklen<len(searchseq) else len(searchseq)]
+			has_NNN = 1 if "NNN" in searchseq else 0
+			has_stop = 1 if "*" in pepseq else 0
 
-				# Reject if identity too low or too short
-				if identity < 0.8 * seqlen or identity < 10: continue
+			prev_end_in_gene = max((get_exon(cursor,m.exon_id_2,db_name=ensembl_db_name[species]).end_in_gene
+						for m in maps[positions[p-1]] if m.species_2 == species))
+			start_in_gene = prev_end_in_gene + search_start + 1 # Do I need this last +1 ?
+			end_in_gene   = prev_end_in_gene + search_end
 
-				# FOUND AN EXON!
-				search_start, search_end, template_start, template_end = map(int,re.split('\D+',r[6])[1:5])
-
-				# Lengthen find to align to coding frame in template
-				start_adjust = (template_start-1) % 3
-				search_start -= start_adjust + 1
-				template_start -= start_adjust + 1
-				end_adjust = -template_end % 3
-				search_end -= end_adjust
-				template_end -= end_adjust
-
-				template_name = int(r[2].split('>')[1])
-				template_searchseq = [s[6] for s in nearestseqs if s[0] == template_name][0]
-				template_dnaseq = template_searchseq[template_start:template_end]
-				template_pepseq = str(Seq(template_dnaseq,generic_dna).translate())
-
-				searchseq = "".join(fasta.splitlines()[1:])
-				dnaseq = searchseq[search_start:search_end]
-				pepseq = str(Seq(dnaseq,generic_dna).translate())
-				flanklen = 60
-				left_flank = searchseq[search_start-flanklen if search_start>flanklen else 0 : search_start]
-				right_flank = searchseq[search_end : search_end+flanklen 
-							if search_end+flanklen<len(searchseq) else len(searchseq)]
-				has_NNN = 1 if "NNN" in searchseq else 0
-				has_stop = 1 if "*" in pepseq else 0
-
-				prev_end_in_gene = max((get_exon(cursor,m.exon_id_2,db_name=ensembl_db_name[species]).end_in_gene
-							for m in maps[positions[p-1]] if m.species_2 == species))
-				start_in_gene = prev_end_in_gene + search_start + 1 # Do I need this last +1 ?
-				end_in_gene   = prev_end_in_gene + search_end
-
-				# Print out some debugging info
-				print
-				print "found sequence for {0}:".format(species)
-				print dnaseq
-				print "left flank: " + left_flank 
-				print "right flank: " + right_flank
-				print "translation: " + pepseq + (" (Stop codon)" if has_stop == 1 else "")
-				print 
-				print "based on {0}, exon {1}, position {2} - {3}:".format(nearestspecies,
-										       template_name,template_start,template_end)
-				print template_dnaseq
-				print "translation: " + template_pepseq
-				print
-				print resultstr
-				print prev_end_in_gene
-				print
-				print "storing to ", ensembl_db_name[species]
-				#raw_input("Press ENTER to continue")
-				strand = -1 if searchstrand != 1 else 1
-				store_sw_exon (cursor,ensembl_db_name[species], human_exons[i].exon_id, gene_id, 
-					       start_in_gene, end_in_gene, strand, dnaseq, left_flank, right_flank, pepseq)
+			# Print out some debugging info
+			print
+			print human_gene_id, human_stable, human_description 
+			print "found sequence for {0}:".format(species)
+			print dnaseq
+			print "left flank: " + left_flank 
+			print "right flank: " + right_flank
+			print "translation: " + pepseq + (" (Stop codon)" if has_stop == 1 else "")
+			print 
+			print "based on {0}, exon {1}, position {2} - {3}:".format(nearestspecies,template_name,template_start,template_end)
+			print template_dnaseq
+			print "translation: " + template_pepseq
+			print
+			print resultstr
+			print prev_end_in_gene
+			print
+			print "storing to ", ensembl_db_name[species]
+			
+			strand = -1 if searchstrand != 1 else 1
+			store_sw_exon (cursor,ensembl_db_name[species], human_exons[i].exon_id, gene_id, 
+				       start_in_gene, end_in_gene, strand, dnaseq, left_flank, right_flank, pepseq)
 
 #########################################
 def main():
     
-    no_threads = 15
+    no_threads = 10
 
     local_db = False
 
@@ -333,7 +361,7 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, search_for_exons, gene_list[5000:], [local_db, ensembl_db_name])
+    parallelize (no_threads, search_for_exons, gene_list[5000:-5000], [local_db, ensembl_db_name])
     
     return True
 

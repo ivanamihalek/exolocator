@@ -14,6 +14,7 @@ from   el_utils.map     import  get_maps, Map
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.alignment          import smith_waterman, exon_aware_smith_waterman
+from   el_utils.special_gene_sets  import human_genes_w_sw_sharp_annotation
 from   alignment import * # C implementation of smith waterman
 
 
@@ -78,7 +79,7 @@ def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
             padding += "-"
     seq_other = padding + exon_seq_other
 
-    if ( len(seq_human) >  len(seq_other)):
+    if ( len(seq_human) > len(seq_other)):
         padding = ""
         for i in range  (len(seq_human)-len(seq_other)):
             padding += "-"
@@ -280,6 +281,7 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
 
                 map.exon_known_1 = human_exons[human_exon_ct].is_known
                 map.exon_known_2 = ortho_exons[ortho_exon_ct].is_known
+                map.source       = 'sw_sharp' if ortho_exons[ortho_exon_ct].analysis_id < 0 else 'ensembl'
 
                 exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end]
                 exon_seq_other   = aligned_seq[other_species][other_start:other_end]
@@ -298,6 +300,31 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
     return maps
 
 #########################################
+def get_exon_pepseq (cursor, exon):
+
+    
+    if  exon.analysis_id > 0:
+        exon_id  = exon.exon_id
+        is_known = exon.is_known
+        qry  = "select protein_seq  "
+        qry += " from exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
+    else:
+        exon_seq_id = exon.exon_seq_id
+        qry  = "select protein_seq "
+        qry += " from  exon_seq where exon_seq_id = %d" % exon_seq_id
+        
+    rows = search_db(cursor, qry)
+    if (not rows):
+        #rows = search_db(cursor, qry, verbose = True)
+        return []
+
+    protein_seq = rows[0][0]
+    if (protein_seq is None):
+        protein_seq = ""
+  
+    return protein_seq
+
+#########################################
 def find_relevant_exons (cursor, all_exons):
 
     relevant_exons = []
@@ -312,9 +339,11 @@ def find_relevant_exons (cursor, all_exons):
     # 2) sort them by their start position in the gene
     to_remove = []
     relevant_exons.sort(key=lambda exon: exon.start_in_gene)
+
     for i in range(len(relevant_exons)):
         exon   = relevant_exons[i]
-        pepseq = get_exon_pepseq (cursor, exon.exon_id, exon.is_known)
+        # local version of the function, to search possibly for sw_exon
+        pepseq = get_exon_pepseq (cursor, exon)
         if not pepseq:
             to_remove.append(i)
             continue
@@ -382,6 +411,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
     #print "############################## human"
     switch_to_db(cursor,  ensembl_db_name['homo_sapiens'])
     relevant_human_exons = find_relevant_exons (cursor, human_exons)
+
     #print "##############################", ortho_species
     switch_to_db(cursor,  ensembl_db_name[ortho_species])
     relevant_ortho_exons = find_relevant_exons (cursor, ortho_exons)
@@ -418,7 +448,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
     return maps
     
 #########################################
-def store (cursor, maps, ensembl_db_name):
+def store (cursor, maps, ensembl_db_name, source = None):
 
     for map in maps:
         fixed_fields  = {}
@@ -428,9 +458,9 @@ def store (cursor, maps, ensembl_db_name):
         fixed_fields ['cognate_genome_db_id'] = species2genome_db_id(cursor, map.species_2)
         fixed_fields ['cognate_exon_id']      = map.exon_id_2
         fixed_fields ['cognate_exon_known']   = map.exon_known_2
+        fixed_fields ['source']               = map.source 
         update_fields['cigar_line']           = map.cigar_line
         update_fields['similarity']           = map.similarity
-        update_fields['source']               = 'ensembl'
         #####
         switch_to_db(cursor,ensembl_db_name['homo_sapiens']) 
         store_or_update (cursor, 'exon_map', fixed_fields, update_fields)
@@ -463,6 +493,37 @@ def gene_has_a_map (cursor, ensembl_db_name, human_exons):
 
     return has_a_map
 
+#########################################
+def exonify(cursor, ensembl_db_name, row_from_sw_exon_table):
+
+    exon = Exon()
+    
+    [sw_exon_id, gene_id, start_in_gene, end_in_gene, human_exon_id,
+     exon_seq_id, strand, phase, has_NNN, has_stop, has_3p_ss, has_5p_ss] = row_from_sw_exon_table
+
+    human_coding = is_coding (cursor, human_exon_id, ensembl_db_name['homo_sapiens'])
+    
+    exon.gene_id             = gene_id
+    exon.exon_id             = sw_exon_id
+    exon.start_in_gene       = start_in_gene
+    exon.end_in_gene         = end_in_gene
+    exon.canon_transl_start  = -1
+    exon.canon_transl_end    = -1
+    exon.exon_seq_id         = exon_seq_id
+    exon.strand              = strand
+    exon.phase               = phase
+    exon.is_known            = 0
+    exon.is_coding           = 1 if human_coding else 0
+    exon.is_canonical        = 0
+    exon.is_constitutive     = 0
+    exon.covering_exon       = -1
+    exon.covering_exon_known = -1 
+    exon.analysis_id         = -1
+
+ 
+
+    return exon
+
 
 #########################################
 def maps_for_gene_list(gene_list, db_info):
@@ -489,7 +550,7 @@ def maps_for_gene_list(gene_list, db_info):
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        #print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+        if not ct%10: print ct, "out of ", len(gene_list) 
         
         # get _all_ exons
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
@@ -498,39 +559,48 @@ def maps_for_gene_list(gene_list, db_info):
             print 'no exons for ', gene_id
             sys.exit(1)
     
-        # check maps
-        #if gene_has_a_map (cursor, ensembl_db_name, human_exons):
-        #    continue
+        ##########
+        for ortho_species, db_name in ensembl_db_name.iteritems():
+            if ortho_species == 'homo_sapiens': continue
 
-        # one2one   orthologues
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        known_orthologues      = get_orthos (cursor, gene_id, 'orthologue')
-        # not-clear orthologues
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        unresolved_orthologues = get_orthos (cursor, gene_id, 'unresolved_ortho')
-        #
-        for [ortho_gene_id, ortho_species] in known_orthologues+unresolved_orthologues:
-            ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
-            if not ortho_exons:
-                missing_exon_info += 1
-                #print "\t", ortho_species, "no exon info"
-                continue
-            #print 
-            #print "\t", ortho_species, "making maps ..."
-            maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons)   
+
+            ortho_exons   = []
+            ortho_gene_id = None
+            for human_exon in human_exons:
+                switch_to_db (cursor, db_name)
+
+                # sw exons 
+                qry  = "select * from sw_exon "
+                qry += " where maps_to_human_exon_id = %d " % human_exon.exon_id
+                rows = search_db (cursor, qry)
+                if not rows: continue
+
+                for row in rows:
+                    # turn them to actual exon objects
+                    exon = exonify (cursor, ensembl_db_name, row)
+                    if not ortho_gene_id:
+                        ortho_gene_id = exon.gene_id
+                    elif not ortho_gene_id == exon.gene_id:
+                        print "funny error in gene assignment ..."
+                        exit (1)
+                    if not exon.is_coding: continue
+                    ortho_exons.append(exon)
+
+            if not ortho_exons: continue
+      
+            # other exons from this species
+            ortho_exons += gene2exon_list(cursor, ortho_gene_id, db_name=db_name)
+
+
+            maps = make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons) 
             if not maps:
-                missing_seq_info += 1
-                #print "\t", ortho_species, "no maps"
+                print "\t", ortho_species, "no maps"
                 continue
-            no_maps += len(maps)
             
+            switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+            print "storing  map for", gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
             store (cursor, maps, ensembl_db_name)
-
-        if (not ct%10):
-            datastring = StringIO.StringIO()
-            print >> datastring, "processed ", ct, "genes,  out of ", len(gene_list), "  ",
-            print >> datastring, no_maps, " maps;   no_exon_info: ", missing_exon_info , "no_seq_info:", missing_seq_info 
-            print datastring.getvalue()
+                
     cursor.close()
     db.close()
 
@@ -553,7 +623,8 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
     switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-    gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+    # special: find genes that have an sw_sharp patch in some species
+    gene_list = human_genes_w_sw_sharp_annotation (cursor, ensembl_db_name)
 
     cursor.close()
     db.close()

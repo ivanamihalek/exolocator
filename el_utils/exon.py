@@ -97,10 +97,9 @@ class Exon:
 
         for attr, value in self.__dict__.iteritems():
             if ( not value is None):
-                printstr += attr+ "    "+ str(value)
+                printstr += " %-20s    %s" % (attr,  str(value))
             else:
-                printstr += attr+ "    None"
-                
+                printstr += " %-20s    None"  % attr
             printstr += "\n"
 
 
