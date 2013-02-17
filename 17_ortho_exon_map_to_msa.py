@@ -7,7 +7,7 @@ from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
 from   el_utils.utils   import  erropen, output_fasta
-from   el_utils.map     import  get_maps, Map
+from   el_utils.map     import  get_maps, map2exon, Map
 from   el_utils.tree    import  species_sort
 from   el_utils.ncbi    import  taxid2trivial
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
@@ -28,7 +28,7 @@ def multiple_exon_alnmt(gene_list, db_info):
     [local_db, ensembl_db_name] = db_info
 
     verbose          = False
-    sw_patching_only = True
+    sw_patching_only = False
 
     if local_db:
         db     = connect_to_mysql()
@@ -55,8 +55,8 @@ def multiple_exon_alnmt(gene_list, db_info):
     no_maps        = 0
     no_pepseq      = 0
     no_orthologues = 0
-    for gene_id in gene_list:
-    #for gene_id in [374433]: #     
+    #for gene_id in gene_list:
+    for gene_id in [374433]: #     
         start = time()
         gene_ct += 1
         if  not gene_ct%100: print gene_ct, "genes out of", len(gene_list)
@@ -94,19 +94,21 @@ def multiple_exon_alnmt(gene_list, db_info):
                 continue
             headers   = [seqname]
             sequences = {seqname:pepseq}
+            hassw = False
             for map in maps:
                 switch_to_db (cursor, ensembl_db_name[map.species_2])
-                pepseq  = get_exon_pepseq (cursor, map.exon_id_2, map.exon_known_2)
+                exon    = map2exon(cursor, ensembl_db_name, map)
+                pepseq  = get_exon_pepseq (cursor,exon)
                 if (not pepseq):
                     continue
                 if  map.source == 'sw_sharp':
                     exon_known_code = 2
+                    hassw = True
                 else:
                     exon_known_code = map.exon_known_2
                 seqname = "{0}:{1}:{2}".format(map.species_2, map.exon_id_2, exon_known_code)
                 headers.append(seqname)
                 sequences[seqname] = pepseq
-
 
             fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], human_exon.exon_id)
             output_fasta (fasta_fnm, headers, sequences)
@@ -131,20 +133,26 @@ def multiple_exon_alnmt(gene_list, db_info):
                 msa_bitmap = bs.tobytes()
                 # Retrieve information on the cognate
                 cognate_species, cognate_exon_id, cognate_exon_known = record.id.split(':')
-                source = 'sw_sharp' if cognate_exon_known == 2 else 'ensembl'
+                source = 'sw_sharp' if cognate_exon_known == '2' else 'ensembl'
                 if (cognate_species == 'homo_sapiens'):
                     human_seq_seen = True
                 cognate_genome_db_id = species2genome_db_id(cursor, cognate_species) # moves the cursor
                 switch_to_db(cursor, ensembl_db_name['homo_sapiens']) # so move it back to homo sapiens
                 # Write the bitmap to the database
                 #if (cognate_species == 'homo_sapiens'):
+                if source == 'sw_sharp':
+                    print "storing"
+                    print human_exon.exon_id, human_exon.is_known
+                    print cognate_species, cognate_genome_db_id, cognate_exon_id, cognate_exon_known, source
+                    print MySQLdb.escape_string(msa_bitmap)
+                    print
                 store_or_update(cursor, "exon_map",    {"cognate_genome_db_id":cognate_genome_db_id,
                    "cognate_exon_id":cognate_exon_id   ,"cognate_exon_known"  :cognate_exon_known,
                    "source": source, "exon_id" :human_exon.exon_id, "exon_known":human_exon.is_known},
                   {"msa_bitstring":MySQLdb.escape_string(msa_bitmap)})
 
             ok += 1
-            commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
+            #commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
         if verbose: print " time: %8.3f\n" % (time()-start);
 
@@ -158,7 +166,7 @@ def multiple_exon_alnmt(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 10
+    no_threads = 1
 
     local_db = False
 

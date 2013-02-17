@@ -314,7 +314,7 @@ def find_relevant_exons (cursor, all_exons):
     relevant_exons.sort(key=lambda exon: exon.start_in_gene)
     for i in range(len(relevant_exons)):
         exon   = relevant_exons[i]
-        pepseq = get_exon_pepseq (cursor, exon.exon_id, exon.is_known)
+        pepseq = get_exon_pepseq (cursor, exon)
         if not pepseq:
             to_remove.append(i)
             continue
@@ -485,11 +485,12 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
 
 
-    for gene_id in gene_list:
+    #for gene_id in gene_list:
+    for gene_id in [374433]:
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        #print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+        #print gene_id, gene2stable(cursor, gene_id), get_description(cursor, gene_id)
         
         # get _all_ exons
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
@@ -501,6 +502,9 @@ def maps_for_gene_list(gene_list, db_info):
         # check maps
         #if gene_has_a_map (cursor, ensembl_db_name, human_exons):
         #    continue
+
+        # get rid of the old maps
+        map_cleanup (cursor, ensembl_db_name, human_exons)
 
         # one2one   orthologues
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])

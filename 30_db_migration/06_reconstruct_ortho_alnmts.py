@@ -11,7 +11,7 @@ from el_utils.mysql   import  connect_to_mysql, connect_to_db
 from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from el_utils.ensembl import  *
 from el_utils.utils   import  erropen, output_fasta, input_fasta
-from el_utils.map     import  Map, get_maps
+from el_utils.map     import  Map, get_maps, map2exon
 from el_utils.tree    import  species_sort
 from el_utils.ncbi    import  taxid2trivial
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
@@ -21,7 +21,7 @@ from el_utils.special_gene_sets  import get_theme_ids
 from el_utils.threads import parallelize
 from bitstring import Bits
 from alignment import * # C implementation of smith waterman
-from   random  import  choice
+from   random  import choice
 # BioPython
 from Bio.Seq      import Seq
 from Bio.Alphabet import generic_dna
@@ -150,10 +150,15 @@ def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_names_of
 
 
 #########################################
-def align_nucseq_by_pepseq(aligned_pepseq, nucseq):
-    if (not len(aligned_pepseq.replace('-',''))*3 == len(nucseq)):
+def align_nucseq_by_pepseq (aligned_pepseq, nucseq):
+
+    # coding dna sequence, by assumption:
+    cds = nucseq
+    translated_cds = Seq(cds).translate().tostring()
+    if not len(aligned_pepseq.replace('-','')) == len(translated_cds):
         print aligned_pepseq.replace('-','')
-        print "length mismatch: ", len(aligned_pepseq.replace('-',''))*3, len(nucseq)
+        print "in align_nucseq_by_pepseq():  length mismatch: ", 
+        print len(aligned_pepseq.replace('-','')), len(translated_cds)
         return ""
     codon = iter(map(''.join, zip(*[iter(nucseq)]*3)))
     aligned_nucseq = ''.join(('---' if c=='-' else next(codon) for c in aligned_pepseq))
@@ -179,6 +184,7 @@ def expand_pepseq (aligned_pep_sequence, exon_seqs, flank_length):
     aligned_nucseq  = align_nucseq_by_pepseq(aligned_pep_sequence, cds)
     if not aligned_nucseq: 
         print aligned_pep_sequence
+        print Seq(cds).translate().tostring()
         print cds
         print pepseq_transl_start, pepseq_transl_end," reconstruction failed"
         exit (1)
@@ -270,15 +276,24 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
     pep_aln_length = 0
     dna_aln_length = 0
     # find all other exons that map to the human exon
-    maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
+    maps    = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
+    maps_sw = filter (lambda m: m.source=='sw_sharp', maps)
+
+    print human_exon.exon_id
+
     for map in maps:
         # get the raw (unaligned) sequence for the exon that maps onto human
-        exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
+        if map in maps_sw:
+            exon_seq_id = get_sw_seq_id (cursor, map.exon_id_2, ensembl_db_name[map.species_2])
+            exon_seqs   = get_exon_seq_by_db_id (cursor, exon_seq_id, ensembl_db_name[map.species_2]) 
+            # pepseq_transl_end should be by python convention (upper bound), but its not
+        else:
+            exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
         if (not exon_seqs):
-            print map
-            exit (1)
+            continue
         [pepseq, pepseq_transl_start, 
          pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs[1:]
+
 
         if len(pepseq)<2: continue
 
@@ -289,6 +304,8 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
         else:
             pepseq2 = dnaseq.translate().tostring()
         
+        if  map in maps_sw:
+            print map.species_2, pepseq
 
         if (not pepseq == pepseq2):
             #print " ! ", pepseq
@@ -297,6 +314,7 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
             continue
             
         # inflate the compressed sequence
+
         bs = Bits(bytes=map.bitmap)
         if (not bs.count(1) == len(pepseq)): continue # check bitmap has correct number of 1s
         usi = iter(pepseq)
@@ -324,8 +342,8 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
     #if not sequence_stripped_pep:
     #    print "blah"
     #    exit(1)
-
     return [sequence_stripped_pep, sequence_stripped_dna]
+
 #########################################
 def parse_aln_name (name):
     fields     = name.split("_")
@@ -1307,8 +1325,8 @@ def make_alignments ( gene_list, db_info):
         # find which species we have, and for how many exons
         # we may have two orthologues for the same species
         seq_name = {}
-        overlapping_maps   = {}
-        parent_seq_name = {}
+        overlapping_maps = {}
+        parent_seq_name  = {}
         for human_exon in canonical_human_exons:
             for exon_seq_name, exon_seq in alnmt_pep[human_exon].iteritems():
                 (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
@@ -1318,7 +1336,7 @@ def make_alignments ( gene_list, db_info):
                 
         # >>>>>>>>>>>>>>>>>>
         names_of_exons = {}
-        human_exon_map     = {}
+        human_exon_map = {}
         for human_exon in canonical_human_exons:
             for exon_seq_name in alnmt_pep[human_exon].keys():
                 concat_seq_name = parent_seq_name[exon_seq_name]
@@ -1392,6 +1410,7 @@ def make_alignments ( gene_list, db_info):
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
 
+
         for seq_to_fix in overlapping_maps.keys():
             # fix_one2many changes bout output_pep and names_of_exons
             [output_pep, names_of_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
@@ -1404,7 +1423,7 @@ def make_alignments ( gene_list, db_info):
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
-            #print "length check failure"
+            print "length check failure"
             continue
 
         if (1):
@@ -1416,7 +1435,7 @@ def make_alignments ( gene_list, db_info):
             #[output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
 
             #afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-            afa_fnme = "test.afa"
+            afa_fnm = "test.afa"
             output_fasta (afa_fnm, sorted_seq_names, output_pep)
             print afa_fnm
 

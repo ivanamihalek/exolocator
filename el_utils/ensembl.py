@@ -20,8 +20,12 @@ def  get_analysis_dict(cursor):
 def  exon_id2gene_id (cursor, ensembl_db_name, exon_id, is_known):
 
     switch_to_db(cursor, ensembl_db_name)
-    qry  = "select gene_id from gene2exon where "
-    qry += "exon_id = %d and is_known = %d " % (exon_id, is_known)
+    if is_known==2: # sw_sharp exon
+        qry  = "select gene_id from sw_exon where "
+        qry += "exon_id = %d " % exon_id
+    else:
+        qry  = "select gene_id from gene2exon where "
+        qry += "exon_id = %d and is_known = %d " % (exon_id, is_known)
     
     rows = search_db (cursor, qry)
     if (not rows or 'ERROR' in rows[0]):
@@ -141,15 +145,22 @@ def is_mitochondrial (cursor, gene_id, db_name=None):
     return is_mitochondrial
 
 #########################################
-def get_exon_pepseq (cursor, exon_id, is_known, db_name=None):
+def get_exon_pepseq (cursor, exon, db_name=None):
 
     if (db_name):
         if not switch_to_db(cursor, db_name):
             return False
 
-    qry  = "select protein_seq  "
-    qry += "from  exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
-
+    if  exon.analysis_id > 0:
+        exon_id  = exon.exon_id
+        is_known = exon.is_known
+        qry  = "select protein_seq  "
+        qry += " from exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
+    else:
+        exon_seq_id = exon.exon_seq_id
+        qry  = "select protein_seq "
+        qry += " from  exon_seq where exon_seq_id = %d" % exon_seq_id
+        
     rows = search_db(cursor, qry)
     if (not rows):
         #rows = search_db(cursor, qry, verbose = True)
@@ -161,7 +172,19 @@ def get_exon_pepseq (cursor, exon_id, is_known, db_name=None):
   
     return protein_seq
 
-
+#########################################
+def  get_sw_seq_id (cursor, exon_id, db_name=None):
+    
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return -1
+    qry  = "select exon_seq_id "
+    qry += " from sw_exon where exon_id = %d" % exon_id
+    rows = search_db(cursor, qry)
+    if not rows or not rows[0][0]:
+        return -1
+    
+    return int(rows[0][0])
 
 #########################################
 def get_exon_seq_by_db_id (cursor, exon_seq_id, db_name=None):
@@ -198,12 +221,20 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
         if not switch_to_db(cursor, db_name):
             return False
 
-    qry  = "select exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, "
-    qry += " left_flank, right_flank, dna_seq  "
-    qry += " from  exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
+    if is_known==2: # sw exon
+        qry  = "select exon_seq.exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, "
+        qry += " left_flank, right_flank, dna_seq  from  exon_seq "
+        qry += " join sw_exon on exon_seq.exon_seq_id = sw_exon.exon_seq_id  "
+        qry += " where sw_exon.exon_id = %d " %  exon_id
+    else:
+        qry  = "select exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, "
+        qry += " left_flank, right_flank, dna_seq  "
+        qry += " from  exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
+
     rows = search_db(cursor, qry)
-    if (not rows):
-        #rows = search_db(cursor, qry, verbose = True)
+
+    if not rows or len(rows[0]) < 7:
+        rows = search_db(cursor, qry, verbose = True)
         return []
 
     [exon_seq_id, protein_seq, pepseq_transl_start, 
@@ -266,7 +297,7 @@ def gene2exon_list (cursor, gene_id, db_name=None):
     return exons
 
 ########################################
-def  get_canonical_exons (cursor, gene_id):
+def get_canonical_exons (cursor, gene_id):
 
     exons = gene2exon_list (cursor, gene_id)
     if (not exons):

@@ -299,32 +299,7 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
 
     return maps
 
-#########################################
-def get_exon_pepseq (cursor, exon):
-
-    
-    if  exon.analysis_id > 0:
-        exon_id  = exon.exon_id
-        is_known = exon.is_known
-        qry  = "select protein_seq  "
-        qry += " from exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
-    else:
-        exon_seq_id = exon.exon_seq_id
-        qry  = "select protein_seq "
-        qry += " from  exon_seq where exon_seq_id = %d" % exon_seq_id
-        
-    rows = search_db(cursor, qry)
-    if (not rows):
-        #rows = search_db(cursor, qry, verbose = True)
-        return []
-
-    protein_seq = rows[0][0]
-    if (protein_seq is None):
-        protein_seq = ""
-  
-    return protein_seq
-
-#########################################
+########################################
 def find_relevant_exons (cursor, all_exons):
 
     relevant_exons = []
@@ -512,8 +487,8 @@ def exonify(cursor, ensembl_db_name, row_from_sw_exon_table):
     exon.exon_seq_id         = exon_seq_id
     exon.strand              = strand
     exon.phase               = phase
-    exon.is_known            = 0
-    exon.is_coding           = 1 if human_coding else 0
+    exon.is_known            = 2 # arbitrary index, used to indicate sw_sharp findings here
+    exon.is_coding           = 1 if (human_coding and not has_stop) else 0
     exon.is_canonical        = 0
     exon.is_constitutive     = 0
     exon.covering_exon       = -1
@@ -546,7 +521,8 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
 
 
-    for gene_id in gene_list:
+    #for gene_id in gene_list:
+    for gene_id in [374433]:
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -558,11 +534,12 @@ def maps_for_gene_list(gene_list, db_info):
         if (not human_exons):
             print 'no exons for ', gene_id
             sys.exit(1)
-    
+
+        # get rid of the old maps # can't do that here bcs this script is only updating sw exons
+        #map_cleanup (cursor, ensembl_db_name, human_exons)
         ##########
         for ortho_species, db_name in ensembl_db_name.iteritems():
             if ortho_species == 'homo_sapiens': continue
-
 
             ortho_exons   = []
             ortho_gene_id = None
@@ -590,7 +567,6 @@ def maps_for_gene_list(gene_list, db_info):
       
             # other exons from this species
             ortho_exons += gene2exon_list(cursor, ortho_gene_id, db_name=db_name)
-
 
             maps = make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons) 
             if not maps:

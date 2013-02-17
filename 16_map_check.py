@@ -7,7 +7,7 @@ from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
 from   el_utils.utils   import  erropen, output_fasta
-from   el_utils.map     import  get_maps, Map
+from   el_utils.map     import  Map, get_maps, map2exon 
 from   el_utils.tree    import  species_sort
 from   el_utils.ncbi    import  taxid2trivial
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
@@ -35,10 +35,11 @@ def main():
     with_map = 0
     tot = 0
     #or gene_id in [412667]: #  wls
-    for gene_id in gene_list: 
+    #for gene_id in gene_list: 
+    for gene_id in [374433]:
         
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        #print  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+        print  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
         # find all exons we are tracking in the database
         human_exons = gene2exon_list(cursor, gene_id)
@@ -56,13 +57,18 @@ def main():
                 has_a_map = True
             #else:
             #print"no maps"
-            if 0:
+            if 1:
                 for map in maps:
-                    species = map.species_2
-                    unaligned_sequence = get_exon_pepseq(cursor, map.exon_id_2, map.exon_known_2, 
-                                                         ensembl_db_name[map.species_2])
-                    print "\t", species, map.exon_id_2, map.exon_known_2
-                    print "\t", unaligned_sequence
+                    species            = map.species_2
+                    exon               = map2exon(cursor, ensembl_db_name, map)
+                    unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
+                    if (1 or map.source=='sw_sharp'):
+                        print "\t", species,  map.source, map.exon_id_2, map.exon_known_2
+                        print "\t maps to ",  map.exon_id_1, map.exon_known_1
+                        print "\t", unaligned_sequence
+                        if not map.bitmap:
+                            print "\t bitmap not assigned"
+                        print
         if has_a_map: with_map +=1
         tot += 1
         print gene_id, tot, with_map

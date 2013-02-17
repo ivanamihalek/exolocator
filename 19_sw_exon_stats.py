@@ -24,7 +24,7 @@ def main():
     for species in all_species:
 
         switch_to_db(cursor, ensembl_db_name[species])
-        qry  =  "select count(1) from sw_exon"
+        qry  =  "select count(1) from sw_exon where template_exon_id is not null"
         rows = search_db(cursor, qry)
 
         if rows and rows[0][0]:

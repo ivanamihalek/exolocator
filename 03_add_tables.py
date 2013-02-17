@@ -2,8 +2,7 @@
 
 
 import MySQLdb
-from   el_utils.mysql   import  connect_to_mysql, search_db
-from   el_utils.mysql   import  create_index, check_table_exists, check_column_exists
+from   el_utils.mysql   import  *
 from   el_utils.ensembl import  get_species, get_gene_ids
 
 #########################################
@@ -24,8 +23,14 @@ def make_sw_exon_table (cursor):
         return False
 
     for column_name in ['gene_id', 'start_in_gene', 
-                        'end_in_gene', 'maps_to_human_exon_id', 'exon_seq_id']:
+                        'end_in_gene', 'maps_to_human_exon_id', 'exon_seq_id', 'template_exon_id']:
         qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
+    for column_name in ['template_species']:
+        qry = "ALTER TABLE %s  ADD %s VARCHAR(120)" % (table, column_name)
         rows = search_db (cursor, qry)
         if (rows):
             return False
@@ -337,6 +342,7 @@ def main():
     for species in all_species:
         print species
         db_name = ensembl_db_name[species]
+        
         for table in ['gene2exon', 'exon_seq', 'sw_exon', 'coding_region']:
 
             if ( check_table_exists (cursor, db_name, table)):
@@ -344,7 +350,7 @@ def main():
             else:
                 print table, " not found in ", db_name
                 make_table (cursor, db_name, table)
-
+                
         create_index (cursor, db_name, 'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
         create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
         create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
