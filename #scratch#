@@ -1,7 +1,0 @@
-        if  map.source=='sw_sharp':
-            get_sw_seq_id (cursor, map.exon_id_2)
-            exon_seqs =  get_exon_seq_by_db_id (cursor, exon_seq_id)
-            print exon_seqs
-            exit(1)
-        else:
-            exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
