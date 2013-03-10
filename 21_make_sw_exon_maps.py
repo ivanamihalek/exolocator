@@ -14,7 +14,7 @@ from   el_utils.map     import  get_maps, Map
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.alignment          import smith_waterman, exon_aware_smith_waterman
-from   el_utils.special_gene_sets  import human_genes_w_sw_sharp_annotation
+from   el_utils.special_gene_sets  import human_genes_w_sw_sharp_annotation, get_theme_ids
 from   alignment import * # C implementation of smith waterman
 
 
@@ -323,7 +323,7 @@ def find_relevant_exons (cursor, all_exons):
             to_remove.append(i)
             continue
         pepseq = pepseq.replace ('X', '')
-        if  not pepseq:
+        if  len (pepseq) < 3:
             to_remove.append(i)
         else:
             exon.pepseq = pepseq
@@ -474,7 +474,8 @@ def exonify(cursor, ensembl_db_name, row_from_sw_exon_table):
     exon = Exon()
     
     [sw_exon_id, gene_id, start_in_gene, end_in_gene, human_exon_id,
-     exon_seq_id, strand, phase, has_NNN, has_stop, has_3p_ss, has_5p_ss] = row_from_sw_exon_table
+     exon_seq_id, template_exon_id, template_species,
+     strand, phase, has_NNN, has_stop, has_3p_ss, has_5p_ss] = row_from_sw_exon_table
 
     human_coding = is_coding (cursor, human_exon_id, ensembl_db_name['homo_sapiens'])
     
@@ -521,8 +522,7 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
 
 
-    #for gene_id in gene_list:
-    for gene_id in [374433]:
+    for gene_id in gene_list:
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -559,7 +559,7 @@ def maps_for_gene_list(gene_list, db_info):
                         ortho_gene_id = exon.gene_id
                     elif not ortho_gene_id == exon.gene_id:
                         print "funny error in gene assignment ..."
-                        exit (1)
+                        continue
                     if not exon.is_coding: continue
                     ortho_exons.append(exon)
 
@@ -586,21 +586,25 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 4
 
     local_db   = False
 
     if local_db:
-        db = connect_to_mysql()
+        db  = connect_to_mysql()
+        cfg = ConfigurationReader()
     else:
-        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
     switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
     # special: find genes that have an sw_sharp patch in some species
-    gene_list = human_genes_w_sw_sharp_annotation (cursor, ensembl_db_name)
+    #gene_list = human_genes_w_sw_sharp_annotation (cursor, ensembl_db_name)
+    #gene_list = [374433]
+    gene_list  = get_theme_ids(cursor, cfg, 'wnt_pathway')
 
     cursor.close()
     db.close()

@@ -62,6 +62,19 @@ def check_exon_table(cursor, db_name, species, verbose = False):
 
 
 #########################################
+def modify_exon_table(cursor, db_name, species):
+    table =  'exon_' + species
+
+    #qry = "ALTER TABLE %s  ADD %s VARCHAR(50)" % (table, 'maps_to_human_exon_id')
+    qry  = "delete from %s where source='sw_sharp'" % table
+    rows = search_db(cursor, qry)
+    print qry
+    if rows:
+        return rows[0][0]
+    else:
+        return 0
+
+#########################################
 def check_exon_table_size(cursor, db_name, species):
     table =  'exon_' + species
 
@@ -95,6 +108,11 @@ def store(cursor, in_path, infile, species):
         if (not ct%1000):
             print "   %s   %5d    %8.3f" % (species, ct,  time()-start);
             start = time()
+
+        fixed_fields    = {}
+        update_fields   = {}
+
+
         line   = line.rstrip()
         field  = line.split("\t")
         if len(field) < 18: continue
@@ -111,17 +129,24 @@ def store(cursor, in_path, infile, species):
         is_constitutive = int(field[9])
         species         =     field[10]
         source          =     field[11]
-        protein_seq     =     field[12]
-        # here I have two fields showing where the peptide translation starts and where it ends
-        left_flank      =     field[15]
-        right_flank     =     field[16]
-        dna_seq         =     field[17]
+        if source == 'sw_sharp':
+            human_exon      = field[12]
+            protein_seq     = field[13]
+            # here I have two fields showing where the peptide translation starts and where it ends
+            left_flank      = field[16]
+            right_flank     = field[17]
+            dna_seq         = field[18]
+            fixed_fields['maps_to_human_exon_id'] = human_exon
+        else:
+            protein_seq     =     field[12]
+            # here I have two fields showing where the peptide translation starts and where it ends
+            left_flank      =     field[15]
+            right_flank     =     field[16]
+            dna_seq         =     field[17]
 
-        fixed_fields    = {}
-        update_fields   = {}
 
         exon_key = ensembl_gene_id + "_" + str(exon_id) + "_" + str(is_known)
-        fixed_fields['exon_key']         = exon_key  
+        fixed_fields ['exon_key']        = exon_key  
   
         update_fields['ensembl_gene_id'] = ensembl_gene_id
         update_fields['ensembl_exon_id'] = ensembl_exon_id
@@ -165,9 +190,10 @@ def load_from_infiles (infiles, in_path):
         #check_exon_table(cursor, db_name, species)        
         #table_size = check_exon_table_size (cursor, db_name, species)
         #if table_size > 0: continue
+        #modify_exon_table (cursor, db_name, species)
         
         store  (cursor, in_path, infile, species)
-        print "\t done in  %8.3f sec" % (time()-start) 
+        #print "\t done in  %8.3f sec" % (time()-start) 
         
     
 #########################################
@@ -185,6 +211,7 @@ def main():
     in_path = cfg.get_path('afs_dumps')
     if (not os.path.exists(in_path)):
         print in_path, "not found"
+
 
     
     cursor.close()

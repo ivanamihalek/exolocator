@@ -95,8 +95,8 @@ def main():
         print "\t", gene2stable(cursor, human_gene_id, ensembl_db_name['homo_sapiens']),
         print get_description (cursor, human_gene_id, ensembl_db_name['homo_sapiens'])
         
-        for [species, exon_id, pepseq] in patches[human_gene_id]:
-            print "\t", species, exon_id, pepseq
+        #for [species, exon_id, pepseq] in patches[human_gene_id]:
+        #    print "\t", species, exon_id, pepseq
 
     cursor.close()
     db    .close()

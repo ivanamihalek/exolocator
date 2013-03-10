@@ -24,9 +24,11 @@ def main():
     for species in all_species:
 
         switch_to_db(cursor, ensembl_db_name[species])
-        qry  =  "select count(1) from sw_exon where template_exon_id is not null"
+        qry  =  "select count(1) from sw_exon  join  exon_seq  "
+        qry +=  "on sw_exon.exon_seq_id = exon_seq.exon_seq_id "
+        qry +=  " where exon_seq.protein_seq  is not  null"
         rows = search_db(cursor, qry)
-
+        
         if rows and rows[0][0]:
             print species,
             print "\t", rows[0][0]

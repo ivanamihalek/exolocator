@@ -90,6 +90,29 @@ class Exon:
         return True
 
     #################################################
+    # load in from gene2exon table (select * from gene2exon)
+    def load_from_sw_exon (self, sw_exon_row):
+
+        if ( len(sw_exon_row) < 10):
+            print "error loading exon: the in list must be",
+            print " at least 10 elements long"
+            return False
+        
+        self.exon_id             = sw_exon_row[0]
+        self.gene_id             = sw_exon_row[1]
+        self.start_in_gene       = sw_exon_row[2]
+        self.end_in_gene         = sw_exon_row[3]
+
+        self.strand              = sw_exon_row[8]
+        self.phase               = sw_exon_row[9]
+        self.is_known            = 0
+        self.is_coding           = 1
+        self.is_canonical        = 0
+        self.is_constitutive     = 0
+
+        return True
+
+    #################################################
     # print
     def __str__ (self):
 

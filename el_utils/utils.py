@@ -43,3 +43,12 @@ def input_fasta (filename):
     inf.close()
 
     return sequence
+
+#########################################
+def parse_aln_name (name):
+    fields     = name.split("_")
+    exon_id    = int(fields[-2])
+    exon_known = int(fields[-1])
+    species    =  "_".join(fields[:-2])
+    return [species, exon_id, exon_known]
+

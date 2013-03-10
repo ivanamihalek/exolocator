@@ -12,7 +12,7 @@ from   el_utils.tree    import  species_sort
 from   el_utils.ncbi    import  taxid2trivial
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
-from   el_utils.special_gene_sets  import human_genes_w_sw_sharp_annotation
+from   el_utils.special_gene_sets  import human_genes_w_sw_sharp_annotation, get_theme_ids
 from   el_utils.threads import  parallelize
 
 
@@ -55,11 +55,10 @@ def multiple_exon_alnmt(gene_list, db_info):
     no_maps        = 0
     no_pepseq      = 0
     no_orthologues = 0
-    #for gene_id in gene_list:
-    for gene_id in [374433]: #     
+    for gene_id in gene_list:
         start = time()
         gene_ct += 1
-        if  not gene_ct%100: print gene_ct, "genes out of", len(gene_list)
+        if  not gene_ct%10: print gene_ct, "genes out of", len(gene_list)
 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         if verbose: print gene_ct, len(gene_ids),  gene_id,  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
@@ -131,6 +130,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 # Generate the bitmap
                 bs         = Bits(bin='0b' + re.sub("[^0]","1", str(record.seq).replace('-','0')))
                 msa_bitmap = bs.tobytes()
+                
                 # Retrieve information on the cognate
                 cognate_species, cognate_exon_id, cognate_exon_known = record.id.split(':')
                 source = 'sw_sharp' if cognate_exon_known == '2' else 'ensembl'
@@ -140,11 +140,14 @@ def multiple_exon_alnmt(gene_list, db_info):
                 switch_to_db(cursor, ensembl_db_name['homo_sapiens']) # so move it back to homo sapiens
                 # Write the bitmap to the database
                 #if (cognate_species == 'homo_sapiens'):
-                if source == 'sw_sharp':
+                if 0 and source == 'sw_sharp':
                     print "storing"
                     print human_exon.exon_id, human_exon.is_known
                     print cognate_species, cognate_genome_db_id, cognate_exon_id, cognate_exon_known, source
                     print MySQLdb.escape_string(msa_bitmap)
+                    if not msa_bitmap:
+                        print "no msa_bitmap"
+                        exit(1)
                     print
                 store_or_update(cursor, "exon_map",    {"cognate_genome_db_id":cognate_genome_db_id,
                    "cognate_exon_id":cognate_exon_id   ,"cognate_exon_known"  :cognate_exon_known,
@@ -166,14 +169,16 @@ def multiple_exon_alnmt(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 10
 
     local_db = False
 
     if local_db:
-        db = connect_to_mysql()
+        db  = connect_to_mysql()
+        cfg = ConfigurationReader()
     else:
-        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
@@ -181,8 +186,10 @@ def main():
 
     species                        = 'homo_sapiens'
     switch_to_db (cursor,  ensembl_db_name[species])
-    #gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+    #gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
     gene_list = human_genes_w_sw_sharp_annotation(cursor, ensembl_db_name)
+    #gene_list = [416511]     
+    #gene_list = get_theme_ids(cursor, cfg, 'wnt_pathway')
     cursor.close()
     db.close()
 

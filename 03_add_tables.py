@@ -5,6 +5,8 @@ import MySQLdb
 from   el_utils.mysql   import  *
 from   el_utils.ensembl import  get_species, get_gene_ids
 
+
+
 #########################################
 def make_sw_exon_table (cursor):
 
@@ -46,8 +48,6 @@ def make_gene2exon_table (cursor):
 
 
     table = 'gene2exon'
-
-
 
     qry  = "CREATE TABLE " + table + " (gene2exon_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
     rows = search_db (cursor, qry)
@@ -231,6 +231,8 @@ def make_exon_map_table (cursor):
         rows = search_db (cursor, qry)
         if (rows):
             return False
+
+
 #########################################
 def make_para_exon_map_table (cursor):
     
@@ -342,6 +344,15 @@ def main():
     for species in all_species:
         print species
         db_name = ensembl_db_name[species]
+        
+        switch_to_db (cursor, ensembl_db_name[species])
+        #qry = "drop table sw_exon"
+        #print search_db(cursor, qry)
+        #qry = "delete from exon_seq where is_sw = 1"
+        #print search_db(cursor, qry)
+        #exit(1)
+        qry   = "ALTER TABLE sw_exon change template_exon_id template_exon_seq_id INT(10)" 
+        print  search_db (cursor, qry)
         
         for table in ['gene2exon', 'exon_seq', 'sw_exon', 'coding_region']:
 

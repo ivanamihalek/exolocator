@@ -10,14 +10,14 @@ import MySQLdb, commands, re, os
 from el_utils.mysql   import  connect_to_mysql, connect_to_db
 from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from el_utils.ensembl import  *
-from el_utils.utils   import  erropen, output_fasta, input_fasta
+from el_utils.utils   import  erropen, output_fasta, input_fasta, parse_aln_name
 from el_utils.map     import  Map, get_maps, map2exon
 from el_utils.tree    import  species_sort
 from el_utils.ncbi    import  taxid2trivial
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from el_utils.config_reader      import ConfigurationReader
 from el_utils.translation        import phase2offset, translation_bounds, crop_dna, translate
-from el_utils.special_gene_sets  import get_theme_ids
+from el_utils.special_gene_sets  import human_genes_w_sw_sharp_annotation, get_theme_ids
 from el_utils.threads import parallelize
 from bitstring import Bits
 from alignment import * # C implementation of smith waterman
@@ -89,7 +89,9 @@ def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_names_of
 
     for piece in pep_seq_pieces:
         if (not len(piece) == template_length):
-            print "length mismatch for aligned exons (?)"
+            #print "length mismatch for aligned exons (?)"
+            #print piece
+            #print template_seq
             return []
 
     # check whether any two pieces overlap
@@ -279,8 +281,6 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
     maps    = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
     maps_sw = filter (lambda m: m.source=='sw_sharp', maps)
 
-    print human_exon.exon_id
-
     for map in maps:
         # get the raw (unaligned) sequence for the exon that maps onto human
         if map in maps_sw:
@@ -294,8 +294,10 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
         [pepseq, pepseq_transl_start, 
          pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs[1:]
 
-
-        if len(pepseq)<2: continue
+        if len(pepseq)<3: continue
+        pepseq_noX = pepseq.replace ('X','')
+        if len(pepseq_noX)<3: continue
+       
 
         # check
         dnaseq  = Seq (dna_seq[pepseq_transl_start:pepseq_transl_end], generic_dna)
@@ -314,7 +316,11 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
             continue
             
         # inflate the compressed sequence
-
+        if not map.bitmap:
+            print
+            print "no bitmap:"
+            print map
+            exit(1)
         bs = Bits(bytes=map.bitmap)
         if (not bs.count(1) == len(pepseq)): continue # check bitmap has correct number of 1s
         usi = iter(pepseq)
@@ -343,14 +349,6 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
     #    print "blah"
     #    exit(1)
     return [sequence_stripped_pep, sequence_stripped_dna]
-
-#########################################
-def parse_aln_name (name):
-    fields     = name.split("_")
-    exon_id    = int(fields[-2])
-    exon_known = int(fields[-1])
-    species    =  "_".join(fields[:-2])
-    return [species, exon_id, exon_known]
 
 
 #########################################
@@ -403,7 +401,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
     for name in sorted_seq_names:
         if not stable_gene_id.has_key(name): continue
         out_string += "%% %s   %s \n" % (name, stable_gene_id[name])
-        out_string += "%% %15s  %15s  %15s     %6s  %10s  %s \n" % \
+        out_string += "%% %20s  %15s  %15s     %6s  %10s  %s \n" % \
            ('exon_id', 'gene_from', 'gene_to', 'coding', 'cannonical', 'source')
         for exon_name in names_of_exons[name]:
             [species, exon_id, exon_known] = parse_aln_name(exon_name)
@@ -412,16 +410,18 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
                 exon_stable_id = exon2stable(cursor, exon_id, ensembl_db_name[species])
             else:
                 exon_stable_id = 'anon'
-
-            source = get_logic_name (cursor, exon.analysis_id,  ensembl_db_name[species])
-            out_string += "  %15s  %15s  %15s     %-6s  %-10s  %s \n" % \
+            if ( exon_known ==2 ):
+                source = 'SW#'
+            else:
+                source = get_logic_name (cursor, exon.analysis_id,  ensembl_db_name[species])
+            out_string += "  %20s  %15s  %15s     %-6s  %-10s  %s \n" % \
                 (exon_stable_id, exon.start_in_gene, exon.end_in_gene,
                  exon.is_coding, exon.is_canonical, source)
                
     
     directory = check_notes_directory (cfg)
     notes_fnm = directory + '/'+stable_id+'.txt'
-    print notes_fnm
+    # print notes_fnm
     of = erropen (notes_fnm, "w")
     print >> of, out_string
     of.close()
@@ -1257,9 +1257,7 @@ def make_alignments ( gene_list, db_info):
     # for each human gene
     gene_ct = 0
     gene_list.reverse()
-    #for gene_id in gene_list:
-    #for gene_id in [387298]:
-    for gene_id in [374433]:
+    for gene_id in gene_list:
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
@@ -1399,8 +1397,8 @@ def make_alignments ( gene_list, db_info):
                 if output_pep[concat_seq_name]: output_pep[concat_seq_name] += '-Z-'
                 output_pep[concat_seq_name] += pep
 
-                if not pep:
-                    print human_exon.exon_id
+                if verbose and not pep:
+                    print ">> ", human_exon.exon_id
              
             headers.append(concat_seq_name)
 
@@ -1434,12 +1432,11 @@ def make_alignments ( gene_list, db_info):
             # get rid of the ghost exons that do not correpond to anything in any other species
             #[output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
 
-            #afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-            afa_fnm = "test.afa"
+            afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_pep)
-            print afa_fnm
+            if verbose: print afa_fnm
 
-        if (0):
+        if (1):
             # >>>>>>>>>>>>>>>>>>
             output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
                                                       sorted_trivial_names, names_of_exons,  
@@ -1451,12 +1448,12 @@ def make_alignments ( gene_list, db_info):
 
             afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_dna)
-            print afa_fnm
+            if verbose: print afa_fnm
 
         #continue
 
         # notes to accompany the alignment:
-        #print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id)
+        print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id)
 
     return 
 
@@ -1469,18 +1466,23 @@ def main():
     local_db = False
 
     if local_db:
-        db = connect_to_mysql()
+        db  = connect_to_mysql()
+        cfg = ConfigurationReader()
     else:
-        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
 
-    species                        = 'homo_sapiens'
+    species                       = 'homo_sapiens'
     switch_to_db (cursor,  ensembl_db_name[species])
-    gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-    #gene_list                     =  get_theme_ids(cursor, 'wnt_pathway')
+    #gene_list                    =  get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+    #gene_list                    =  get_theme_ids(cursor, ensembl_db_name, cfg, 'wnt_pathway')
+    #gene_list                     =  get_theme_ids(cursor, ensembl_db_name, cfg, 'genecards_top500')
+    #gene_list = human_genes_w_sw_sharp_annotation(cursor, ensembl_db_name)
+    gene_list = [397176]
     cursor.close()
     db.close()
 

@@ -11,7 +11,7 @@ from   el_utils.utils         import  erropen
 
 
 #########################################
-def exon_tabstring(exon, gene_stable_id, exon_stable_id, species, analysis, exon_seqs):
+def exon_tabstring(exon, gene_stable_id, exon_stable_id, human_exon_stable_id,  species, analysis, exon_seqs):
     
     ret  = ""
     ret += str(exon.exon_id) +"\t"
@@ -26,7 +26,8 @@ def exon_tabstring(exon, gene_stable_id, exon_stable_id, species, analysis, exon
     ret += str(exon.is_constitutive) +"\t"
     ret += species                   +"\t"
     ret += analysis +"\t"
-
+    if analysis=='sw_sharp':
+         ret += human_exon_stable_id +"\t" 
 
     ret += "\t".join( map((lambda token:  type(token) is str and token or str(token)), exon_seqs) )
 
@@ -69,11 +70,12 @@ def dump_exons (species_list, db_info):
         for sw_exon in sw_exons:
 
             [sw_exon_id, gene_id, start_in_gene, end_in_gene, human_exon_id,
-             exon_seq_id, strand, phase, has_NNN, has_stop, has_3p_ss, has_5p_ss] = sw_exon
+             exon_seq_id, template_exon_id, template_species, strand, phase, has_NNN, has_stop, has_3p_ss, has_5p_ss] = sw_exon
 
             if has_stop: continue
 
             human_coding = is_coding (cursor, human_exon_id, ensembl_db_name['homo_sapiens'])
+            human_exon_stable_id  = exon2stable(cursor, human_exon_id)
 
             exon_seqs = get_exon_seq_by_db_id (cursor, exon_seq_id, ensembl_db_name[species])
             if (not exon_seqs):
@@ -85,6 +87,7 @@ def dump_exons (species_list, db_info):
             # the first field return by get_exon_seqs is the exon_seq_id, so get rid of it
             gene_stable_id = gene2stable(cursor,gene_id)
             exon_stable_id = "anon"
+
 
             exon = Exon()
 
@@ -98,7 +101,7 @@ def dump_exons (species_list, db_info):
             exon.is_coding       = 1 if human_coding else 0
            
 
-            print >> of, exon_tabstring (exon, gene_stable_id, exon_stable_id, species, analysis, exon_seqs[1:])
+            print >> of, exon_tabstring (exon, gene_stable_id, exon_stable_id, human_exon_stable_id, species, analysis, exon_seqs[1:])
 
 
         of.close()

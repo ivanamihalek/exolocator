@@ -112,6 +112,34 @@ def is_coding (cursor, exon_id, db_name=None):
     return rows[0][0]>0
     
 #########################################
+def get_biotype (cursor, exon_id, db_name=None):
+    
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+
+    qry = "select biotype from gene where gene_id = %d " % int(exon_id)
+    rows = search_db (cursor, qry)
+    if ( not rows):
+        return False
+
+    return rows[0][0]
+    
+#########################################
+def get_status (cursor, exon_id, db_name=None):
+    
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+
+    qry = "select status from gene where gene_id = %d " % int(exon_id)
+    rows = search_db (cursor, qry)
+    if ( not rows):
+        return False
+
+    return rows[0][0]
+    
+#########################################
 def is_coding_exon (cursor, exon_id, is_known, db_name=None):
     
     if (db_name):
@@ -195,7 +223,7 @@ def get_exon_seq_by_db_id (cursor, exon_seq_id, db_name=None):
 
     qry  = "select exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, "
     qry += " left_flank, right_flank, dna_seq  "
-    qry += " from  exon_seq where exon_seq_id = %d" % exon_seq_id
+    qry += " from exon_seq where exon_seq_id = %d" % exon_seq_id
     rows = search_db(cursor, qry)
     if (not rows):
         #rows = search_db(cursor, qry, verbose = True)
@@ -213,6 +241,32 @@ def get_exon_seq_by_db_id (cursor, exon_seq_id, db_name=None):
         dna_seq = ""
     
     return [exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, dna_seq]
+
+#########################################
+def get_exon_phase (cursor, exon_id, is_known, db_name=None):
+
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+
+    if is_known==2: # sw exon
+        qry  = "select phase from sw_exon"
+    elif is_known==1:
+        qry  = "select phase from exon"
+    elif is_known==0:
+        qry  = "select start_phase from prediction_exon"
+    else:
+        return None
+
+    qry += " where exon_id = %d " %  exon_id
+    rows = search_db(cursor, qry)
+
+    if not rows:
+        rows = search_db(cursor, qry, verbose = True)
+        return None
+
+    
+    return  rows[0][0]
 
 #########################################
 def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
@@ -260,13 +314,20 @@ def get_exon (cursor, exon_id, is_known=None, db_name=None):
         if not switch_to_db(cursor, db_name):
             return exon
 
-    qry  = "select * from gene2exon where exon_id = %d" %  exon_id
-    if is_known: qry += " and is_known = %s " % is_known
-    rows = search_db(cursor, qry, verbose=False)
-    if (not rows):
-        return exon
-        
-    exon.load_from_gene2exon (rows[0])
+    if is_known and is_known==2:
+        # sw# exon
+        qry  = "select * from sw_exon where exon_id = %d" %  exon_id
+        rows = search_db(cursor, qry, verbose=False)
+        if (not rows):
+            return exon
+        exon.load_from_sw_exon (rows[0])
+    else:
+        qry  = "select * from gene2exon where exon_id = %d" %  exon_id
+        if is_known: qry += " and is_known = %s " % is_known
+        rows = search_db(cursor, qry, verbose=False)
+        if (not rows):
+            return exon
+        exon.load_from_gene2exon (rows[0])
 
     return exon
 

@@ -254,7 +254,7 @@ def main():
             print dir, " is not a directory "
             sys.exit (1)
             
-    db     = connect_to_mysql()
+    #db     = connect_to_mysql()
     #db     = connect_to_mysql(user="marioot", passwd="tooiram")
     db      = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
@@ -290,7 +290,7 @@ def main():
     fixed_fields  = {}
     update_fields = {}
     for [name, path] in util_path.iteritems():
-        fixed_fields['name'] = name
+        fixed_fields['name']  = name
         update_fields['path'] = path
         store_or_update (cursor, 'util_path', fixed_fields, update_fields)
 

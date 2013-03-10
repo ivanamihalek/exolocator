@@ -1,13 +1,15 @@
 #########################################
 
+import os
 from mysql import *
 from utils import erropen
 
 
 #########################################
-def get_theme_ids(cursor, theme_name):
+def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
 
-    fnm = '../resources/'+theme_name+'.txt'
+    path = config_reader.get_path('resources')
+    fnm  = path + '/' + theme_name + '.txt'
     if not os.path.exists(fnm):
         print fnm, "not found"
         exit(1)
@@ -15,16 +17,22 @@ def get_theme_ids(cursor, theme_name):
     if not os.path.getsize(fnm) > 0:
         print fnm, "empty"
         exit(1)
+
+    switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         
     inf = erropen(fnm, "r")
     gene_ids = []
     for line in inf:
         line.rstrip()
-        [stable_id, name] = line.split("\t")
+        fields = line.split("\t")
+        stable_id = fields[0]
         qry  = "select gene_id, description from gene where stable_id='%s'" % stable_id
         rows = search_db (cursor, qry)
         if not rows: continue
-        gene_ids.append(rows[0][0])
+        if 'ERROR' in rows[0]:
+            print rows[0]
+            exit(1)
+        gene_ids.append(int(rows[0][0]))
     inf.close()
 
     return gene_ids

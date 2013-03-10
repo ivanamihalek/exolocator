@@ -4,13 +4,12 @@ import MySQLdb
 import commands
 from random import choice
 from   el_utils.mysql   import  connect_to_mysql, search_db
-from   el_utils.ensembl import  get_species, get_gene_ids, gene2exon_list
-from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl, stable2gene
-from   el_utils.ensembl import  gene2canon_transl, get_canonical_exons, get_selenocysteines
-from   el_utils.ensembl import  is_mitochondrial
+from   el_utils.ensembl import  *
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
+from   el_utils.special_gene_sets  import  get_theme_ids
+from   el_utils.config_reader      import ConfigurationReader
 
 # BioPython
 from Bio.Seq import Seq
@@ -65,6 +64,7 @@ def  get_alt_seq_info (cursor, gene_id, species):
     qry += "where seq_region.seq_region_id = assembly_exception.exc_seq_region_id "
     qry += "and assembly_exception.seq_region_id = %d" % seq_region_id
     qry += " and not assembly_exception.exc_type = 'PAR'"
+
     rows = search_db (cursor, qry)
     if (rows):
         [seq_name, seq_region_start, seq_region_end] = rows[0]
@@ -374,11 +374,13 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
     if local_db:
         db     = connect_to_mysql()
         acg    = AlignmentCommandGenerator()
+        cfg    = ConfigurationReader()
     else:
         db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg    = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
-    species_list = ['tetraodon_nigroviridis']
+    species_list = ['homo_sapiens']
     for species in species_list:
         print
         print "############################"
@@ -387,23 +389,31 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
 
-        if (species=='homo_sapiens'):
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-        else:
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+        #if (species=='homo_sapiens'):
+        #    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        #else:
+        #    gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+
+        
+        gene_ids = get_theme_ids(cursor, ensembl_db_name, cfg, 'missing_seq')
         
         ct  = 0
         tot = 0
-        #gene_ids = [stable2gene(cursor,'ENSG00000156970')] # BUB1B
-        #gene_ids = [19079]
         
-        #for gene_id in gene_ids:
-        for tot in range(10):
+        seen = {}
+        for gene_id in gene_ids:
+        #for tot in range(10):
 
-            gene_id = choice(gene_ids)
+            #gene_id = choice(gene_ids)
             #tot +=1 
-            if (not  tot%100):
-               print ct, tot
+ 
+            if seen.has_key(gene_id):
+                continue
+            seen[gene_id] = True
+
+            print 
+            print gene_id, gene2stable (cursor, gene_id)
+
             # find canonical translation
             canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
 
@@ -416,8 +426,11 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
                 [seq_name, file_names,  seq_region_start, 
                  seq_region_end, seq_region_strand] = ret
             else:
-                ct +=1 
+                print "no seq info "
+                ct += 1 
                 continue
+
+
             # extract raw gene  region
             gene_seq = get_gene_seq( acg, species, seq_name, file_names, seq_region_strand,  
                                      seq_region_start, seq_region_end)
@@ -425,6 +438,8 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
             # reconstruct the translation from the raw gene_seq and exon boundaries
             translated_seq = transl_reconstruct (cursor, gene_id, gene_seq, 
                                                  canonical_coding_exons, verbose = verbose)
+
+            print 
             print "==========================================="
             print canonical_translation
             print "========"
@@ -434,6 +449,7 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
                 # compare the two sequences and cry foul if they are not the same:
                 comparison_ok = compare_seqs (canonical_translation, translated_seq, verbose = verbose)
                 if (comparison_ok):
+                    print "translation ok"
                     continue
             ###################### if ok, we are done here ######################
 
@@ -444,13 +460,13 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
             ret = get_alt_seq_info (cursor, gene_id, species)
             if ret:
                 [seq_name, file_names, seq_region_start, seq_region_end] = ret
+                print "alt seq info ", seq_name, file_names, seq_region_start, seq_region_end
             else:
                 ct +=1 
                 continue
             # extract raw gene  region
             gene_seq = get_gene_seq( acg, species, seq_name, file_names, seq_region_strand,  
                                      seq_region_start, seq_region_end)
-            print "***********************"
 
             # reconstruct the translation from the raw gene_seq and exon boundaries
             translated_seq = transl_reconstruct (cursor, gene_id, gene_seq, 
@@ -467,6 +483,10 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
                 print "attempted fix: ",  seq_name, file_names,  seq_region_start, seq_region_end
                 ct += 1
                 print ct, tot
+                print "==========================================="
+                print canonical_translation
+                print "========"
+                print translated_seq
 
  
         print species, ct, tot

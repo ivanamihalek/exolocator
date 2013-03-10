@@ -4,11 +4,12 @@ import MySQLdb
 import commands
 from   random import choice
 from   el_utils.mysql   import  connect_to_mysql, search_db
-from   el_utils.ensembl import  get_species, get_gene_ids, get_logic_name
-from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl
+from   el_utils.ensembl import  *
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
+from   el_utils.special_gene_sets  import  get_theme_ids
+from   el_utils.config_reader      import ConfigurationReader
 
 #########################################
 def get_gene_region (cursor, gene_id, is_known=None):
@@ -528,36 +529,59 @@ def gene2exon(species_list, db_info):
     if local_db:
         db     = connect_to_mysql()
         acg    = AlignmentCommandGenerator()
+        cfg    = ConfigurationReader()
     else:
         db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg    = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-
-
     for species in species_list:
-        #if (not species == 'homo_sapiens'):
-        #    continue
+        if (not species == 'homo_sapiens'):
+            continue
         print
         print "############################"
         print  species
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
 
-        if (species=='homo_sapiens'):
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-        else:
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+        #if (species=='homo_sapiens'):
+        #    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        #else:
+        #    gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         
+        gene_ids = get_theme_ids(cursor, ensembl_db_name, cfg, 'missing_seq')
+
         ct  = 0
         tot = 0
-        #for gene_id in [19079]:
-        for tot in range(1000):
+        status_not_known = 0
+        biotype_not_protein_coding = 0
+        seen = {}
+        for gene_id in gene_ids:
+        #for tot in range(1000):
 
-            if not tot%100: print tot
+            if seen.has_key(gene_id):
+                continue
+            seen[gene_id] = True
 
             # pick a random gene id
-            gene_id = choice(gene_ids)
+            #gene_id = choice(gene_ids)
+            #if not tot%100: print tot
+            tot += 1
+            status  = get_status (cursor, gene_id)
+            if not status  == 'KNOWN': 
+                status_not_known += 1
+                print status
+                continue
+
+            biotype = get_biotype (cursor, gene_id)
+            if not biotype == 'protein_coding': 
+                print biotype
+                biotype_not_protein_coding += 1
+                continue
+
+            print 
+            print gene_id, gene2stable (cursor, gene_id), biotype
             # find all exons associated with that gene id
             exons = find_exons (cursor, gene_id, species)
             if (not exons):
@@ -618,8 +642,10 @@ def gene2exon(species_list, db_info):
             #if (tot==1000):
             #    break
             #print fasta
-   
-        print species,  ct, " out of ", tot
+ 
+        print "total:", tot
+        print "status_not_known: ",  status_not_known
+        print "biotype_not_protein_coding: ", biotype_not_protein_coding
 
     cursor.close()
     db.close()

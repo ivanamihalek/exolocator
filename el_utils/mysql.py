@@ -30,6 +30,8 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
             conditions += " and "
         if ( type (value) is int):
             conditions += " %s= %d "  % (field, value)
+        elif value is None:
+            conditions += " %s= null " % field
         else:
             conditions += " %s='%s' " % (field, value)
         first = False
@@ -38,6 +40,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
     qry = "select exists (select 1 from %s  where %s) "  % (table, conditions)
     rows   = search_db (cursor, qry)
     exists = rows and (type(rows[0][0]) is long) and (rows[0][0]==1)
+
 
     if exists and not update_fields: return True
 
@@ -87,6 +90,8 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
         qry += ")"
         
     rows   = search_db (cursor, qry)
+
+
 
     if (rows):
         rows   = search_db (cursor, qry, verbose=True)
@@ -200,7 +205,7 @@ def connect_to_mysql (user=None, passwd=None, host=None, port=None):
             
     except  MySQLdb.Error, e:
         print "Error connecting to mysql as root (%s) " % (e.args[1])
-        exit(1)
+        sys.exit(1)
  
     return db
 

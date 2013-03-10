@@ -10,7 +10,7 @@ import MySQLdb, commands, re, os
 from el_utils.mysql   import  connect_to_mysql, connect_to_db
 from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from el_utils.ensembl import  *
-from el_utils.utils   import  erropen, output_fasta, input_fasta
+from el_utils.utils   import  erropen, output_fasta, input_fasta, parse_aln_name
 from el_utils.map     import  Map, get_maps
 from el_utils.tree    import  species_sort
 from el_utils.ncbi    import  taxid2trivial
@@ -378,13 +378,6 @@ def print_notes (notes_fnm, orthologues, exons, sorted_species, specid2name, hum
 
     return True
 
-#########################################
-def parse_aln_name (name):
-    fields     = name.split("_")
-    exon_id    = int(fields[-2])
-    exon_known = int(fields[-1])
-    species    =  "_".join(fields[:-2])
-    return [species, exon_id, exon_known]
 
 #########################################
 def get_name (seq_name, species, ortho_gene_id):

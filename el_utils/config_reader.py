@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
     local_db = False
     if local_db:
-        cfg      = ConfigurationReader()
+        cfg    = ConfigurationReader()
     else:
         cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cfg.spill_all()
