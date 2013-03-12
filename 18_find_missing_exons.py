@@ -15,6 +15,10 @@ from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.threads import  parallelize
 
+
+#########################################
+MAX_SEARCH_LENGTH = 100000
+
 #########################################
 class Seq_Region:
     def __init__(self, name, filename, strand, start, end):
@@ -39,11 +43,13 @@ def get_gene_start_end(cursor, ensembl_db_name, gene_id):
     switch_to_db (cursor, ensembl_db_name)
     qry  = "select seq_region_start, seq_region_end from gene where gene_id=%d" % gene_id
     rows = search_db(cursor, qry)
-    # if not rows: return
-    return map(int,rows[0])
+    if not rows: 
+        return None
+    return  map(int, rows[0])
 
 #########################################
 def get_seq_region(cursor, ensembl_db_name, exon_id, exon_known):
+
     switch_to_db (cursor, ensembl_db_name)
     qry  = "select name, file_name, seq_region_strand, seq_region_start, seq_region_end "
     if exon_known == 1:
@@ -51,7 +57,7 @@ def get_seq_region(cursor, ensembl_db_name, exon_id, exon_known):
     elif exon_known == 0:
         qry += "from prediction_exon "
     elif exon_known == 2:
-        print "get_seq_region() from sw exon not implemented - need to fishi it up from the gene region "
+        print "get_seq_region() from sw exon not implemented - need to finish it up from the gene region "
         return None
     else:
         print "error in get_seq_region() "
@@ -61,6 +67,9 @@ def get_seq_region(cursor, ensembl_db_name, exon_id, exon_known):
     qry += "where exon_id=%d" % exon_id
     rows = search_db(cursor, qry)
     if not rows:   return False
+    if not len(rows[0]) ==5:
+        print rows[0]
+        return False
     name, file_names, strand, start, end = rows[0]
     return Seq_Region(name, get_best_filename(file_names), int(strand), int(start), int(end))
 
@@ -253,72 +262,152 @@ def  check_sw_exon_exists(cursor, ensembl_db_name, species, maps_to_human_exon_i
     
 
 #########################################
-def sw_search(acg, exon_id, exon_seq, species, searchname, searchfile, searchstrand, searchstart, searchend):
+def sw_search(acg, species,  prev_seq_region, next_seq_region, template_seq):
 
     resulststr = ""
 
-    searchtmp = NamedTemporaryFile()
-    querytmp  = NamedTemporaryFile()
+    ###########################################################
+    # determine the search region, adn extract it using fastascmd
 
-    # Write out sequences to search
+    if not next_seq_region and not prev_seq_region:
+        print "no regions specified in sw_searc()"
+        return resulststr
+    
+    if not prev_seq_region:
+        searchname   = next_seq_region.name
+        searchfile   = next_seq_region.filename
+        searchstrand = next_seq_region.strand
+        if searchstrand==1:
+            searchstart = next_seq_region.start - MAX_SEARCH_LENGTH
+            searchend   = next_seq_region.start
+        else:
+            searchstart = next_seq_region.end
+            searchend   = next_seq_region.end   + MAX_SEARCH_LENGTH
+
+    elif not next_seq_region:
+        searchname   = prev_seq_region.name
+        searchfile   = prev_seq_region.filename
+        searchstrand = prev_seq_region.strand
+
+        if searchstrand==1:
+            searchstart = prev_seq_region.end
+            searchend   = prev_seq_region.end   + MAX_SEARCH_LENGTH
+        else:
+            searchstart = prev_seq_region.start - MAX_SEARCH_LENGTH
+            searchend   = prev_seq_region.start
+
+    else:
+        if prev_seq_region.name == next_seq_region.name:
+            searchname =  prev_seq_region.name
+        else:
+            print "prev_seq_region.name != next_seq_region.name ",  
+            print prev_seq_region.name,  next_seq_region.name
+            print "(cannot handle such cases yet)"
+            return resulststr
+
+        if prev_seq_region.filename == next_seq_region.filename:
+            searchfile =  prev_seq_region.filename
+        else:
+            print "prev_seq_region.filename != next_seq_region.filename ",  
+            print prev_seq_region.filename,  next_seq_region.filename
+            print "(cannot handle such cases yet)"
+            return resulststr
+
+        if prev_seq_region.strand == next_seq_region.strand:
+            searchstrand = prev_seq_region.strand
+        else:
+            print "prev_seq_region.strand != next_seq_region.strand ",  
+            print prev_seq_region.strand,  next_seq_region.strand
+            print "(cannot handle such cases yet)"
+            return resulststr
+
+        searchstart = prev_seq_region.end
+        searchend   = next_seq_region.start
+
+        if searchstart > searchend: # we are on the other strand
+            searchstart = next_seq_region.end
+            searchend   = prev_seq_region.start
+        
+
+    print searchname, searchfile, searchstrand, searchstart, searchend
+
+    searchtmp = NamedTemporaryFile(delete=True)
+    querytmp  = NamedTemporaryFile(delete=True)
+
+    ###########################################################
+    # extract search region  using fastacmd
     fastacmd = acg.generate_fastacmd_gene_command(species, searchname, searchfile, searchstrand, searchstart, searchend)
     #fasta = subprocess.check_output(fastacmd, shell=True)
     fasta  = commands.getoutput(fastacmd)
     searchtmp.write(fasta)
     searchtmp.flush()
-		    # Write out query sequences
-    querytmp.write(">{0}\n{1}\n".format(exon_id, exon_seq)) # exon_seq_id, dna_seq
+
+    
+    ###########################################################
+    # Write out query sequences(? how many of them?)
+    querytmp.write(">{0}\n{1}\n".format("query", template_seq)) # dna_seq
     querytmp.flush()
-    # Perform SW# search
+
+    ###########################################################
+    # do  SW# search
     swsharpcmd = acg.generate_SW_nt(querytmp.name, searchtmp.name)
     resultstr  = commands.getoutput (swsharpcmd)
     searchtmp.close()
     querytmp.close()
-
+    
     print resultstr
+    exit(1)
 
     return resulststr
     
 #########################################
-def get_template (cursor,  map_table, species, he):
+def get_template (cursor, ensembl_db_name,  map_table, species, he):
 
     template_species = None
-    template_seq     = []
+    template_seq     = None
 
     nearest_species = species_sort(cursor, map_table.keys(), species)[1:]
+    exon = Exon()
 
     for nearest in nearest_species:
         if not map_table[nearest][he]: continue
-        template_species = nearest
-        break
 
-    if not template_species:
-        return [template_species, template_seq]
+        m = map_table[nearest][he]
+        exon.exon_id     = m.exon_id_2
+        exon.is_known    = m.exon_known_2
+        exon.analysis_id = 1 # to be able to recycle get_exon_dna_seq()
+
+        template_seq = get_exon_dnaseq (cursor, exon,  ensembl_db_name[species])
+        if not template_seq:
+            template_species = None
+        else:
+            template_species = nearest
+            break
+
 
     return [template_species, template_seq]
 
 
+
 #########################################
 # he stands for "human exon"
-def get_left_bound  (cursor, ensembl_db_name,  map_table, species, he, previous_he):
+def get_neighboring_region  (cursor, ensembl_db_name,  map_table, species, he, nbr_he):
     
-    left_bound = -1
+    nbr_region = None
 
-    if not previous_he:
+    if not nbr_he:
         # the bound will be my present left boud 
         #  + default range of search on the left
-        return left_bound
+        pass
     else:
-        prev_map        = map_table[species][previous_he]
-        prev_exon_id    = prev_map.exon_id_2
-        prev_exon_known = prev_map.exon_known_2
-        # get exon
-        prev_exon       = get_exon (cursor, prev_exon_id, prev_exon_known, ensembl_db_name[species])
-        left_bound_in_gene = prev_exon.end_in_gene
-        print "left bound in gene: ", left_bound_in_gene
-        exit(1)
+        nbr_map        = map_table[species][nbr_he]
+        nbr_exon_id    = nbr_map.exon_id_2
+        nbr_exon_known = nbr_map.exon_known_2
 
-    return 
+        nbr_region = get_seq_region(cursor, ensembl_db_name[species], nbr_exon_id, nbr_exon_known)
+
+    return nbr_region
+
 
 #########################################
 def search_for_exons(human_gene_list, db_info):
@@ -420,7 +509,7 @@ def search_for_exons(human_gene_list, db_info):
             prev = he
         next[he] = None
 
-        # fill starting from the species that are nearest to the human
+        # fill,  starting from the species that are nearest to the human
         species_sorted_from_human = species_sort(cursor,map_table.keys(),species)[1:]
         for species in species_sorted_from_human:
             # see which exons have which neighbors
@@ -438,20 +527,29 @@ def search_for_exons(human_gene_list, db_info):
                     no_left.append(he)
                 elif not nxt or not map_table[species][nxt]:
                     no_right.append(he)
-            print 
-            print species
             
-            print "both nbrs:"
+            # fill in exons that have both heigbors:
+            if has_both_neighbors: print "\n", species, "\n both nbrs:"
             for he in has_both_neighbors:
+
                 m = map_table[species][he]
                 # get template (known exon from the nearest species)
-                [template_species, teplate_seq] = get_template (cursor,  map_table, species, he)
+                [template_species, template_seq] = get_template (cursor, ensembl_db_name,  map_table, species, he)
                 if not template_species: continue
+
                 print he.exon_id, "template species ", template_species
-                # get left bound for the search
-                left_bound  = get_left_bound  (cursor, ensembl_db_name, map_table, species, he, previous[he])
-                right_bound = get_right_bound (cursor, ensembl_db_name, map_table, species, he, next[he])
-                # do search
+                # get previous region
+                prev_seq_region = get_neighboring_region (cursor, ensembl_db_name, 
+                                                          map_table, species, he, previous[he])
+                next_seq_region = get_neighboring_region (cursor, ensembl_db_name, map_table, 
+                                                          species, he, next[he])
+                print "prev region: ", prev_seq_region
+                print "next region: ", next_seq_region
+                print 
+                # do sw search
+                resulststr = sw_search(acg, species, prev_seq_region, next_seq_region, template_seq)
+                # parse the output
+                
                 # store if something found
                 exit(1)
             print
@@ -507,58 +605,9 @@ def search_for_exons(human_gene_list, db_info):
 
 		for gene_id  in regions[species].keys():
 
-		    # Get preceding and following exon regions for this gene_id
-		    indices = sorted (regions[species][gene_id].keys())
-		    p       = bisect (indices, index[he])
-		    if p == 0: prev_seq_regions = None
-		    else:      prev_seq_regions =  regions[species][gene_id][ indices[p-1] ]
-		    if p == len(indices): next_seq_regions = None
- 		    else:                 next_seq_regions = regions[species][gene_id][ indices[p+1] ]
 
-                    print 
-                    print gene_id,  maps_to_human_exon_id
-                    print "missing", index[he]
-                    #print "prev",    (prev_seq_regions.keys() if prev_seq_regions else  prev_seq_regions)
-                    #print "following", (next_seq_regions.keys()if next_seq_regions else next_seq_regions)
-
-                    
-		    # Get search name, filename and strand - assume they are not split across files
-		    if prev_seq_regions is not None: r = prev_seq_regions[0]
-		    else:                            r = next_seq_regions[0]
-                    
-		    searchname, searchfile, searchstrand = r.name, r.filename, r.strand
-
-		    # Get search start and end points
-		    #endsearchlength = 100000 # how many bps to search for start and end exons
-		    #if searchstrand == 1:
-		    #	start_regions = prev_seq_regions
-		    #	end_regions   = next_seq_regions
-		    #else:
-                    #	start_regions = next_seq_regions
-		    #	end_regions   = prev_seq_regions
-		    #if start_regions is not None:
-		    #	searchstart = max((sr.end for sr in start_regions)) + 1
-		    #else: searchstart = None
-		    #if end_regions is not None:
-		    #	searchend   = min((sr.start for sr in end_regions)) - 1
-		    #else: searchend = searchstart + endsearchlength
-		    #if searchstart is None: searchstart = searchend - endsearchlength
-		    #if searchstart < 0: searchstart = 0
-
-		    # Skip if search region too short
-		    if searchend and searchstart and searchend - searchstart < 10: continue
-
-                    print  searchname, searchfile, searchstrand,  "   ", searchstart, "   ", searchend
-
-		    # Get template sequences
-                   [exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, 
-                     left_flank, right_flank, dna_seq, template_exon_id] = nearestseqs[0]
-                    
-                    print nearestspecies
-                    print "human:   ", human_exon_pepseq
-                    print "template:", protein_seq
-
-                    resultstr = sw_search(acg, exon_seq_id, protein_seq, species, searchname, searchfile, searchstrand, searchstart, searchend)
+                    resultstr = sw_search(acg, exon_seq_id, protein_seq, species, searchname, searchfile, 
+                                          searchstrand, searchstart, searchend)
 
 
 		    for r in (f.splitlines() for f in resultstr.split("#"*80+"\n")):

@@ -201,6 +201,32 @@ def get_exon_pepseq (cursor, exon, db_name=None):
     return protein_seq
 
 #########################################
+def get_exon_dnaseq (cursor, exon, db_name=None):
+
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return None
+
+    if  exon.analysis_id > 0:
+        exon_id  = exon.exon_id
+        is_known = exon.is_known
+        qry  = "select dna_seq  "
+        qry += " from exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
+    else:
+        exon_seq_id = exon.exon_seq_id
+        qry  = "select dna_seq "
+        qry += " from  exon_seq where exon_seq_id = %d" % exon_seq_id
+        
+    rows = search_db(cursor, qry)
+    if (not rows):
+        #rows = search_db(cursor, qry, verbose = True)
+        return None
+
+    dna_seq = rows[0][0]
+  
+    return dna_seq
+
+#########################################
 def  get_sw_seq_id (cursor, exon_id, db_name=None):
     
     if (db_name):
