@@ -153,6 +153,25 @@ def is_coding_exon (cursor, exon_id, is_known, db_name=None):
     return rows[0][0]>0
 
 #########################################
+def get_gene_coordinates (cursor, gene_id, db_name=None):
+
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return None
+
+    qry  = "select seq_region_id, seq_region_start, seq_region_end, seq_region_strand  "
+    qry += " from gene "
+    qry += " where gene_id = %d" %  gene_id
+    rows = search_db (cursor, qry)
+
+
+    if ( not rows or  isinstance(rows[0], str) and 'error' in rows[0].lower()):
+         search_db (cursor, qry, verbose = True)
+         return None
+
+    return rows[0]
+
+#########################################
 def is_mitochondrial (cursor, gene_id, db_name=None):
 
     if (db_name):
@@ -314,6 +333,7 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
     rows = search_db(cursor, qry)
 
     if not rows or len(rows[0]) < 7:
+        print "using db ", db_name
         rows = search_db(cursor, qry, verbose = True)
         return []
 
