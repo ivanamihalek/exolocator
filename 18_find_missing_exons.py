@@ -178,6 +178,12 @@ def store_sw_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene,
     return sw_exon_id
 
 #########################################
+def fuzzy_translate (searchseq, search_start, search_end, mitochondrial):
+
+    # implement my own translation that allows isolated deletions (nucleotide missed in sequencing)
+
+
+#########################################
 def translate(searchseq, search_start, search_end, mitochondrial):
     dnaseq = searchseq[search_start:search_end]
     if mitochondrial:
@@ -216,6 +222,7 @@ def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchs
             s = SequenceMatcher(None, pepseq, template_pepseq)
             key = (b,e)
             ratio[key] =  s.ratio()
+            
     
     sorted_keys = sorted(ratio, key=lambda key: -ratio[key])
     
@@ -247,7 +254,6 @@ def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchs
                 e = search_start + b + 3*(i_e+n_e-i_b)  - search_end
                 pepseq = pepseq[i_b:i_e+n_e]
             
-
     return  [pepseq, search_start+b, search_end+e]
         
 
@@ -379,13 +385,15 @@ def get_template (cursor, ensembl_db_name,  map_table, species, he):
         if not template_seqs:
             template_species = None
         else:
-            template_species = nearest
+            template_species    = nearest
+            template_exon_id    = m.exon_id_2
+            template_exon_known = m.exon_known_2
             break
 
     [exon_seq_id, protein_seq, pepseq_transl_start, 
      pepseq_transl_end, left_flank, right_flank, dna_seq] = template_seqs
 
-    return [template_species, dna_seq, protein_seq]
+    return [template_species, template_exon_id, template_exon_known, dna_seq, protein_seq]
 
 
 
@@ -440,32 +448,26 @@ def parse_sw_output (resultstr):
     return best_match
 
 #########################################
-def translation_check (dnaseq, mitochondrial, pepseq):
-    if not pepseq == translate(searchseq, search_start, search_end, mitochondrial):
+def translation_check ( searchseq, match_start, match_end, mitochondrial, pepseq):
+    if not pepseq == translate(searchseq, match_start, match_end, mitochondrial):
         print " ! "
         print pepseq
-        print translate(searchseq, search_start, search_end, mitochondrial)
+        print translate(searchseq, match_start, match_end, mitochondrial)
         return False
     return True
 
 
 #########################################
-def organize_and_store_sw_exon (cursor, ensembl_db_name,  species, gene_start, gene_strand, search_start, he,
+def organize_and_store_sw_exon (cursor, ensembl_db_name,  species, 
+                                gene_start, gene_strand, search_start, searchseq, he,
                                 match_start, match_end, mitochondrial, pepseq,
                                 template_species, template_exon_id, 
                                 template_start, template_end, verbose=False):
 
-    ##################################
-    start_adjust  = (template_start-1) % 3
-    match_start  -= start_adjust + 1
-
-    end_adjust    = -template_end % 3
-    match_end    -= end_adjust
-
     dnaseq = searchseq [match_start:match_end]
 
     # check one more time that the translation that we are storing matches:
-    if not translation_check (dnseq, mitochondrial, pepseq): return False
+    if not translation_check (searchseq, match_start, match_end, mitochondrial, pepseq): return None
                 
     # flanking seqeunces
     flanklen    = FLANK_LENGTH
@@ -484,31 +486,16 @@ def organize_and_store_sw_exon (cursor, ensembl_db_name,  species, gene_start, g
         end_in_gene   = gene_start - (search_start+match_start)
         
 
-
-    strand = -1 if searchstrand != 1 else 1
+    gene_strand = -1 if gene_strand != 1 else 1
     sw_exon_id  = None
     #sw_exon_id = store_sw_exon (cursor, ensembl_db_name[species], he.exon_id, gene_id, 
-    #	            start_in_gene, end_in_gene, strand, dnaseq, left_flank, right_flank, pepseq,
+    #                            start_in_gene, end_in_gene, strand, dnaseq, left_flank, right_flank, pepseq,
     #               has_NNN, has_stop, template_exon_id, template_pecies)
+    
+    #if not sw_exon_id: return None
 
-    if verbose:# Print out some debugging info
-        print "============================================"
-        print human_gene_id, human_stable, human_description 
-        print "found sequence for {0}:".format(species)
-        print dnaseq
-        print "left flank:    " + left_flank 
-        print "right flank:   " + right_flank
-        print "translation:   " + pepseq + (" (Stop codon)" if has_stop == 1 else "")
-        print "template:      " + template_pepseq
-        print "human version: " + human_exon_pepseq
-        print "based on {0}, exon {1}, position {2} - {3}:".format(nearestspecies,template_name,
-                                                                               template_start,template_end)
-        print "storing to ", ensembl_db_name[species]
-        print "stored as exon ", sw_exon_id
-        print "exons found: ", found, "out of ", sought, "sought"
-        print 
-        
-    exit(1)
+    # the reutn is used for diagnostic purposes
+    return [left_flank, right_flank, has_stop, sw_exon_id]
 
 
 #########################################
@@ -653,29 +640,24 @@ def search_for_exons(human_gene_list, db_info):
 
                 m = map_table[species][he]
                 # get template (known exon from the nearest species)
-                [template_species, template_exon_id,
+                [template_species, template_exon_id, template_exon_known,
                  template_dna, template_pepseq] = get_template (cursor, ensembl_db_name, 
                                                                                   map_table, species, he)
                 if not template_species: continue
 
                 # get previous region
-                prev_seq_region        = get_neighboring_region (cursor, ensembl_db_name, 
-                                                          map_table, species, he, previous[he])
-                next_seq_region        = get_neighboring_region (cursor, ensembl_db_name, map_table, 
-                                                          species, he, next[he])
+                prev_seq_region  = get_neighboring_region (cursor, ensembl_db_name, 
+                                                           map_table, species, he, previous[he])
+                next_seq_region  = get_neighboring_region (cursor, ensembl_db_name, map_table, 
+                                                           species, he, next[he])
                 # do sw search
-                [resultstr, searchseq, search_start] = sw_search(acg, species, prev_seq_region, next_seq_region, template_dna)
+                [resultstr, searchseq, search_start] = sw_search (acg, species, prev_seq_region, next_seq_region, template_dna)
                 if not resultstr: continue
 
                 # parse the output
                 match     = parse_sw_output(resultstr)
                 if not match: continue
 
-                print "\n", species, "\nboth nbrs:"
-                print "prev region: ", prev_seq_region
-                print "next region: ", next_seq_region
-                print "template species: ",  template_species
-                print match
                 # store if something found
                 [match_start, match_end, template_start, template_end] = match
                 # how different is translation for the translated template?
@@ -688,11 +670,34 @@ def search_for_exons(human_gene_list, db_info):
                                                                                 match_start, match_end)
                 if len(pepseq)<3: continue
                 
-                organize_and_store_sw_exon(cursor, ensembl_db_name, species, gene_start, gene_strand, search_start,  he,
+                ret = organize_and_store_sw_exon(cursor, ensembl_db_name, species, 
+                                           gene_start, gene_strand, search_start, searchseq, he,
                                            match_start, match_end, mitochondrial, pepseq,
-                                           template_species,  template_exon_id, 
-                                           template_start, template_end, verbose=True )
+                                           template_species, template_exon_id, 
+                                           template_start, template_end, verbose=True)
 
+                if not ret: continue
+
+                if verbose:# Print out some debugging info
+                    [left_flank, right_flank, has_stop, sw_exon_id] = ret
+                    human_exon_pepseq  = get_exon_pepseq (cursor, he, ensembl_db_name['homo_sapiens'])
+                    print "============================================"
+                    print human_gene_id, human_stable, human_description 
+                    print "found sequence for {0}:".format(species)
+                    #print dnaseq
+                    print "left flank:    " + left_flank 
+                    print "right flank:   " + right_flank
+                    print "translation:   " + pepseq + (" (Stop codon)" if has_stop == 1 else "")
+                    print "template:      " + template_pepseq
+                    print "human version: " + human_exon_pepseq
+                    print "based on {0}, exon {1}, position {2} - {3}:".format(template_species,template_exon_id,
+                                                                               template_start, template_end)
+                    print "storing to ", ensembl_db_name[species]
+                    print "stored as exon ", sw_exon_id
+                    print "exons found: ", found, "out of ", sought, "sought"
+                    print 
+                    print resultstr
+                    print
                 exit(1)
             
             continue
