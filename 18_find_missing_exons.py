@@ -3,8 +3,11 @@
 import MySQLdb, subprocess, re, commands
 from tempfile     import NamedTemporaryFile
 from bisect       import bisect
+
 from Bio.Seq      import Seq
 from Bio.Alphabet import generic_dna
+from Bio.Data     import CodonTable
+
 from difflib      import SequenceMatcher
 from   el_utils.mysql   import  *
 from   el_utils.ensembl import  *
@@ -170,22 +173,17 @@ def store_sw_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene,
     exon_seq_id = find_exon_seq_id (cursor, sw_exon_id)
     if not exon_seq_id: return False
 
-
     #################################
     qry  = "update sw_exon set exon_seq_id = {0} where exon_id = {1}".format(exon_seq_id, sw_exon_id)
     cursor.execute(qry)
 
     return sw_exon_id
 
-#########################################
-def fuzzy_translate (searchseq, search_start, search_end, mitochondrial):
-
-    # implement my own translation that allows isolated deletions (nucleotide missed in sequencing)
-
 
 #########################################
 def translate(searchseq, search_start, search_end, mitochondrial):
     dnaseq = searchseq[search_start:search_end]
+
     if mitochondrial:
         try:
             pepseq = str(Seq(dnaseq,generic_dna).translate(table="Vertebrate Mitochondrial"))
@@ -195,30 +193,33 @@ def translate(searchseq, search_start, search_end, mitochondrial):
         try:
             pepseq = str(Seq(dnaseq,generic_dna).translate())
         except:
+            print Seq(dnaseq,generic_dna).translate()
             pepseq = ""
   
     return pepseq
 
-#########################################
-def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchseq,  search_start, search_end):
 
-    pepseq = translate(searchseq, search_start, search_end, mitochondrial)
+#########################################
+def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchseq,  
+                                 match_start, match_end, aligned_target_seq):
+
+    pepseq = translate(searchseq, match_start, match_end, mitochondrial)
     if pepseq==template_pepseq:
-        return  [pepseq, search_start, search_end]
+        return  [pepseq, match_start, match_end]
 
     s = SequenceMatcher(None, pepseq, template_pepseq)
     if s.ratio() > 0.5 and not '*' in pepseq:
-        return  [pepseq, search_start, search_end]
+        return  [pepseq, match_start, match_end]
 
     ratio = {}
     for b in range(-2, 3): # begin offset
-        if search_start+b < 0: continue
-        if search_start+b > len(searchseq): continue
+        if match_start+b < 0: continue
+        if match_start+b > len(searchseq): continue
         for e in range(-2, 3): # end offset
-            if search_end + e < 0: continue
-            if search_end + e > len(searchseq): continue
+            if match_end + e < 0: continue
+            if match_end + e > len(searchseq): continue
             
-            pepseq = translate(searchseq, search_start+b, search_end+e,  mitochondrial)
+            pepseq = translate(searchseq, match_start+b, match_end+e,  mitochondrial)
             s = SequenceMatcher(None, pepseq, template_pepseq)
             key = (b,e)
             ratio[key] =  s.ratio()
@@ -229,12 +230,12 @@ def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchs
     key = sorted_keys[0]
     (b,e) = key
     if ratio[key] < 0.5:
-        return ["", search_start, search_end]
+        return ["", match_start, match_end]
 
-    pepseq = translate(searchseq, search_start+b, search_end+e,  mitochondrial)
+    pepseq = translate(searchseq, match_start+b, match_end+e,  mitochondrial)
 
     if "*" in pepseq and len(pepseq) > len(template_pepseq): # if the stop is outside of the matching region with template, 
-                                                      # return only the matching region
+                                                             # return only the matching region
         print 'resolving a stop codon'
         s      = SequenceMatcher(None, pepseq, template_pepseq)
         blocks = s.get_matching_blocks()
@@ -243,7 +244,7 @@ def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchs
             (i, j, n) = blocks[0]
             if n == len(template_pepseq):
                 b += 3*i
-                e = search_start + b + 3*n - search_end  
+                e = match_start + b + 3*n - match_end  
                 pepseq = pepseq[i:i+n]
         else:
             (i_b,j_b,n_b) = blocks[0]
@@ -251,10 +252,10 @@ def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchs
             matching_region_length = i_e+n_e-i_b
             if matching_region_length == len(template_pepseq):
                 b += 3*i_b
-                e = search_start + b + 3*(i_e+n_e-i_b)  - search_end
+                e = match_start + b + 3*(i_e+n_e-i_b)  - match_end
                 pepseq = pepseq[i_b:i_e+n_e]
             
-    return  [pepseq, search_start+b, search_end+e]
+    return  [pepseq, match_start+b, match_end+e]
         
 
 #########################################
@@ -348,7 +349,6 @@ def sw_search(acg, species,  prev_seq_region, next_seq_region, template_seq):
     searchtmp.write(fasta)
     searchtmp.flush()
 
-    
     ###########################################################
     # Write out query sequences(? how many of them?)
     querytmp.write(">{0}\n{1}\n".format("query", template_seq)) # dna_seq
@@ -366,6 +366,7 @@ def sw_search(acg, species,  prev_seq_region, next_seq_region, template_seq):
     searchseq = "".join(fasta.splitlines()[1:])
 
     return [resultstr, searchseq, searchstart]
+
     
 #########################################
 def get_template (cursor, ensembl_db_name,  map_table, species, he):
@@ -416,6 +417,30 @@ def get_neighboring_region  (cursor, ensembl_db_name,  map_table, species, he, n
 
     return nbr_region
 
+#########################################
+def patch_aligned_seq (aligned_target_seq, aligned_qry_seq, mitochondrial):
+
+
+    patched_target_seq = aligned_target_seq
+
+    if not '-' in patched_target_seq:
+        return patched_target_seq
+
+    print aligned_target_seq
+    print aligned_qry_seq
+    # patch if needed and possible
+    # if needed path so that the
+    if mitochondrial:
+        codon_table = CodonTable.unambiguous_dna_by_name["Vertebrate Mitochondrial"]
+    else:
+        codon_table = CodonTable.unambiguous_dna_by_name["Standard"]
+
+
+    print codon_table
+
+    # return warning if the patching was done
+    return patched_target_seq
+
 
 #########################################
 def parse_sw_output (resultstr):
@@ -429,10 +454,10 @@ def parse_sw_output (resultstr):
 
         # Parse result
         seqlen = min(int(re.split('\D+',r[1])[1]),int(re.split('\D+',r[3])[1]))
-        identity, matchlen = map(int,re.split('\D+',r[7])[1:3])
+        identity, matchlen = map(int,re.split('\D+', r[7])[1:3])
         #similarity = int(re.split('\D+',r[8])[1])
-        #gaps = int(re.split('\D+',r[9])[1])
-        #score = float(r[10].split()[1])
+        #gaps       = int(re.split('\D+',r[9])[1])
+        #score      = float(r[10].split()[1])
 
         
         # Reject if identity too low or too short -- seqlen is the length of the query
@@ -443,9 +468,21 @@ def parse_sw_output (resultstr):
         if matchlen > longest:
             longest = matchlen
             [search_start, search_end, template_start, template_end] = map(int,re.split('\D+',r[6])[1:5])
-            best_match = [search_start, search_end, template_start, template_end]
 
-    return best_match
+            aligned_qry_seq = ""
+            for row in r[13::3]: # every third row
+                seq = re.split('\s+',row)[2]
+                aligned_qry_seq += seq
+            aligned_target_seq = ""
+            for row in r[12::3]: # every third row
+                seq = re.split('\s+',row)[2]
+                aligned_target_seq += seq
+            best_match = [search_start, search_end, template_start, template_end, 
+                          aligned_target_seq, aligned_qry_seq]
+
+
+
+    return best_match 
 
 #########################################
 def translation_check ( searchseq, match_start, match_end, mitochondrial, pepseq):
@@ -655,11 +692,14 @@ def search_for_exons(human_gene_list, db_info):
                 if not resultstr: continue
 
                 # parse the output
-                match     = parse_sw_output(resultstr)
+                match = parse_sw_output(resultstr)
                 if not match: continue
+                [match_start, match_end, template_start, template_end, 
+                 aligned_target_seq, aligned_qry_seq] = match
+                # try to recover from a single insert
+                patch_aligned_seq (aligned_target_seq, aligned_qry_seq, mitochondrial)
+                exit(1)
 
-                # store if something found
-                [match_start, match_end, template_start, template_end] = match
                 # how different is translation for the translated template?
                 # align in all three frames and pick one which is the most similar to the template 
                 # check for the length of the peptide # should I perhaps check if one of the
@@ -667,7 +707,9 @@ def search_for_exons(human_gene_list, db_info):
                 # something I chould defineitley come back to one fine day
                 [pepseq, match_start, match_end] = find_the_most_similar_frame (cursor, mitochondrial,
                                                                                 template_pepseq, searchseq, 
-                                                                                match_start, match_end)
+                                                                                match_start, match_end,
+                                                                                aligned_target_seq)
+                print pepseq
                 if len(pepseq)<3: continue
                 
                 ret = organize_and_store_sw_exon(cursor, ensembl_db_name, species, 
