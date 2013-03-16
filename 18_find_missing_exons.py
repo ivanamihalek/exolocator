@@ -201,7 +201,16 @@ def translate(searchseq, search_start, search_end, mitochondrial):
 
 #########################################
 def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchseq,  
-                                 match_start, match_end, aligned_target_seq):
+                                 match_start, match_end, patched_target_seq):
+
+
+    patched_searchseq  = searchseq[:match_start]    
+
+    patched_searchseq += patched_target_seq
+    patched_searchseq += searchseq[match_end:]
+
+
+    searchseq = patched_searchseq
 
     pepseq = translate(searchseq, match_start, match_end, mitochondrial)
     if pepseq==template_pepseq:
@@ -418,28 +427,69 @@ def get_neighboring_region  (cursor, ensembl_db_name,  map_table, species, he, n
     return nbr_region
 
 #########################################
-def patch_aligned_seq (aligned_target_seq, aligned_qry_seq, mitochondrial):
-
-
+def patch_aligned_seq (aligned_target_seq, aligned_template_seq,  template_start, mitochondrial):
+    
     patched_target_seq = aligned_target_seq
+    patched_positions     = []
 
+    # if there are no gaps, nothing to be done here
     if not '-' in patched_target_seq:
-        return patched_target_seq
+        return [patched_target_seq, patched_codons]
 
-    print aligned_target_seq
-    print aligned_qry_seq
-    # patch if needed and possible
-    # if needed path so that the
+    # only the simplest of simple cases, because 
+    # 1) it is the easiest to script [otherwise I get into wuagmire of guessing whcih things might be patchable
+    # 2) it hase the best chance of really being a stutter in sequencing
+    # thus require no gaps in template, and only isolated gaps in target
+    if '-' in aligned_template_seq:
+        return [patched_target_seq, patched_codons]
+    if '--' in aligned_target_seq:
+        return [patched_target_seq, patched_codons]
+
+    # patch if needed and possible (can it be that something is mitochondrial in one species but not in the other)
     if mitochondrial:
         codon_table = CodonTable.unambiguous_dna_by_name["Vertebrate Mitochondrial"]
     else:
         codon_table = CodonTable.unambiguous_dna_by_name["Standard"]
 
+    # find isolated gaps
+    # do we have phase in the template seq by any chance?
+    prev_pos        = (3-template_start)%3
+    next_pos        = prev_pos+3
+    template_length = len(aligned_template_seq)
 
-    print codon_table
+    patched_target_seq = ""
+    for pos in range(template_length)[next_pos::3]:
+
+        # find what the corresponding codon is in template
+        target_codon  = aligned_target_seq[prev_pos:pos]
+        template_codon = aligned_template_seq[prev_pos:pos]
+        
+
+        if '-' in target_codon: 
+            # if the two codons match, copy the third
+            test_codon = ""
+            for i  in range(3):
+                if not target_codon[i]=='-':
+                    test_codon       +=  target_codon[i]
+                    patched_position  = prev_pos + i
+                else:
+                    test_codon += template_codon[i]
+            # if we end up with the stop codon rigth there,  abandon the attempt
+            if test_codon in codon_table.stop_codons:
+                continue
+
+            patched_target_seq  += test_codon
+            patched_positions.append(patched_position)
+            
+        else:
+            patched_target_seq  += target_codon
+            
+        prev_pos = pos
+
+
 
     # return warning if the patching was done
-    return patched_target_seq
+    return [patched_target_seq, patched_positions]
 
 
 #########################################
@@ -477,7 +527,7 @@ def parse_sw_output (resultstr):
             for row in r[12::3]: # every third row
                 seq = re.split('\s+',row)[2]
                 aligned_target_seq += seq
-            best_match = [search_start, search_end, template_start, template_end, 
+            best_match = [search_start-1, search_end-1, template_start-1, template_end-1, 
                           aligned_target_seq, aligned_qry_seq]
 
 
@@ -695,10 +745,11 @@ def search_for_exons(human_gene_list, db_info):
                 match = parse_sw_output(resultstr)
                 if not match: continue
                 [match_start, match_end, template_start, template_end, 
-                 aligned_target_seq, aligned_qry_seq] = match
-                # try to recover from a single insert
-                patch_aligned_seq (aligned_target_seq, aligned_qry_seq, mitochondrial)
-                exit(1)
+                 aligned_target_seq, aligned_template_seq] = match
+                
+                # patch isolated gaps == keep track of the positions that are patched
+                [patched_target_seq, patched_positions] = patch_aligned_seq (aligned_target_seq, aligned_template_seq, 
+                                                        template_start, mitochondrial)
 
                 # how different is translation for the translated template?
                 # align in all three frames and pick one which is the most similar to the template 
@@ -708,34 +759,36 @@ def search_for_exons(human_gene_list, db_info):
                 [pepseq, match_start, match_end] = find_the_most_similar_frame (cursor, mitochondrial,
                                                                                 template_pepseq, searchseq, 
                                                                                 match_start, match_end,
-                                                                                aligned_target_seq)
-                print pepseq
+                                                                                patched_target_seq)
                 if len(pepseq)<3: continue
-                
-                ret = organize_and_store_sw_exon(cursor, ensembl_db_name, species, 
-                                           gene_start, gene_strand, search_start, searchseq, he,
-                                           match_start, match_end, mitochondrial, pepseq,
-                                           template_species, template_exon_id, 
-                                           template_start, template_end, verbose=True)
+                ret = []
+                #ret = organize_and_store_sw_exon(cursor, ensembl_db_name, species, 
+                #                           gene_start, gene_strand, search_start, searchseq, he,
+                #                           match_start, match_end, mitochondrial, pepseq,
+                #                           template_species, template_exon_id, 
+                #                           template_start, template_end, verbose=True)
 
-                if not ret: continue
+                #if not ret: continue
 
                 if verbose:# Print out some debugging info
-                    [left_flank, right_flank, has_stop, sw_exon_id] = ret
+                    if ret:
+                        [left_flank, right_flank, has_stop, sw_exon_id] = ret
                     human_exon_pepseq  = get_exon_pepseq (cursor, he, ensembl_db_name['homo_sapiens'])
                     print "============================================"
                     print human_gene_id, human_stable, human_description 
                     print "found sequence for {0}:".format(species)
                     #print dnaseq
-                    print "left flank:    " + left_flank 
-                    print "right flank:   " + right_flank
-                    print "translation:   " + pepseq + (" (Stop codon)" if has_stop == 1 else "")
+                    if  ret:
+                        print "left flank:    " + left_flank 
+                        print "right flank:   " + right_flank
+                    #print "translation:   " + pepseq + (" (Stop codon)" if has_stop == 1 else "")
+                    print "translation:   " + pepseq 
                     print "template:      " + template_pepseq
                     print "human version: " + human_exon_pepseq
                     print "based on {0}, exon {1}, position {2} - {3}:".format(template_species,template_exon_id,
                                                                                template_start, template_end)
                     print "storing to ", ensembl_db_name[species]
-                    print "stored as exon ", sw_exon_id
+                    print "stored as exon " if  ret else "not stored"
                     print "exons found: ", found, "out of ", sought, "sought"
                     print 
                     print resultstr
