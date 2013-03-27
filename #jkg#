@@ -1,2 +1,0 @@
-        start_in_gene = gene_start - search_end + 1 # Do I need this last +1 ?
-        end_in_gene   = gene_start - search_start
