@@ -133,6 +133,7 @@ class Exon:
     def __init__ (self):
         
         self.exon_id             = None
+        self.stable_id           = None
         self.gene_id             = None
         self.start_in_gene       = None
         self.end_in_gene         = None

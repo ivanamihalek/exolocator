@@ -78,22 +78,28 @@ def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
             padding += "-"
     seq_other = padding + exon_seq_other
 
-    if ( len(seq_human) >  len(seq_other)):
+    if ( len(seq_human) > len(seq_other)):
         padding = ""
         for i in range  (len(seq_human)-len(seq_other)):
             padding += "-"
         seq_other += padding
 
-    if ( len(seq_other) >  len(seq_human)):
+    if ( len(seq_other) > len(seq_human)):
         padding = ""
         for i in range  (len(seq_other)-len(seq_human)):
             padding += "-"
         seq_human += padding
 
-
-    return [seq_human, seq_other] 
-
+    seq_human_no_common_gaps = ""
+    seq_other_no_common_gaps = ""
     
+    for i in range (len(seq_human)):
+        if seq_human[i] == '-' and seq_other[i] == '-': continue
+        seq_human_no_common_gaps += seq_human[i]
+        seq_other_no_common_gaps += seq_other[i]
+
+    return [seq_human_no_common_gaps, seq_other_no_common_gaps] 
+
 #########################################
 def alignment_line (seq_human, seq_other):
 
@@ -214,7 +220,8 @@ def  fract_identity (cigar_line):
     total_length = 0
     common       = 0
     prev_end     = 0
-
+    lengthA      = 0
+    lengthB      = 0
     for match in char_pattern.finditer(cigar_line):
         this_start       = match.start()
         no_repeats = int(cigar_line[prev_end:this_start])
@@ -223,12 +230,37 @@ def  fract_identity (cigar_line):
 
         total_length += no_repeats
         if alignment_instruction == 'M':
-            common += no_repeats
-     
+            common  += no_repeats
+            lengthA += no_repeats
+            lengthB += no_repeats
+        elif alignment_instruction == 'A':
+            lengthB += no_repeats
+        elif alignment_instruction == 'B':
+            lengthA += no_repeats
+            
+    shorter = lengthA if lengthA<=lengthB else lengthB
+
+    if shorter == 0: return fraction # fraction is still set to 0
+
     if total_length:
-        fraction = common/float(total_length)
+        fraction = common/float(shorter)
         
     return  fraction
+
+#########################################
+def  pairwise_fract_identity (seqs):
+    
+    fract_identity = 0.0
+    [seq1, seq2]   = seqs
+    if ( not len(seq1)):
+        return fract_identity
+
+    for i in range(len(seq1)):
+        if (seq1[i] == '-'): continue
+        if seq1[i] == seq2[i]: fract_identity += 1.0
+    
+    fract_identity /= float(len(seq1))
+    return fract_identity
 
 #########################################
 def overlap (start, end, other_start, other_end):
@@ -281,8 +313,8 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
                 map.exon_known_1 = human_exons[human_exon_ct].is_known
                 map.exon_known_2 = ortho_exons[ortho_exon_ct].is_known
 
-                exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end]
-                exon_seq_other   = aligned_seq[other_species][other_start:other_end]
+                exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end].replace('#','-')
+                exon_seq_other   = aligned_seq[other_species][other_start:other_end].replace('#','-')
                 [seq_human, seq_other] = pad_the_alnmt (exon_seq_human,human_start,
                                                         exon_seq_other, other_start)
 
@@ -358,21 +390,6 @@ def mafft_align (cfg, acg, seq1, seq2):
  
 
     return aligned_seqs
-
-#########################################
-def  pairwise_fract_identity (seqs):
-    
-    fract_identity = 0.0
-    [seq1, seq2]   = seqs
-    if ( not len(seq1)):
-        return fract_identity
-
-    for i in range(len(seq1)):
-        if (seq1[i] == '-'): continue
-        if seq1[i] == seq2[i]: fract_identity += 1.0
-    
-    fract_identity /= float(len(seq1))
-    return fract_identity
 
 #########################################
 def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons):
@@ -467,6 +484,7 @@ def gene_has_a_map (cursor, ensembl_db_name, human_exons):
 #########################################
 def maps_for_gene_list(gene_list, db_info):
     
+    verbose = False
 
     [local_db, ensembl_db_name] = db_info
     if local_db:
@@ -485,12 +503,13 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
 
 
-    #for gene_id in gene_list:
-    for gene_id in [374433]:
+    for gene_id in gene_list:
+    #for gene_id in [374433]:
+    #for gene_id in [412667]: #  wls
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        #print gene_id, gene2stable(cursor, gene_id), get_description(cursor, gene_id)
+        if verbose: print gene_id, gene2stable(cursor, gene_id), get_description(cursor, gene_id)
         
         # get _all_ exons
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
@@ -519,18 +538,19 @@ def maps_for_gene_list(gene_list, db_info):
                 missing_exon_info += 1
                 #print "\t", ortho_species, "no exon info"
                 continue
-            #print 
-            #print "\t", ortho_species, "making maps ..."
+            if verbose:
+                print 
+                print "\t", ortho_species, "making maps ..."
+
             maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons)   
             if not maps:
                 missing_seq_info += 1
                 #print "\t", ortho_species, "no maps"
                 continue
             no_maps += len(maps)
-            
             store (cursor, maps, ensembl_db_name)
 
-        if (not ct%10):
+        if  not ct%10:
             datastring = StringIO.StringIO()
             print >> datastring, "processed ", ct, "genes,  out of ", len(gene_list), "  ",
             print >> datastring, no_maps, " maps;   no_exon_info: ", missing_exon_info , "no_seq_info:", missing_seq_info 
@@ -544,7 +564,7 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 10
 
     local_db   = False
 
