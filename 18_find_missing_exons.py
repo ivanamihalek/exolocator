@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import MySQLdb, subprocess, re, commands
+import copy
 from tempfile     import NamedTemporaryFile
 from bisect       import bisect
 
@@ -41,6 +42,7 @@ class Seq_Region:
 	self.end = end
     def __str__(self):
         return "(" + ",".join((self.name,self.filename,str(self.strand),str(self.start),str(self.end))) + ")"
+
 
 #########################################
 def get_best_filename(names_string):
@@ -370,6 +372,8 @@ def sw_search(acg, species,  prev_seq_region, next_seq_region, template_seq):
     searchtmp.write(fasta)
     searchtmp.flush()
 
+    print fastacmd
+
     ###########################################################
     # Write out query sequences(? how many of them?)
     querytmp.write(">{0}\n{1}\n".format("query", template_seq)) # dna_seq
@@ -518,7 +522,7 @@ def parse_sw_output (resultstr):
 
         # Parse result
         seqlen = min(int(re.split('\D+',r[1])[1]),int(re.split('\D+',r[3])[1]))
-        identity, matchlen = map(int,re.split('\D+', r[7])[1:3])
+        identity, matchlen = map(int, re.split('\D+', r[7])[1:3])
         #similarity = int(re.split('\D+',r[8])[1])
         #gaps       = int(re.split('\D+',r[9])[1])
         #score      = float(r[10].split()[1])
@@ -543,8 +547,6 @@ def parse_sw_output (resultstr):
                 aligned_target_seq += seq
             best_match = [search_start-1, search_end-1, template_start-1, template_end-1, 
                           aligned_target_seq, aligned_qry_seq]
-
-
 
     return best_match 
 
@@ -591,7 +593,7 @@ def organize_and_store_sw_exon (cursor, ensembl_db_name,  species,
     sw_exon_id  = None
     #sw_exon_id = store_sw_exon (cursor, ensembl_db_name[species], he.exon_id, gene_id, 
     #                            start_in_gene, end_in_gene, strand, dnaseq, left_flank, right_flank, pepseq,
-    #               has_NNN, has_stop, template_exon_id, template_pecies)
+    #                            has_NNN, has_stop, template_exon_id, template_pecies)
     
     #if not sw_exon_id: return None
 
@@ -600,21 +602,20 @@ def organize_and_store_sw_exon (cursor, ensembl_db_name,  species,
 
 
 #########################################
-def search_and_store(cursor, ensembl_db_name, acg, human_exon, species, prev_seq_region, next_seq_region, 
-                     template_info, mitochondrial):
+def search_and_store (cursor, ensembl_db_name, acg, human_exon, species, prev_seq_region, next_seq_region, 
+                      template_info, mitochondrial):
 
-    success_flag = False
+    matching_region = None
 
-    [template_species,template_exon_id, template_dna, template_pepseq] = template_info
-
+    [template_species, template_exon_id, template_dna, template_pepseq] = template_info
 
     # do sw search
     [resultstr, searchseq, search_start] = sw_search (acg, species, prev_seq_region, next_seq_region, template_dna)
-    if not resultstr: return success_flag
+    if not resultstr: return matching_region
 
     # parse the output
     match = parse_sw_output(resultstr)
-    if not match: return success_flag
+    if not match: return matching_region
     [match_start, match_end, template_start, template_end, 
      aligned_target_seq, aligned_template_seq] = match
 
@@ -622,7 +623,7 @@ def search_and_store(cursor, ensembl_db_name, acg, human_exon, species, prev_seq
     [patch_failure, patched_target_seq, patched_positions] = patch_aligned_seq (aligned_target_seq, 
                                                                                 aligned_template_seq, 
                                                                                 template_start, mitochondrial)
-    if patch_failure: return success_flag
+    if patch_failure: return matching_region
 
     # how different is translation for the translated template?
     # align in all three frames and pick one which is the most similar to the template 
@@ -633,9 +634,15 @@ def search_and_store(cursor, ensembl_db_name, acg, human_exon, species, prev_seq
                                                                     template_pepseq, searchseq, 
                                                                     match_start, match_end,
                                                                     patched_target_seq)
-    if len(pepseq)<3: return success_flag
+    if len(pepseq)<3: return matching_region
 
-    success_flag = True
+    matching_region = copy.copy(next_seq_region)
+    if prev_seq_region.strand == 1:
+        matching_region.start = prev_seq_region.end + match_start
+        matching_region.end   = prev_seq_region.end + match_end
+    else:
+        matching_region.end   = next_region.start   - match_start
+        matching_region.start = next_region.start   - match_end
 
     ret = []
     #ret = organize_and_store_sw_exon(cursor, ensembl_db_name, species, 
@@ -645,8 +652,8 @@ def search_and_store(cursor, ensembl_db_name, acg, human_exon, species, prev_seq
     #                           template_start, template_end, verbose=True)
 
     #if not ret: 
-    #success_flag =  False
-    #return success_flag
+    #matching_region =  False
+    #return matching_region
     if verbose:# Print out some debugging info
         if ret:
             [left_flank, right_flank, has_stop, sw_exon_id] = ret
@@ -670,8 +677,25 @@ def search_and_store(cursor, ensembl_db_name, acg, human_exon, species, prev_seq
         print "stored as exon " if  ret else "not stored"
         print 
 
-    return success_flag
+    return matching_region
 
+#########################################
+def left_region (seq_region, region_length):
+
+    new_region = copy.copy(seq_region)
+    new_region.start = seq_region.start-2*region_length
+    new_region.end   = seq_region.start-region_length
+
+    return new_region
+
+#########################################
+def right_region (seq_region, region_length):
+
+    new_region = copy.copy(seq_region)
+    new_region.start = seq_region.end   +   region_length
+    new_region.end   = seq_region.start + 2*region_length
+
+    return new_region
 
 #########################################
 def find_missing_exons(human_gene_list, db_info):
@@ -822,44 +846,94 @@ def find_missing_exons(human_gene_list, db_info):
                 # get template (known exon from the nearest species)
                 [template_species, template_exon_id, template_exon_known,
                  template_dna, template_pepseq] = get_template (cursor, ensembl_db_name, 
-                                                                                  map_table, species, he)
+                                                                map_table, species, he)
                 if not template_species: continue
 
                 # previous_ and next_seq_region are of the type Seq_Region defined on the top of the file
 
                 # get previous region
                 prev_seq_region = get_neighboring_region (cursor, ensembl_db_name, 
-                                                           map_table, species, he, previous[he])
+                                                          map_table, species, he, previous[he])
                 # get following  region
                 next_seq_region = get_neighboring_region (cursor, ensembl_db_name, map_table, 
-                                                           species, he, next[he])
+                                                          species, he, next[he])
 
                 sought += 1
                 template_info = [template_species,template_exon_id, template_dna, template_pepseq]
-                success = search_and_store(cursor,   ensembl_db_name, acg,  he, species, prev_seq_region, next_seq_region,
-                                           template_info, mitochondrial)
-                if success: found += 1
+                matching_region = search_and_store(cursor, ensembl_db_name, acg, he, species, 
+                                                    prev_seq_region, next_seq_region, template_info, mitochondrial)
+                if matching_region: found += 1
 
 
-            print "no left:",
+            print "no left:"
             # work backwards
             # use the last known region on the left as the bound
             no_left.reverse()
+            next_seq_region = None
             for he in no_left:
                 m =  map_table[species][he]
+                # get template (known exon from the nearest species)
+                [template_species, template_exon_id, template_exon_known,
+                 template_dna, template_pepseq] = get_template (cursor, ensembl_db_name, 
+                                                                map_table, species, he)
+                if not template_species: continue
                 print he.exon_id
-                
-            print
-            
-            continue
 
+                # get following  region
+                if not next_seq_region:
+                    next_seq_region = get_neighboring_region (cursor, ensembl_db_name, map_table, 
+                                                              species, he, next[he])
+                if not next_seq_region: continue
 
-            print "no right:",
+                # otherwise it is the last thing we found
+                # the previous region is eyeballed from the next on
+                # the previous and the  next region frame the search region
+                prev_seq_region = left_region (next_seq_region, MAX_SEARCH_LENGTH)
+                sought         += 1
+                template_info   = [template_species, template_exon_id, template_dna, template_pepseq]
+                matching_region = search_and_store(cursor, ensembl_db_name, acg, he, 
+                                                   species, prev_seq_region, next_seq_region,
+                                                   template_info, mitochondrial)
+                if matching_region: 
+                    found += 1
+                    next_seq_region = matching_region
+           
+            print "no right:"
+            # repeat the whole procedure on the right
+            prev_seq_region = None
             for he in no_right:
                 m =  map_table[species][he]
-                print he.exon_id,
-            print
+                # get template (known exon from the nearest species)
+                [template_species, template_exon_id, template_exon_known,
+                 template_dna, template_pepseq] = get_template (cursor, ensembl_db_name, 
+                                                                map_table, species, he)
+                if not template_species: continue
+                print he.exon_id
+
+                # get following  region
+                if not prev_seq_region:
+                    prev_seq_region = get_neighboring_region (cursor, ensembl_db_name, map_table, 
+                                                              species, he, previous[he])
+                if not prev_seq_region: continue
+                # otherwise it is the last thing we found
+                    
+
+                # the following region is eyeballed from the previous 
+                next_seq_region = right_region (prev_seq_region, MAX_SEARCH_LENGTH)
+                sought         += 1
+                template_info   = [template_species,template_exon_id, template_dna, template_pepseq]
+                matching_region = search_and_store (cursor, ensembl_db_name, acg, he, 
+                                                    species, prev_seq_region, next_seq_region,
+                                                    template_info, mitochondrial)
+                if matching_region: 
+                    found += 1
+                    prev_seq_region = matching_region
+                    
+
             
+            
+            if no_right: exit(1)
+            print
                 
 
         print "done with ",  human_gene_id, human_stable, human_description 
