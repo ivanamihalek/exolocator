@@ -15,6 +15,8 @@ from   el_utils.ensembl import  *
 from   el_utils.utils   import  erropen, output_fasta
 from   el_utils.map     import  Map, get_maps
 from   el_utils.tree    import  species_sort
+
+from   el_utils.special_gene_sets  import  get_theme_ids
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.threads import  parallelize
@@ -135,7 +137,7 @@ def find_exon_seq_id (cursor, sw_exon_id):
 #########################################
 def store_sw_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene, 
 		   end_in_gene,  strand,  dnaseq, left_flank, right_flank, pepseq,
-                   has_NNN, has_stop, template_exon_id, template_species):
+                   has_NNN, has_stop, template_exon_seq_id, template_species):
 
     switch_to_db(cursor, db_name)
 
@@ -152,7 +154,7 @@ def store_sw_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene,
     update_fields['has_NNN']          = has_NNN
     update_fields['has_stop']         = has_stop
 
-    update_fields['template_exon_id'] = template_exon_id
+    update_fields['template_exon_seq_id'] = template_exon_seq_id
     update_fields['template_species'] = template_species
 
     store_or_update (cursor, 'sw_exon', fixed_fields, update_fields)
@@ -440,14 +442,16 @@ def get_template (cursor, ensembl_db_name, map_table, species, he):
         else:
             [exon_seq_id, protein_seq, pepseq_transl_start, 
              pepseq_transl_end, left_flank, right_flank, dna_seq] = template_seqs
-            if len(protein_seq)/len_human_protein_seq< 0.3: continue
+            if len(protein_seq)/len_human_protein_seq < 0.3: continue
+            if "XX" in protein_seq: continue
             template_species    = nearest
             template_exon_id    = m.exon_id_2
             template_exon_known = m.exon_known_2
+            template_exon_seq_id = exon_seq_id
             break
 
 
-    return [template_species, template_exon_id, template_exon_known, dna_seq, protein_seq]
+    return [template_species, template_exon_seq_id, dna_seq, protein_seq]
 
 
 
@@ -593,7 +597,7 @@ def translation_check ( searchseq, match_start, match_end, mitochondrial, pepseq
 def organize_and_store_sw_exon (cursor, ensembl_db_name,  species, gene_id, 
                                 gene_coords, search_start, searchseq, he,
                                 match_start, match_end, mitochondrial, pepseq,
-                                template_species, template_exon_id, 
+                                template_species, template_exon_seq_id, 
                                 template_start, template_end, verbose=False):
 
     
@@ -624,10 +628,9 @@ def organize_and_store_sw_exon (cursor, ensembl_db_name,  species, gene_id,
 
     gene_strand = -1 if gene_strand != 1 else 1
     sw_exon_id  = None
-    template_stable_exon_id = 
     sw_exon_id  = store_sw_exon (cursor, ensembl_db_name[species], he.exon_id, gene_id, 
                                  start_in_gene, end_in_gene, gene_strand, dnaseq, left_flank, right_flank, pepseq,
-                                 has_NNN, has_stop, template_stable_exon_id, template_species)
+                                 has_NNN, has_stop, template_exon_seq_id, template_species)
     
     if not sw_exon_id: return None
 
@@ -636,12 +639,12 @@ def organize_and_store_sw_exon (cursor, ensembl_db_name,  species, gene_id,
 
 
 #########################################
-def search_and_store (cursor, ensembl_db_name, acg, human_exon, species, gene_id, gene_coords, prev_seq_region, next_seq_region, 
-                      template_info, mitochondrial):
+def search_and_store (cursor, ensembl_db_name, acg, human_exon, species, gene_id, gene_coords, 
+                      prev_seq_region, next_seq_region, template_info, mitochondrial):
 
     matching_region = None
 
-    [template_species, template_exon_id, template_dna, template_pepseq] = template_info
+    [template_species, template_exon_seq_id, template_dna, template_pepseq] = template_info
 
     # do sw search
     [resultstr, searchseq, search_start] = sw_search (acg, species, prev_seq_region, next_seq_region, template_dna)
@@ -675,15 +678,15 @@ def search_and_store (cursor, ensembl_db_name, acg, human_exon, species, gene_id
         matching_region.start = prev_seq_region.end + match_start
         matching_region.end   = prev_seq_region.end + match_end
     else:
-        matching_region.end   = next_seq_region.start   - match_start
-        matching_region.start = next_seq_region.start   - match_end
+        matching_region.end   = next_seq_region.start - match_start
+        matching_region.start = next_seq_region.start - match_end
 
     
     ret = []
     ret = organize_and_store_sw_exon(cursor, ensembl_db_name, species, gene_id,  
                                gene_coords, search_start, searchseq, human_exon,
                                match_start, match_end, mitochondrial, pepseq,
-                               template_species, template_exon_id, 
+                               template_species, template_exon_seq_id, 
                                template_start, template_end, verbose=True)
 
 
@@ -704,7 +707,7 @@ def search_and_store (cursor, ensembl_db_name, acg, human_exon, species, gene_id
         print "translation:   " + pepseq 
         print "template:      " + template_pepseq
         print "human version: " + human_exon.pepseq
-        print "based on {0}, exon {1}, position {2} - {3}:".format(template_species,template_exon_id,
+        print "based on {0}, exon {1}, position {2} - {3}:".format(template_species,template_exon_seq_id,
                                                                    template_start, template_end)
         print "storing to ", ensembl_db_name[species]
         print "stored as exon " if  ret else "not stored"
@@ -756,15 +759,8 @@ def find_missing_exons(human_gene_list, db_info):
     found   = 0
     sought  = 0
     human_gene_list.reverse()
-    #for human_gene_id in human_gene_list:
-    #for human_gene_id in [370495]: # Known hit
-    #for human_gene_id in [378768]: #  p53
-    #for human_gene_id in [412667]: #  wls
-    #for human_gene_id in [418249]: #  TRF2
-    #for human_gene_id in [374433]: # Known hit
-    for human_gene_id in [397321]: # nice example, finds 23 out of 61
-    #for human_gene_id in [397176]:
-
+    # for human_gene_id in human_gene_list:
+    for human_gene_id in [399436]:
 
 	switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
 
@@ -782,6 +778,10 @@ def find_missing_exons(human_gene_list, db_info):
 	# find all human exons for this gene we are tracking in the database in order
 	human_exons = [e for e in gene2exon_list(cursor, human_gene_id) 
                        if e.covering_exon < 0 and e.is_canonical and e.is_known]
+        if not human_exons: 
+            print "\t\t no exons found"
+            continue
+
 	human_exons.sort(key=lambda exon: exon.start_in_gene)
         for he in human_exons:
             he.stable_id = exon2stable (cursor, he.exon_id)
@@ -839,7 +839,7 @@ def find_missing_exons(human_gene_list, db_info):
         # fill,  starting from the species that are nearest to the human
         species_sorted_from_human = species_sort(cursor,map_table.keys(),species)[1:]
         for species in species_sorted_from_human:
-        #for species in ['choloepus_hoffmanni']:
+        #for species in ['dipodomys_ordii']:
             # see which exons have which neighbors
             no_left  = []
             no_right = []
@@ -879,7 +879,7 @@ def find_missing_exons(human_gene_list, db_info):
 
                 m = map_table[species][he]
                 # get template (known exon from the nearest species)
-                [template_species, template_exon_id, template_exon_known,
+                [template_species, template_exon_seq_id,
                  template_dna, template_pepseq] = get_template (cursor, ensembl_db_name, 
                                                                 map_table, species, he)
                 if not template_species: continue
@@ -888,12 +888,14 @@ def find_missing_exons(human_gene_list, db_info):
                 # get previous region
                 prev_seq_region = get_neighboring_region (cursor, ensembl_db_name, 
                                                           map_table, species, he, previous[he])
+                if not prev_seq_region: continue
                 # get following  region
                 next_seq_region = get_neighboring_region (cursor, ensembl_db_name, map_table, 
                                                           species, he, next[he])
+                if not next_seq_region: continue
 
                 sought += 1
-                template_info = [template_species,template_exon_id, template_dna, template_pepseq]
+                template_info   = [template_species, template_exon_seq_id, template_dna, template_pepseq]
                 matching_region = search_and_store(cursor, ensembl_db_name, acg, he, species, gene_id, gene_coords, 
                                                     prev_seq_region, next_seq_region, template_info, mitochondrial)
                 if matching_region: found += 1
@@ -906,7 +908,7 @@ def find_missing_exons(human_gene_list, db_info):
             for he in no_left:
                 m =  map_table[species][he]
                 # get template (known exon from the nearest species)
-                [template_species, template_exon_id, template_exon_known,
+                [template_species,  template_exon_seq_id,
                  template_dna, template_pepseq] = get_template (cursor, ensembl_db_name, 
                                                                 map_table, species, he)
                 if not template_species: continue
@@ -922,7 +924,7 @@ def find_missing_exons(human_gene_list, db_info):
                 # the previous and the  next region frame the search region
                 prev_seq_region = left_region (next_seq_region, MAX_SEARCH_LENGTH)
                 sought         += 1
-                template_info   = [template_species, template_exon_id, template_dna, template_pepseq]
+                template_info   = [template_species, template_exon_seq_id, template_dna, template_pepseq]
                 matching_region = search_and_store(cursor, ensembl_db_name, acg, he, 
                                                    species,  gene_id, gene_coords, prev_seq_region, next_seq_region,
                                                    template_info, mitochondrial)
@@ -935,7 +937,7 @@ def find_missing_exons(human_gene_list, db_info):
             for he in no_right:
                 m =  map_table[species][he]
                 # get template (known exon from the nearest species)
-                [template_species, template_exon_id, template_exon_known,
+                [template_species,  template_exon_seq_id, 
                  template_dna, template_pepseq] = get_template (cursor, ensembl_db_name, 
                                                                 map_table, species, he)
                 if not template_species: continue
@@ -951,7 +953,7 @@ def find_missing_exons(human_gene_list, db_info):
                 # the following region is eyeballed from the previous 
                 next_seq_region = right_region (prev_seq_region, MAX_SEARCH_LENGTH)
                 sought         += 1
-                template_info   = [template_species,template_exon_id, template_dna, template_pepseq]
+                template_info   = [template_species,template_exon_seq_id, template_dna, template_pepseq]
                 matching_region = search_and_store (cursor, ensembl_db_name, acg, he, 
                                                     species, gene_id, gene_coords, prev_seq_region, next_seq_region,
                                                     template_info, mitochondrial)
@@ -977,9 +979,11 @@ def main():
     local_db = False
 
     if local_db:
-        db = connect_to_mysql()
+        db  = connect_to_mysql()
+        cfg = ConfigurationReader()
     else:
-        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
@@ -987,7 +991,8 @@ def main():
 
     species       = 'homo_sapiens'
     switch_to_db (cursor, ensembl_db_name[species])
-    gene_list     = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+    #gene_list     = get_gene_ids  (cursor, biotype='protein_coding', is_known=1)
+    gene_list     = get_theme_ids (cursor,  ensembl_db_name, cfg, 'wnt_pathway')
     cursor.close()
     db.close()
 
@@ -1008,4 +1013,11 @@ if __name__ == '__main__':
                 else:
                     print "%6.2f " % m.similarity,
             print
+    #for human_gene_id in [370495]: # Known hit
+    #for human_gene_id in [378768]: #  p53
+    #for human_gene_id in [412667]: #  wls
+    #for human_gene_id in [418249]: #  TRF2
+    #for human_gene_id in [374433]: # Known hit
+    for human_gene_id in [397321]: # nice example, finds 23 out of 61
+    #for human_gene_id in [397176]:
 '''

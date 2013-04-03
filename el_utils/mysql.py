@@ -31,7 +31,7 @@ def store_or_update (cursor, table, fixed_fields, update_fields):
         if ( type (value) is int):
             conditions += " %s= %d "  % (field, value)
         elif value is None:
-            conditions += " %s= null " % field
+            conditions += " %s= null" % field
         else:
             conditions += " %s='%s' " % (field, value)
         first = False

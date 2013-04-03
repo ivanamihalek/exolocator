@@ -362,13 +362,13 @@ def get_exon (cursor, exon_id, is_known=None, db_name=None):
 
     if is_known and is_known==2:
         # sw# exon
-        qry  = "select * from sw_exon where exon_id = %d" %  exon_id
+        qry  = "select * from sw_exon where exon_id = %d"   % exon_id
         rows = search_db(cursor, qry, verbose=False)
         if (not rows):
             return exon
         exon.load_from_sw_exon (rows[0])
     else:
-        qry  = "select * from gene2exon where exon_id = %d" %  exon_id
+        qry  = "select * from gene2exon where exon_id = %d" % exon_id
         if is_known: qry += " and is_known = %s " % is_known
         rows = search_db(cursor, qry, verbose=False)
         if (not rows):
