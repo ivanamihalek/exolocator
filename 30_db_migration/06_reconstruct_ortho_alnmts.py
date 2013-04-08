@@ -27,6 +27,11 @@ from   random  import choice
 from Bio.Seq      import Seq
 from Bio.Alphabet import generic_dna
 
+import pdb
+
+verbose = True
+
+
 #########################################
 def translate_to_trivial(cursor, all_species):
     trivial_name = {}
@@ -61,11 +66,10 @@ def check_seq_length(sequence, msg):
     for name, seq in sequence.iteritems():
         if not len(seq) == aln_length:
             print msg, 
-            print "seq length check failure ",  name, len(seq),  aln_length
+            print "seq length check failure  for",  name, " length: ", len(seq),  "aln_length", aln_length
             afa_fnm = msg+'.afa'
+            print "writing the offending alnmt to ", afa_fnm
             output_fasta (afa_fnm, sequence.keys(), sequence)
-            print afa_fnm
-            #exit(1)
             return False
     return True
 
@@ -229,7 +233,7 @@ def strip_gaps (sequence):
 
     all_gaps = {}  
 
-    if not check_seq_length(sequence, 'strip gaps:'): 
+    if not check_seq_length(sequence, 'in_strip_gaps'): 
         return sequence
     
     aln_length = len(sequence.itervalues().next())
@@ -307,21 +311,14 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
         else:
             pepseq2 = dnaseq.translate().tostring()
         
-        if  map in maps_sw:
-            print map.species_2, pepseq
 
         if (not pepseq == pepseq2):
-            #print " ! ", pepseq
-            #print " ! ", pepseq2
-            #exit (1)
             continue
             
         # inflate the compressed sequence
         if not map.bitmap:
-            print
-            print "no bitmap:"
-            print map
-            exit(1)
+            continue
+
         bs = Bits(bytes=map.bitmap)
         if (not bs.count(1) == len(pepseq)): continue # check bitmap has correct number of 1s
         usi = iter(pepseq)
@@ -345,10 +342,6 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
     # strip common gaps
     sequence_stripped_dna = strip_gaps (sequence_dna)
 
-    # TODO
-    #if not sequence_stripped_pep:
-    #    print "blah"
-    #    exit(1)
     return [sequence_stripped_pep, sequence_stripped_dna]
 
 
@@ -511,7 +504,7 @@ def name2count (output_pep, names_of_exons):
     return [name_ct2exon_ct, exon_ct2name_ct]
 
 #########################################
-def exon_seq_check(exon_seqs, pep_aligned, species, exon_name, verbose=True):
+def exon_seq_check(exon_seqs, pep_aligned, species, exon_name):
 
     [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
      exon_right_flank, exon_dna_seq] = exon_seqs   
@@ -686,7 +679,7 @@ def decorate_and_concatenate (pepseqs):
 ########################################
 def realign_slice_clustal_omega (pep_slice, seq_to_fix, pep_seq_pieces):
 
-    new_pep_slice  = pep_slice
+    new_pep_slice = pep_slice
 
     #afa_fnm  = 'slice.afa'
     #output_fasta (afa_fnm, pep_slice.keys(), pep_slice)
@@ -774,7 +767,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     number_of_human_exons = ct
 
     current_pep = output_pep
-
 
     # for each unresolved "map"  cut out the slice and re-align
     for  [human_exons, ortho_exons] in overlapping_maps:
@@ -1032,7 +1024,6 @@ def make_alignments ( gene_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
 
-    verbose      = True
     flank_length = 10
 
     if local_db:
@@ -1063,11 +1054,11 @@ def make_alignments ( gene_list, db_info):
     switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
  
 
-    # for each human gene
+    # for each  gene in the provided list
     gene_ct = 0
     gene_list.reverse()
     for gene_id in gene_list:
-
+    #for gene_id in [418332]:
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
 
@@ -1216,22 +1207,22 @@ def make_alignments ( gene_list, db_info):
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
-
-
-        for seq_to_fix in overlapping_maps.keys():
-            # fix_one2many changes bout output_pep and names_of_exons
-            [output_pep, names_of_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
-                                                         canonical_human_exons, human_exon_map, 
-                                                         names_of_exons, seq_to_fix, 
-                                                         overlapping_maps[seq_to_fix], 
-                                                         alnmt_pep, output_pep)
  
-            # we may have chosen to delete some sequences
-            sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
+        if 1:
+            for seq_to_fix in overlapping_maps.keys():
+                # fix_one2many changes both output_pep and names_of_exons
+                [output_pep, names_of_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
+                                                             canonical_human_exons, human_exon_map, 
+                                                             names_of_exons, seq_to_fix, 
+                                                             overlapping_maps[seq_to_fix], 
+                                                             alnmt_pep, output_pep)
+ 
+                # we may have chosen to delete some sequences
+                sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
             print "length check failure"
-            continue
+            #continue
 
         if (1):
             # >>>>>>>>>>>>>>>>>>
@@ -1263,7 +1254,6 @@ def make_alignments ( gene_list, db_info):
 
         # notes to accompany the alignment:
         print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id)
-
     return 
 
 
@@ -1271,9 +1261,9 @@ def make_alignments ( gene_list, db_info):
 def main():
     
     no_threads = 1
-
-    local_db = False
-
+    special    = 'wnt_pathway'
+    local_db   = False
+    
     if local_db:
         db  = connect_to_mysql()
         cfg = ConfigurationReader()
@@ -1285,13 +1275,17 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
 
-    species                       = 'homo_sapiens'
-    switch_to_db (cursor,  ensembl_db_name[species])
-    #gene_list                    =  get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-    #gene_list                    =  get_theme_ids(cursor, ensembl_db_name, cfg, 'wnt_pathway')
-    #gene_list                     =  get_theme_ids(cursor, ensembl_db_name, cfg, 'genecards_top500')
-    #gene_list = human_genes_w_sw_sharp_annotation(cursor, ensembl_db_name)
-    gene_list = [397176]
+
+    if special:
+        print "using", special, "set"
+        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+    else:
+        print "using all protein coding genes"
+        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
+        gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        
+ 
+
     cursor.close()
     db.close()
 

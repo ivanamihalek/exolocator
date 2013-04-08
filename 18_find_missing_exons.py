@@ -443,15 +443,17 @@ def get_template (cursor, ensembl_db_name, map_table, species, he):
             [exon_seq_id, protein_seq, pepseq_transl_start, 
              pepseq_transl_end, left_flank, right_flank, dna_seq] = template_seqs
             if len(protein_seq)/len_human_protein_seq < 0.3: continue
+            if len_human_protein_seq/len(protein_seq) < 0.3: continue
             if "XX" in protein_seq: continue
-            template_species    = nearest
-            template_exon_id    = m.exon_id_2
-            template_exon_known = m.exon_known_2
+            template_species     = nearest
+            template_exon_id     = m.exon_id_2
+            template_exon_known  = m.exon_known_2
             template_exon_seq_id = exon_seq_id
+            template_similarity_to_human = m.similarity
             break
 
-
-    return [template_species, template_exon_seq_id, dna_seq, protein_seq]
+    if not template_species: return None
+    return [template_species, template_exon_seq_id, dna_seq, protein_seq, template_similarity_to_human]
 
 
 
@@ -594,7 +596,7 @@ def translation_check ( searchseq, match_start, match_end, mitochondrial, pepseq
 
 
 #########################################
-def organize_and_store_sw_exon (cursor, ensembl_db_name,  species, gene_id, 
+def organize_and_store_sw_exon (cursor, ensembl_db_name, species, gene_id, 
                                 gene_coords, search_start, searchseq, he,
                                 match_start, match_end, mitochondrial, pepseq,
                                 template_species, template_exon_seq_id, 
@@ -639,12 +641,12 @@ def organize_and_store_sw_exon (cursor, ensembl_db_name,  species, gene_id,
 
 
 #########################################
-def search_and_store (cursor, ensembl_db_name, acg, human_exon, species, gene_id, gene_coords, 
+def search_and_store (cursor, ensembl_db_name, acg, human_exon, old_maps,  species, gene_id, gene_coords, 
                       prev_seq_region, next_seq_region, template_info, mitochondrial):
 
     matching_region = None
 
-    [template_species, template_exon_seq_id, template_dna, template_pepseq] = template_info
+    [template_species, template_exon_seq_id, template_dna, template_pepseq, template_similarity_to_human] = template_info
 
     # do sw search
     [resultstr, searchseq, search_start] = sw_search (acg, species, prev_seq_region, next_seq_region, template_dna)
@@ -671,6 +673,22 @@ def search_and_store (cursor, ensembl_db_name, acg, human_exon, species, gene_id
                                                                     template_pepseq, searchseq, 
                                                                     match_start, match_end,
                                                                     patched_target_seq)
+
+    # one last check - do we have a candidate map already?
+    better_map_exists = False
+    if old_maps:
+        for old_map in old_maps:
+            if old_map.species_2  == species:
+                if  old_map.similarity >  similarity:
+                    better_map_exists = True
+                    break
+
+    if better_map_exists: return matching_region
+
+    # if yes, how does the similarity compare with what we have just found
+    similarity = pairwise_fract_similarity (human_exon.pepseq, pepseq)
+
+
     if len(pepseq)<3: return matching_region
 
     matching_region = copy.copy(next_seq_region)
@@ -707,10 +725,15 @@ def search_and_store (cursor, ensembl_db_name, acg, human_exon, species, gene_id
         print "translation:   " + pepseq 
         print "template:      " + template_pepseq
         print "human version: " + human_exon.pepseq
+        print "template similarity to human:  %6.2f" % template_similarity_to_human
         print "based on {0}, exon {1}, position {2} - {3}:".format(template_species,template_exon_seq_id,
                                                                    template_start, template_end)
         print "storing to ", ensembl_db_name[species]
-        print "stored as exon " if  ret else "not stored"
+        if ret: 
+            [left_flank, right_flank, has_stop, sw_exon_id] = ret
+            print "stored as exon " , sw_exon_id
+        else:
+            print "not stored"
         print 
 
     return matching_region
@@ -759,8 +782,8 @@ def find_missing_exons(human_gene_list, db_info):
     found   = 0
     sought  = 0
     human_gene_list.reverse()
-    # for human_gene_id in human_gene_list:
-    for human_gene_id in [399436]:
+    #for human_gene_id in human_gene_list:
+    for human_gene_id in [418332]:
 
 	switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
 
@@ -793,9 +816,10 @@ def find_missing_exons(human_gene_list, db_info):
             for he in human_exons:
                 map_table[species][he] = None
 
+        maps_for_exon = {}
         for he in human_exons:
-            maps_for_exon =  get_maps(cursor, ensembl_db_name, he.exon_id, he.is_known) # exon data
-            for m in maps_for_exon:
+            maps_for_exon[he] =  get_maps(cursor, ensembl_db_name, he.exon_id, he.is_known) # exon data
+            for m in maps_for_exon[he]:
                if m.similarity < 0.7: continue
                map_table[m.species_2][he] = m
 
@@ -809,10 +833,15 @@ def find_missing_exons(human_gene_list, db_info):
             if not one_exon_found:
                 del map_table[species]
                
+        # fill in the peptide sequence field for each exon
         # get rid of exons  that appear in no other species but human (?)
         bad_he = []
         for he in human_exons:
             one_species_found = False
+            he.pepseq =   get_exon_pepseq (cursor, he, ensembl_db_name['homo_sapiens'])
+            if len (he.pepseq) < 3:  # can I ever get rid of all the nonsense I find in Ensembl?
+                bad_he.append(he)
+                continue
             for species in  map_table.keys(): 
                 if species =='homo_sapiens': continue
                 if map_table[species][he]:
@@ -822,9 +851,6 @@ def find_missing_exons(human_gene_list, db_info):
                 bad_he.append(he)
         human_exons = filter (lambda he: not he in bad_he, human_exons)
 
-        # fill in the peptide sequence field for each exon
-        for he in human_exons:
-            he.pepseq =   get_exon_pepseq (cursor, he, ensembl_db_name['homo_sapiens'])
 
         # keep track of nearest neighbors for each human exon
         previous = {}
@@ -879,10 +905,9 @@ def find_missing_exons(human_gene_list, db_info):
 
                 m = map_table[species][he]
                 # get template (known exon from the nearest species)
-                [template_species, template_exon_seq_id,
-                 template_dna, template_pepseq] = get_template (cursor, ensembl_db_name, 
+                template_info = get_template (cursor, ensembl_db_name, 
                                                                 map_table, species, he)
-                if not template_species: continue
+                if not template_info: continue
                 # previous_ and next_seq_region are of the type Seq_Region defined on the top of the file
 
                 # get previous region
@@ -895,9 +920,8 @@ def find_missing_exons(human_gene_list, db_info):
                 if not next_seq_region: continue
 
                 sought += 1
-                template_info   = [template_species, template_exon_seq_id, template_dna, template_pepseq]
-                matching_region = search_and_store(cursor, ensembl_db_name, acg, he, species, gene_id, gene_coords, 
-                                                    prev_seq_region, next_seq_region, template_info, mitochondrial)
+                matching_region = search_and_store(cursor, ensembl_db_name, acg, he, maps_for_exon[he], species, gene_id, 
+                                                   gene_coords, prev_seq_region, next_seq_region, template_info, mitochondrial)
                 if matching_region: found += 1
 
 
@@ -908,10 +932,9 @@ def find_missing_exons(human_gene_list, db_info):
             for he in no_left:
                 m =  map_table[species][he]
                 # get template (known exon from the nearest species)
-                [template_species,  template_exon_seq_id,
-                 template_dna, template_pepseq] = get_template (cursor, ensembl_db_name, 
+                template_info = get_template (cursor, ensembl_db_name, 
                                                                 map_table, species, he)
-                if not template_species: continue
+                if not template_info: continue
 
                 # get following  region
                 if not next_seq_region:
@@ -924,7 +947,6 @@ def find_missing_exons(human_gene_list, db_info):
                 # the previous and the  next region frame the search region
                 prev_seq_region = left_region (next_seq_region, MAX_SEARCH_LENGTH)
                 sought         += 1
-                template_info   = [template_species, template_exon_seq_id, template_dna, template_pepseq]
                 matching_region = search_and_store(cursor, ensembl_db_name, acg, he, 
                                                    species,  gene_id, gene_coords, prev_seq_region, next_seq_region,
                                                    template_info, mitochondrial)
@@ -937,10 +959,9 @@ def find_missing_exons(human_gene_list, db_info):
             for he in no_right:
                 m =  map_table[species][he]
                 # get template (known exon from the nearest species)
-                [template_species,  template_exon_seq_id, 
-                 template_dna, template_pepseq] = get_template (cursor, ensembl_db_name, 
+                template_info = get_template (cursor, ensembl_db_name, 
                                                                 map_table, species, he)
-                if not template_species: continue
+                if not template_info: continue
 
                 # get following  region
                 if not prev_seq_region:
@@ -953,7 +974,6 @@ def find_missing_exons(human_gene_list, db_info):
                 # the following region is eyeballed from the previous 
                 next_seq_region = right_region (prev_seq_region, MAX_SEARCH_LENGTH)
                 sought         += 1
-                template_info   = [template_species,template_exon_seq_id, template_dna, template_pepseq]
                 matching_region = search_and_store (cursor, ensembl_db_name, acg, he, 
                                                     species, gene_id, gene_coords, prev_seq_region, next_seq_region,
                                                     template_info, mitochondrial)
@@ -975,6 +995,7 @@ def find_missing_exons(human_gene_list, db_info):
 def main():
     
     no_threads = 1
+    special    = 'wnt_pathway'
 
     local_db = False
 
@@ -989,10 +1010,14 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
 
-    species       = 'homo_sapiens'
-    switch_to_db (cursor, ensembl_db_name[species])
-    #gene_list     = get_gene_ids  (cursor, biotype='protein_coding', is_known=1)
-    gene_list     = get_theme_ids (cursor,  ensembl_db_name, cfg, 'wnt_pathway')
+    if special:
+        print "using", special, "set"
+        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+    else:
+        print "using all protein coding genes"
+        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
+        gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+
     cursor.close()
     db.close()
 

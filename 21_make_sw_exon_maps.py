@@ -8,7 +8,7 @@ from random  import random
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
-from   el_utils.utils   import  erropen, output_fasta
+from   el_utils.utils   import  *
 from   el_utils.threads import  parallelize
 from   el_utils.map     import  get_maps, Map
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
@@ -24,7 +24,7 @@ def decorate_and_concatenate (exons):
     count = 1
     for  exon in exons:
         pepseq = exon.pepseq
-        padded_count = "{0:03d}".format(count)
+        padded_count   = "{0:03d}".format(count)
         decorated_seq += 'B'+padded_count+pepseq+'Z'
         count += 1
 
@@ -207,31 +207,6 @@ def unfold_cigar_line (seq_A, seq_B, cigar_line):
 
 
 #########################################
-def  fract_identity (cigar_line):
-
-    fraction = 0
-
-    char_pattern = re.compile("\D")
-    total_length = 0
-    common       = 0
-    prev_end     = 0
-
-    for match in char_pattern.finditer(cigar_line):
-        this_start       = match.start()
-        no_repeats = int(cigar_line[prev_end:this_start])
-        alignment_instruction = cigar_line[this_start]
-        prev_end = match.end()
-
-        total_length += no_repeats
-        if alignment_instruction == 'M':
-            common += no_repeats
-     
-    if total_length:
-        fraction = common/float(total_length)
-        
-    return  fraction
-
-#########################################
 def overlap (start, end, other_start, other_end):
     if ( other_end < start): 
         return False
@@ -242,7 +217,7 @@ def overlap (start, end, other_start, other_end):
 
 
 #########################################
-def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
+def maps_evaluate (cursor, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions):
 
     maps = []
    
@@ -255,12 +230,16 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
         other_species = species
         break
 
+
     for human_exon_ct in range(len(human_exons)):
 
         padded_count_human = "{0:03d}".format(human_exon_ct+1)
         if ( not  exon_positions['homo_sapiens'].has_key(padded_count_human) ):
             continue
         [human_start, human_end] = exon_positions['homo_sapiens'][padded_count_human]
+
+        human_exon = human_exons[human_exon_ct]
+        old_maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
 
 
         for ortho_exon_ct in range(len(ortho_exons)):
@@ -283,8 +262,8 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
                 map.exon_known_2 = ortho_exons[ortho_exon_ct].is_known
                 map.source       = 'sw_sharp' if ortho_exons[ortho_exon_ct].analysis_id < 0 else 'ensembl'
 
-                exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end]
-                exon_seq_other   = aligned_seq[other_species][other_start:other_end]
+                exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end].replace('#','-')
+                exon_seq_other   = aligned_seq[other_species][other_start:other_end].replace('#','-')
                 [seq_human, seq_other] = pad_the_alnmt (exon_seq_human,human_start,
                                                         exon_seq_other, other_start)
 
@@ -292,10 +271,16 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
                 [seq1, seq2] = unfold_cigar_line (seq_human.replace('-',''), seq_other.replace('-',''), ciggy)
 
                 map.cigar_line = ciggy
-                map.similarity = fract_identity (ciggy)
+                map.similarity = pairwise_fract_identity (seq1, seq2)
                 
-                maps.append(map)
-
+                # bit of paranoia, but not misplaced:  do we already have a map for this exon by any chance?
+                better_map = False
+                for old_map in old_maps:
+                    if old_map.species_2  == other_species:
+                        if  old_map.similarity >  map.similarity:
+                            better_map = True
+                            break
+                if not better_map: maps.append(map)
 
     return maps
 
@@ -364,21 +349,6 @@ def mafft_align (cfg, acg, seq1, seq2):
     return aligned_seqs
 
 #########################################
-def  pairwise_fract_identity (seqs):
-    
-    fract_identity = 0.0
-    [seq1, seq2]   = seqs
-    if ( not len(seq1)):
-        return fract_identity
-
-    for i in range(len(seq1)):
-        if (seq1[i] == '-'): continue
-        if seq1[i] == seq2[i]: fract_identity += 1.0
-    
-    fract_identity /= float(len(seq1))
-    return fract_identity
-
-#########################################
 def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons):
 
     maps = []
@@ -418,7 +388,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
         exon_positions[species] = find_exon_positions(seq)
 
     # fill in the actual map values
-    maps = maps_evaluate (relevant_human_exons, relevant_ortho_exons, aligned_seq, exon_positions)
+    maps = maps_evaluate (cursor, ensembl_db_name, relevant_human_exons, relevant_ortho_exons, aligned_seq, exon_positions)
 
     return maps
     
@@ -523,6 +493,7 @@ def maps_for_gene_list(gene_list, db_info):
 
 
     for gene_id in gene_list:
+    #for gene_id in [418332]:
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -530,6 +501,8 @@ def maps_for_gene_list(gene_list, db_info):
         
         # get _all_ exons
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+        print ct, len(gene_list),  gene_id,  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+
         human_exons = gene2exon_list(cursor, gene_id)
         if (not human_exons):
             print 'no exons for ', gene_id
@@ -574,7 +547,6 @@ def maps_for_gene_list(gene_list, db_info):
                 continue
             
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-            print "storing  map for", gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
             store (cursor, maps, ensembl_db_name)
                 
     cursor.close()
@@ -586,7 +558,8 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 4
+    no_threads = 1
+    special    = 'wnt_pathway'
 
     local_db   = False
 
@@ -600,11 +573,13 @@ def main():
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-    # special: find genes that have an sw_sharp patch in some species
-    #gene_list = human_genes_w_sw_sharp_annotation (cursor, ensembl_db_name)
-    #gene_list = [374433]
-    gene_list  = get_theme_ids(cursor, cfg, 'wnt_pathway')
+    if special:
+        print "using", special, "set"
+        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+    else:
+        print "using all protein coding genes that have an sw# patch"
+        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
+        gene_list = human_genes_w_sw_sharp_annotation (cursor, ensembl_db_name)
 
     cursor.close()
     db.close()

@@ -8,13 +8,18 @@ from random  import random
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
-from   el_utils.utils   import  erropen, output_fasta
+from   el_utils.utils   import  *
 from   el_utils.threads import  parallelize
 from   el_utils.map     import  get_maps, Map
-from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
-from   el_utils.config_reader      import ConfigurationReader
-from   el_utils.alignment          import smith_waterman, exon_aware_smith_waterman
+
+from   el_utils.special_gene_sets  import  get_theme_ids
+from   el_utils.almt_cmd_generator import  AlignmentCommandGenerator
+from   el_utils.config_reader      import  ConfigurationReader
+from   el_utils.alignment          import  smith_waterman, exon_aware_smith_waterman
 from   alignment import * # C implementation of smith waterman
+
+#########################################
+verbose = True
 
 
 #########################################
@@ -212,57 +217,6 @@ def unfold_cigar_line (seq_A, seq_B, cigar_line):
 
 
 #########################################
-def  fract_identity (cigar_line):
-
-    fraction = 0
-
-    char_pattern = re.compile("\D")
-    total_length = 0
-    common       = 0
-    prev_end     = 0
-    lengthA      = 0
-    lengthB      = 0
-    for match in char_pattern.finditer(cigar_line):
-        this_start       = match.start()
-        no_repeats = int(cigar_line[prev_end:this_start])
-        alignment_instruction = cigar_line[this_start]
-        prev_end = match.end()
-
-        total_length += no_repeats
-        if alignment_instruction == 'M':
-            common  += no_repeats
-            lengthA += no_repeats
-            lengthB += no_repeats
-        elif alignment_instruction == 'A':
-            lengthB += no_repeats
-        elif alignment_instruction == 'B':
-            lengthA += no_repeats
-            
-    shorter = lengthA if lengthA<=lengthB else lengthB
-
-    if shorter == 0: return fraction # fraction is still set to 0
-
-    if total_length:
-        fraction = common/float(shorter)
-        
-    return  fraction
-
-#########################################
-def  pairwise_fract_identity (seqs):
-    
-    fract_identity = 0.0
-    [seq1, seq2]   = seqs
-    if ( not len(seq1)):
-        return fract_identity
-
-    for i in range(len(seq1)):
-        if (seq1[i] == '-'): continue
-        if seq1[i] == seq2[i]: fract_identity += 1.0
-    
-    fract_identity /= float(len(seq1))
-    return fract_identity
-
-#########################################
 def overlap (start, end, other_start, other_end):
     if ( other_end < start): 
         return False
@@ -319,13 +273,12 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
                                                         exon_seq_other, other_start)
 
                 ciggy = cigar_line (seq_human, seq_other)
-                [seq1, seq2] = unfold_cigar_line (seq_human.replace('-',''), seq_other.replace('-',''), ciggy)
+                [seq1, seq2]   = unfold_cigar_line (seq_human.replace('-',''), seq_other.replace('-',''), ciggy)
 
                 map.cigar_line = ciggy
-                map.similarity = fract_identity (ciggy)
-                
-                maps.append(map)
+                map.similarity = pairwise_fract_identity(seq1, seq2)
 
+                maps.append(map)                
 
     return maps
 
@@ -484,7 +437,6 @@ def gene_has_a_map (cursor, ensembl_db_name, human_exons):
 #########################################
 def maps_for_gene_list(gene_list, db_info):
     
-    verbose = False
 
     [local_db, ensembl_db_name] = db_info
     if local_db:
@@ -504,8 +456,7 @@ def maps_for_gene_list(gene_list, db_info):
 
 
     for gene_id in gene_list:
-    #for gene_id in [374433]:
-    #for gene_id in [412667]: #  wls
+    #for gene_id in [418332]:
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -516,7 +467,7 @@ def maps_for_gene_list(gene_list, db_info):
         human_exons = gene2exon_list(cursor, gene_id)
         if (not human_exons):
             print 'no exons for ', gene_id
-            sys.exit(1)
+            continue
     
         # check maps
         #if gene_has_a_map (cursor, ensembl_db_name, human_exons):
@@ -538,9 +489,6 @@ def maps_for_gene_list(gene_list, db_info):
                 missing_exon_info += 1
                 #print "\t", ortho_species, "no exon info"
                 continue
-            if verbose:
-                print 
-                print "\t", ortho_species, "making maps ..."
 
             maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons)   
             if not maps:
@@ -564,20 +512,29 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 10
+    no_threads = 1
+    special   = 'nonhom_end_joining'
 
     local_db   = False
 
     if local_db:
-        db = connect_to_mysql()
+        db  = connect_to_mysql()
+        cfg = ConfigurationReader()
     else:
-        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-    gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+    if special:
+        print "using", special, "set"
+        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+    else:
+        print "using all protein coding genes"
+        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
+        gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        
 
     cursor.close()
     db.close()

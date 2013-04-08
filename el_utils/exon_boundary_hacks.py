@@ -1,3 +1,5 @@
+import MySQLdb, commands, re, os
+
 #########################################
 def move_Z (peptide_alnmt, global_bdry_position, template_name):
 

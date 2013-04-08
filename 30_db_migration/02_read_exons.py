@@ -61,18 +61,6 @@ def check_exon_table(cursor, db_name, species, verbose = False):
         make_exon_table (cursor, table)
 
 
-#########################################
-def modify_exon_table(cursor, db_name, species):
-    table =  'exon_' + species
-
-    #qry = "ALTER TABLE %s  ADD %s VARCHAR(50)" % (table, 'maps_to_human_exon_id')
-    qry  = "delete from %s where source='sw_sharp'" % table
-    rows = search_db(cursor, qry)
-    print qry
-    if rows:
-        return rows[0][0]
-    else:
-        return 0
 
 #########################################
 def check_exon_table_size(cursor, db_name, species):
@@ -187,10 +175,6 @@ def load_from_infiles (infiles, in_path):
         if ('mustela') in fields[0]:
             species += "_" + fields[2]
             
-        #check_exon_table(cursor, db_name, species)        
-        #table_size = check_exon_table_size (cursor, db_name, species)
-        #if table_size > 0: continue
-        #modify_exon_table (cursor, db_name, species)
         
         store  (cursor, in_path, infile, species)
         #print "\t done in  %8.3f sec" % (time()-start) 

@@ -25,7 +25,7 @@ def make_sw_exon_table (cursor):
         return False
 
     for column_name in ['gene_id', 'start_in_gene', 
-                        'end_in_gene', 'maps_to_human_exon_id', 'exon_seq_id', 'template_exon_id']:
+                        'end_in_gene', 'maps_to_human_exon_id', 'exon_seq_id', 'template_exon_seq_id']:
         qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
         rows = search_db (cursor, qry)
         if (rows):
@@ -351,7 +351,7 @@ def main():
         #qry = "delete from exon_seq where is_sw = 1"
         #print search_db(cursor, qry)
         #exit(1)
-        qry   = "ALTER TABLE sw_exon change template_exon_id template_exon_seq_id INT(10)" 
+        
         print  search_db (cursor, qry)
         
         for table in ['gene2exon', 'exon_seq', 'sw_exon', 'coding_region']:

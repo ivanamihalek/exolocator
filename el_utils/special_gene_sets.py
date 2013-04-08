@@ -23,9 +23,15 @@ def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
     inf = erropen(fnm, "r")
     gene_ids = []
     for line in inf:
-        line.rstrip()
-        fields = line.split("\t")
-        stable_id = fields[0]
+        line = line.rstrip()
+        if "\t" in line:
+            fields = line.split("\t")
+            stable_id = fields[0]
+        elif "\s" in line:
+            fields = line.split("\t")
+            stable_id = fields[0]
+        else:
+            stable_id = line
         qry  = "select gene_id, description from gene where stable_id='%s'" % stable_id
         rows = search_db (cursor, qry)
         if not rows: continue
