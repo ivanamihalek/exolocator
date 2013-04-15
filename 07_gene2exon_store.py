@@ -560,6 +560,7 @@ def gene2exon(species_list, db_info):
     cursor = db.cursor()
 
     for species in species_list:
+    #for species in ['dipodomys_ordii']:
 
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
@@ -573,7 +574,7 @@ def gene2exon(species_list, db_info):
         ct = 0
         for gene_id in gene_ids:
             ct += 1 
-            if (not ct%1000):
+            if not ct%100:
                 print  "%s  %5d    (%5.2f) " % (species, ct, float(ct)/number_of_genes)
             # see if we looked into this gene already
             #if (gene2exon_list(cursor, gene_id, db_name=ensembl_db_name[species])):

@@ -558,7 +558,8 @@ def store_exon_seqs(species_list, db_info):
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    for species in species_list:
+    for species in ['dipodomys_ordii']:
+    #for species in species_list:
         print
         print "############################"
         print  species
@@ -577,7 +578,7 @@ def store_exon_seqs(species_list, db_info):
         tot = 0
         for gene_id in gene_ids:
             tot += 1
-            if (not  tot%1000):
+            if (not  tot%100):
                 print species, "tot:", tot, " fail:", ct
                
             # extract raw gene  region - bonus return from checking whether the 
@@ -624,7 +625,7 @@ def main():
     """
 
 
-    no_threads = 5
+    no_threads = 1
 
     local_db = False
 

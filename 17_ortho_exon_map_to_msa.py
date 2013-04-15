@@ -21,8 +21,7 @@ from time      import  time
 from Bio       import  SeqIO
 from bitstring import  Bits
 
-verbose          = False
-sw_patching_only = False
+verbose          = True
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):
@@ -58,7 +57,7 @@ def multiple_exon_alnmt(gene_list, db_info):
     no_orthologues = 0
 
     for gene_id in gene_list:
-    #for gene_id in [418332]:
+    #for gene_id in [418249]:
         start = time()
         gene_ct += 1
         if  not gene_ct%10: print gene_ct, "genes out of", len(gene_list)
@@ -79,11 +78,6 @@ def multiple_exon_alnmt(gene_list, db_info):
                 no_maps += 1
                 if verbose: print "\t  no maps"
                 continue
-            if sw_patching_only:
-                maps2 = filter (lambda m: m.source == 'sw_sharp', maps)
-                if not maps2: 
-                    if verbose: print "\t   no sw contribs ... "
-                    continue
 
             # output to fasta:
             seqname   = "{0}:{1}:{2}".format('homo_sapiens', human_exon.exon_id, human_exon.is_known)
@@ -104,7 +98,7 @@ def multiple_exon_alnmt(gene_list, db_info):
 
                 switch_to_db (cursor, ensembl_db_name[map.species_2])
 
-                if map.similarity < 0.5: continue
+                if map.similarity < 0.3: continue
                 exon    = map2exon(cursor, ensembl_db_name, map)
                 pepseq  = get_exon_pepseq (cursor,exon)
                 if (not pepseq):
@@ -180,7 +174,7 @@ def multiple_exon_alnmt(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'nonhom_end_joining'
+    special    = 'wnt_pathway'
 
     local_db = False
 

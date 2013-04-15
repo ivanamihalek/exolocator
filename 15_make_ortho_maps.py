@@ -276,7 +276,7 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
                 [seq1, seq2]   = unfold_cigar_line (seq_human.replace('-',''), seq_other.replace('-',''), ciggy)
 
                 map.cigar_line = ciggy
-                map.similarity = pairwise_fract_identity(seq1, seq2)
+                map.similarity = pairwise_fract_similarity(seq1, seq2)
 
                 maps.append(map)                
 
@@ -456,7 +456,7 @@ def maps_for_gene_list(gene_list, db_info):
 
 
     for gene_id in gene_list:
-    #for gene_id in [418332]:
+    #for gene_id in [418249]:
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -479,22 +479,25 @@ def maps_for_gene_list(gene_list, db_info):
         # one2one   orthologues
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         known_orthologues      = get_orthos (cursor, gene_id, 'orthologue')
+
         # not-clear orthologues
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         unresolved_orthologues = get_orthos (cursor, gene_id, 'unresolved_ortho')
         #
         for [ortho_gene_id, ortho_species] in known_orthologues+unresolved_orthologues:
+            #if not ortho_species == 'dipodomys_ordii': continue
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
             if not ortho_exons:
                 missing_exon_info += 1
-                #print "\t", ortho_species, "no exon info"
+                print "\t", ortho_species, "no exon info"
                 continue
 
             maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons)   
             if not maps:
                 missing_seq_info += 1
-                #print "\t", ortho_species, "no maps"
+                print "\t", ortho_species, "no maps"
                 continue
+
             no_maps += len(maps)
             store (cursor, maps, ensembl_db_name)
 
@@ -513,7 +516,7 @@ def maps_for_gene_list(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special   = 'nonhom_end_joining'
+    special    = 'genecards_top500'
 
     local_db   = False
 
@@ -521,7 +524,7 @@ def main():
         db  = connect_to_mysql()
         cfg = ConfigurationReader()
     else:
-        db  = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
@@ -539,7 +542,7 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, maps_for_gene_list, gene_list[0:15000], [local_db, ensembl_db_name])
+    parallelize (no_threads, maps_for_gene_list, gene_list, [local_db, ensembl_db_name])
     
     return True
 

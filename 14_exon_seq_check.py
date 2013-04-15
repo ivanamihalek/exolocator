@@ -58,7 +58,7 @@ def main():
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)    
-    all_species = ['ailuropoda_melanoleuca']
+    all_species = ['dipodomys_ordii']
 
     for species in all_species:
 
@@ -79,7 +79,7 @@ def main():
         stored_incorrect = 0
         translation_fail = 0
 
-        for tot in range(500):
+        for tot in range(1000):
  
             gene_id = choice(gene_ids)
 
@@ -100,6 +100,8 @@ def main():
                 exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     no_exon_seq += 1
+                    print "no exon seqs for  ", gene_id, exon.exon_id
+                    exit(1)
                     continue                   
 
                 [exon_seq_id, pepseq, pepseq_transl_start, 

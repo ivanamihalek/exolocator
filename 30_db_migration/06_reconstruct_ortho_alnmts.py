@@ -1057,8 +1057,8 @@ def make_alignments ( gene_list, db_info):
     # for each  gene in the provided list
     gene_ct = 0
     gene_list.reverse()
-    for gene_id in gene_list:
-    #for gene_id in [418332]:
+    #for gene_id in gene_list:
+    for gene_id in [418249]:
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
 
@@ -1261,19 +1261,18 @@ def make_alignments ( gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'wnt_pathway'
+    special    = 'genecards_top500'
     local_db   = False
     
     if local_db:
         db  = connect_to_mysql()
         cfg = ConfigurationReader()
     else:
-        db  = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
-
 
 
     if special:

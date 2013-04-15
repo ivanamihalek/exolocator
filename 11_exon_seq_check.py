@@ -380,7 +380,7 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         cfg    = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
-    species_list = ['homo_sapiens']
+    species_list = ['dipodomys_ordii']
     for species in species_list:
         print
         print "############################"
@@ -389,30 +389,30 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
 
-        #if (species=='homo_sapiens'):
-        #    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-        #else:
-        #    gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+        if (species=='homo_sapiens'):
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        else:
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
         
-        gene_ids = get_theme_ids(cursor, ensembl_db_name, cfg, 'missing_seq')
+        #gene_ids = get_theme_ids(cursor, ensembl_db_name, cfg, 'missing_seq')
         
         ct  = 0
         tot = 0
         
         seen = {}
-        for gene_id in gene_ids:
-        #for tot in range(10):
+        #for gene_id in gene_ids:
+        for tot in range(1000):
 
-            #gene_id = choice(gene_ids)
+            gene_id = choice(gene_ids)
             #tot +=1 
  
             if seen.has_key(gene_id):
                 continue
             seen[gene_id] = True
 
-            print 
-            print gene_id, gene2stable (cursor, gene_id)
+            #print 
+            #print gene_id, gene2stable (cursor, gene_id)
 
             # find canonical translation
             canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
@@ -439,17 +439,17 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
             translated_seq = transl_reconstruct (cursor, gene_id, gene_seq, 
                                                  canonical_coding_exons, verbose = verbose)
 
-            print 
-            print "==========================================="
-            print canonical_translation
-            print "========"
-            print translated_seq
+            #print 
+            #print "==========================================="
+            #print canonical_translation
+            #print "========"
+            #print translated_seq
 
             if (translated_seq):
                 # compare the two sequences and cry foul if they are not the same:
                 comparison_ok = compare_seqs (canonical_translation, translated_seq, verbose = verbose)
                 if (comparison_ok):
-                    print "translation ok"
+                    #print "translation ok"
                     continue
             ###################### if ok, we are done here ######################
 
@@ -460,7 +460,7 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
             ret = get_alt_seq_info (cursor, gene_id, species)
             if ret:
                 [seq_name, file_names, seq_region_start, seq_region_end] = ret
-                print "alt seq info ", seq_name, file_names, seq_region_start, seq_region_end
+                #print "alt seq info ", seq_name, file_names, seq_region_start, seq_region_end
             else:
                 ct +=1 
                 continue
@@ -482,7 +482,7 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
                 print "original name: ",  orig_name, orig_file,  orig_start, orig_end
                 print "attempted fix: ",  seq_name, file_names,  seq_region_start, seq_region_end
                 ct += 1
-                print ct, tot
+                print ct, "out of",  tot
                 print "==========================================="
                 print canonical_translation
                 print "========"

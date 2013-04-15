@@ -1,4 +1,5 @@
 import sys, os
+import string
 
 #########################################
 def erropen (file,mode):
@@ -101,4 +102,39 @@ def  pairwise_fract_identity (seq1, seq2):
     
     fract_identity /= float(len(seq1))
     return fract_identity
+
+#########################################
+def  pairwise_fract_similarity (seq1, seq2):
+    
+    is_similar_to = {}
+
+    # this is rather crude ...
+    for  char in string.printable:
+        is_similar_to[char] = char
+
+    is_similar_to['I'] = 'V';
+    is_similar_to['L'] = 'V';
+    is_similar_to['S'] = 'T';
+    is_similar_to['D'] = 'E';
+    is_similar_to['K'] = 'R';
+    is_similar_to['Q'] = 'N';
+    is_similar_to['.'] = '.';
+    is_similar_to['-'] = '.';
+
+    is_similar_to['A'] = 'V';
+    is_similar_to['M'] = 'V';
+    is_similar_to['G'] = 'V';
+    is_similar_to['F'] = 'Y';
+    is_similar_to['H'] = 'R';
+
+    fract_similarity = 0.0
+    if ( not len(seq1)):
+        return fract_similarity
+
+    for i in range(len(seq1)):
+        if (seq1[i] == '-'): continue
+        if is_similar_to[seq1[i]] == is_similar_to[seq2[i]]: fract_similarity += 1.0
+    
+    fract_similarity /= float(len(seq1))
+    return fract_similarity
 

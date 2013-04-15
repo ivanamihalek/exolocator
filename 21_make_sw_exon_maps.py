@@ -271,7 +271,7 @@ def maps_evaluate (cursor, ensembl_db_name, human_exons, ortho_exons, aligned_se
                 [seq1, seq2] = unfold_cigar_line (seq_human.replace('-',''), seq_other.replace('-',''), ciggy)
 
                 map.cigar_line = ciggy
-                map.similarity = pairwise_fract_identity (seq1, seq2)
+                map.similarity = pairwise_fract_similarity (seq1, seq2)
                 
                 # bit of paranoia, but not misplaced:  do we already have a map for this exon by any chance?
                 better_map = False
@@ -492,8 +492,8 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
 
 
-    for gene_id in gene_list:
-    #for gene_id in [418332]:
+    #for gene_id in gene_list:
+    for gene_id in [418249]:
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -506,7 +506,8 @@ def maps_for_gene_list(gene_list, db_info):
         human_exons = gene2exon_list(cursor, gene_id)
         if (not human_exons):
             print 'no exons for ', gene_id
-            sys.exit(1)
+            continue
+            #sys.exit(1)
 
         # get rid of the old maps # can't do that here bcs this script is only updating sw exons
         #map_cleanup (cursor, ensembl_db_name, human_exons)
@@ -559,7 +560,7 @@ def maps_for_gene_list(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'wnt_pathway'
+    special    = 'telomere_maintenance'
 
     local_db   = False
 

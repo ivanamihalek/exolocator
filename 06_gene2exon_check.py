@@ -537,7 +537,7 @@ def gene2exon(species_list, db_info):
     cursor = db.cursor()
 
     for species in species_list:
-        if (not species == 'homo_sapiens'):
+        if (not species == 'dipodomys_ordii'):
             continue
         print
         print "############################"
@@ -545,14 +545,14 @@ def gene2exon(species_list, db_info):
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
 
-        #if (species=='homo_sapiens'):
-        #    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-        #else:
-        #    gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+        if (species=='homo_sapiens'):
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        else:
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         
-        gene_ids = get_theme_ids(cursor, ensembl_db_name, cfg, 'missing_seq')
+        #gene_ids = get_theme_ids(cursor, ensembl_db_name, cfg, 'missing_seq')
 
-        ct  = 0
+        no_exons_found  = 0
         tot = 0
         status_not_known = 0
         biotype_not_protein_coding = 0
@@ -569,25 +569,31 @@ def gene2exon(species_list, db_info):
             #if not tot%100: print tot
             tot += 1
             status  = get_status (cursor, gene_id)
-            if not status  == 'KNOWN': 
+            if not 'KNOWN' in status: 
                 status_not_known += 1
-                print status
+                #print status
                 continue
 
             biotype = get_biotype (cursor, gene_id)
             if not biotype == 'protein_coding': 
-                print biotype
+                #print biotype
                 biotype_not_protein_coding += 1
                 continue
 
-            print 
-            print gene_id, gene2stable (cursor, gene_id), biotype
+            #print 
+            #print gene_id, gene2stable (cursor, gene_id), biotype
             # find all exons associated with that gene id
             exons = find_exons (cursor, gene_id, species)
             if (not exons):
-                #ct +=1
-                print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
+                no_exons_found +=1
+                #print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
                 
+            if not tot%1000:
+                print "total:", tot
+                print "status_not_known: ",  status_not_known
+                print "biotype_not_protein_coding: ", biotype_not_protein_coding
+                print "no_exons_found: ", no_exons_found
+            continue
    
             length = 0
             for exon in exons:
@@ -642,10 +648,6 @@ def gene2exon(species_list, db_info):
             #if (tot==1000):
             #    break
             #print fasta
- 
-        print "total:", tot
-        print "status_not_known: ",  status_not_known
-        print "biotype_not_protein_coding: ", biotype_not_protein_coding
 
     cursor.close()
     db.close()

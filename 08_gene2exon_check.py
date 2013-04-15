@@ -32,7 +32,7 @@ def main():
 
     species_list = all_species
     #species_list = ['callithrix_jacchus']
-    #species_list = ['ailuropoda_melanoleuca']
+    #species_list = ['dipodomys_ordii']
     for species in species_list:
         print
         print "############################"

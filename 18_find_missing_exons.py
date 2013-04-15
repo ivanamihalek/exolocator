@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import MySQLdb, subprocess, re, commands
-import copy
+import copy, pdb
 from tempfile     import NamedTemporaryFile
 from bisect       import bisect
 
@@ -12,7 +12,7 @@ from Bio.Data     import CodonTable
 from difflib      import SequenceMatcher
 from   el_utils.mysql   import  *
 from   el_utils.ensembl import  *
-from   el_utils.utils   import  erropen, output_fasta
+from   el_utils.utils   import  *
 from   el_utils.map     import  Map, get_maps
 from   el_utils.tree    import  species_sort
 
@@ -215,7 +215,7 @@ def translate(searchseq, search_start, search_end, mitochondrial):
 def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchseq,  
                                  match_start, match_end, patched_target_seq):
 
-
+    #pdb.set_trace()
     patched_searchseq  = searchseq[:match_start]    
 
     patched_searchseq += patched_target_seq
@@ -223,6 +223,10 @@ def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchs
 
 
     searchseq = patched_searchseq
+
+    # I should debug this one fine day:
+    if match_end >= len(searchseq):
+        return ["", match_start, match_end]
 
     pepseq = translate(searchseq, match_start, match_end, mitochondrial)
 
@@ -664,7 +668,7 @@ def search_and_store (cursor, ensembl_db_name, acg, human_exon, old_maps,  speci
                                                                                 template_start, mitochondrial)
     if patch_failure: return matching_region
 
-    # how different is translation for the translated template?
+    # how different is translation from the translated template?
     # align in all three frames and pick one which is the most similar to the template 
     # check for the length of the peptide # should I perhaps check if one of the
     # solutions that are usb-optimal in length give lnger peptide?
@@ -673,21 +677,6 @@ def search_and_store (cursor, ensembl_db_name, acg, human_exon, old_maps,  speci
                                                                     template_pepseq, searchseq, 
                                                                     match_start, match_end,
                                                                     patched_target_seq)
-
-    # one last check - do we have a candidate map already?
-    better_map_exists = False
-    if old_maps:
-        for old_map in old_maps:
-            if old_map.species_2  == species:
-                if  old_map.similarity >  similarity:
-                    better_map_exists = True
-                    break
-
-    if better_map_exists: return matching_region
-
-    # if yes, how does the similarity compare with what we have just found
-    similarity = pairwise_fract_similarity (human_exon.pepseq, pepseq)
-
 
     if len(pepseq)<3: return matching_region
 
@@ -782,8 +771,8 @@ def find_missing_exons(human_gene_list, db_info):
     found   = 0
     sought  = 0
     human_gene_list.reverse()
-    #for human_gene_id in human_gene_list:
-    for human_gene_id in [418332]:
+    for human_gene_id in human_gene_list:
+    #for human_gene_id in [418249]:
 
 	switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
 
@@ -863,10 +852,14 @@ def find_missing_exons(human_gene_list, db_info):
         next[he] = None
 
         # fill,  starting from the species that are nearest to the human
+        if not map_table.keys():
+            continue # whatever
+
         species_sorted_from_human = species_sort(cursor,map_table.keys(),species)[1:]
         for species in species_sorted_from_human:
-        #for species in ['dipodomys_ordii']:
+        #for species in ['meleagris_gallopavo']:
             # see which exons have which neighbors
+            if verbose: print he.exon_id, species
             no_left  = []
             no_right = []
             has_both_neighbors = []
@@ -947,7 +940,7 @@ def find_missing_exons(human_gene_list, db_info):
                 # the previous and the  next region frame the search region
                 prev_seq_region = left_region (next_seq_region, MAX_SEARCH_LENGTH)
                 sought         += 1
-                matching_region = search_and_store(cursor, ensembl_db_name, acg, he, 
+                matching_region = search_and_store(cursor, ensembl_db_name, acg, he,  maps_for_exon[he], 
                                                    species,  gene_id, gene_coords, prev_seq_region, next_seq_region,
                                                    template_info, mitochondrial)
                 if matching_region: 
@@ -974,7 +967,7 @@ def find_missing_exons(human_gene_list, db_info):
                 # the following region is eyeballed from the previous 
                 next_seq_region = right_region (prev_seq_region, MAX_SEARCH_LENGTH)
                 sought         += 1
-                matching_region = search_and_store (cursor, ensembl_db_name, acg, he, 
+                matching_region = search_and_store (cursor, ensembl_db_name, acg, he,  maps_for_exon[he], 
                                                     species, gene_id, gene_coords, prev_seq_region, next_seq_region,
                                                     template_info, mitochondrial)
                 #print he.pepseq
@@ -983,9 +976,6 @@ def find_missing_exons(human_gene_list, db_info):
                     found += 1
                     prev_seq_region = matching_region
                     
-
-            
-            
         if verbose: print "done with ",  human_gene_id, human_stable, human_description 
         if verbose: print "sought", sought, " found", found
                 
@@ -1028,21 +1018,3 @@ def main():
 #########################################
 if __name__ == '__main__':
 	main()
-
-'''
-       for species in species_sorted_from_human:
-            for he in human_exons:
-                m =  map_table[species][he]
-                if not m:
-                    print "%6s " % 'none',
-                else:
-                    print "%6.2f " % m.similarity,
-            print
-    #for human_gene_id in [370495]: # Known hit
-    #for human_gene_id in [378768]: #  p53
-    #for human_gene_id in [412667]: #  wls
-    #for human_gene_id in [418249]: #  TRF2
-    #for human_gene_id in [374433]: # Known hit
-    for human_gene_id in [397321]: # nice example, finds 23 out of 61
-    #for human_gene_id in [397176]:
-'''

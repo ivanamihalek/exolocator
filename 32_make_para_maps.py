@@ -8,7 +8,7 @@ from random  import random, choice
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
-from   el_utils.utils   import  erropen, output_fasta
+from   el_utils.utils   import  *
 from   el_utils.threads import  parallelize
 from   el_utils.map     import  get_maps, Map
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
@@ -260,7 +260,7 @@ def maps_evaluate (template_exons, para_exons, aligned_seq, exon_positions):
                 [seq1, seq2] = unfold_cigar_line (seq_template.replace('-',''), seq_other.replace('-',''), ciggy)
 
                 map.cigar_line = ciggy
-                map.similarity = fract_identity (ciggy)
+                map.similarity = pairwise_fract_similarity (seq1, seq2)
                 
                 maps.append(map)
 
