@@ -492,8 +492,7 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
 
 
-    #for gene_id in gene_list:
-    for gene_id in [418249]:
+    for gene_id in gene_list:
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -560,7 +559,7 @@ def maps_for_gene_list(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'telomere_maintenance'
+    special    = 'genecards_top500'
 
     local_db   = False
 

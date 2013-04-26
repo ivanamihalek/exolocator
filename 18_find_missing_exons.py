@@ -987,7 +987,7 @@ def main():
     no_threads = 1
     special    = 'wnt_pathway'
 
-    local_db = False
+    local_db   = False
 
     if local_db:
         db  = connect_to_mysql()

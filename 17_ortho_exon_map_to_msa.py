@@ -21,7 +21,7 @@ from time      import  time
 from Bio       import  SeqIO
 from bitstring import  Bits
 
-verbose          = True
+verbose = False
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):
@@ -174,7 +174,7 @@ def multiple_exon_alnmt(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'wnt_pathway'
+    special    = 'circadian_clock'
 
     local_db = False
 

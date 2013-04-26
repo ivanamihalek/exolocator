@@ -1057,8 +1057,8 @@ def make_alignments ( gene_list, db_info):
     # for each  gene in the provided list
     gene_ct = 0
     gene_list.reverse()
-    #for gene_id in gene_list:
-    for gene_id in [418249]:
+    for gene_id in gene_list:
+    #for gene_id in [418249]:
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
 
@@ -1233,7 +1233,8 @@ def make_alignments ( gene_list, db_info):
             #[output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
 
             afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-            output_fasta (afa_fnm, sorted_seq_names, output_pep)
+            ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
+            if not ret: continue
             if verbose: print afa_fnm
 
         if (1):
@@ -1247,7 +1248,9 @@ def make_alignments ( gene_list, db_info):
             output_dna = strip_gaps(output_dna)
 
             afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-            output_fasta (afa_fnm, sorted_seq_names, output_dna)
+            ret = output_fasta (afa_fnm, sorted_seq_names, output_dna)
+            if not ret: continue
+
             if verbose: print afa_fnm
 
         #continue
@@ -1261,7 +1264,7 @@ def make_alignments ( gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'genecards_top500'
+    special    = 'nonhom_end_joining'
     local_db   = False
     
     if local_db:

@@ -8,7 +8,7 @@ def erropen (file,mode):
         of = open (file,mode)
     except:
         print "error opening ", file
-        sys.exit(1)
+        return None
 
     return of
 
@@ -22,13 +22,16 @@ def mkdir_p (path):
 #########################################
 def output_fasta (filename, headers, sequence):
     outf = erropen (filename, "w")
+    if not outf: return False
+
     for header  in  headers:
         if not sequence.has_key(header): continue
         print >> outf, ">"+header
         print >> outf, sequence[header]
     outf.close()
 
-    return
+    return True
+
 #########################################
 def input_fasta (filename):
     sequence = {}
