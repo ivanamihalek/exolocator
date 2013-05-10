@@ -1264,7 +1264,7 @@ def make_alignments ( gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'nonhom_end_joining'
+    special    = 'enzymes'
     local_db   = False
     
     if local_db:

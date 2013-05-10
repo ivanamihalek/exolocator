@@ -405,7 +405,8 @@ def sw_search(acg, species,  prev_seq_region, next_seq_region, template_seq):
     # do  SW# search
     swsharpcmd = acg.generate_SW_nt(querytmp.name, searchtmp.name)
     #print swsharpcmd
-   
+
+
     resultstr  = commands.getoutput (swsharpcmd)
     searchtmp.close()
     querytmp.close()
@@ -414,6 +415,7 @@ def sw_search(acg, species,  prev_seq_region, next_seq_region, template_seq):
     #print resultstr
     #print 
     #print
+    #exit(1)
 
     ###########################################################
     # give me that sequence,  now that you have it    
@@ -985,7 +987,7 @@ def find_missing_exons(human_gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'wnt_pathway'
+    special    = 'circadian_clock'
 
     local_db   = False
 

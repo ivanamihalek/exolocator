@@ -559,7 +559,7 @@ def maps_for_gene_list(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'genecards_top500'
+    special    = 'enzymes'
 
     local_db   = False
 

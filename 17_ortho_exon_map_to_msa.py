@@ -174,7 +174,7 @@ def multiple_exon_alnmt(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'circadian_clock'
+    special    = 'cell_cycle_checkpoints'
 
     local_db = False
 
