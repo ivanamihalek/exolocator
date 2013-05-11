@@ -10,16 +10,16 @@ from Bio.Alphabet import generic_dna
 from Bio.Data     import CodonTable
 
 from difflib      import SequenceMatcher
-from   el_utils.mysql   import  *
-from   el_utils.ensembl import  *
-from   el_utils.utils   import  *
-from   el_utils.map     import  Map, get_maps
-from   el_utils.tree    import  species_sort
+from el_utils.mysql   import  *
+from el_utils.ensembl import  *
+from el_utils.utils   import  *
+from el_utils.map     import  Map, get_maps
+from el_utils.tree    import  species_sort
 
-from   el_utils.special_gene_sets  import  get_theme_ids
-from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
-from   el_utils.config_reader      import ConfigurationReader
-from   el_utils.threads import  parallelize
+from el_utils.special_gene_sets  import  get_theme_ids
+from el_utils.almt_cmd_generator import AlignmentCommandGenerator
+from el_utils.config_reader      import ConfigurationReader
+from el_utils.threads import  parallelize
 from subprocess import Popen, PIPE, STDOUT
 
 #########################################
@@ -987,7 +987,7 @@ def find_missing_exons(human_gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'circadian_clock'
+    special    = 'cell_cycle_checkpoints'
 
     local_db   = False
 

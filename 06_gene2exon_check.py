@@ -131,6 +131,7 @@ def get_exons (cursor, gene_id, species, table):
         return get_predicted_exons (cursor, gene_id, species)
 
 
+
 #########################################
 def get_canonical_exon_ids (cursor, canonical_transcript_id):
 

@@ -460,7 +460,7 @@ def make_para_exon_maps(species_list, db_info):
 
             if verbose: print "\t no map found - making new one"
 
-            # COMMENT THIS OUT PERHAPS? yeah, unless you know exactly wha you're doing
+            # COMMENT THIS OUT PERHAPS? yeah, unless you know exactly what you're doing
             # get rid of the old maps
             # map_cleanup (cursor, ensembl_db_name, human_exons)
 

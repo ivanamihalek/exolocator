@@ -2,6 +2,70 @@ import sys, os
 import string
 
 #########################################
+def check_seq_length(sequence, msg):
+
+    if not sequence.values():
+        return False
+    aln_length = len(sequence.values()[0])
+    if not aln_length:
+        return False
+    for name, seq in sequence.iteritems():
+        if not len(seq) == aln_length:
+            print msg, 
+            print "seq length check failure  for",  name, " length: ", len(seq),  "aln_length", aln_length
+            afa_fnm = msg+'.afa'
+            print "writing the offending alnmt to ", afa_fnm
+            output_fasta (afa_fnm, sequence.keys(), sequence)
+            return False
+    return True
+
+#########################################
+def strip_gaps (sequence):
+
+    seq_stripped = {}
+
+    all_gaps = {}  
+
+    if not check_seq_length(sequence, 'in_strip_gaps'): 
+        return sequence
+    
+    aln_length = len(sequence.itervalues().next())
+
+    if aln_length is None or aln_length==0:
+        return sequence
+    
+    for name, seq in sequence.iteritems():
+        if not len(seq): 
+            continue
+        sequence[name] = seq.replace("-Z-", "BZB")
+
+    for pos in range(aln_length):
+        all_gaps[pos] = True
+        for name, seq in sequence.iteritems():
+            if not len(seq): 
+                continue
+            if (not seq[pos]=='-'):
+                all_gaps[pos] = False
+                break
+
+
+    for name, seq in sequence.iteritems():
+        if not len(seq): 
+            continue
+        seq_stripped[name] = ""
+        for pos in range(aln_length):
+            if all_gaps[pos]: continue
+            seq_stripped[name] += seq[pos]
+
+
+    for name, seq in seq_stripped.iteritems():
+        if not len(seq): 
+            continue
+        seq_stripped[name] = seq_stripped[name].replace("BZB", "-Z-")
+
+    return seq_stripped
+
+#########################################
 def erropen (file,mode):
     of = None
     try:

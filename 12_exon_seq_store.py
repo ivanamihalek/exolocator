@@ -10,6 +10,8 @@ from   el_utils.ensembl import  gene2canon_transl, get_canonical_exons, get_sele
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
+from   el_utils.config_reader      import ConfigurationReader
+from   el_utils.special_gene_sets  import get_theme_ids
 
 # BioPython
 from Bio.Seq import Seq
@@ -19,133 +21,6 @@ from Bio.Alphabet import generic_dna
 
     
 
-
-#########################################
-def  get_primary_seq_info (cursor, gene_id, species):
-
-    # seq identifier from gene table
-    qry  = "select seq_region_id, seq_region_start, seq_region_end, seq_region_strand"
-    qry += " from gene where gene_id = %d" % gene_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         exit(1)
-    [seq_region_id, seq_region_start, seq_region_end, seq_region_strand] = rows[0]
-    
-
-    qry  = "select name, file_name from seq_region "
-    qry += " where seq_region_id= %d" %  seq_region_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         return []
-    [seq_name, file_names] = rows[0]
-    # Ivana:
-    # What is the proper way to find out whether the seq_region is mitochondrial?
-    # EMily:
-    # It's in the seq_region table, under name. Name will either be a chromosome
-    # number, MT for mitochrondria or the name of a contig.
-    mitochondrial = is_mitochondrial(cursor, gene_id)
-
-    return [seq_name, file_names, seq_region_start, 
-            seq_region_end, seq_region_strand, mitochondrial]
-
-#########################################
-def  get_alt_seq_info (cursor, gene_id, species):
-
-    # seq identifier from gene table
-    qry  = "select seq_region_id, seq_region_strand from gene where gene_id = %d" % gene_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         exit(1)
-    [seq_region_id, seq_region_strand] = rows[0]
-    
-    # check whether we have "assembly exception"
-    # we do not want 'PAR' regions, though:
-    '''
-    The pseudo-autosomal regions are homologous DNA sequences on the (human) X and Y chromosomes. 
-    They allow the pairing and crossing-over of these sex chromosomes the same way the autosomal 
-    chromosomes do during meiosis. 
-    As these genomic regions are identical between X and Y, they are oftentimes only stored once.
-    '''
-
-    qry  = "select seq_region.name,  assembly_exception.exc_seq_region_start, assembly_exception.exc_seq_region_end "
-    qry += "from seq_region, assembly_exception "
-    qry += "where seq_region.seq_region_id = assembly_exception.exc_seq_region_id "
-    qry += "and assembly_exception.seq_region_id = %d" % seq_region_id
-    qry += " and not assembly_exception.exc_type = 'PAR'"
-    rows = search_db (cursor, qry)
-    if (rows):
-        [seq_name, seq_region_start, seq_region_end] = rows[0]
-        qry = " select distinct file_name from seq_region where seq_region.name = '%s' " % seq_name
-        rows = search_db (cursor, qry)
-        file_names = ""
-        for row in rows:
-            if file_names:
-                file_names += " "
-            file_names += row[0]
-
-        mitochondrial = is_mitochondrial (cursor, gene_id)
-        return [seq_name, file_names, seq_region_start, 
-                seq_region_end, seq_region_strand, mitochondrial]
-    else:
-        return []
-
-#########################################
-def extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  
-                      seq_region_start, seq_region_end):
-
-    # now the question is, which file do I use if there are several options?
-    first_choice  = ""
-    second_choice = ""
-    for file_name in file_names.split(" "):
-        if  '.chromosome.' in  file_name:
-            first_choice = file_name
-        elif '.toplevel.' in  file_name:
-            second_choice = file_name
-            
-    fasta_db_file = ""
-    if first_choice:
-        fasta_db_file = first_choice
-    elif second_choice:
-        fasta_db_file = second_choice
-
-    if not fasta_db_file:
-        print "failed to decide on fasta_db_file:"
-        print file_names
-        exit(1)
-
-
-    # extract gene sequence  from fasta db
-    fastacmd = acg.generate_fastacmd_gene_command(species, seq_name, fasta_db_file,
-                                                  seq_region_strand,  seq_region_start,    
-                                                  seq_region_end)
-    ret = commands.getoutput(fastacmd)
-    if not ret:
-        print "no refturn for fastacmd for", species, gene_id
-        print "fastacmd: ", fastacmd
-        exit (1)
-    if ('ERROR' in ret):
-        print "Error running fastacmd: ", fastacmd
-        print ret
-        if 'Ignoring sequence location' in ret:
-            print 'will ignore'
-            print
-        else:
-            exit (1)
-    gene_seq = ""
-    reading = 0
-    for line in ret.split("\n"):
-        if ('>' in line):
-            reading = 1
-            continue
-        if (not reading):
-            continue
-        line.rstrip()
-        gene_seq += line
-
-    return gene_seq
 #########################################
 def strip_stop(pepseq):
     if (not pepseq or len(pepseq)==0):
@@ -548,17 +423,20 @@ def store_exon_seqs(species_list, db_info):
 
     """
     
+    special    = 'missing_seq'
 
     [local_db, ensembl_db_name] = db_info
     if local_db:
         db     = connect_to_mysql()
         acg    = AlignmentCommandGenerator()
+        cfg    = ConfigurationReader()
     else:
         db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg    = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    for species in ['dipodomys_ordii']:
+    for species in ['homo_sapiens']:
     #for species in species_list:
         print
         print "############################"
@@ -567,7 +445,10 @@ def store_exon_seqs(species_list, db_info):
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False      
  
-        if (species=='homo_sapiens'):
+        if special:
+            print "using", special, "set"
+            gene_ids = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+        elif (species=='homo_sapiens'):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
@@ -638,8 +519,6 @@ def main():
     cursor.close()
     db    .close()
 
-    all_species = ['equus_caballus', 'echinops_telfairi', 'oryctolagus_cuniculus', 
-                   'ornithorhynchus_anatinus', 'oryzias_latipes']
     parallelize (no_threads, store_exon_seqs, all_species, [local_db, ensembl_db_name])
 
 

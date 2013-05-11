@@ -58,7 +58,7 @@ def main():
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)    
-    all_species = ['dipodomys_ordii']
+    all_species = ['homo_sapiens']
 
     for species in all_species:
 
@@ -100,8 +100,8 @@ def main():
                 exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     no_exon_seq += 1
-                    print "no exon seqs for  ", gene_id, exon.exon_id
-                    exit(1)
+                    #print "no exon seqs for  ", gene_id, exon.exon_id
+                    #exit(1)
                     continue                   
 
                 [exon_seq_id, pepseq, pepseq_transl_start, 
@@ -124,8 +124,8 @@ def main():
 
                 if (not pepseq == pepseq2):
                     stored_incorrect += 1
-                
-                pepseq_ok += 1
+                else:
+                    pepseq_ok += 1
 
         print
         print species
@@ -133,7 +133,7 @@ def main():
         print "no exon seq info   ", no_exon_seq
         print "short dna          ", short_dna
         print "transl failure     ", translation_fail
-        print "stored incorrect   ", stored_incorrect
+        print "stored pepseq does not correspond to the translation of stored dna:   ", stored_incorrect
         print "pepseq ok          ", pepseq_ok
 
     cursor.close()

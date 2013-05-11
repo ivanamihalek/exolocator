@@ -3,6 +3,159 @@
 import MySQLdb
 from   mysql import search_db, switch_to_db
 from   exon  import Exon
+import commands
+
+
+
+#########################################
+def  get_primary_seq_info (cursor, gene_id, species):
+
+    # seq identifier from gene table
+    qry  = "select seq_region_id, seq_region_start, seq_region_end, seq_region_strand"
+    qry += " from gene where gene_id = %d" % gene_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         exit(1)
+    [seq_region_id, seq_region_start, seq_region_end, seq_region_strand] = rows[0]
+    
+
+    qry  = "select name, file_name from seq_region "
+    qry += " where seq_region_id= %d" %  seq_region_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+    [seq_name, file_names] = rows[0]
+    # Ivana:
+    # What is the proper way to find out whether the seq_region is mitochondrial?
+    # EMily:
+    # It's in the seq_region table, under name. Name will either be a chromosome
+    # number, MT for mitochrondria or the name of a contig.
+    mitochondrial = is_mitochondrial(cursor, gene_id)
+
+    return [seq_name, file_names, seq_region_start, 
+            seq_region_end, seq_region_strand, mitochondrial]
+
+#########################################
+def  get_alt_seq_info (cursor, gene_id, species):
+
+    # seq identifier from gene table
+    qry  = "select seq_region_id, seq_region_strand from gene where gene_id = %d" % gene_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         exit(1)
+    [seq_region_id, seq_region_strand] = rows[0]
+    
+    # check whether we have "assembly exception"
+    # we do not want 'PAR' regions, though:
+    '''
+    The pseudo-autosomal regions are homologous DNA sequences on the (human) X and Y chromosomes. 
+    They allow the pairing and crossing-over of these sex chromosomes the same way the autosomal 
+    chromosomes do during meiosis. 
+    As these genomic regions are identical between X and Y, they are oftentimes only stored once.
+    '''
+
+    qry  = "select seq_region.name,  assembly_exception.exc_seq_region_start, assembly_exception.exc_seq_region_end "
+    qry += "from seq_region, assembly_exception "
+    qry += "where seq_region.seq_region_id = assembly_exception.exc_seq_region_id "
+    qry += "and assembly_exception.seq_region_id = %d" % seq_region_id
+    qry += " and not assembly_exception.exc_type = 'PAR'"
+    rows = search_db (cursor, qry)
+    if (rows):
+        [seq_name, seq_region_start, seq_region_end] = rows[0]
+        qry = " select distinct file_name from seq_region where seq_region.name = '%s' " % seq_name
+        rows = search_db (cursor, qry)
+        file_names = ""
+        for row in rows:
+            if file_names:
+                file_names += " "
+            file_names += row[0]
+
+        mitochondrial = is_mitochondrial (cursor, gene_id)
+        return [seq_name, file_names, seq_region_start, 
+                seq_region_end, seq_region_strand, mitochondrial]
+    else:
+        return []
+
+#########################################
+def extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  
+                      seq_region_start, seq_region_end):
+
+    # now the question is, which file do I use if there are several options?
+    first_choice  = ""
+    second_choice = ""
+    for file_name in file_names.split(" "):
+        if  '.chromosome.' in  file_name:
+            first_choice = file_name
+        elif '.toplevel.' in  file_name:
+            second_choice = file_name
+            
+    fasta_db_file = ""
+    if first_choice:
+        fasta_db_file = first_choice
+    elif second_choice:
+        fasta_db_file = second_choice
+
+    if not fasta_db_file:
+        print "failed to decide on fasta_db_file:"
+        print file_names
+        exit(1)
+
+
+    # extract gene sequence  from fasta db
+    fastacmd = acg.generate_fastacmd_gene_command(species, seq_name, fasta_db_file,
+                                                  seq_region_strand,  seq_region_start,    
+                                                  seq_region_end)
+    ret = commands.getoutput(fastacmd)
+    if not ret:
+        print "no refturn for fastacmd for", species, gene_id
+        print "fastacmd: ", fastacmd
+        exit (1)
+    if ('ERROR' in ret):
+        print "Error running fastacmd: ", fastacmd
+        print ret
+        if 'Ignoring sequence location' in ret:
+            print 'will ignore'
+            print
+        else:
+            exit (1)
+    gene_seq = ""
+    reading = 0
+    for line in ret.split("\n"):
+        if ('>' in line):
+            reading = 1
+            continue
+        if (not reading):
+            continue
+        line.rstrip()
+        gene_seq += line
+
+    return gene_seq
+
+
+
+#########################################
+def get_transcript_ids (cursor, gene_id, db_name=None):
+
+    transcript_ids = []
+
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+
+    qry  = "select transcript_id, stable_id from transcript where gene_id = %d " % gene_id
+    rows = search_db(cursor, qry)
+
+    if not rows:
+        return transcript_ids
+    
+    for row in rows:
+        transcript_ids.append(row)
+
+    return transcript_ids
+
 
 #########################################
 def  get_analysis_dict(cursor):
@@ -333,8 +486,8 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
     rows = search_db(cursor, qry)
 
     if not rows or len(rows[0]) < 7:
-        print "using db ", db_name
-        rows = search_db(cursor, qry, verbose = True)
+        #print "using db ", db_name
+        #rows = search_db(cursor, qry, verbose = True)
         return []
 
     [exon_seq_id, protein_seq, pepseq_transl_start, 

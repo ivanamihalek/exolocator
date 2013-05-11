@@ -515,7 +515,7 @@ def maps_for_gene_list(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'actin_binding'
+    special    = 'circadian_clock'
 
     local_db   = False
 

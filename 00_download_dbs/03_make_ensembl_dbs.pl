@@ -6,6 +6,7 @@
 # (actually, from dna_align_feature can be found the info about CCDS annotation)
 # I nevere really found use for - perhaps can be skipped during downloading, to make things faster
 # the sql script needs to be hacked (or does it - just leave the tables empty)
+#--user=ensembl --psqljupitersql
 
 $path_to_db = "/mnt/ensembl/release-69/mysql";
 
