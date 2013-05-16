@@ -143,7 +143,7 @@ def get_transcript_ids (cursor, gene_id, db_name=None):
 
     if (db_name):
         if not switch_to_db(cursor, db_name):
-            return False
+            return []
 
     qry  = "select transcript_id, stable_id from transcript where gene_id = %d " % gene_id
     rows = search_db(cursor, qry)
@@ -156,6 +156,26 @@ def get_transcript_ids (cursor, gene_id, db_name=None):
 
     return transcript_ids
 
+
+#########################################
+def get_translation_coords (cursor, transcript_id, db_name=None):
+    
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return []
+
+    qry  = "select  seq_start, start_exon_id, seq_end, end_exon_id  "
+    qry += " from translation where transcript_id = %d " % transcript_id
+   
+    rows = search_db(cursor, qry)
+
+    if not rows:
+        return []
+
+    if 'error' in str(rows[0][0]).lower():
+        return []
+
+    return rows[0]
 
 #########################################
 def  get_analysis_dict(cursor):
@@ -251,13 +271,13 @@ def get_logic_name(cursor, analysis_id, db_name = None):
     return logic_name 
 
 #########################################
-def is_coding (cursor, exon_id, db_name=None):
+def is_coding (cursor, gene_id, db_name=None):
     
     if (db_name):
         if not switch_to_db(cursor, db_name):
             return False
 
-    qry = "select is_coding from gene where gene_id = %d " % int(exon_id)
+    qry = "select is_coding from gene where gene_id = %d " % int(gene_id)
     rows = search_db (cursor, qry)
     if ( not rows):
         return False
@@ -544,8 +564,8 @@ def gene2exon_list (cursor, gene_id, db_name=None):
     rows = search_db(cursor, qry)
     if (not rows):
         rows = search_db(cursor, 'select database()')
-        print "database ", rows[0][0]
-        rows = search_db(cursor, qry, verbose = True)
+        #print "database ", rows[0][0]
+        #rows = search_db(cursor, qry, verbose = True)
         return []
 
     for row in rows:

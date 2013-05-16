@@ -227,6 +227,7 @@ def main():
     util_path['blastall'] = '/usr/bin/blastall'
     util_path['fastacmd'] = '/usr/bin/fastacmd'
     util_path['sw#']      = '/usr/bin/swsharp'
+    util_path['usearch']  = '/usr/bin/usearch'
 
     dir_path = {}
     dir_path['ensembl_fasta'] = '/mnt/ensembl-mirror/release-69/fasta'

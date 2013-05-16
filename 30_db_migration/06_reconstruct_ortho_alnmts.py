@@ -10,7 +10,7 @@ import MySQLdb, commands, re, os
 from el_utils.mysql   import  connect_to_mysql, connect_to_db
 from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from el_utils.ensembl import  *
-from el_utils.utils   import  erropen, output_fasta, input_fasta, parse_aln_name, strip_gaps
+from el_utils.utils   import  *
 from el_utils.map     import  Map, get_maps, map2exon
 from el_utils.tree    import  species_sort
 from el_utils.ncbi    import  taxid2trivial
@@ -506,8 +506,8 @@ def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_seq_n
 
         output_dna[name] = ""
 
-        prev_local_pos = -3
-        exon_ct        = -1
+        prev_local_pos   = -3
+        exon_ct          = -1
         for local_pos in local_bdry_position[name]+[len(full_aligned_pepseq)]:
 
             # find inserts
@@ -549,7 +549,6 @@ def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_seq_n
                 output_dna[name] += '-Z-'
  
             prev_local_pos = local_pos
-
 
     return output_dna
    
@@ -953,6 +952,137 @@ def remove_ghosts (output_pep, names_of_exons):
     return [output_pep, names_of_exons]
 
 
+#########################################
+def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
+                      mitochondrial, names_of_exons, alnmt_pep, output_pep, flank_length):
+    #########
+    
+    output_pep_new  = {}
+
+    # which exons correspond to which name?
+    [name_ct2exon_ct, exon_ct2name_ct] = name2count (output_pep, names_of_exons)
+    if not name_ct2exon_ct: 
+        return output_pep_new
+
+    # in the peptide alignment find exon positions that are  global exon boundaries, 
+    # and the ones that are local
+    [global_bdry_position, local_bdry_position] = find_exon_boundaries(output_pep)
+
+
+    output_pep_new = {}
+
+    # "insert" here will be the codon that we will always glue to the right of Z denoting the boundary
+    insert_global  = []
+    insert         = {}
+    for name  in output_pep.keys():
+       insert[name] = {}
+
+    for pos in global_bdry_position:
+        for name  in output_pep.keys():
+            insert[name][pos] = False
+
+    for name, full_aligned_pepseq in output_pep.iteritems():
+ 
+        prev_local_pos   = -3
+        exon_ct          = -1
+        prev_right_flank = ""
+        for local_pos in local_bdry_position[name]+[len(full_aligned_pepseq)]:
+
+            
+            human_seq      = output_pep['human'][prev_local_pos+3:local_pos]
+            pep_seq        = full_aligned_pepseq[prev_local_pos+3:local_pos]
+
+            exon_ct    += 1
+            name_ct     = exon_ct2name_ct[name][exon_ct]
+            if (name_ct < 0):
+                prev_right_flank = None
+                continue
+
+            exon_seq_name = names_of_exons[name][name_ct]
+            [species, exon_id, exon_known] = parse_aln_name(exon_seq_name)
+            exon_seqs     = get_exon_seqs(cursor, exon_id, exon_known, ensembl_db_name[species])[1:]
+
+            if not exon_seqs:
+                prev_right_flank = None
+                continue
+
+            [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
+             exon_right_flank, exon_dna_seq] = exon_seqs  
+
+
+            phase = get_exon_phase (cursor, exon_id, exon_known)
+
+
+            if phase > 0 and prev_right_flank:
+
+                offset    = (3-phase)%3
+                cary      = prev_right_flank[:phase]
+                tmp_patch = exon_left_flank.lower() + exon_dna_seq[:trsl_from]
+                flanking_nucleotides   = tmp_patch [-offset:]
+                codon                  = cary + flanking_nucleotides
+                [phase_suggested, res] = translate (codon, 0, mitochondrial, strip_stop = False)
+
+                if res: # we are going to have an insert here
+                    insert [name][prev_local_pos+3] = res
+                    if not (prev_local_pos+3) in insert_global:
+                        insert_global.append(prev_local_pos+3)
+
+
+            # so here are the ad-hoc rules we will use: we will say that we have a valid previous flank
+            # 1) the previous exon maps to previous human exon
+            #        we are mkaing sure that this is the case by setting prev_right_flank to None
+            #        if there is no mapping
+            # 2) the end of the previous exon agrees with the end of the previous human exon
+            # now check that the right ends of the exon match:
+            end_match = False
+            for i in range(len(human_seq)):
+                h = human_seq[-i]
+                p = pep_seq[-i]
+                if h == '-' and p == '-': continue
+                if not h == '-' and not p == '-':
+                    end_match = True
+                break
+            if end_match:
+                prev_right_flank  = exon_dna_seq [trsl_to:]
+                prev_right_flank += exon_right_flank.lower()
+            else:
+                pass
+
+            prev_local_pos = local_pos
+
+    #######################################################################
+    #rerun one more time - put in the inserts    
+
+    insert_global.append(len(full_aligned_pepseq))
+    insert_global.sort()
+
+
+    for name, full_aligned_pepseq in output_pep.iteritems():
+
+        pos                  = insert_global[0]
+        pep_seq              = full_aligned_pepseq[:pos]
+        output_pep_new[name] = pep_seq
+        prev_pos             = pos
+
+        for  pos in insert_global[1:]:
+            pep_seq        = full_aligned_pepseq[prev_pos:pos]
+
+            if prev_pos in insert[name].keys() and insert[name][prev_pos]:
+                for i in range(len(pep_seq)):
+                    if not pep_seq[i] == '-':  break
+                    output_pep_new[name] += '-'
+                output_pep_new[name] += insert[name][prev_pos]
+                output_pep_new[name] += pep_seq [i:]
+            
+            else:
+                output_pep_new[name] += "-"
+                output_pep_new[name] += pep_seq
+
+            prev_pos = pos
+
+    return output_pep_new
+   
+
 
 #########################################
 #########################################
@@ -994,9 +1124,9 @@ def make_alignments ( gene_list, db_info):
 
     # for each  gene in the provided list
     gene_ct = 0
-    gene_list.reverse()
+    #gene_list.reverse()
     for gene_id in gene_list:
-    #for gene_id in [418249]:
+    #for gene_id in [412667]:
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
 
@@ -1167,14 +1297,6 @@ def make_alignments ( gene_list, db_info):
             boundary_cleanup(output_pep, sorted_seq_names)
             output_pep = strip_gaps(output_pep)
 
-            # get rid of the ghost exons that do not correpond to anything in any other species
-            #[output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
-
-            afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-            ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
-            if not ret: continue
-            if verbose: print afa_fnm
-
         if (1):
             # >>>>>>>>>>>>>>>>>>
             output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
@@ -1184,17 +1306,31 @@ def make_alignments ( gene_list, db_info):
                 continue
 
             output_dna = strip_gaps(output_dna)
-
             afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
             ret = output_fasta (afa_fnm, sorted_seq_names, output_dna)
+            #if not ret: continue
+            if verbose: print afa_fnm
+
+
+        if (1):
+            # >>>>>>>>>>>>>>>>>>
+            output_pep = fix_split_codons (cursor, ensembl_db_name, cfg, acg, 
+                                           sorted_trivial_names, mitochondrial, names_of_exons,  
+                                           alnmt_pep, output_pep, flank_length)
+
+
+            afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+            ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
             if not ret: continue
 
             if verbose: print afa_fnm
+            
 
         #continue
 
         # notes to accompany the alignment:
         print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id)
+        
     return 
 
 
@@ -1202,7 +1338,7 @@ def make_alignments ( gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'enzymes'
+    special    = 'egfr_signaling'
     local_db   = False
     
     if local_db:
@@ -1251,4 +1387,19 @@ if __name__ == '__main__':
     #for gene_id in [389337]: #inositol polyphosphate-4-phosphatase
     #for gene_id in [418590]: # titin
     #for gene_id in [412362]: # complement component 1,s subcomponent
+
+
+                if verbose:
+                    print
+                    print "============================================================"
+                    print species
+                    print human_seq
+                    print pep_seq
+                    print " phase ", phase, " trsl_from ", trsl_from, " offset ", offset
+                    print " prev right flank ", prev_right_flank
+                    print " curr  left flank ", tmp_patch
+                    print cary, flanking_nucleotides, codon, res
+                    print prev_local_pos, " ---> ",  insert [name][prev_local_pos]
+
+
 '''

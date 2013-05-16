@@ -91,7 +91,16 @@ def output_fasta (filename, headers, sequence):
     for header  in  headers:
         if not sequence.has_key(header): continue
         print >> outf, ">"+header
-        print >> outf, sequence[header]
+        chunk_size   = 50
+        chunk_number =  1
+        while chunk_number*chunk_size <= len (sequence[header]):
+            start = (chunk_number-1)*chunk_size
+            end = start+chunk_size
+            print >> outf, sequence[header][start:end]
+            chunk_number += 1
+        if chunk_number*chunk_size > len (sequence[header]):
+            start = (chunk_number-1)*chunk_size
+            print >> outf, sequence[header][start:]
     outf.close()
 
     return True

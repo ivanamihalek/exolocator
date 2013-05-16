@@ -62,7 +62,7 @@ def translation_bounds(cursor, exon_id):
     return [seq_start, seq_end]
 
 #########################################
-def  translate (dna_seq, phase, mitochondrial=False):
+def  translate (dna_seq, phase, mitochondrial=False, strip_stop=True):
 
     pepseq = ""
     if phase < 0: phase = 0
@@ -73,10 +73,14 @@ def  translate (dna_seq, phase, mitochondrial=False):
     else:
         pepseq = dnaseq.translate().tostring()
 
-    if pepseq and pepseq[-1]=='*':
-        pepseq = pepseq[:-1]
-    if not '*' in pepseq:
+    if strip_stop: 
+        if pepseq and pepseq[-1]=='*':
+            pepseq = pepseq[:-1]
+        if not '*' in pepseq:
+            return [offset, pepseq]
+    elif not '*' in pepseq[:-1]:
         return [offset, pepseq]
+
 
     phase = (phase+1)%3
     offset = phase2offset(phase)
@@ -86,10 +90,14 @@ def  translate (dna_seq, phase, mitochondrial=False):
     else:
         pepseq = dnaseq.translate().tostring()
     
-    if pepseq and  pepseq[-1]=='*':
-        pepseq = pepseq[:-1]
-    if not '*' in pepseq:
+    if strip_stop: 
+        if pepseq and pepseq[-1]=='*':
+            pepseq = pepseq[:-1]
+        if not '*' in pepseq:
+            return [offset, pepseq]
+    elif not '*' in pepseq[:-1]:
         return [offset, pepseq]
+
 
     phase = (phase+1)%3
     offset = phase2offset(phase)
@@ -99,8 +107,14 @@ def  translate (dna_seq, phase, mitochondrial=False):
     else:
         pepseq = dnaseq.translate().tostring()
     
-    if pepseq and  pepseq[-1]=='*':
-        pepseq = pepseq[:-1]
+
+    if strip_stop: 
+        if pepseq and pepseq[-1]=='*':
+            pepseq = pepseq[:-1]
+        if not '*' in pepseq:
+            return [offset, pepseq]
+    elif not '*' in pepseq[:-1]:
+        return [offset, pepseq]
     if not '*' in pepseq:
         return [offset, pepseq]
 

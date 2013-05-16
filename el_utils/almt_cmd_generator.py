@@ -65,6 +65,11 @@ class AlignmentCommandGenerator(object):
         self.sw_sharp       = self.configReader.get_path('sw#')
         self._check_exists(self.sw_sharp)
 
+        # usearch
+        self.usearch       = self.configReader.get_path('usearch')
+        self._check_exists(self.usearch)
+
+        
         # hacked blast, to be used by swsharp to align exons while respecting the boundaries
         self.blosum_matrix  = "{0}/{1}".format(self.configReader.get_path('resources'),
                                                self.configReader.get_value('blosum_hacked'))
@@ -158,6 +163,14 @@ class AlignmentCommandGenerator(object):
             
         return cmd
 
+    
+    def generate_usearch_nt (self, query_sequence_file, target_fasta_db_file, output_file,
+                             identity="0.5", strand="plus"):
+        # strand can also be both
+        cmd = "{0} -threads 1   -search_local {1}  -db {2}  -alnout {3} -id {4} -strand {5}  ". \
+            format(self.usearch, query_sequence_file, target_fasta_db_file, output_file,
+                   identity, strand)
+        return cmd
     
     def generate_SW_nt (self, query_sequence_file, target_fasta_db_file, 
                              output_file = None, supress_stdout = False):

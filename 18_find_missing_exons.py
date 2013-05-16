@@ -316,112 +316,6 @@ def get_fasta (acg, species, searchname, searchfile, searchstrand, searchstart, 
 
     return fasta
 
-#########################################
-def sw_search(acg, species,  prev_seq_region, next_seq_region, template_seq):
-
-    resulststr  = None
-    searchstr   = None
-    searchstart = None
-    ###########################################################
-    # determine the search region, adn extract it using fastascmd
-
-    if not next_seq_region and not prev_seq_region:
-        print "no regions specified in sw_searc()"
-        return [resulststr, searchstr, searchstart]
-    
-    if not prev_seq_region:
-        searchname   = next_seq_region.name
-        searchfile   = next_seq_region.filename
-        searchstrand = next_seq_region.strand
-        if searchstrand==1:
-            searchstart = next_seq_region.start - MAX_SEARCH_LENGTH
-            searchend   = next_seq_region.start
-        else:
-            searchstart = next_seq_region.end
-            searchend   = next_seq_region.end   + MAX_SEARCH_LENGTH
-
-    elif not next_seq_region:
-        searchname   = prev_seq_region.name
-        searchfile   = prev_seq_region.filename
-        searchstrand = prev_seq_region.strand
-
-        if searchstrand==1:
-            searchstart = prev_seq_region.end
-            searchend   = prev_seq_region.end   + MAX_SEARCH_LENGTH
-        else:
-            searchstart = prev_seq_region.start - MAX_SEARCH_LENGTH
-            searchend   = prev_seq_region.start
-
-    else:
-        if prev_seq_region.name == next_seq_region.name:
-            searchname =  prev_seq_region.name
-        else:
-            print "prev_seq_region.name != next_seq_region.name ",  
-            print prev_seq_region.name,  next_seq_region.name
-            print "(cannot handle such cases yet)"
-            return [resulststr, searchstr, searchstart]
-
-        if prev_seq_region.filename == next_seq_region.filename:
-            searchfile =  prev_seq_region.filename
-        else:
-            print "prev_seq_region.filename != next_seq_region.filename ",  
-            print prev_seq_region.filename,  next_seq_region.filename
-            print "(cannot handle such cases yet)"
-            return [resulststr, searchstr, searchstart]
-
-        if prev_seq_region.strand == next_seq_region.strand:
-            searchstrand = prev_seq_region.strand
-        else:
-            print "prev_seq_region.strand != next_seq_region.strand ",  
-            print prev_seq_region.strand,  next_seq_region.strand
-            print "(cannot handle such cases yet)"
-            return [resulststr, searchstr, searchstart]
-
-        searchstart = prev_seq_region.end
-        searchend   = next_seq_region.start
-
-        if searchstart > searchend: # we are on the other strand
-            searchstart = next_seq_region.end
-            searchend   = prev_seq_region.start
-    
-    if searchstart < 1: searchstart=1
-
-    searchtmp = NamedTemporaryFile(delete=True)
-    querytmp  = NamedTemporaryFile(delete=True)
-
-    ###########################################################
-    # extract search region  using fastacmd
-    fasta = get_fasta (acg, species, searchname, searchfile, searchstrand, searchstart, searchend)
-    if not fasta: return [resulststr, searchstr, searchstart]
-    searchtmp.write(fasta)
-    searchtmp.flush()
-
-    ###########################################################
-    # Write out query sequences(? how many of them?)
-    querytmp.write(">{0}\n{1}\n".format("query", template_seq)) # dna_seq
-    querytmp.flush()
-
-    ###########################################################
-    # do  SW# search
-    swsharpcmd = acg.generate_SW_nt(querytmp.name, searchtmp.name)
-    #print swsharpcmd
-
-
-    resultstr  = commands.getoutput (swsharpcmd)
-    searchtmp.close()
-    querytmp.close()
-
-    #print fasta
-    #print resultstr
-    #print 
-    #print
-    #exit(1)
-
-    ###########################################################
-    # give me that sequence,  now that you have it    
-    searchseq = "".join(fasta.splitlines()[1:])
-
-    return [resultstr, searchseq, searchstart]
 
     
 #########################################
@@ -550,47 +444,6 @@ def patch_aligned_seq (aligned_target_seq, aligned_template_seq,  template_start
     patch_failure = False
     return [patch_failure, patched_target_seq, patched_positions]
 
-
-#########################################
-def parse_sw_output (resultstr):
-		    
-    best_match = None
-    longest    = -1
-
-    for r in (f.splitlines() for f in resultstr.split("#"*80+"\n")):
-        
-        if len(r) < 14: continue # Skip blank or malformed results
-
-        # Parse result
-        seqlen = min(int(re.split('\D+',r[1])[1]),int(re.split('\D+',r[3])[1]))
-        identity, matchlen = map(int, re.split('\D+', r[7])[1:3])
-        #similarity = int(re.split('\D+',r[8])[1])
-        #gaps       = int(re.split('\D+',r[9])[1])
-        #score      = float(r[10].split()[1])
-
-        
-        # Reject if identity too low or too short -- seqlen is the length of the query
-        if identity < 0.4*seqlen or identity < 10: continue
-
-        # FOUND AN EXON!
-        # ... but lets keep what might be the best match
-        if matchlen > longest:
-            longest = matchlen
-            [search_start, search_end, template_start, template_end] = map(int,re.split('\D+',r[6])[1:5])
-
-            aligned_qry_seq = ""
-            for row in r[13::3]: # every third row
-                seq = re.split('\s+',row)[2]
-                aligned_qry_seq += seq
-            aligned_target_seq = ""
-            for row in r[12::3]: # every third row
-                seq = re.split('\s+',row)[2]
-                aligned_target_seq += seq
-            best_match = [search_start-1, search_end-1, template_start-1, template_end-1, 
-                          aligned_target_seq, aligned_qry_seq]
-
-    return best_match 
-
 #########################################
 def translation_check ( searchseq, match_start, match_end, mitochondrial, pepseq):
     if not pepseq == translate(searchseq, match_start, match_end, mitochondrial):
@@ -599,6 +452,79 @@ def translation_check ( searchseq, match_start, match_end, mitochondrial, pepseq
         print translate(searchseq, match_start, match_end, mitochondrial)
         return False
     return True
+
+
+#########################################
+def find_search_region (acg, species,  prev_seq_region, next_seq_region):
+
+    # determine the search region, and extract it using fastacmd
+    if not next_seq_region and not prev_seq_region:
+        print "no regions specified in sw_searc()"
+        return []
+    
+    if not prev_seq_region:
+        searchname   = next_seq_region.name
+        searchfile   = next_seq_region.filename
+        searchstrand = next_seq_region.strand
+        if searchstrand==1:
+            searchstart = next_seq_region.start - MAX_SEARCH_LENGTH
+            searchend   = next_seq_region.start
+        else:
+            searchstart = next_seq_region.end
+            searchend   = next_seq_region.end   + MAX_SEARCH_LENGTH
+
+    elif not next_seq_region:
+        searchname   = prev_seq_region.name
+        searchfile   = prev_seq_region.filename
+        searchstrand = prev_seq_region.strand
+
+        if searchstrand==1:
+            searchstart = prev_seq_region.end
+            searchend   = prev_seq_region.end   + MAX_SEARCH_LENGTH
+        else:
+            searchstart = prev_seq_region.start - MAX_SEARCH_LENGTH
+            searchend   = prev_seq_region.start
+
+    else:
+        if prev_seq_region.name == next_seq_region.name:
+            searchname =  prev_seq_region.name
+        else:
+            print "prev_seq_region.name != next_seq_region.name ",  
+            print prev_seq_region.name,  next_seq_region.name
+            print "(cannot handle such cases yet)"
+            return []
+
+        if prev_seq_region.filename == next_seq_region.filename:
+            searchfile =  prev_seq_region.filename
+        else:
+            print "prev_seq_region.filename != next_seq_region.filename ",  
+            print prev_seq_region.filename,  next_seq_region.filename
+            print "(cannot handle such cases yet)"
+            return []
+
+        if prev_seq_region.strand == next_seq_region.strand:
+            searchstrand = prev_seq_region.strand
+        else:
+            print "prev_seq_region.strand != next_seq_region.strand ",  
+            print prev_seq_region.strand,  next_seq_region.strand
+            print "(cannot handle such cases yet)"
+            return []
+
+        searchstart = prev_seq_region.end
+        searchend   = next_seq_region.start
+
+        if searchstart > searchend: # we are on the other strand
+            searchstart = next_seq_region.end
+            searchend   = prev_seq_region.start
+    
+    if searchstart < 1: searchstart=1
+
+    ###########################################################
+    # extract search region  using fastacmd
+    fasta = get_fasta (acg, species, searchname, searchfile, searchstrand, searchstart, searchend)
+
+
+    return [fasta]
 
 
 #########################################
@@ -646,6 +572,205 @@ def organize_and_store_sw_exon (cursor, ensembl_db_name, species, gene_id,
     return [left_flank, right_flank, has_stop, sw_exon_id]
 
 
+
+#########################################
+def sw_search (acg, querytmp, fasta):
+
+    resultstr  = ""
+
+    # save fasta (temporarily)
+    searchtmp = NamedTemporaryFile(delete=True)
+    searchtmp.write(fasta)
+    searchtmp.flush()
+
+    # do  SW# search
+    swsharpcmd = acg.generate_SW_nt(querytmp.name, searchtmp.name)
+    resultstr  = commands.getoutput (swsharpcmd)
+    searchtmp.close()
+
+    print swsharpcmd
+
+    if 'Segmentation' in  resultstr:
+        print swsharpcmd
+        print  " ** ", resultstr
+        resultstr = ""
+
+    return resultstr
+
+
+#########################################
+def usearch (acg, querytmp, fasta):
+
+    resultstr  = ""
+
+    # save fasta (temporarily)
+    searchtmp = NamedTemporaryFile(delete=True)
+
+    # chop up fasta into pieces that are smaller than 50k
+    searchseq = "\n".join(fasta.splitlines()[1:])
+    
+    total_length = 0
+    outstr = ""
+    chunksize = 15000
+
+    print  total_length, len(searchseq)
+
+    while total_length < len(searchseq):
+
+        if (total_length+chunksize >= len(searchseq)):
+            upper_bound   = len(searchseq)
+        else:
+            upper_bound   = total_length+chunksize
+
+        outstr += ">piece_%d_%d"% (total_length, upper_bound)
+        outstr += "\n"
+        outstr += searchseq[total_length:upper_bound]
+        if not outstr[-1] == '\n': outstr += "\n"
+   
+        total_length += chunksize
+
+
+    total_length = 10000
+    while total_length < len(searchseq):
+
+        if (total_length+chunksize >= len(searchseq)):
+            upper_bound   = len(searchseq)
+        else:
+            upper_bound   = total_length+chunksize
+
+        outstr += ">piece_%d_%d"% (total_length, upper_bound)
+        outstr += "\n"
+        outstr += searchseq[total_length:upper_bound]
+        if not outstr[-1] == '\n': outstr += "\n"
+   
+        total_length += chunksize
+
+
+
+    searchtmp.write(outstr)
+    searchtmp.flush()
+
+    # 
+    outtmp = NamedTemporaryFile(delete=True)
+
+    # do  usearch
+    cmd = acg.generate_usearch_nt (querytmp.name, searchtmp.name, outtmp.name)
+    
+
+    resultstr  = commands.getoutput (cmd)
+    searchtmp.close()
+
+    # what happens if the search fails?
+    resultstr =  commands.getoutput ("cat "+ outtmp.name)
+    outtmp.close()
+
+    if 'Segmentation' in  resultstr:
+        print  cmd
+        print  " ** ", resultstr
+        resultstr = ""
+
+    return resultstr
+
+
+#########################################
+def parse_sw_output (resultstr):
+		    
+    best_match = None
+    longest    = -1
+
+    for r in (f.splitlines() for f in resultstr.split("#"*80+"\n")):
+        
+        if len(r) < 14: continue # Skip blank or malformed results
+
+        # Parse result
+        seqlen = min(int(re.split('\D+',r[1])[1]),int(re.split('\D+',r[3])[1]))
+        identity, matchlen = map(int, re.split('\D+', r[7])[1:3])
+        #similarity = int(re.split('\D+',r[8])[1])
+        #gaps       = int(re.split('\D+',r[9])[1])
+        #score      = float(r[10].split()[1])
+
+        
+        # Reject if identity too low or too short -- seqlen is the length of the query
+        if identity < 0.4*seqlen or identity < 10: continue
+
+        # FOUND AN EXON!
+        # ... but lets keep what might be the best match
+        if matchlen > longest:
+            longest = matchlen
+            [search_start, search_end, template_start, template_end] = map(int,re.split('\D+',r[6])[1:5])
+
+            aligned_qry_seq = ""
+            for row in r[13::3]: # every third row
+                seq = re.split('\s+',row)[2]
+                aligned_qry_seq += seq
+            aligned_target_seq = ""
+            for row in r[12::3]: # every third row
+                seq = re.split('\s+',row)[2]
+                aligned_target_seq += seq
+            best_match = [search_start-1, search_end-1, template_start-1, template_end-1, 
+                          aligned_target_seq, aligned_qry_seq]
+
+    return best_match 
+
+
+#########################################
+def parse_usearch_output (resultstr):
+		    
+    best_match = None
+    longest    = -1
+
+    reading = False
+    lines  =  resultstr.split("\n")
+
+    for lineno in range( len(lines)):
+        
+        if 'Evalue' in line[lineno]: # the sult is in the previous couple of lines
+
+
+
+        # Parse result
+        #seqlen = min(int(re.split('\D+',r[1])[1]),int(re.split('\D+',r[3])[1]))
+        #identity, matchlen = map(int, re.split('\D+', r[7])[1:3])
+
+        
+        # Reject if identity too low or too short -- seqlen is the length of the query
+        #if identity < 0.4*seqlen or identity < 10: continue
+
+        # FOUND AN EXON!
+        # ... but lets keep what might be the best match
+        #if matchlen > longest:
+        #    longest = matchlen
+        #    [search_start, search_end, template_start, template_end] = map(int,re.split('\D+',r[6])[1:5])
+        #    
+        #    aligned_qry_seq = ""
+        #    for row in r[13::3]: # every third row
+        #        seq = re.split('\s+',row)[2]
+        #        aligned_qry_seq += seq
+        #    aligned_target_seq = ""
+        #    for row in r[12::3]: # every third row
+        #        seq = re.split('\s+',row)[2]
+        #        aligned_target_seq += seq
+        #    best_match = [search_start-1, search_end-1, template_start-1, template_end-1, 
+        #                  aligned_target_seq, aligned_qry_seq]
+
+    return best_match 
+
+
+#########################################
+def brute_force_search(acg, querytmp, fasta ):
+
+    if 0:
+        resultstr = sw_search (acg, querytmp, fasta)
+        match = parse_sw_output(resultstr)
+    else:
+        resultstr = usearch (acg, querytmp, fasta)
+        match = parse_usearch_output(resultstr)
+
+
+
+    return match
+
+
 #########################################
 def search_and_store (cursor, ensembl_db_name, acg, human_exon, old_maps,  species, gene_id, gene_coords, 
                       prev_seq_region, next_seq_region, template_info, mitochondrial):
@@ -653,22 +778,52 @@ def search_and_store (cursor, ensembl_db_name, acg, human_exon, old_maps,  speci
     matching_region = None
 
     [template_species, template_exon_seq_id, template_dna, template_pepseq, template_similarity_to_human] = template_info
+    
+    # Write out query sequences
+    querytmp  = NamedTemporaryFile(delete=False)
+    querytmp.write(">{0}\n{1}\n".format("query", template_dna)) # dna_seq
+    querytmp.flush()
 
-    # do sw search
-    [resultstr, searchseq, search_start] = sw_search (acg, species, prev_seq_region, next_seq_region, template_dna)
-    if not resultstr: return matching_region
+    # find the search region
+    ret = find_search_region (acg, species,  prev_seq_region, next_seq_region)
+    if not ret: 
+        print "no search region "
+        exit(1)
+        return matching_region
+    [fasta] = ret
+    if not fasta: 
+        print "no search region (fasta empty)"
+        exit(1)
+        return matching_region
+        
+    # give me that sequence,  now that you have it    
+    searchseq = "".join(fasta.splitlines()[1:])
+    # does the search region contain NNNN?
+    searchseq_contains_NNN = ('NNN' in searchseq)
 
-    # parse the output
-    match = parse_sw_output(resultstr)
-    if not match: return matching_region
-    [match_start, match_end, template_start, template_end, 
-     aligned_target_seq, aligned_template_seq] = match
+ 
+    # do brute force search 
+    match = brute_force_search(acg, querytmp, fasta)
+
+
+    if  match: 
+        [match_start, match_end, template_start, template_end, 
+         aligned_target_seq, aligned_template_seq] = match
+    else: 
+        print "no match "
+        exit(1)
+        return matching_region
+        
+    querytmp.close()
 
     # patch isolated gaps == keep track of the positions that are patched
     [patch_failure, patched_target_seq, patched_positions] = patch_aligned_seq (aligned_target_seq, 
                                                                                 aligned_template_seq, 
                                                                                 template_start, mitochondrial)
-    if patch_failure: return matching_region
+    if patch_failure: 
+        print "patching failure "
+        exit(1)
+        return matching_region
 
     # how different is translation from the translated template?
     # align in all three frames and pick one which is the most similar to the template 
@@ -726,7 +881,7 @@ def search_and_store (cursor, ensembl_db_name, acg, human_exon, old_maps,  speci
         else:
             print "not stored"
         print 
-
+        exit(1)
     return matching_region
 
 #########################################
@@ -987,7 +1142,7 @@ def find_missing_exons(human_gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'cell_cycle_checkpoints'
+    special    = 'telomere_maintenance'
 
     local_db   = False
 
