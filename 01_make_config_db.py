@@ -222,12 +222,6 @@ def  feed_trivial_names (cursor, all_species):
 def main():
 
     
-    util_path = {}
-    util_path['mafft']    = '/usr/bin/mafft'
-    util_path['blastall'] = '/usr/bin/blastall'
-    util_path['fastacmd'] = '/usr/bin/fastacmd'
-    util_path['sw#']      = '/usr/bin/swsharp'
-    util_path['usearch']  = '/usr/bin/usearch'
 
     dir_path = {}
     dir_path['ensembl_fasta'] = '/mnt/ensembl-mirror/release-69/fasta'
@@ -237,6 +231,18 @@ def main():
     dir_path['resources']  = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
     dir_path['resources'] += 'pypeworks/exolocator/resources'
     dir_path['scratch']    = '/tmp'
+    dir_path['maxentscan']   = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
+    dir_path['maxentscan']  += 'pypeworks/exolocator/pl_utils/maxentscan'
+
+    util_path = {}
+    util_path['mafft']    = '/usr/bin/mafft'
+    util_path['blastall'] = '/usr/bin/blastall'
+    util_path['fastacmd'] = '/usr/bin/fastacmd'
+    util_path['sw#']      = '/usr/bin/swsharp'
+    util_path['usearch']  = '/usr/bin/usearch'
+    util_path['score3']   = dir_path['maxentscan'] + '/score3.pl'
+    util_path['score5']   = dir_path['maxentscan'] + '/score5.pl'
+
     parameter = {}
     parameter['blastp_e_value'] = "1.e-10" # it will be used as a string  when fmting the blastp cmd
     parameter['blosum_hacked']  = "blosum_hacked.txt" # filename, to be found in resources

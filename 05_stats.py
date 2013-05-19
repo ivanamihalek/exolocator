@@ -61,8 +61,9 @@ def make_map_table (cursor, ensembl_db_name, all_species, human_exons):
     for he in human_exons:
         maps_for_exon[he] =  get_maps(cursor, ensembl_db_name, he.exon_id, he.is_known) # exon data
         for m in maps_for_exon[he]:
-           if m.similarity < 0.7: continue
-           map_table[m.species_2][he] = m
+            if not m.source == 'ensembl': continue
+            if m.similarity < 0.5: continue
+            map_table[m.species_2][he] = m
            #if m.source =='sw_sharp': print m.source
     # get rid of species that do not have the gene at all
     for species in all_species:
@@ -87,7 +88,7 @@ def exon_stats (cursor, ensembl_db_name, all_species,human_gene_list):
     table_size = 0
     holes      = 0
     from_sw_sharp = 0
-
+    from_usearch  = 0
 
     for human_gene_id in human_gene_list:
     #for ct in range (500):
@@ -112,6 +113,8 @@ def exon_stats (cursor, ensembl_db_name, all_species,human_gene_list):
                     holes += 1
                 elif map_table[species][he].source =='sw_sharp':
                     from_sw_sharp += 1
+                elif map_table[species][he].source =='usearch':
+                    from_usearch  += 1
 
         #if table_size and holes: print " % 4d  %4d  %5.2f   %5.2e " %  \
         #    (table_size, holes,  float(holes+from_sw_sharp)/table_size, float(from_sw_sharp)/holes)

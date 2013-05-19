@@ -37,6 +37,7 @@ class Map:    # this particular map is between exons
         self.similarity         = None
         self.bitmap             = None
         self.source             = None
+        self.warning            = None
 
     ###################################
     def load_from_db (self, db_row, cursor, paralogue=False):
@@ -45,10 +46,11 @@ class Map:    # this particular map is between exons
             [exon_map_id, exon_id, cognate_exon_id,  
              exon_known, cognate_exon_known,  
              cigar_line, similarity, source, msa_bitmap] = db_row
+            warning = None
         else:
             [exon_map_id, exon_id, cognate_exon_id,  
              exon_known, cognate_exon_known, cognate_genome_db_id, 
-             cigar_line, similarity, source, msa_bitmap] = db_row
+             cigar_line, similarity, source, msa_bitmap, warning] = db_row
             self.species_2      = genome_db_id2species (cursor,  cognate_genome_db_id)
 
         self.exon_id_1          = exon_id
@@ -59,6 +61,7 @@ class Map:    # this particular map is between exons
         self.similarity         = similarity
         self.source             = source
         self.bitmap             = msa_bitmap
+        self.warning            = warning
        
 #########################################
 def get_maps(cursor, ensembl_db_name, exon_id, is_known, species = 'homo_sapiens', table='exon_map'):

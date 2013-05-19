@@ -259,6 +259,10 @@ def get_description (cursor, gene_id, db_name = None):
 
 #########################################
 def get_logic_name(cursor, analysis_id, db_name = None):
+
+    if analysis_id < 0:
+        return ''
+
     if (db_name):
         if not switch_to_db(cursor, db_name):
             return False

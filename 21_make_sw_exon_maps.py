@@ -260,10 +260,16 @@ def maps_evaluate (cursor, ensembl_db_name, human_exons, ortho_exons, aligned_se
 
                 map.exon_known_1 = human_exons[human_exon_ct].is_known
                 map.exon_known_2 = ortho_exons[ortho_exon_ct].is_known
-                map.source       = 'sw_sharp' if ortho_exons[ortho_exon_ct].analysis_id < 0 else 'ensembl'
+
+                if ortho_exons[ortho_exon_ct].analysis_id == -1:
+                    map.source   = 'sw_sharp' 
+                elif ortho_exons[ortho_exon_ct].analysis_id == -2:
+                    map.source   = 'usearch' 
+                else:
+                    map.source   = 'ensembl'
 
                 exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end].replace('#','-')
-                exon_seq_other   = aligned_seq[other_species][other_start:other_end].replace('#','-')
+                exon_seq_other   =  aligned_seq[other_species][other_start:other_end].replace('#','-')
                 [seq_human, seq_other] = pad_the_alnmt (exon_seq_human,human_start,
                                                         exon_seq_other, other_start)
 
@@ -439,7 +445,7 @@ def gene_has_a_map (cursor, ensembl_db_name, human_exons):
     return has_a_map
 
 #########################################
-def exonify(cursor, ensembl_db_name, row_from_sw_exon_table):
+def exonify(cursor, ensembl_db_name, row_from_sw_exon_table, method):
 
     exon = Exon()
     
@@ -458,15 +464,22 @@ def exonify(cursor, ensembl_db_name, row_from_sw_exon_table):
     exon.exon_seq_id         = exon_seq_id
     exon.strand              = strand
     exon.phase               = phase
-    exon.is_known            = 2 # arbitrary index, used to indicate sw_sharp findings here
     exon.is_coding           = 1 if (human_coding and not has_stop) else 0
     exon.is_canonical        = 0
     exon.is_constitutive     = 0
     exon.covering_exon       = -1
     exon.covering_exon_known = -1 
-    exon.analysis_id         = -1
 
- 
+    if method == 'sw_sharp':
+        exon.is_known        =  2 # arbitrary index, used to indicate sw_sharp findings here
+        exon.analysis_id     = -1
+    elif  method == 'usearch':
+        exon.is_known        =  3 # arbitrary index, used to indicate usearch  findings 
+        exon.analysis_id     = -2
+    else:
+        exon.is_known        =  0 
+        exon.analysis_id     =  0
+        
 
     return exon
 
@@ -491,7 +504,7 @@ def maps_for_gene_list(gene_list, db_info):
     ct                = 0
     no_maps           = 0
 
-
+    #######################################
     for gene_id in gene_list:
 
         ct += 1
@@ -519,22 +532,24 @@ def maps_for_gene_list(gene_list, db_info):
             for human_exon in human_exons:
                 switch_to_db (cursor, db_name)
 
-                # sw exons 
-                qry  = "select * from sw_exon "
-                qry += " where maps_to_human_exon_id = %d " % human_exon.exon_id
-                rows = search_db (cursor, qry)
-                if not rows: continue
+                # novel exon
+                for table in ['sw_exon', 'usearch_exon']:
+                    method = 'sw_sharp' if table=='sw_exon' else 'usearch'
+                    qry  = "select * from %s " % table
+                    qry += " where maps_to_human_exon_id = %d " % human_exon.exon_id
+                    rows = search_db (cursor, qry)
+                    if not rows: continue
 
-                for row in rows:
-                    # turn them to actual exon objects
-                    exon = exonify (cursor, ensembl_db_name, row)
-                    if not ortho_gene_id:
-                        ortho_gene_id = exon.gene_id
-                    elif not ortho_gene_id == exon.gene_id:
-                        print "funny error in gene assignment ..."
-                        continue
-                    if not exon.is_coding: continue
-                    ortho_exons.append(exon)
+                    for row in rows:
+                        # turn them to actual exon objects
+                        exon = exonify (cursor, ensembl_db_name, row, method)
+                        if not ortho_gene_id:
+                            ortho_gene_id = exon.gene_id
+                        elif not ortho_gene_id == exon.gene_id:
+                            print "funny error in gene assignment ..."
+                            continue
+                        #if not exon.is_coding: continue ? whats this?
+                        ortho_exons.append(exon)
 
             if not ortho_exons: continue
       
@@ -558,8 +573,8 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
-    special    = 'cell_cycle_checkpoints'
+    no_threads = 10
+    special    = 'telomere_maintenance'
 
     local_db   = False
 

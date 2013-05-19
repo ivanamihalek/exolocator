@@ -2,19 +2,21 @@
 
 import MySQLdb
 import commands
-from   el_utils.mysql   import  connect_to_mysql, search_db, store_or_update
-from   el_utils.ensembl import  get_species, get_gene_ids, get_logic_name
-from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl, gene2exon_list
+from   el_utils.mysql   import  *  
+from   el_utils.ensembl import  * 
+from   el_utils.utils   import  *
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
+from   el_utils.special_gene_sets  import  get_theme_ids
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
+from   el_utils.config_reader      import ConfigurationReader
 
 #########################################
 def get_gene_region (cursor, gene_id, is_known=None):
 
-    qry     = "SELECT seq_region_id, seq_region_start, seq_region_end, "
+    qry     = "select seq_region_id, seq_region_start, seq_region_end, "
     qry    += " seq_region_strand "
-    qry    += " FROM gene WHERE gene_id=%d"  %  gene_id
+    qry    += " from  gene  where  gene_id=%d"  %  gene_id
     if (not is_known is None and is_known):
         qry  += " and  status='known' "
     rows    = search_db (cursor, qry, verbose=False)
@@ -31,8 +33,8 @@ def get_gene_region (cursor, gene_id, is_known=None):
 #########################################
 def get_canonical_transcript_id (cursor, gene_id):
 
-    qry     = "SELECT canonical_transcript_id"
-    qry    += " FROM gene WHERE gene_id=%d"  %  gene_id
+    qry     = "select canonical_transcript_id"
+    qry    += " from  gene where gene_id=%d"  %  gene_id
     rows    = search_db (cursor, qry, verbose=False)
 
     if (not rows):
@@ -119,14 +121,36 @@ def get_predicted_exons (cursor, gene_id, species):
  
     return exons
 
+#########################################
+def get_novel_exons (cursor, gene_id, table):
+
+    exons = []
+
+    qry  = "select * from %s " % table
+    qry += " where gene_id = %d " % gene_id
+    rows = search_db (cursor, qry)
+    if not rows: return exons
+
+    for row in rows:
+        exon         = Exon()
+        exon.load_from_novel_exon (row, table)
+        exons.append(exon)
+    return exons
+
 
 #########################################
 def get_exons (cursor, gene_id, species, table):
 
-    if ( table == 'exon'):
+    if (table == 'exon'):
         return get_known_exons (cursor, gene_id, species)
-    else:
+    elif (table == 'prediction_exon'):
         return get_predicted_exons (cursor, gene_id, species)
+    elif (table == 'sw_exon'):
+        return get_novel_exons (cursor, gene_id, table)
+    elif (table == 'usearch_exon'):
+        return get_novel_exons (cursor, gene_id, table)
+
+    return []
 
 
 #########################################
@@ -207,8 +231,6 @@ def  mark_canonical (cursor, gene_id, exons):
        if (exon.exon_id in canonical_ids):
            exon.is_canonical = 1
 
-
-            
 #########################################
 def fill_in_annotation_info (cursor, gene_id, exons):
 
@@ -361,6 +383,7 @@ def find_master (exon_1, exon_2, is_ensembl, is_havana):
     canonical_exon = None
     superset_exon  = None
     known_exon     = None
+    novel_exon     = None
 
     exon_start_1 = exon_1.start_in_gene
     exon_end_1   = exon_1.end_in_gene
@@ -395,8 +418,17 @@ def find_master (exon_1, exon_2, is_ensembl, is_havana):
     elif (exon_2.is_known and not exon_1.is_known):
         known_exon = exon_2
 
+    if (exon_1.is_known<2 and not exon_2.is_known<2):
+        novel_exon = exon_2
+    elif (exon_2.is_known<2  and not exon_1.is_known<2 ):
+        novel_exon = exon_1
+
+
+
     if havana_exon     is not None:
         master_exon = havana_exon
+    elif novel_exon is not None:
+        master_exon = novel_exon
     elif canonical_exon is not None:
         master_exon = canonical_exon
     elif ensembl_exon  is not None:
@@ -508,6 +540,8 @@ def find_exons (cursor, gene_id, species):
     # get all exons from the 'predicted_exon' table
     if (not species == 'homo_sapiens'):
         exons += get_exons  (cursor, gene_id, species, 'prediction_exon')
+        exons += get_exons  (cursor, gene_id, species, 'sw_exon')
+        exons += get_exons  (cursor, gene_id, species, 'usearch_exon')
     # mark the exons belonging to canonical transcript
     mark_canonical          (cursor, gene_id, exons)
     # get annotation info
@@ -516,6 +550,7 @@ def find_exons (cursor, gene_id, species):
     sort_out_covering_exons (cursor, exons)
     # mark coding exons
     mark_coding (cursor, gene_id, species, exons)
+    
 
     return exons
 
@@ -550,7 +585,7 @@ def store_exon (cursor, exon):
 
 
 #########################################
-def gene2exon(species_list, db_info):
+def gene2exon_all(species_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
     if local_db:
@@ -560,7 +595,6 @@ def gene2exon(species_list, db_info):
     cursor = db.cursor()
 
     for species in species_list:
-    #for species in ['dipodomys_ordii']:
 
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
@@ -571,14 +605,9 @@ def gene2exon(species_list, db_info):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
         number_of_genes = len(gene_ids)
-        ct = 0
+
         for gene_id in gene_ids:
-            ct += 1 
-            if not ct%100:
-                print  "%s  %5d    (%5.2f) " % (species, ct, float(ct)/number_of_genes)
-            # see if we looked into this gene already
-            #if (gene2exon_list(cursor, gene_id, db_name=ensembl_db_name[species])):
-            #    continue
+
             # find all exons associated with the gene id 
             exons = find_exons (cursor, gene_id, species)
             if (not exons):
@@ -593,6 +622,45 @@ def gene2exon(species_list, db_info):
 
     return True
 
+#########################################
+def gene2exon_orthologues(gene_list, db_info):
+
+    [local_db, ensembl_db_name] = db_info
+    if local_db:
+        db = connect_to_mysql()
+    else:
+        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    cursor = db.cursor()
+
+    for gene_id in gene_list:
+
+        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+        orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
+        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+        orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
+
+        for [ortho_gene_id, ortho_species] in orthologues:
+
+            switch_to_db (cursor, ensembl_db_name[ortho_species])
+
+            # find all exons associated with the gene id 
+            exons = find_exons (cursor, ortho_gene_id, ortho_species)
+            if (not exons):
+                print gene2stable (cursor, gene_id = ortho_gene_id), " no exons found for", ortho_species
+                print 
+                exit (1)  # if I got to here in the pipeline this shouldn't happen
+   
+            # store into gene2exon table
+            for exon in exons:
+                store_exon (cursor, exon)
+
+        print " %8.3f " %  (float( int(gene_list.index(gene_id)) +1 )/len(gene_list))
+
+    cursor.close()
+    db.close()
+
+    return True
+
 
 
 #########################################
@@ -600,19 +668,32 @@ def main():
 
     no_threads = 1
     local_db   = False
+    special    = 'telomere_maintenance'
 
     if local_db:
-        db     = connect_to_mysql()
+        db  = connect_to_mysql()
+        cfg = ConfigurationReader()
     else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
+
     [all_species, ensembl_db_name] = get_species (cursor)
+    if special:
+        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+        
     cursor.close()
     db    .close()
-    
-    parallelize (no_threads, gene2exon, all_species,  [local_db, ensembl_db_name])
 
-
+    # two version of the main loop:
+    # 1) over all species, and all genes in each speceis
+    if not special:
+        parallelize (no_threads, gene2exon_all, all_species,  [local_db, ensembl_db_name])
+    # 2) over orthologues for a given list of genes
+    else:
+        print "using", special, "set"
+        parallelize (no_threads, gene2exon_orthologues, gene_list,  [local_db, ensembl_db_name])
+        
 
 #########################################
 if __name__ == '__main__':

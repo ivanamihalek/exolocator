@@ -58,15 +58,15 @@ class AlignmentCommandGenerator(object):
         self.blastp    += " -p blastp -e "+ self.configReader.get_value('blastp_e_value')
 
         # ensembl database
-        self.ensembldb      = self.configReader.get_path('ensembl_fasta')
+        self.ensembldb = self.configReader.get_path('ensembl_fasta')
         self._check_exists(self.ensembldb)
 
         # Smith-Waterman
-        self.sw_sharp       = self.configReader.get_path('sw#')
+        self.sw_sharp  = self.configReader.get_path('sw#')
         self._check_exists(self.sw_sharp)
 
         # usearch
-        self.usearch       = self.configReader.get_path('usearch')
+        self.usearch = self.configReader.get_path('usearch')
         self._check_exists(self.usearch)
 
         
@@ -74,9 +74,13 @@ class AlignmentCommandGenerator(object):
         self.blosum_matrix  = "{0}/{1}".format(self.configReader.get_path('resources'),
                                                self.configReader.get_value('blosum_hacked'))
         # mafft
-        self.mafft          = self.configReader.get_path('mafft')
+        self.mafft   = self.configReader.get_path('mafft')
         self._check_exists(self.mafft)
-        
+
+        # maxent scan
+        self.scan3   = self.configReader.get_path('score3')
+        self.scan5   = self.configReader.get_path('score5')
+        self.maxent_homedir = self.configReader.get_path('maxentscan')
         
     def generate_fastacmd_gene_command (self, species, seq_name, fasta_db_file, 
                                    strand = None, 
@@ -218,6 +222,15 @@ class AlignmentCommandGenerator(object):
             return "{0}-profile {1} {2} > {3}".format(self.mafft, input_file_1, input_file_2, output_file)
         else:
             return "{0}-profile {1} {2} ".format(self.mafft, input_file_1, input_file_2)
+
+    def generate_maxentscan_cmd (self, intron_side,  input_file):
+        if intron_side == 3:
+            return "{0}  {1} {2}  ".format(self.scan3, self.maxent_homedir, input_file)
+        elif intron_side == 5:
+            return "{0}  {1} {2}  ".format(self.scan5, self.maxent_homedir, input_file)
+        else:
+            return ""
+                                           
     
     def _generate_genedb_file_name (self, species, sequence_type, sequence_id, masked):
         '''

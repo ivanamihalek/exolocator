@@ -70,15 +70,15 @@ class Exon:
             print " at least 17 elements long"
             return False
         
-        self.gene_id             = gene2exon_row[1]
-        self.exon_id             = gene2exon_row[2]
-        self.start_in_gene       = gene2exon_row[3]
-        self.end_in_gene         = gene2exon_row[4]
-        self.canon_transl_start  = gene2exon_row[5]
-        self.canon_transl_end    = gene2exon_row[6]
-        self.exon_seq_id         = gene2exon_row[7]
-        self.strand              = gene2exon_row[8]
-        self.phase               = gene2exon_row[9]
+        self.gene_id             = gene2exon_row [1]
+        self.exon_id             = gene2exon_row [2]
+        self.start_in_gene       = gene2exon_row [3]
+        self.end_in_gene         = gene2exon_row [4]
+        self.canon_transl_start  = gene2exon_row [5]
+        self.canon_transl_end    = gene2exon_row [6]
+        self.exon_seq_id         = gene2exon_row [7]
+        self.strand              = gene2exon_row [8]
+        self.phase               = gene2exon_row [9]
         self.is_known            = gene2exon_row[10]
         self.is_coding           = gene2exon_row[11]
         self.is_canonical        = gene2exon_row[12]
@@ -91,25 +91,25 @@ class Exon:
 
     #################################################
     # load in from gene2exon table (select * from gene2exon)
-    def load_from_sw_exon (self, sw_exon_row):
+    def load_from_novel_exon (self, table_row, table):
 
-        if ( len(sw_exon_row) < 10):
+        if ( len(table_row) < 10):
             print "error loading exon: the in list must be",
             print " at least 10 elements long"
             return False
         
-        self.exon_id             = sw_exon_row[0]
-        self.gene_id             = sw_exon_row[1]
-        self.start_in_gene       = sw_exon_row[2]
-        self.end_in_gene         = sw_exon_row[3]
+        self.exon_id             = table_row[0]
+        self.gene_id             = table_row[1]
+        self.start_in_gene       = table_row[2]
+        self.end_in_gene         = table_row[3]
 
-        self.strand              = sw_exon_row[8]
-        self.phase               = sw_exon_row[9]
-        self.is_known            = 0
+        self.strand              = table_row[8]
+        self.phase               = table_row[9]
+        self.is_known            = 2 if table=='sw_exon' else 3
         self.is_coding           = 1
         self.is_canonical        = 0
         self.is_constitutive     = 0
-
+        self.analysis_id         = -1
         return True
 
     #################################################

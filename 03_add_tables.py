@@ -8,7 +8,7 @@ from   el_utils.ensembl import  get_species, get_gene_ids
 
 
 #########################################
-def make_sw_exon_table (cursor):
+def make_novel_exon_table (cursor, table):
 
 
     # if maps_to_human_exon_id is 0
@@ -17,7 +17,6 @@ def make_sw_exon_table (cursor):
     #     indicating that the exon might not have been sequenced
     # 5p_ss and 3p_ss refer to canonical splice sites -r' and t'  refer to the intron
 
-    table = 'sw_exon'
 
     qry  = "CREATE TABLE " + table + "  (exon_id INT(10) PRIMARY KEY AUTO_INCREMENT)"
     rows = search_db (cursor, qry)
@@ -181,6 +180,18 @@ def make_orthologue_table (cursor, table):
             return False
 
 #########################################
+def modify_exon_map_table (cursor):
+
+    table = 'exon_map'
+
+    for column_name in ['warning']:
+        qry = "ALTER TABLE %s add %s blob" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+
+    
+#########################################
 def make_exon_map_table (cursor):
     
     table = 'exon_map'
@@ -232,6 +243,12 @@ def make_exon_map_table (cursor):
         if (rows):
             return False
 
+
+    for column_name in ['warning']:
+        qry = "ALTER TABLE %s add %s blob" % (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
 
 #########################################
 def make_para_exon_map_table (cursor):
@@ -295,7 +312,9 @@ def make_table (cursor, db_name, table):
     elif table == 'exon_seq':
         make_exon_seq_table (cursor)
     elif table == 'sw_exon':
-        make_sw_exon_table (cursor)
+        make_novel_exon_table (cursor, table)
+    elif table == 'usearch_exon':
+        make_novel_exon_table (cursor, table)
     elif table == 'coding_region':
         make_coding_region_table (cursor)
     elif table in ['orthologue', 'unresolved_ortho', 'paralogue']:
@@ -346,15 +365,17 @@ def main():
         db_name = ensembl_db_name[species]
         
         switch_to_db (cursor, ensembl_db_name[species])
+
+
         #qry = "drop table sw_exon"
         #print search_db(cursor, qry)
         #qry = "delete from exon_seq where is_sw = 1"
         #print search_db(cursor, qry)
         #exit(1)
         
-        print  search_db (cursor, qry)
+        #search_db (cursor, qry)
         
-        for table in ['gene2exon', 'exon_seq', 'sw_exon', 'coding_region']:
+        for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region']:
 
             if ( check_table_exists (cursor, db_name, table)):
                 print table, " found in ", db_name
@@ -365,6 +386,8 @@ def main():
         create_index (cursor, db_name, 'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
         create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
         create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
+
+    exit(1)
 
     # add file_name column to seq_region table
     for species in all_species:
