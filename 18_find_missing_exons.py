@@ -121,7 +121,7 @@ def get_alt_seq_region(cursor,ensembl_db_name, exon_id, exon_known):
 
     switch_to_db (cursor, ensembl_db_name)
     qry  = "select name, file_name, seq_region_strand, exc_seq_region_start, exc_seq_region_end "
-    if exon_known == 1:
+    if exon_known   == 1:
         qry += "from exon "
     elif exon_known == 0:
         qry += "from prediction_exon "
@@ -398,6 +398,7 @@ def get_template (cursor, ensembl_db_name, map_table, species, he):
              pepseq_transl_end, left_flank, right_flank, dna_seq] = template_seqs
             if len(protein_seq)/len_human_protein_seq < 0.3: continue
             if len_human_protein_seq/len(protein_seq) < 0.3: continue
+            if not left_flank or not right_flank: continue
             if "XX" in protein_seq: continue
             template_species     = nearest
             template_exon_id     = m.exon_id_2
@@ -1065,6 +1066,8 @@ def find_missing_exons(human_gene_list, db_info):
         for he in human_exons:
             he.stable_id = exon2stable (cursor, he.exon_id)
 
+        ##################################################################################
+        ##################################################################################
 	# make 'table' of maps, which is either pointer to the map if it exists, or None
 	map_table = {}
         for species in all_species:
@@ -1262,8 +1265,8 @@ def find_missing_exons(human_gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 12
-    special    = None
+    no_threads = 5
+    special    = 'actin_binding'
 
     local_db   = False
 

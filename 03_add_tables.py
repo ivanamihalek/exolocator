@@ -36,8 +36,13 @@ def make_novel_exon_table (cursor, table):
         if (rows):
             return False
 
-    for column_name in ['strand', 'phase',  'has_NNN', 'has_stop', 'has_3p_ss', 'has_5p_ss']:
+    for column_name in ['strand', 'phase', 'end_phase',  'has_NNN', 'has_stop']:
         qry = "ALTER TABLE %s  ADD %s tinyint" %  (table, column_name)
+        rows = search_db (cursor, qry)
+        if (rows):
+            return False
+    for column_name in ['has_3p_ss', 'has_5p_ss']:
+        qry = "ALTER TABLE %s  ADD %s blob" %  (table, column_name)
         rows = search_db (cursor, qry)
         if (rows):
             return False
@@ -367,12 +372,32 @@ def main():
         switch_to_db (cursor, ensembl_db_name[species])
 
 
-        #qry = "drop table sw_exon"
-        #print search_db(cursor, qry)
-        #qry = "delete from exon_seq where is_sw = 1"
-        #print search_db(cursor, qry)
-        #exit(1)
-        
+        if False:
+            #qry = "drop table sw_exon"
+            #print search_db(cursor, qry)
+            #qry = "drop table usearch_exon"
+            #print search_db(cursor, qry)
+            qry = "delete from exon_seq  where is_sw >= 1"
+            print search_db(cursor, qry)
+            print "optimizing exon_seq"
+            qry = "optimize table exon_seq"
+            print search_db(cursor, qry)
+
+            #qry = "delete from gene2exon where is_known > 1"
+            #print "optimizing gene2exon"
+            #qry = "optimize table gene2exon"
+            #print search_db(cursor, qry)
+
+            #if species=='homo_sapiens':
+                #qry = "delete from exon_map  where source='sw_sharp'"
+                #print search_db(cursor, qry)
+                #qry = "delete from exon_map  where source='usearch'"
+                #print search_db(cursor, qry)
+                #print "optimizing exon_map"
+                #qry = "optimize table exon_map"
+                #print search_db(cursor, qry)
+                
+
         #search_db (cursor, qry)
         
         for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region']:

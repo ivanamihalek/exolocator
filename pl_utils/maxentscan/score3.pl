@@ -154,10 +154,14 @@ sub scoreconsensus{
   $cons2{'C'} = 0.0037; 
   $cons2{'G'} = 0.9905; 
   $cons2{'T'} = 0.0030;
-  my $addscore = $cons1{$seqa[18]} * $cons2{$seqa[19]}/ ($bgd{$seqa[18]} * $bgd{$seqa[19]}); 
+  
+  my $denominator = $bgd{$seqa[18]} * $bgd{$seqa[19]};
+  $denominator || return 0.0;
+  my $addscore = $cons1{$seqa[18]} * $cons2{$seqa[19]}/$denominator;
   return $addscore;
 }
 sub log2{
-      my ($val) = @_;
+    my ($val) = @_;
+    $val>0 || return 0.0;
     return log($val)/log(2);
 }

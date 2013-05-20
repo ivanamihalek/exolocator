@@ -78,19 +78,22 @@ class Tree:
     def nhx_string(self):
         return self.root.nhx_string()
 
-
+    ###################################
+    def add(self, cursor, name):
+        leaf = Node(name)
+        # get tax ids from the gene_db table in compara database
+        switch_to_db(cursor, get_compara_name(cursor))
+        leaf.tax_id = species2taxid (cursor, leaf.name)
+        leaf.is_leaf = True
+        self.leafs.append(leaf)
+        self.node[leaf.tax_id] = leaf
 
     ###################################
     # construct tree using the ncbi tree and the given leafs
     def build (self, cursor):
-
-        # get tax ids from the gene_db table in compara database
         switch_to_db(cursor, get_compara_name(cursor))
         for leaf in self.leafs:
-            taxid = species2taxid (cursor, leaf.name)
-            leaf.tax_id =  taxid
-        # add leafs to the rest of the nodes
-        for leaf in self.leafs:
+            leaf.tax_id = species2taxid (cursor, leaf.name)
             leaf.is_leaf = True
             self.node[leaf.tax_id] = leaf
 
@@ -229,8 +232,7 @@ if __name__ == '__main__':
 
     tree   = Tree()
     for species in all_species:
-        leaf = Node(species)
-        tree.leafs.append(leaf)
+        tree.add(cursor, species)
     tree.build(cursor)
 
     print tree.nhx_string()

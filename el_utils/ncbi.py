@@ -36,13 +36,11 @@ def taxid2parentid (cursor, tax_id):
 
 ########
 def get_ncbi_tax_name (cursor):
-
     qry = "show databases like 'ncbi%tax%'"
     rows = search_db (cursor, qry)
     if (not rows):
         rows = search_db (cursor, qry, verbose = True)
         return ""
-
     return rows[0][0]
 
 ########
