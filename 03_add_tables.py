@@ -366,6 +366,8 @@ def main():
 
     # add exon tables to all species
     for species in all_species:
+
+        if species == 'homo_sapiens': continue
         print species
         db_name = ensembl_db_name[species]
         
@@ -377,11 +379,11 @@ def main():
             #print search_db(cursor, qry)
             #qry = "drop table usearch_exon"
             #print search_db(cursor, qry)
-            qry = "delete from exon_seq  where is_sw >= 1"
-            print search_db(cursor, qry)
-            print "optimizing exon_seq"
-            qry = "optimize table exon_seq"
-            print search_db(cursor, qry)
+            #qry = "delete from exon_seq  where is_sw >= 1"
+            #print search_db(cursor, qry)
+            #print "optimizing exon_seq"
+            #qry = "optimize table exon_seq"
+            #print search_db(cursor, qry)
 
             #qry = "delete from gene2exon where is_known > 1"
             #print "optimizing gene2exon"
@@ -396,7 +398,8 @@ def main():
                 #print "optimizing exon_map"
                 #qry = "optimize table exon_map"
                 #print search_db(cursor, qry)
-                
+            
+            pass
 
         #search_db (cursor, qry)
         
@@ -408,9 +411,12 @@ def main():
                 print table, " not found in ", db_name
                 make_table (cursor, db_name, table)
                 
+        print "optimizing gene2exon"
+        qry = "optimize table gene2exon"
+        print search_db(cursor, qry)
         create_index (cursor, db_name, 'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
-        create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
-        create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
+        #create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
+        #create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
 
     exit(1)
 

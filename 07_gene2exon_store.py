@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import MySQLdb
-import commands
+import commands, pdb
 from   el_utils.mysql   import  *  
 from   el_utils.ensembl import  * 
 from   el_utils.utils   import  *
@@ -373,7 +373,7 @@ from pygraph.algorithms.cycles import find_cycle
 from pygraph.algorithms.accessibility import accessibility
 
 #########################################
-def find_master (exon_1, exon_2, is_ensembl, is_havana):
+def find_master (cursor, exon_1, exon_2, is_ensembl, is_havana):
 
     master_exon    = None
     covered_exon   = None
@@ -390,6 +390,20 @@ def find_master (exon_1, exon_2, is_ensembl, is_havana):
     exon_start_2 = exon_2.start_in_gene
     exon_end_2   = exon_2.end_in_gene
 
+    if  exon_2.is_known == 3:
+
+        print exon_start_1,  exon_end_1, exon_start_2, exon_end_2
+        [exon_seq_id, protein_seq, pepseq_transl_start, 
+         pepseq_transl_end, left_flank, right_flank, dna_seq] = \
+        get_exon_seqs (cursor, exon_1.exon_id,  exon_1.is_known)
+        print "p1", protein_seq
+
+        [exon_seq_id, protein_seq, pepseq_transl_start, 
+         pepseq_transl_end, left_flank, right_flank, dna_seq] = \
+        get_exon_seqs (cursor, exon_2.exon_id,  exon_2.is_known)
+
+        print "p2", protein_seq
+        
     if (exon_start_1 > exon_end_2 or exon_start_2 > exon_end_1):
         return None, None # Fully disjoint exons
 
@@ -422,7 +436,6 @@ def find_master (exon_1, exon_2, is_ensembl, is_havana):
         novel_exon = exon_2
     elif (exon_2.is_known<2  and not exon_1.is_known<2 ):
         novel_exon = exon_1
-
 
 
     if havana_exon     is not None:
@@ -459,7 +472,7 @@ def sort_out_covering_exons (cursor, exons):
     dg = digraph()
     dg.add_nodes(exons)
     for exon1, exon2 in combinations(dg.nodes(),2):
-        master, covered = find_master(exon1,exon2,is_ensembl,is_havana)
+        master, covered = find_master(cursor, exon1,exon2,is_ensembl,is_havana)
         if master is not None and covered is not None:
             dg.add_edge(master,covered)
     assert not find_cycle(dg)
@@ -534,6 +547,9 @@ def find_exons (cursor, gene_id, species):
     coding_region_start = -1
     coding_region_end   = -1
     exons               = []
+
+    ue = get_exons  (cursor, gene_id, species, 'usearch_exon')
+    for e in ue: print "usearch : ", e.exon_id
     
     # get all exons from the 'exon' table
     exons = get_exons (cursor, gene_id, species, 'exon')
@@ -632,7 +648,8 @@ def gene2exon_orthologues(gene_list, db_info):
         db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    for gene_id in gene_list:
+    #for gene_id in gene_list:
+    for gene_id in [416374]:
 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
@@ -641,6 +658,7 @@ def gene2exon_orthologues(gene_list, db_info):
 
         for [ortho_gene_id, ortho_species] in orthologues:
 
+            if not  ortho_species == 'ochotona_princeps': continue
             switch_to_db (cursor, ensembl_db_name[ortho_species])
 
             # find all exons associated with the gene id 
@@ -652,6 +670,7 @@ def gene2exon_orthologues(gene_list, db_info):
    
             # store into gene2exon table
             for exon in exons:
+                #if exon.is_known>1: print exon
                 store_exon (cursor, exon)
 
         print " %8.3f " %  (float( int(gene_list.index(gene_id)) +1 )/len(gene_list))
@@ -668,7 +687,7 @@ def main():
 
     no_threads = 1
     local_db   = False
-    special    = 'telomere_maintenance'
+    special    = 'test'
 
     if local_db:
         db  = connect_to_mysql()

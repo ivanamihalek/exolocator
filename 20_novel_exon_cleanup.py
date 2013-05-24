@@ -6,6 +6,7 @@ from tempfile import NamedTemporaryFile
 from operator import itemgetter
 from el_utils.mysql   import  *
 from el_utils.ensembl import  *
+from el_utils.utils   import  *
 from el_utils.config_reader      import ConfigurationReader
 from el_utils.special_gene_sets  import human_genes_w_sw_sharp_annotation, get_theme_ids
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
@@ -25,7 +26,69 @@ def get_ok_human_exons (cursor, ensembl_db_name, gene_id):
         if not get_exon_seqs (cursor, human_exon.exon_id, 1, ensembl_db_name['homo_sapiens']):
             continue
         canonical_human_exons.append(human_exon)
+
+    canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
     return canonical_human_exons
+
+#########################################
+def check_translation_start (mitochondrial, left_flank, dna_seq, template_dna_seq, templ_protein_seq):
+
+    correction    = None
+    phase         = 0
+    left_flank_ok = False
+
+
+    if not templ_protein_seq[0]=='M':
+       return [left_flank_ok, correction, phase]    
+
+    if mitochondrial:
+        pepseq = Seq(dna_seq[:3]).translate(table="Vertebrate Mitochondrial").tostring()
+    else:
+        pepseq = Seq(dna_seq[:3]).translate().tostring()
+    
+    if pepseq[0] == 'M':
+        left_flank_ok = True
+        return [left_flank_ok, correction, phase]    
+
+    if len(dna_seq) < 3*len(templ_protein_seq):
+        shift_range_left  = 12 + abs(len(dna_seq)- 3*len(templ_protein_seq))/3*3
+        shift_range_right = 12
+    else:
+        shift_range_left  = 12 
+        shift_range_right = 12 + abs(len(dna_seq)- 3*len(templ_protein_seq))/3*3
+        
+
+    concat    = left_flank +dna_seq
+    old_joint = len(left_flank)
+   
+    while shift_range_left > len(left_flank):
+        shift_range_left -= 3
+    while shift_range_right > len(dna_seq):
+         shift_range_right -= 3
+
+    for correction in range(0, -shift_range_left+3, -3):
+        codon = concat[old_joint-correction-3:old_joint-correction]
+        if mitochondrial:
+            pepseq = Seq(codon).translate(table="Vertebrate Mitochondrial").tostring()
+        else:
+            pepseq = Seq(codon).translate().tostring()
+        if pepseq and pepseq[0] == 'M':
+            left_flank_ok = True
+            return [left_flank_ok, correction, phase]    
+
+    for correction in range(0, shift_range_right-3, +3):
+        codon = concat[old_joint+correction:old_joint+correction+3]
+        if mitochondrial:
+            pepseq = Seq(codon).translate(table="Vertebrate Mitochondrial").tostring()
+        else:
+            pepseq = Seq(codon).translate().tostring()
+        if pepseq and pepseq[0] == 'M':
+            left_flank_ok = True
+            return [left_flank_ok, correction, phase] 
+  
+
+
+    return [left_flank_ok, correction, phase]  
 
 #########################################
 def check_left_flank (acg, left_flank, dna_seq, template_dna_seq):
@@ -74,18 +137,23 @@ def check_left_flank (acg, left_flank, dna_seq, template_dna_seq):
     scores  = commands.getoutput (cmd).split("\n")
     tmp_in_file.close()
 
+    # find the position of the max score   
+    index_of_max_score = None
+    for i in range(len(scores)):
+        sc = float(scores[i])
+        if max_score < sc: 
+            max_score =sc
+            index_of_max_score = i
+    if not index_of_max_score or index_of_max_score > len(shifts):
+        return [left_flank_ok, correction, phase, max_score]
 
 
-    # find the position of the max score        
-    index_of_max_score =  min( enumerate(scores), key=itemgetter(1))[0]  
-    max_score = float(scores[index_of_max_score])
-    if index_of_max_score > len(shifts):
-        print cmd
-        print list_of_shifted_seqs
-        exit(1)
-    max_score_shift = shifts[index_of_max_score]
-    if max_score < 6.0: return [left_flank_ok, correction, phase, max_score]
+    if max_score < 3.0: return [left_flank_ok, correction, phase, max_score]
+
     left_flank_ok = True
+    max_score_shift = shifts[index_of_max_score]
+
+    # for novel exons, translation starts and ends at the exon boundaries
 
     ########### important!
     # if no score is positive - abandon, this is probably not major class, 
@@ -93,23 +161,11 @@ def check_left_flank (acg, left_flank, dna_seq, template_dna_seq):
     
     # we need to move our presumtpive end ov exon by
     # this much in order to get the most likely splicing signal
-    if max_score_shift == 0: 
-        correction = None
-        phase      = 0
-    elif max_score_shift == -1:
-        correction = None
-        phase      = 2
-    elif max_score_shift == -2:
-        correction = None
-        phase      = 1
-    else: # we seem to have missed by a couple of residues
-        correction  = max_score_shift
-        sign        = correction/abs(correction)
-        correction  = abs(correction)
-        phase       = correction%3
-        correction  = correction/3*3
-        correction *= sign
-        if sign < 0: phase = (3-phase)%3
+    correction = max_score_shift
+    phase      = correction%3
+    if phase < 0: phase = abs(phase)
+
+    left_flank_ok = ( max_score >=  6.0)
 
     return [left_flank_ok, correction, phase, max_score]
 
@@ -119,7 +175,7 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
     correction  = None
     phase       = 0
     right_flank_ok = False
-    max_score   = -1
+    max_score   = -10
     tmp_in_file = NamedTemporaryFile(delete=True)
 
     shift_range = 10 + abs(len(dna_seq)-len(template_dna_seq))
@@ -158,40 +214,85 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
     if not scores:
         return [right_flank_ok, correction, phase, max_score]
 
-    # find the position of the max score        
-    index_of_max_score =  min( enumerate(scores), key=itemgetter(1))[0]  
+    # find the position of the max score   
+    index_of_max_score = None
+    for i in range(len(scores)):
+        sc = float(scores[i])
+        if max_score < sc: 
+            max_score =sc
+            index_of_max_score = i
 
+    if not index_of_max_score or index_of_max_score > len(shifts):
+        # allscores are negative
+        return [right_flank_ok, correction, phase, max_score]
 
-    max_score       = float(scores[index_of_max_score])
-    if index_of_max_score > len(shifts):
-        print cmd
-        print list_of_shifted_seqs
-        exit(1)
     max_score_shift = shifts[index_of_max_score]
-    if max_score < 6.0: return [right_flank_ok, correction, phase, max_score]
+    if max_score < 3.0: return [right_flank_ok, correction, phase, max_score]
     right_flank_ok = True
    
 
-    if max_score_shift   == 0: 
-        correction = None
-        phase      = 0
-    elif max_score_shift == 1:
-        correction = None
-        phase      = 1    # this is endphase
-    elif max_score_shift == 2:
-        correction = None 
-        phase      = 2
-    else: # we seem to have missed by a couple of residues
-        correction = max_score_shift
-        sign       = correction/abs(correction)
-        correction = abs(correction)
-        phase      = correction%3
-        correction = correction/3*3
-        correction *= sign
-        if sign < 0: phase = (3-phase)%3
+    correction = max_score_shift
+    phase      = correction%3
+    if phase < 0: phase = (3-abs(phase))%3
+
+
+    right_flank_ok = (max_score >= 6.0)
 
     return [right_flank_ok, correction, phase, max_score]
 
+#########################################
+def check_coordinates_in_the_gene (cursor, acg, ensembl_db_name, species, sw_exon, exon_dna_seq):
+
+    [sw_exon_id, gene_id, start_in_gene, end_in_gene,  maps_to_human_exon_id, exon_seq_id,
+     template_exon_seq_id, template_species,  strand, phase, end_phase, has_NNN, has_stop, 
+     has_3p_ss, has_5p_ss] = sw_exon
+
+
+    gene_coords =  get_gene_coordinates (cursor, gene_id, ensembl_db_name[species])  
+    [gene_seq_region_id, gene_start, gene_end, gene_strand] = gene_coords
+
+    print  start_in_gene, end_in_gene, strand, gene_start-gene_end
+
+    if ( start_in_gene< 0 ):
+        region_start = gene_start + start_in_gene
+    else: 
+        region_start = gene_start 
+
+    if (end_in_gene > gene_end):
+        region_end = gene_start + end_in_gene
+    else:
+        region_end = gene_end
+
+    qry  = "select name, file_name "
+
+    qry += " from seq_region where seq_region_id = %d " % int(gene_seq_region_id)
+    rows = search_db(cursor, qry)
+    [name, file_names] = rows[0]
+    filename = get_best_filename(file_names)
+    fasta    = get_fasta (acg, species, name, filename, gene_strand, region_start, region_end)
+
+    delete = False
+    gene_fasta = NamedTemporaryFile (delete=delete)
+    gene_fasta.write(fasta)
+
+    exon_fasta = NamedTemporaryFile (delete=delete)
+    exon_fasta.write(">tmp\n"+exon_dna_seq)
+    
+    outtmp =  NamedTemporaryFile (delete=delete)
+
+    cmd = acg.generate_usearch_nt (exon_fasta.name, gene_fasta.name, outtmp.name)
+    
+    resultstr  = commands.getoutput (cmd)
+
+    gene_fasta.close()
+    exon_fasta.close()
+
+    resultstr =  commands.getoutput ("cat "+ outtmp.name)
+    outtmp.close()
+   
+    print resultstr
+
+    exit(1)
 
 #########################################
 def exon_cleanup(gene_list, db_info):
@@ -212,26 +313,34 @@ def exon_cleanup(gene_list, db_info):
     # find db ids and common names for each species db
     all_species, ensembl_db_name = get_species (cursor)
 
+    mammals = ['ailuropoda_melanoleuca',   'bos_taurus',  'callithrix_jacchus',  'canis_familiaris',  'cavia_porcellus',  'choloepus_hoffmanni',  'dasypus_novemcinctus',  'dipodomys_ordii',  'echinops_telfairi',  'equus_caballus',  'erinaceus_europaeus',  'felis_catus',   'gorilla_gorilla',  'ictidomys_tridecemlineatus',   'loxodonta_africana',  'macaca_mulatta',  'macropus_eugenii',    'microcebus_murinus',  'monodelphis_domestica',  'mus_musculus',  'mustela_putorius_furo',  'myotis_lucifugus',  'nomascus_leucogenys',  'ochotona_princeps',   'ornithorhynchus_anatinus',  'oryctolagus_cuniculus',    'otolemur_garnettii',  'pan_troglodytes',   'pongo_abelii',  'procavia_capensis',  'pteropus_vampyrus',  'rattus_norvegicus',  'sarcophilus_harrisii',  'sorex_araneus',  'sus_scrofa',  'tarsius_syrichta',  'tupaia_belangeri',  'tursiops_truncatus',  'vicugna_pacos']
 
-    for human_gene_id in gene_list:
-    #for human_gene_id in [397176]:
+    tot         = 0
+    tot_ok      = 0
+    #for human_gene_id in gene_list:
+    for human_gene_id in [416374]:
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id   = gene2stable(cursor, human_gene_id)
         description = get_description (cursor, human_gene_id)
+
+
+        mitochondrial = is_mitochondrial(cursor, human_gene_id)
+
         #print "#############################################"
         #print human_gene_id, stable_id, get_description (cursor, human_gene_id)
 
         human_exons = get_ok_human_exons (cursor,ensembl_db_name,  human_gene_id)
-        tot         = 0
-        tot_ok      = 0
 
         for human_exon in human_exons:
             [exon_seq_id, human_protein_seq, pepseq_transl_start, pepseq_transl_end, 
-             left_flank, right_flank, dna_seq] = get_exon_seqs (cursor, human_exon.exon_id,  1, ensembl_db_name['homo_sapiens'])
+             left_flank, right_flank, dna_seq] = get_exon_seqs (cursor, human_exon.exon_id,  1,
+                                                                ensembl_db_name['homo_sapiens'])
             human_exon_phase = get_exon_phase (cursor, human_exon.exon_id,  1)
 
-            for species in all_species:
-            #for species in ['pelodiscus_sinensis']:
+            first_exon = (human_exons.index(human_exon) == 0)
+
+            for species in mammals: # maxentscan does not work for fish 
+            #for species in ['ochotona_princeps']:
                  for table in ['sw_exon','usearch_exon']:
                      switch_to_db(cursor, ensembl_db_name[species])
                      qry      = "select * from %s where maps_to_human_exon_id = %d " % (table, human_exon.exon_id)
@@ -249,35 +358,69 @@ def exon_cleanup(gene_list, db_info):
                          has_NNN  = False
 
                          [sw_exon_id, gene_id, start_in_gene, end_in_gene,  maps_to_human_exon_id, exon_seq_id,
-                          template_exon_seq_id, template_species,  strand, phase, end_phase, has_NNN, has_stop, has_3p_ss, has_5p_ss] = sw_exon
+                          template_exon_seq_id, template_species,  strand, phase, end_phase, has_NNN, has_stop, 
+                          has_3p_ss, has_5p_ss] = sw_exon
+
+
+                         tot +=1
+             
+                         exon_seqs =  get_exon_seq_by_db_id (cursor, exon_seq_id, ensembl_db_name[species])
+                         if not exon_seqs: continue
                          [exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, 
-                          left_flank, right_flank, dna_seq] = get_exon_seq_by_db_id (cursor, exon_seq_id, ensembl_db_name[species])
+                          left_flank, right_flank, dna_seq] = exon_seqs
 
+                         len_ok   =  (pepseq_transl_end-pepseq_transl_start) == len (dna_seq)
+                         if not len_ok:
+                             print "blah"
+                             # if it is not the case, then make it be so
+                             left_flank += dna_seq[:pepseq_transl_start]
+                             right_flank = dna_seq[pepseq_transl_end:] + right_flank
+                             dna_seq   = dna_seq[pepseq_transl_start:pepseq_transl_end]
+                             pepseq_transl_start = 0
+                             pepseq_transl_end   = len(dna_seq)
 
-                         if not has_stop and not has_NNN:
-                             ok  += 1
+                         phase_ok =  (len (dna_seq)%3 == 0)
+                         if not phase_ok:
+                             phase = len(dna_seq)%3
+                             cds = dna_seq[phase:]
+                             pepseq_corrected = Seq(cds).translate().tostring()
+                             if pepseq_corrected == protein_seq:
+                                 left_flank += dna_seq[:phase]
+                                 dna_seq     = dna_seq[phase:]
+                             else:
+                                 cds = dna_seq[:-phase]
+                                 pepseq_corrected = Seq(cds).translate().tostring()
 
-                         ########################
-                         # see if the  protein seq matches the quoted boundaries
-                         # coding dna sequence:
-                         cds = dna_seq[pepseq_transl_start:pepseq_transl_end]
-                         translated_cds = Seq(cds).translate().tostring()
-                         if not  translated_cds == protein_seq:
-                             print Seq(cds).translate().tostring()
-                             print protein_seq
-                             exit(1)
+                                 if pepseq_corrected == protein_seq:
+                                     right_flank += dna_seq[-phase:] + right_flank
+                                     dna_seq     = dna_seq[:-phase]
+                                 else: 
+                                     print "no match ..."
+                                     exit(1)
+                             
+                             pepseq_transl_start = 0
+                             pepseq_transl_end   = len(dna_seq)
+                       
 
+                         # retrieve the template
                          template_db_id = species2genome_db_id (cursor, template_species)
 
                          [templ_exon_seq_id, templ_protein_seq, templ_pepseq_transl_start, 
                           templ_pepseq_transl_end,  templ_left_flank, templ_right_flank, templ_dna_seq] \
                           = get_exon_seq_by_db_id (cursor, template_exon_seq_id, ensembl_db_name[template_species])
 
-                         ########################
-                         # 
+                         correction = 0
+                         phase      = 0
+                         end_phase  = 0
+
+                         # if this is the first exon, check if we are starting from methionine
+                         if first_exon:
+                             [left_flank_ok, correction, phase] = \
+                                 check_translation_start (mitochondrial, left_flank, dna_seq, templ_dna_seq, templ_protein_seq)
                          # see if the left splice site is ok
-                         [left_flank_ok, correction, phase, max_score] = \
-                             check_left_flank (acg, left_flank, dna_seq, templ_dna_seq)
+                         else:
+                             [left_flank_ok, correction, phase, max_score] = \
+                                 check_left_flank (acg, left_flank, dna_seq, templ_dna_seq)
 
                          ########################
                          # 
@@ -285,75 +428,168 @@ def exon_cleanup(gene_list, db_info):
                          [right_flank_ok, end_correction, end_phase, end_max_score] = \
                              check_right_flank(acg, right_flank, dna_seq, templ_dna_seq)
 
-                         cds  = ""
+                         #if not left_flank_ok and not right_flank_ok: continue
+
                          pepseq_corrected = ""
-                         if left_flank_ok and correction:
-                             if correction > 0:
-                                 cds = dna_seq[pepseq_transl_start+correction:pepseq_transl_end]
+                         new_left_flank   = ""
+                         new_right_flank  = ""
+                         new_dna_seq      = ""
+                         if left_flank_ok: 
+                             offset = (3-phase)%3
+                             if correction:
+                                 if correction > 0:
+                                     new_dna_seq     =              dna_seq[correction:]
+                                     new_left_flank  = left_flank + dna_seq[:correction]
+                                 else:
+                                     # correction is negative, therefore left_flank[correction:] is the tail of left_flank
+                                     new_dna_seq     = left_flank[correction:]+ dna_seq
+                                     new_left_flank  = left_flank[:correction]
                              else:
-                                 # correction is negative, therefore left_flank[correction:] is the tail of left_flank
-                                 cds = left_flank[correction:]+ dna_seq[pepseq_transl_start:pepseq_transl_end]
+                                 new_left_flank = left_flank
+
+                             pepseq_transl_start = offset
+
+                         else:
+                             new_left_flank = left_flank
+
+                         if right_flank_ok:
+                             if not new_dna_seq: new_dna_seq = dna_seq
+                             if end_correction:
+                                 if end_correction < 0:
+                                     new_right_flank = new_dna_seq[end_correction:] + right_flank
+                                     new_dna_seq     = new_dna_seq[:end_correction]
+                                 else:
+                                     # correction is negative, therefore right_flank[correction:] is the tail of right_flank
+                                     new_right_flank  = right_flank[end_correction:]
+                                     new_dna_seq     += right_flank[:end_correction]
+                             else:
+                                 new_right_flank = right_flank
+                             pepseq_transl_end  = len(new_dna_seq) 
+                             pepseq_transl_end -= end_phase
+                         else:
+                             new_right_flank = right_flank
+
+                         # if only one flank is ok, use that side to decide if there is a phase on the other
+                         if left_flank_ok and not right_flank_ok:
+                             end_phase = (pepseq_transl_end-pepseq_transl_start)%3
+                             pepseq_transl_end -= end_phase
                          
-                         if right_flank_ok and end_correction:
-                             if not cds: cds = dna_seq[pepseq_transl_start:pepseq_transl_end]
-                             if end_correction < 0:
-                                 cds = cds[:end_correction]
-                             else:
-                                 # correction is negative, therefore left_flank[correction:] is the tail of left_flank
-                                 cds += right_flank[:end_correction]
+                         if right_flank_ok and not left_flank_ok:
+                             phase = (pepseq_transl_end-pepseq_transl_start)%3
+                             pepseq_transl_start += phase
+ 
+                         # check that the lengths match
+                         has_stop = None
+                         if new_dna_seq: 
+                             len_old = len(    left_flank +     dna_seq +     right_flank)
+                             len_new = len(new_left_flank + new_dna_seq + new_right_flank)
+                             if not len_old==len_new:
                                  
-                         if cds: 
-                             pepseq_corrected = Seq(cds).translate().tostring()
+                                 print len_old, len_new
+                                 print correction, end_correction
+                                 print map (len, [left_flank, dna_seq, right_flank])
+                                 print map (len, [new_left_flank, new_dna_seq, new_right_flank])
+                                 exit(1)
+                             cds = new_dna_seq[pepseq_transl_start:pepseq_transl_end]
+                             if mitochondrial:
+                                 pepseq_corrected = Seq(cds).translate(table="Vertebrate Mitochondrial").tostring()
+                             else:
+                                 pepseq_corrected = Seq(cds).translate().tostring()
                              if '*' in pepseq_corrected:
-                                 has_stop = True
+                                 has_stop = 1
+                             else:
+                                 has_stop = 0
+
+                         if has_stop and not '*' in protein_seq: continue # abort, abort
+
 
                          print "#############################################"
                          print human_gene_id, stable_id, description
                          print species, table
 
-                         print "\t     human", human_protein_seq, human_exon_phase
-                         print "\t deposited", protein_seq
-                         print "\t translted", translated_cds
-                         print "\t  template", templ_protein_seq
                          print "\t  template", template_exon_seq_id, template_species, template_db_id
                          print "\t  template left flank", templ_left_flank, templ_dna_seq[0:3]
                          print "\t           left flank", left_flank, dna_seq[0:3]
-                         print "\t          ",  left_flank_ok, correction, phase, max_score
+                         print "\t          ",  left_flank_ok, correction, phase,
+                         if not first_exon:
+                             print max_score
+                         else:
+                             print
                          print "\t  template right flank", templ_dna_seq[-3:],templ_right_flank
                          print "\t           right flank", dna_seq[-3:], right_flank
                          print "\t          ", right_flank_ok, end_correction, end_phase, end_max_score
 
+                         print "\t     human", human_protein_seq, human_exon.exon_id, human_exon_phase 
+                         print "\t  template", templ_protein_seq
+                         print "\t deposited", protein_seq
                          if pepseq_corrected: print "\t corrected", pepseq_corrected
+                             
+                         if new_dna_seq:
+                             if (pepseq_transl_end-pepseq_transl_start)%3:
+                                 print pepseq_transl_start, pepseq_transl_end
+                                 print phase, end_phase
+                                 print len(new_dna_seq)
+                                 print "%%%%% "
+                                 exit(1)
+                         else:
+                             new_dna_seq = dna_seq 
+
+                         #########################################################
+                         # 18_find_exons is sometimes messing up the coordinates 
+                         # I do not know why
+                         check_coordinates_in_the_gene (cursor, acg, ensembl_db_name, species, sw_exon, new_dna_seq)
 
                          #########################################################
                          # update the *_exon and exon_seq tables accordingly
                          switch_to_db(cursor, ensembl_db_name[species])
-                         qry = "update %s set " % table
-                         if left_flank_ok:
-                             qry += " phase = %d,  " % phase
-                             qry += " has_3p_ss = '%s', "  % ("me_score="+str(max_score))
-                         if right_flank_ok:
-                             qry += " end_phase = %d,  " % end_phase
-                             qry += " has_5p_ss = '%s' "  % ("me_score="+str(end_max_score))
-                         qry += " where exon_id=%d" %  sw_exon_id
                          
-                         print  ensembl_db_name[species]
-                         print qry
-
+                     
                          qry = "update %s set " % table
+                         
+                         set_fields = ""
+                         if not has_stop is None:
+                             set_fields += " has_stop  = %d" % has_stop
+                            
                          if left_flank_ok:
-                             qry += " phase = %d,  " % phase
-                             qry += " has_3p_ss = '%s', "  % ("me_score="+str(max_score))
+                             if set_fields: set_fields += ", "
+                             set_fields += " phase = %d,  " % phase
+                             if first_exon:
+                                 set_fields += " has_3p_ss = '%s' "  % ("first exon; starts with M")
+                             else:
+                                 set_fields += " has_3p_ss = '%s' "  % ("me_score="+str(max_score))
+
                          if right_flank_ok:
-                             qry += " end_phase = %d,  " % end_phase
-                             qry += " has_5p_ss = '%s' "  % ("me_score="+str(end_max_score))
-                         qry += " where exon_id=%d" %  sw_exon_id
-                          
+                             if set_fields: set_fields += ", "
+                             set_fields += " end_phase = %d,  " % end_phase
+                             set_fields += " has_5p_ss = '%s' "  % ("me_score="+str(end_max_score))
+                         
+                         
+                         qry += set_fields + " where exon_id=%d" %  sw_exon_id
+                         
+                         if set_fields:
+                             print ensembl_db_name[species]
+                             print qry
+                             print search_db(cursor, qry)
 
-                         exit(1)
+                         # update exon sequence
+                         if pepseq_corrected: 
+                             # we might have changed our mind as to what is the cDNA seq, and what is flanking
+                             qry  = "update exon_seq set "
+                             qry += " protein_seq = '%s', " % pepseq_corrected
+                             qry += " dna_seq = '%s', "     % new_dna_seq
+                             qry += " left_flank = '%s', "  % new_left_flank
+                             qry += " right_flank = '%s', " % new_right_flank
+                             qry += " pepseq_transl_start = %d, " % pepseq_transl_start
+                             qry += " pepseq_transl_end = %d  "   % pepseq_transl_end
+                             table_id = 2 if table=='sw_exon' else 3
+                             qry += " where exon_id=%d and is_known=%d" % (sw_exon_id, table_id)
 
-                     tot_ok += ok
-                     tot += ct
+                             print qry
+                             print search_db(cursor, qry)
+                            
+                         # gene2exon --> have to go back to 07_gene2exon for that
+                         tot_ok += 1
+                         print
 
             #print species, "total: ", ct, "  ok: ", ok
     
@@ -367,6 +603,7 @@ def main():
     
     no_threads = 1
     special    = 'test'
+    #special    = 'genecards_top500'
 
     local_db   = False
 
@@ -379,6 +616,7 @@ def main():
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
+
 
 
     if special:

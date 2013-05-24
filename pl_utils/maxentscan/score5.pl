@@ -4,7 +4,7 @@
 # the input is of the form [-3,+6] sequence around the splice position
 # each line is taken to be one splice sequence
 
-@ARGV>1 || die "Usage: $0 <input file (one splice site per line)>.\n";
+@ARGV>1 || die "Usage: $0  <me_homedir> <input file (one splice site per line)>.\n";
 
 ($me_homedir, $inputfile) = @ARGV;
 

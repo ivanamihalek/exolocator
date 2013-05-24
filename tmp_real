@@ -1,4 +1,4 @@
-/usr/bin/usearch -threads 1 -search_local /tmp/tmpJQKdJd -db /tmp/tmpuF6CrL -alnout tmp -id 0.5 -strand plus 
+/usr/bin/usearch -threads 1 -search_local /tmp/tmpnce0my -db /tmp/tmpj_Izrm -id 0.5 -strand plus -alnout tmp_real 
 usearch_i86linux32 v6.0.307, 4.0Gb RAM (16.5Gb total), 16 cores
 
 Query >tmp

@@ -1,5 +1,36 @@
 import sys, os
 import string
+from subprocess import Popen, PIPE, STDOUT
+
+
+#########################################
+def get_best_filename(names_string):
+    names_list = names_string.split()
+    chromo_names = [n for n in names_list if 'chromosom' in n]
+    if chromo_names: return chromo_names[0]
+    else: return names_list[0]
+
+#########################################
+def get_fasta (acg, species, searchname, searchfile, searchstrand, searchstart, searchend):
+
+    fasta    = None
+    fastacmd = acg.generate_fastacmd_gene_command(species, searchname, searchfile, 
+                                                  searchstrand, searchstart, searchend)
+    p      = Popen(fastacmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
+    fasta, errmsg = p.communicate()
+    if errmsg and 'From location cannot be greater than' in errmsg:
+        match = re.search('\d+', errmsg )
+        max_searchend = match.group(0)
+        if max_searchend < searchstart: return fasta
+
+        fastacmd = acg.generate_fastacmd_gene_command(species, searchname, 
+                                                      searchfile, searchstrand, searchstart, max_searchend)
+        p      = Popen(fastacmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
+        fasta, errmsg = p.communicate()
+
+
+    return fasta
+
 
 #########################################
 def check_seq_length(sequence, msg):

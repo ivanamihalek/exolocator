@@ -380,15 +380,17 @@ def get_exon_pepseq (cursor, exon, db_name=None):
         is_known = exon.is_known
         qry  = "select protein_seq  "
         qry += " from exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
-    else:
+    elif exon.exon_seq_id:
         exon_seq_id = exon.exon_seq_id
         qry  = "select protein_seq "
         qry += " from  exon_seq where exon_seq_id = %d" % exon_seq_id
-        
+    else:
+        return ""
+
     rows = search_db(cursor, qry)
     if (not rows):
         #rows = search_db(cursor, qry, verbose = True)
-        return []
+        return ""
 
     protein_seq = rows[0][0]
     if (protein_seq is None):
@@ -502,6 +504,13 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
         qry += " left_flank, right_flank, dna_seq  from  exon_seq "
         qry += " join sw_exon on exon_seq.exon_seq_id = sw_exon.exon_seq_id  "
         qry += " where sw_exon.exon_id = %d " %  exon_id
+
+    elif is_known==3: # usearch exon
+        qry  = "select exon_seq.exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, "
+        qry += " left_flank, right_flank, dna_seq  from  exon_seq "
+        qry += " join usearch_exon on exon_seq.exon_seq_id = usearch_exon.exon_seq_id  "
+        qry += " where usearch_exon.exon_id = %d " %  exon_id
+
     else:
         qry  = "select exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, "
         qry += " left_flank, right_flank, dna_seq  "

@@ -106,6 +106,9 @@ def multiple_exon_alnmt(gene_list, db_info):
                 if  map.source == 'sw_sharp':
                     exon_known_code = 2
                     hassw = True
+                elif  map.source == 'usearch':
+                    exon_known_code = 3
+                    hassw = True
                 else:
                     exon_known_code = map.exon_known_2
                 seqname = "{0}:{1}:{2}".format(map.species_2, map.exon_id_2, exon_known_code)
@@ -137,7 +140,13 @@ def multiple_exon_alnmt(gene_list, db_info):
                 
                 # Retrieve information on the cognate
                 cognate_species, cognate_exon_id, cognate_exon_known = record.id.split(':')
-                source = 'sw_sharp' if cognate_exon_known == '2' else 'ensembl'
+                if cognate_exon_known == '2':
+                    source = 'sw_sharp'
+                elif cognate_exon_known == '3':
+                    source = 'usearch'
+                    print "bleep"
+                else:
+                    source = 'ensembl'
                 if (cognate_species == 'homo_sapiens'):
                     human_seq_seen = True
                 cognate_genome_db_id = species2genome_db_id(cursor, cognate_species) # moves the cursor
@@ -174,7 +183,7 @@ def multiple_exon_alnmt(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'cell_cycle_checkpoints'
+    special    = 'test'
 
     local_db = False
 

@@ -1,0 +1,40 @@
+#########################################
+def exonify(cursor, ensembl_db_name, row_from_sw_exon_table, method):
+
+    exon = Exon()
+    
+    [sw_exon_id, gene_id, start_in_gene, end_in_gene, human_exon_id,
+     exon_seq_id, template_exon_id, template_species,
+     strand, phase, end_phase, has_NNN, has_stop, has_3p_ss, has_5p_ss] = row_from_sw_exon_table
+
+    human_coding = is_coding (cursor, human_exon_id, ensembl_db_name['homo_sapiens'])
+    
+    exon.gene_id             = gene_id
+    exon.exon_id             = sw_exon_id
+    exon.start_in_gene       = start_in_gene
+    exon.end_in_gene         = end_in_gene
+    exon.canon_transl_start  = -1
+    exon.canon_transl_end    = -1
+    exon.exon_seq_id         = exon_seq_id
+    exon.strand              = strand
+    exon.phase               = phase
+    exon.end_phase           = end_phase
+    exon.is_coding           = 1 if (human_coding and not has_stop) else 0
+    exon.is_canonical        = 0
+    exon.is_constitutive     = 0
+    exon.covering_exon       = -1
+    exon.covering_exon_known = -1 
+
+    if method == 'sw_sharp':
+        exon.is_known        =  2 # arbitrary index, used to indicate sw_sharp findings here
+        exon.analysis_id     = -1
+    elif  method == 'usearch':
+        exon.is_known        =  3 # arbitrary index, used to indicate usearch  findings 
+        exon.analysis_id     = -2
+    else:
+        exon.is_known        =  0 
+        exon.analysis_id     =  0
+        
+
+    return exon
+

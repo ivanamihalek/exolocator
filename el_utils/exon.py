@@ -93,7 +93,7 @@ class Exon:
     # load in from gene2exon table (select * from gene2exon)
     def load_from_novel_exon (self, table_row, table):
 
-        if ( len(table_row) < 10):
+        if ( len(table_row) < 11):
             print "error loading exon: the in list must be",
             print " at least 10 elements long"
             return False
@@ -105,6 +105,7 @@ class Exon:
 
         self.strand              = table_row[8]
         self.phase               = table_row[9]
+        self.end_phase           = table_row[10]
         self.is_known            = 2 if table=='sw_exon' else 3
         self.is_coding           = 1
         self.is_canonical        = 0
