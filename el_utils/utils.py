@@ -1,6 +1,234 @@
-import sys, os
-import string
+import sys, os,  re, commands
+import string, random
 from subprocess import Popen, PIPE, STDOUT
+from tempfile     import NamedTemporaryFile
+
+#########################################
+def sw_search (cfg, acg, query_seq, target_seq, delete= True):
+
+    resultstr  = ""
+
+    # save fasta (temporarily)
+    random_str   = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(6))
+
+    qry_filename = "{0}/qry_{1}.fa".format  (cfg.dir_path['scratch'], random_str)
+    qry_file = erropen( qry_filename, "w")
+    qry_file.write(">query\n"+query_seq+"\n")
+    qry_file.close()
+
+
+    tgt_filename = "{0}/tgt_{1}.fa".format  (cfg.dir_path['scratch'], random_str)
+    tgt_file = erropen( tgt_filename, "w")
+    tgt_file.write(outstr)
+    tgt_file.close()
+
+
+    # do  SW# search
+    swsharpcmd = acg.generate_SW_nt (qry_filename, tgt_filename)
+    resultstr  = commands.getoutput (swsharpcmd)
+    searchtmp.close()
+
+    print swsharpcmd
+
+    if 'Segmentation' in  resultstr:
+        print swsharpcmd
+        print  " ** ", resultstr
+        resultstr = ""
+
+    if delete:
+        cmd = "rm  {0}  {1}  {2}".format (qry_filename, tgt_filename, outname)
+        stdout  = commands.getoutput (cmd)
+
+
+    return resultstr
+
+
+#########################################
+def usearch (cfg, acg, query_seq, target_seq, delete= True):
+
+    resultstr  = ""
+
+    # NmedTMpFile was giving me some of the wirdest errors with usearch
+    # something about amino acid files, but when I ran it from cmd line it was ok
+    
+    random_str   = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(6))
+
+    qry_filename = "{0}/qry_{1}.fa".format  (cfg.dir_path['scratch'], random_str)
+    qry_file = erropen( qry_filename, "w")
+    qry_file.write(">query\n"+query_seq+"\n")
+    qry_file.close()
+
+
+    total_length = 0
+    outstr    = ""
+    chunksize = 15000
+
+    while total_length < len(target_seq):
+
+        if (total_length+chunksize >= len(target_seq)):
+            upper_bound   = len(target_seq)
+        else:
+            upper_bound   = total_length+chunksize
+
+        outstr += ">piece_%d_%d"% (total_length, upper_bound)
+        outstr += "\n"
+        outstr += target_seq[total_length:upper_bound]
+        if not outstr[-1] == '\n': outstr += "\n"
+   
+        total_length += chunksize
+
+
+    total_length = 10000
+    while total_length < len(target_seq):
+
+        if (total_length+chunksize >= len(target_seq)):
+            upper_bound   = len(target_seq)
+        else:
+            upper_bound   = total_length+chunksize
+
+        outstr += ">piece_%d_%d"% (total_length, upper_bound)
+        outstr += "\n"
+        outstr += target_seq[total_length:upper_bound]
+        if not outstr[-1] == '\n': outstr += "\n"
+   
+        total_length += chunksize
+
+    name = "tgt_blah"
+    tgt_filename = "{0}/tgt_{1}.fa".format  (cfg.dir_path['scratch'], random_str)
+    tgt_file = erropen( tgt_filename, "w")
+    tgt_file.write(outstr)
+    tgt_file.close()
+ 
+    # 
+    outname = "{0}/{1}.out".format  (cfg.dir_path['scratch'], random_str)
+   
+
+    # do  usearch
+    cmd = acg.generate_usearch_nt (qry_filename, tgt_filename, outname)
+    stdout  = commands.getoutput (cmd)
+    if 'Segmentation' in  stdout:
+        print  cmd
+        print  " ** ", stdout
+        resultstr = ""
+
+    # what happens if the search fails?
+    resultstr =  commands.getoutput ("cat "+ outname)
+    
+    if delete:
+        cmd = "rm  {0}  {1}  {2}".format (qry_filename, tgt_filename, outname)
+        stdout  = commands.getoutput (cmd)
+
+
+    return resultstr
+
+
+#########################################
+def parse_sw_output (resultstr):
+		    
+    best_match = None
+    longest    = -1
+
+    for r in (f.splitlines() for f in resultstr.split("#"*80+"\n")):
+        
+        if len(r) < 14: continue # Skip blank or malformed results
+
+        # Parse result
+        seqlen = min(int(re.split('\D+',r[1])[1]),int(re.split('\D+',r[3])[1]))
+        identity, matchlen = map(int, re.split('\D+', r[7])[1:3])
+        #similarity = int(re.split('\D+',r[8])[1])
+        #gaps       = int(re.split('\D+',r[9])[1])
+        #score      = float(r[10].split()[1])
+
+        
+        # Reject if identity too low or too short -- seqlen is the length of the query
+        if identity < 0.4*seqlen or identity < 10: continue
+
+        # FOUND AN EXON!
+        # ... but lets keep what might be the best match
+        if matchlen > longest:
+            longest = matchlen
+            [search_start, search_end, template_start, template_end] = map(int,re.split('\D+',r[6])[1:5])
+
+            aligned_qry_seq = ""
+            for row in r[13::3]: # every third row
+                seq = re.split('\s+',row)[2]
+                aligned_qry_seq += seq
+            aligned_target_seq = ""
+            for row in r[12::3]: # every third row
+                seq = re.split('\s+',row)[2]
+                aligned_target_seq += seq
+            best_match = [search_start-1, search_end-1, template_start-1, template_end-1, 
+                          aligned_target_seq, aligned_qry_seq]
+
+    return best_match 
+
+
+#########################################
+def parse_usearch_output (resultstr):
+	
+
+    best_match = None
+    longest    = -1
+
+    read_start = -1
+    lines  =  resultstr.split("\n")
+    table_entry = {}
+
+    for lineno in range(len(lines)):
+        if 'QueryLo-Hi' in lines[lineno]: 
+            for ct in range  (lineno+1,len(lines)):
+            
+                fields = re.split('\s+', lines[ct])
+                if len(fields) < 7: break
+                target =  fields[-1]
+
+                [search_start, search_end]      =  map (int, re.split('\D+', fields[5])[:2])
+                [template_start, template_end]  =  map (int, re.split('\D+', fields[4])[:2])
+
+                table_entry[target] = [search_start, search_end, template_start, template_end]
+
+        elif ' Query ' in lines[lineno]: 
+            read_start = lineno
+            match =  re.search('\d+', lines[lineno])
+            seqlen  = int(match.group())
+
+        elif 'Evalue' in lines[lineno] and  read_start >0: # the result is in the previous couple of lines
+            
+            [matchlen, number_matching, identity] = map(int, re.split('\D+', lines[lineno])[:3])
+            if  matchlen < 0.4*seqlen or identity < 10: continue
+                                                        
+            # FOUND AN EXON!
+            # ... but lets keep what might be the best match
+            if matchlen > longest:
+
+                longest = matchlen
+
+                target_line_fields = lines[read_start+1].split (" ")
+                target = target_line_fields[-1][1:] # get rid of ">"
+                
+                [search_start, search_end, template_start, template_end] = table_entry[target]
+
+                aligned_qry_seq = ""
+                for row in lines[read_start+3:lineno-3:4]: # every fourth row
+                    seq = re.split('\s+',row)[3]
+                    aligned_qry_seq += seq
+                aligned_target_seq = ""
+                for row in lines[read_start+5:lineno-1:4]: # every fourth row
+                    seq = re.split('\s+',row)[3]
+                    aligned_target_seq += seq
+
+                # just one more piece of hacking:
+                # we had to chopup the query into smaller pieces to make usearch happy
+                # where is the match, counted from the beginning of the whole thing?
+                name_fields = target.split ("_")
+                piece_from  = int(name_fields[-2])
+                #piece_to   = int(name_fields[-1])
+                best_match  = [piece_from+search_start-1, piece_from+search_end-1, template_start-1, 
+                               template_end-1, aligned_target_seq, aligned_qry_seq]
+                
+
+    return best_match 
+
 
 
 #########################################

@@ -7,8 +7,7 @@ import pdb
 
 import MySQLdb, commands, re, os
 
-from el_utils.mysql   import  connect_to_mysql, connect_to_db
-from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
+from el_utils.mysql   import  *
 from el_utils.ensembl import  *
 from el_utils.utils   import  *
 from el_utils.map     import  Map, get_maps, map2exon
@@ -222,17 +221,17 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
     dna_aln_length = 0
     # find all other exons that map to the human exon
     maps    = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
-    maps_sw = filter (lambda m: m.source=='sw_sharp', maps)
+    maps    = filter (lambda m: not m.exon_id_2 is None, maps)
+    maps_sw = filter (lambda m: m.source=='sw_sharp' or m.source=='usearch', maps)
+
+    print "all: ",  len(maps), " novel:",  len(maps_sw)
 
     for map in maps:
         # get the raw (unaligned) sequence for the exon that maps onto human
-        if map in maps_sw:
-            exon_seq_id = get_sw_seq_id (cursor, map.exon_id_2, ensembl_db_name[map.species_2])
-            exon_seqs   = get_exon_seq_by_db_id (cursor, exon_seq_id, ensembl_db_name[map.species_2]) 
-            # pepseq_transl_end should be by python convention (upper bound), but its not
-        else:
-            exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
+        exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
         if (not exon_seqs):
+            print " exon_seqs for" , map.source
+            exit(1)
             continue
         [pepseq, pepseq_transl_start, 
          pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs[1:]
@@ -297,15 +296,27 @@ def check_notes_directory (cfg):
     return directory
 
 #########################################
-def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sorted_seq_names, stable_id):
+def find_maps_to (cursor, ensembl_db_name,  human_exon_map, concat_seq_name, exon_seq_name):
+    
+    stable_ids_str = ""
+    stable_ids     = []
 
-    # write to string
-    out_string  = "% Notes to accompany the alignment of (tentative) orthologues\n"
-    out_string += "%% for the canonical transcript of the human gene %s," % stable_id
-    out_string += "\n" 
-    out_string += "% The alignment shows the exons that correspond to human transcript,\n" 
-    out_string += "% from the following genes: \n" 
-    out_string += "%% %-30s  %-30s  %-30s \n" % ('species', 'common_name', 'gene_id')
+
+    switch_to_db ( cursor, ensembl_db_name['homo_sapiens'])
+
+    for human_exon in human_exon_map[concat_seq_name].keys():
+        if not exon_seq_name in human_exon_map[concat_seq_name][human_exon]: continue
+        stable_id = exon2stable (cursor, human_exon.exon_id)
+        stable_ids.append(stable_id)
+
+
+    stable_ids_str = ";".join(stable_ids)
+
+    return stable_ids_str
+
+
+#########################################
+def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sorted_seq_names, stable_id, human_exon_map):
 
     gene_id        = {}
     stable_gene_id = {}
@@ -322,35 +333,67 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
                 stable_gene_id[name] = gene2stable(cursor, ortho_gene_id, ensembl_db_name[species])
                 sci_name[name]       = species
 
+    descr = get_description (cursor, gene_id['human'], ensembl_db_name['homo_sapiens'])
+
+    # write to string
+    out_string  = "% Notes to accompany the alignment of (tentative) orthologues\n"
+    out_string += "%% for the canonical transcript of the human gene %s, \n" % stable_id
+    out_string += "%% %s\n"  % descr
+    out_string += "%%\n"
+    out_string += "% The alignment shows the exons from the following genes: \n" 
+    out_string += "%% %-30s  %-30s  %-30s \n" % ('species', 'common_name', 'gene_id')
+
     sorted_seq_names = filter (lambda name: name in output_pep.keys(), sorted_seq_names)
     for name in sorted_seq_names:
         if not sci_name.has_key(name) or not stable_gene_id.has_key(name): continue
         out_string += " %-30s  %-30s  %-30s \n" % ( name, sci_name[name],  stable_gene_id[name])
 
     out_string += "\n" 
-    out_string += "% The following exons were used in the alignment\n" 
+    out_string += "% The following exons appear in the alignment\n" 
 
+
+ 
     for name in sorted_seq_names:
         if not stable_gene_id.has_key(name): continue
-        out_string += "%% %s   %s \n" % (name, stable_gene_id[name])
-        out_string += "%% %20s  %15s  %15s     %6s  %10s  %s \n" % \
-           ('exon_id', 'gene_from', 'gene_to', 'coding', 'cannonical', 'source')
+        out_string += "\n" 
+        out_string += "%% sequence name: %s   corresponding to the gene: %s \n" % (name, stable_gene_id[name])
+        out_string += "%% %20s  %10s  %10s  %6s  %6s    %-s  %-s\n" % \
+           ('exon_id', 'gene_from', 'gene_to', 'coding', 'canon', 'source', 'maps_to_human_exon')
+
         for exon_name in names_of_exons[name]:
+
             [species, exon_id, exon_known] = parse_aln_name(exon_name)
             exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
-            if exon.is_known:
+            if exon_known == 1:
                 exon_stable_id = exon2stable(cursor, exon_id, ensembl_db_name[species])
             else:
-                exon_stable_id = 'anon'
-            if ( exon_known ==2 ):
-                source = 'SW#'
+                exon_stable_id = exon_name
+
+            if (exon_known ==2 or exon_known ==3):
+                source = "SW#, " if (exon_known ==2) else "usearch, "
+                
+                template_species = exon.template_species
+                template_exon_seq_id = exon.template_exon_seq_id
+                [template_exon_id, template_exon_known] = exon_seq_id2exon_id (cursor, 
+                                                        template_exon_seq_id, 
+                                                        ensembl_db_name[template_species])
+                if (template_exon_known==1):
+                    template_stable = exon2stable(cursor, int(template_exon_id), ensembl_db_name[template_species])
+                else:
+                    template_stable = 'novel'
+                source += "by sim to " + template_stable + ", " + template_species
             else:
                 source = get_logic_name (cursor, exon.analysis_id,  ensembl_db_name[species])
-            out_string += "  %20s  %15s  %15s     %-6s  %-10s  %s \n" % \
-                (exon_stable_id, exon.start_in_gene, exon.end_in_gene,
-                 exon.is_coding, exon.is_canonical, source)
+                
+            maps_to_human_stable = find_maps_to (cursor, ensembl_db_name, human_exon_map, name, exon_name)
+                
+            out_string += "  %20s   %10s  %10s     %-6s  %-10s   %-s   %-s \n" % \
+                (exon_stable_id,  exon.start_in_gene, exon.end_in_gene,
+                 exon.is_coding, exon.is_canonical, source, maps_to_human_stable)
                
     
+
+
     directory = check_notes_directory (cfg)
     notes_fnm = directory + '/'+stable_id+'.txt'
     # print notes_fnm
@@ -683,7 +726,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
     if not output_pep.has_key('human'): return [output_pep, names_of_exons]
 
-
     # 
     new_alignment_pep  = {}
     new_names_of_exons = []
@@ -845,8 +887,8 @@ def find_overlapping_maps (ortho_exon_to_human_exon, exon_seq_names, alnmt_pep):
 
         for j in range (i+1, len(exon_seq_names)):
 
-            exon_seq_name_2  = exon_seq_names[j]  
-            human_exons_2    = ortho_exon_to_human_exon[exon_seq_name_2]
+            exon_seq_name_2   = exon_seq_names[j]  
+            human_exons_2     = ortho_exon_to_human_exon[exon_seq_name_2]
 
             if set( human_exons) & set (human_exons_2) :
                 overlapping_human_set = True
@@ -1125,8 +1167,8 @@ def make_alignments ( gene_list, db_info):
     # for each  gene in the provided list
     gene_ct = 0
     #gene_list.reverse()
-    for gene_id in gene_list:
-    #for gene_id in [412667]:
+    #for gene_id in gene_list:
+    for gene_id in [416374]:
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
 
@@ -1222,6 +1264,8 @@ def make_alignments ( gene_list, db_info):
         for concat_seq_name, concat_exons in names_of_exons.iteritems():
             overlapping_maps[concat_seq_name] = find_overlapping_maps (ortho_exon_to_human_exon, concat_exons, alnmt_pep)
 
+
+   
 
         # >>>>>>>>>>>>>>>>>>
         # concatenate the aligned exons for each species, taking into account that the alignment
@@ -1329,7 +1373,7 @@ def make_alignments ( gene_list, db_info):
         #continue
 
         # notes to accompany the alignment:
-        print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id)
+        print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id, human_exon_map)
         
     return 
 
@@ -1338,7 +1382,7 @@ def make_alignments ( gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'egfr_signaling'
+    special    = 'test'
     local_db   = False
     
     if local_db:

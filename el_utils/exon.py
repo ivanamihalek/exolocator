@@ -103,6 +103,9 @@ class Exon:
         self.start_in_gene       = table_row[2]
         self.end_in_gene         = table_row[3]
 
+        self.template_exon_seq_id  = table_row[6]
+        self.template_species      = table_row[7]
+
         self.strand              = table_row[8]
         self.phase               = table_row[9]
         self.end_phase           = table_row[10]
@@ -133,26 +136,27 @@ class Exon:
     # when something is defined as an exon ....
     def __init__ (self):
         
-        self.exon_id             = None
-        self.stable_id           = None
-        self.gene_id             = None
-        self.start_in_gene       = None
-        self.end_in_gene         = None
-        self.exon_seq_id         = None
-        self.strand              = None
-        self.phase               = None
-        self.end_phase           = None
-        self.pepseq_transl_start = None
-        self.pepseq_transl_end   = None
-        self.canon_transl_start  = None
-        self.canon_transl_end    = None
-        self.is_known            = None
-        self.is_coding           = None
-        self.is_canonical        = None
-        self.covering_exon       = None
-        self.covering_exon_known = None
-        self.analysis_id         = None
-        self.pepseq              = None
-
+        self.exon_id               = None
+        self.stable_id             = None
+        self.gene_id               = None
+        self.start_in_gene         = None
+        self.end_in_gene           = None
+        self.exon_seq_id           = None
+        self.strand                = None
+        self.phase                 = None
+        self.end_phase             = None
+        self.pepseq_transl_start   = None
+        self.pepseq_transl_end     = None
+        self.canon_transl_start    = None
+        self.canon_transl_end      = None
+        self.is_known              = None
+        self.is_coding             = None
+        self.is_canonical          = None
+        self.covering_exon         = None
+        self.covering_exon_known   = None
+        self.analysis_id           = None
+        self.pepseq                = None
+        self.template_species      = None
+        self.template_exon_seq_id  = None
 
 

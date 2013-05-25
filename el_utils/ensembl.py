@@ -383,7 +383,7 @@ def get_exon_pepseq (cursor, exon, db_name=None):
     elif exon.exon_seq_id:
         exon_seq_id = exon.exon_seq_id
         qry  = "select protein_seq "
-        qry += " from  exon_seq where exon_seq_id = %d" % exon_seq_id
+        qry += " from exon_seq where exon_seq_id = %d" % exon_seq_id
     else:
         return ""
 
@@ -397,6 +397,20 @@ def get_exon_pepseq (cursor, exon, db_name=None):
         protein_seq = ""
   
     return protein_seq
+
+#########################################
+def exon_seq_id2exon_id (cursor, exon_seq_id, db_name=None):
+
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return ""
+    qry  = "select exon_id, is_known from exon_seq where exon_seq_id = %d  " % int(exon_seq_id)
+    rows = search_db(cursor, qry)
+    if (not rows):
+        return ""
+
+
+    return rows[0]
 
 #########################################
 def get_exon_dnaseq (cursor, exon, db_name=None):
@@ -546,13 +560,20 @@ def get_exon (cursor, exon_id, is_known=None, db_name=None):
         if not switch_to_db(cursor, db_name):
             return exon
 
-    if is_known and is_known==2:
+    if is_known==2:
         # sw# exon
         qry  = "select * from sw_exon where exon_id = %d"   % exon_id
         rows = search_db(cursor, qry, verbose=False)
         if (not rows):
             return exon
-        exon.load_from_sw_exon (rows[0])
+        exon.load_from_novel_exon (rows[0], "sw_exon")
+    elif is_known==3:
+        # sw# exon
+        qry  = "select * from usearch_exon where exon_id = %d"   % exon_id
+        rows = search_db(cursor, qry, verbose=False)
+        if (not rows):
+            return exon
+        exon.load_from_novel_exon (rows[0], "usearch_exon")
     else:
         qry  = "select * from gene2exon where exon_id = %d" % exon_id
         if is_known: qry += " and is_known = %s " % is_known

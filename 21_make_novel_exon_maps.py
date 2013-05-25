@@ -387,10 +387,6 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
     else: # C implementation
         [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
             = smith_waterman_context (human_seq, ortho_seq)
-    print ">human"
-    print aligned_seq['homo_sapiens']
-    print ">ortho"
-    print aligned_seq[ortho_species]
 
     if (not aligned_seq['homo_sapiens'] or 
         not aligned_seq[ortho_species]):
@@ -540,13 +536,10 @@ def maps_for_gene_list(gene_list, db_info):
         for ortho_species, db_name in ensembl_db_name.iteritems():
             if ortho_species == 'homo_sapiens': continue
 
-            if not  ortho_species == 'ochotona_princeps': continue
-
             ortho_exons   = []
             ortho_gene_id = None
             for human_exon in human_exons:
 
-                if not human_exon.exon_id==4903453: continue
 
                 switch_to_db (cursor, db_name)
 
@@ -580,10 +573,6 @@ def maps_for_gene_list(gene_list, db_info):
                 print "\t", ortho_species, "no maps"
                 continue
 
-            print " ++++ ", ortho_species
-            for map in maps:
-                if map.source == 'usearch':
-                    print "\tusearch", map.similarity
             
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
             store (cursor, maps, ensembl_db_name)
@@ -598,7 +587,7 @@ def maps_for_gene_list(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'test'
+    special    = 'genecards_top500'
 
     local_db   = False
 

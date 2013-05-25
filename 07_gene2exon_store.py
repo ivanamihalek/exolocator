@@ -390,20 +390,7 @@ def find_master (cursor, exon_1, exon_2, is_ensembl, is_havana):
     exon_start_2 = exon_2.start_in_gene
     exon_end_2   = exon_2.end_in_gene
 
-    if  exon_2.is_known == 3:
 
-        print exon_start_1,  exon_end_1, exon_start_2, exon_end_2
-        [exon_seq_id, protein_seq, pepseq_transl_start, 
-         pepseq_transl_end, left_flank, right_flank, dna_seq] = \
-        get_exon_seqs (cursor, exon_1.exon_id,  exon_1.is_known)
-        print "p1", protein_seq
-
-        [exon_seq_id, protein_seq, pepseq_transl_start, 
-         pepseq_transl_end, left_flank, right_flank, dna_seq] = \
-        get_exon_seqs (cursor, exon_2.exon_id,  exon_2.is_known)
-
-        print "p2", protein_seq
-        
     if (exon_start_1 > exon_end_2 or exon_start_2 > exon_end_1):
         return None, None # Fully disjoint exons
 
@@ -548,9 +535,6 @@ def find_exons (cursor, gene_id, species):
     coding_region_end   = -1
     exons               = []
 
-    ue = get_exons  (cursor, gene_id, species, 'usearch_exon')
-    for e in ue: print "usearch : ", e.exon_id
-    
     # get all exons from the 'exon' table
     exons = get_exons (cursor, gene_id, species, 'exon')
     # get all exons from the 'predicted_exon' table
@@ -658,7 +642,6 @@ def gene2exon_orthologues(gene_list, db_info):
 
         for [ortho_gene_id, ortho_species] in orthologues:
 
-            if not  ortho_species == 'ochotona_princeps': continue
             switch_to_db (cursor, ensembl_db_name[ortho_species])
 
             # find all exons associated with the gene id 
@@ -673,7 +656,7 @@ def gene2exon_orthologues(gene_list, db_info):
                 #if exon.is_known>1: print exon
                 store_exon (cursor, exon)
 
-        print " %8.3f " %  (float( int(gene_list.index(gene_id)) +1 )/len(gene_list))
+        print "progress:  %8.3f " %  (float( int(gene_list.index(gene_id)) +1 )/len(gene_list))
 
     cursor.close()
     db.close()
@@ -687,7 +670,7 @@ def main():
 
     no_threads = 1
     local_db   = False
-    special    = 'test'
+    special    = 'genecards_top500'
 
     if local_db:
         db  = connect_to_mysql()

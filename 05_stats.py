@@ -188,3 +188,16 @@ def main():
 #########################################
 if __name__ == '__main__':
     main()
+
+'''
+        prev_end = 0
+        for human_exon in human_exons:
+
+            first_exon = (human_exons.index(human_exon) == 0)
+            if  first_exon: origin = human_exon.start_in_gene
+            print " &&&   %10d    %10d   %10d" % (human_exon.start_in_gene-origin, 
+                                                     human_exon.end_in_gene-human_exon.start_in_gene+1,
+                                                     human_exon.start_in_gene - prev_end)
+            prev_end = human_exon.end_in_gene
+
+'''

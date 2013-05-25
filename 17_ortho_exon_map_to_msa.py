@@ -56,8 +56,9 @@ def multiple_exon_alnmt(gene_list, db_info):
     no_pepseq      = 0
     no_orthologues = 0
 
-    for gene_id in gene_list:
-    #for gene_id in [418249]:
+    #for gene_id in gene_list:
+    for gene_id in [416374]:
+
         start = time()
         gene_ct += 1
         if  not gene_ct%10: print gene_ct, "genes out of", len(gene_list)
@@ -144,7 +145,6 @@ def multiple_exon_alnmt(gene_list, db_info):
                     source = 'sw_sharp'
                 elif cognate_exon_known == '3':
                     source = 'usearch'
-                    print "bleep"
                 else:
                     source = 'ensembl'
                 if (cognate_species == 'homo_sapiens'):

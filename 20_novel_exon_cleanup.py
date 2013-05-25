@@ -241,7 +241,7 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
     return [right_flank_ok, correction, phase, max_score]
 
 #########################################
-def check_coordinates_in_the_gene (cursor, acg, ensembl_db_name, species, sw_exon, exon_dna_seq):
+def check_coordinates_in_the_gene (cursor, cfg, acg, ensembl_db_name, species, sw_exon, exon_dna_seq):
 
     [sw_exon_id, gene_id, start_in_gene, end_in_gene,  maps_to_human_exon_id, exon_seq_id,
      template_exon_seq_id, template_species,  strand, phase, end_phase, has_NNN, has_stop, 
@@ -251,17 +251,28 @@ def check_coordinates_in_the_gene (cursor, acg, ensembl_db_name, species, sw_exo
     gene_coords =  get_gene_coordinates (cursor, gene_id, ensembl_db_name[species])  
     [gene_seq_region_id, gene_start, gene_end, gene_strand] = gene_coords
 
-    print  start_in_gene, end_in_gene, strand, gene_start-gene_end
 
-    if ( start_in_gene< 0 ):
-        region_start = gene_start + start_in_gene
-    else: 
-        region_start = gene_start 
+    if ( gene_strand >  0 ):
+        if ( start_in_gene< 0 ):
+            region_start = gene_start + start_in_gene
+        else: 
+            region_start = gene_start 
 
-    if (end_in_gene > gene_end):
-        region_end = gene_start + end_in_gene
+        if (end_in_gene > gene_end):
+            region_end = gene_start + end_in_gene
+        else:
+            region_end = gene_end
     else:
-        region_end = gene_end
+        if ( start_in_gene< 0 ):
+            region_end = gene_end - start_in_gene
+        else: 
+            region_end = gene_end
+
+        if (end_in_gene > gene_end):
+            region_start = gene_end - end_in_gene
+        else:
+            region_start = gene_end
+        
 
     qry  = "select name, file_name "
 
@@ -270,29 +281,30 @@ def check_coordinates_in_the_gene (cursor, acg, ensembl_db_name, species, sw_exo
     [name, file_names] = rows[0]
     filename = get_best_filename(file_names)
     fasta    = get_fasta (acg, species, name, filename, gene_strand, region_start, region_end)
+    qry_seq = "".join(fasta.splitlines()[1:])
 
-    delete = False
-    gene_fasta = NamedTemporaryFile (delete=delete)
-    gene_fasta.write(fasta)
+    delete = True
 
-    exon_fasta = NamedTemporaryFile (delete=delete)
-    exon_fasta.write(">tmp\n"+exon_dna_seq)
-    
-    outtmp =  NamedTemporaryFile (delete=delete)
+    resultstr = usearch (cfg, acg, exon_dna_seq, qry_seq, delete)
+    match = parse_usearch_output (resultstr)
 
-    cmd = acg.generate_usearch_nt (exon_fasta.name, gene_fasta.name, outtmp.name)
-    
-    resultstr  = commands.getoutput (cmd)
+    if not match:
+        print "no match" # should do something in this case
+        return []
+    else:
+        [match_start, match_end, template_start, template_end, 
+         aligned_target_seq, aligned_template_seq] = match
+        
+    if ( gene_strand >  0 ):
+        start_in_gene_corrected = region_start + match_start - gene_start + 1
+        end_in_gene_corrected   = region_start + match_end - gene_start   + 1
+    else:
+        start_in_gene_corrected = match_start - (region_end - gene_end) + 1
+        end_in_gene_corrected   = match_end   - (region_end - gene_end) + 1
+        
 
-    gene_fasta.close()
-    exon_fasta.close()
+    return [start_in_gene_corrected, end_in_gene_corrected]
 
-    resultstr =  commands.getoutput ("cat "+ outtmp.name)
-    outtmp.close()
-   
-    print resultstr
-
-    exit(1)
 
 #########################################
 def exon_cleanup(gene_list, db_info):
@@ -330,7 +342,7 @@ def exon_cleanup(gene_list, db_info):
         #print human_gene_id, stable_id, get_description (cursor, human_gene_id)
 
         human_exons = get_ok_human_exons (cursor,ensembl_db_name,  human_gene_id)
-
+        
         for human_exon in human_exons:
             [exon_seq_id, human_protein_seq, pepseq_transl_start, pepseq_transl_end, 
              left_flank, right_flank, dna_seq] = get_exon_seqs (cursor, human_exon.exon_id,  1,
@@ -340,7 +352,7 @@ def exon_cleanup(gene_list, db_info):
             first_exon = (human_exons.index(human_exon) == 0)
 
             for species in mammals: # maxentscan does not work for fish 
-            #for species in ['ochotona_princeps']:
+
                  for table in ['sw_exon','usearch_exon']:
                      switch_to_db(cursor, ensembl_db_name[species])
                      qry      = "select * from %s where maps_to_human_exon_id = %d " % (table, human_exon.exon_id)
@@ -371,7 +383,6 @@ def exon_cleanup(gene_list, db_info):
 
                          len_ok   =  (pepseq_transl_end-pepseq_transl_start) == len (dna_seq)
                          if not len_ok:
-                             print "blah"
                              # if it is not the case, then make it be so
                              left_flank += dna_seq[:pepseq_transl_start]
                              right_flank = dna_seq[pepseq_transl_end:] + right_flank
@@ -526,6 +537,7 @@ def exon_cleanup(gene_list, db_info):
                              
                          if new_dna_seq:
                              if (pepseq_transl_end-pepseq_transl_start)%3:
+                                 print "length not divisible by 3 "
                                  print pepseq_transl_start, pepseq_transl_end
                                  print phase, end_phase
                                  print len(new_dna_seq)
@@ -537,7 +549,11 @@ def exon_cleanup(gene_list, db_info):
                          #########################################################
                          # 18_find_exons is sometimes messing up the coordinates 
                          # I do not know why
-                         check_coordinates_in_the_gene (cursor, acg, ensembl_db_name, species, sw_exon, new_dna_seq)
+                         ret = check_coordinates_in_the_gene (cursor, cfg, acg, ensembl_db_name, 
+                                                              species, sw_exon, new_dna_seq)
+                         if not ret: continue
+                         [start_in_gene_corrected, end_in_gene_corrected] = ret
+                             
 
                          #########################################################
                          # update the *_exon and exon_seq tables accordingly
@@ -547,7 +563,16 @@ def exon_cleanup(gene_list, db_info):
                          qry = "update %s set " % table
                          
                          set_fields = ""
+                         if not start_in_gene_corrected == start_in_gene:
+                            if set_fields: set_fields += ", "
+                            set_fields += " start_in_gene = %d  " % start_in_gene_corrected
+
+                         if not end_in_gene_corrected == end_in_gene:
+                            if set_fields: set_fields += ", "
+                            set_fields += " end_in_gene = %d  " % end_in_gene_corrected
+
                          if not has_stop is None:
+                             if set_fields: set_fields += ", "
                              set_fields += " has_stop  = %d" % has_stop
                             
                          if left_flank_ok:
@@ -567,34 +592,26 @@ def exon_cleanup(gene_list, db_info):
                          qry += set_fields + " where exon_id=%d" %  sw_exon_id
                          
                          if set_fields:
-                             print ensembl_db_name[species]
-                             print qry
-                             print search_db(cursor, qry)
+                             search_db(cursor, qry)
 
                          # update exon sequence
                          if pepseq_corrected: 
                              # we might have changed our mind as to what is the cDNA seq, and what is flanking
                              qry  = "update exon_seq set "
                              qry += " protein_seq = '%s', " % pepseq_corrected
-                             qry += " dna_seq = '%s', "     % new_dna_seq
-                             qry += " left_flank = '%s', "  % new_left_flank
-                             qry += " right_flank = '%s', " % new_right_flank
+                             qry += " dna_seq = '%s',     " % new_dna_seq
+                             qry += " left_flank = '%s',  " % new_left_flank
+                             qry += " right_flank = '%s',       " % new_right_flank
                              qry += " pepseq_transl_start = %d, " % pepseq_transl_start
-                             qry += " pepseq_transl_end = %d  "   % pepseq_transl_end
+                             qry += " pepseq_transl_end   = %d  " % pepseq_transl_end
                              table_id = 2 if table=='sw_exon' else 3
                              qry += " where exon_id=%d and is_known=%d" % (sw_exon_id, table_id)
-
-                             print qry
-                             print search_db(cursor, qry)
+                             search_db(cursor, qry)
                             
                          # gene2exon --> have to go back to 07_gene2exon for that
                          tot_ok += 1
-                         print
 
-            #print species, "total: ", ct, "  ok: ", ok
     
-    print tot, tot_ok
-
     cursor.close()
     db.close()
 
@@ -602,8 +619,7 @@ def exon_cleanup(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'test'
-    #special    = 'genecards_top500'
+    special    = 'genecards_top500'
 
     local_db   = False
 
