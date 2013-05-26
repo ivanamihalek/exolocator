@@ -224,8 +224,6 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flan
     maps    = filter (lambda m: not m.exon_id_2 is None, maps)
     maps_sw = filter (lambda m: m.source=='sw_sharp' or m.source=='usearch', maps)
 
-    print "all: ",  len(maps), " novel:",  len(maps_sw)
-
     for map in maps:
         # get the raw (unaligned) sequence for the exon that maps onto human
         exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
@@ -354,7 +352,9 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
 
  
     for name in sorted_seq_names:
-        if not stable_gene_id.has_key(name): continue
+        if not stable_gene_id.has_key(name): 
+            print name, "bleep"
+            continue
         out_string += "\n" 
         out_string += "%% sequence name: %s   corresponding to the gene: %s \n" % (name, stable_gene_id[name])
         out_string += "%% %20s  %10s  %10s  %6s  %6s    %-s  %-s\n" % \
@@ -719,10 +719,13 @@ def realign_slice (pep_slice, seq_to_fix, pep_seq_pieces):
 def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_map,
                   names_of_exons, seq_to_fix, overlapping_maps, alnmt_pep, output_pep):
 
+    #pdb.set_trace()
 
     count = 0
 
+    #no overlapping maps - nothing to resolve"
     if not overlapping_maps: return [output_pep, names_of_exons]
+        
 
     if not output_pep.has_key('human'): return [output_pep, names_of_exons]
 
@@ -802,6 +805,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         if len(exon_aln_start_pep) <= smallest_id or  len(exon_aln_start_pep) <= largest_id:
             print  len(exon_aln_start_pep), smallest_id, len(exon_aln_start_pep), largest_id
+            print "abort 1"
             return [output_pep, names_of_exons]
 
         ####################################
@@ -814,6 +818,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         if  number_of_human_exons > 3 and \
                 float(pep_slice_end-pep_slice_start)/len(output_pep['human']) > 0.3 or 'elephant' in seq_to_fix:
             #print "deleting", seq_to_fix
+            print "abort 2: map apparently spread over too many humna exons:"
+            print seq_to_fix, " pep slice", pep_slice_start, pep_slice_end, "  len: ", len(output_pep['human'])
             del output_pep[seq_to_fix]
             return [output_pep, names_of_exons]
 
@@ -831,6 +837,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         if not check_seq_length(new_pep_slice, "new_pep_slice"):
             del output_pep[seq_to_fix]
+            print "abort 3"
             return [output_pep, names_of_exons]
 
         #################################### 
@@ -843,6 +850,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         if not check_seq_length(new_alignment_pep, "new_alignment_pep"):
             del output_pep[seq_to_fix]
+            print "abort 4"
             return [output_pep, names_of_exons]
 
         boundary_cleanup(new_alignment_pep, new_alignment_pep.keys())
@@ -1167,8 +1175,8 @@ def make_alignments ( gene_list, db_info):
     # for each  gene in the provided list
     gene_ct = 0
     #gene_list.reverse()
-    #for gene_id in gene_list:
-    for gene_id in [416374]:
+    for gene_id in gene_list:
+
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
 
@@ -1320,17 +1328,16 @@ def make_alignments ( gene_list, db_info):
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
  
-        if 1:
-            for seq_to_fix in overlapping_maps.keys():
-                # fix_one2many changes both output_pep and names_of_exons
-                [output_pep, names_of_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
-                                                             canonical_human_exons, human_exon_map, 
-                                                             names_of_exons, seq_to_fix, 
-                                                             overlapping_maps[seq_to_fix], 
-                                                             alnmt_pep, output_pep)
- 
-                # we may have chosen to delete some sequences
-                sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
+        for seq_to_fix in overlapping_maps.keys():
+            # fix_one2many changes both output_pep and names_of_exons
+            [output_pep, names_of_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
+                                                         canonical_human_exons, human_exon_map, 
+                                                         names_of_exons, seq_to_fix, 
+                                                         overlapping_maps[seq_to_fix], 
+                                                         alnmt_pep, output_pep)
+
+            # we may have chosen to delete some sequences
+            sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
             print "length check failure"
@@ -1383,6 +1390,18 @@ def main():
     
     no_threads = 1
     special    = 'test'
+
+    if len(sys.argv) > 1 and  len(sys.argv)<3:
+        print "usage: %s <set name> <number of threads> <method>"
+        exit(1)
+    elif len(sys.argv)==3:
+
+        special = sys.argv[1]
+        special = special.lower()
+        if special == 'none': special = None
+
+        no_threads = int(sys.argv[2])
+
     local_db   = False
     
     if local_db:
@@ -1396,6 +1415,7 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
 
+    print "running ", sys.argv[0]
     if special:
         print "using", special, "set"
         gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )

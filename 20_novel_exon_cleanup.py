@@ -329,8 +329,8 @@ def exon_cleanup(gene_list, db_info):
 
     tot         = 0
     tot_ok      = 0
-    #for human_gene_id in gene_list:
-    for human_gene_id in [416374]:
+    for human_gene_id in gene_list:
+
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id   = gene2stable(cursor, human_gene_id)
         description = get_description (cursor, human_gene_id)
@@ -619,8 +619,20 @@ def exon_cleanup(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'genecards_top500'
+    special    = 'test'
 
+    if len(sys.argv) > 1 and  len(sys.argv)<3:
+        print "usage: %s <set name> <number of threads> <method>"
+        exit(1)
+    elif len(sys.argv)==3:
+
+        special = sys.argv[1]
+        special = special.lower()
+        if special == 'none': special = None
+
+        no_threads = int(sys.argv[2])
+
+ 
     local_db   = False
 
     if local_db:
@@ -634,7 +646,7 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
 
-
+    print "running ", sys.argv[0]
     if special:
         print "using", special, "set"
         gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
@@ -642,6 +654,7 @@ def main():
         print "using all protein coding genes"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+
 
     cursor.close()
     db.close()

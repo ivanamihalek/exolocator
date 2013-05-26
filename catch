@@ -1,2 +1,96 @@
 using test set
-usearch :  1
+416374 ENSG00000108846 ATP-binding cassette, sub-family C (CFTR/MRP), member 3 [Source:HGNC Symbol;Acc:54]
+usearch 0.8 otolemur_garnettii 4902504 1
+usearch 0.0666667 ochotona_princeps 4902504 1
+usearch 0.183333 xiphophorus_maculatus 4902504 1
+usearch 1.0 nomascus_leucogenys 4902504 1
+usearch None xiphophorus_maculatus 4902924 1
+usearch 0.384615 echinops_telfairi 4903292 1
+usearch 0.569231 tetraodon_nigroviridis 4903343 1
+usearch 0.646154 takifugu_rubripes 4903343 2894
+usearch 0.0 nomascus_leucogenys 4903414 1
+usearch 0.0 nomascus_leucogenys 4903434 1
+usearch 0.684211 ochotona_princeps 4903453 1
+region: 28070 30734
+search: 85 189
+ match: 85 189
+  gene: 1712 98910 1
+----------------
+GGCTCGGTGGCCTATGTGCCCCAGCAGCGTGGAATCCAGAACGCCACGCTTCAAGAAAATGTGCTGTTTGGCCGCAACACTGGACTCCAAGCGCTACCAACGGAC
+============================================
+416374 ENSG00000108846 ATP-binding cassette, sub-family C (CFTR/MRP), member 3 [Source:HGNC Symbol;Acc:54]
+found sequence for echinops_telfairi:
+left flank:    AGGGCTTGGTGCTTGGCCCAGCCTGGGCTGAACCTCAAGGTCAGTGTCTTCCACCGCCAG
+right flank:   CGTNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+translation:   GSVAYVPQQRGIQNATLQENVLFGRNTGLQALPT
+template:      GSVAYVPQQAWIQNATLQENVLFGQALDPKRYQQTLEACALVADLEVLPGGDQTEIGEK
+human version: GSVAYVPQQAWIQNCTLQENVLFGKALNPKRYQQTLEACALLADLEMLPGGDQTEIGEK
+template similarity to human:    0.95
+based on loxodonta_africana, exon 193024, position 0 - 103:
+storing to  echinops_telfairi_core_69_1
+stored as exon  1 to usearch_exon
+
+no match search region contains NNN: False
+no match search region contains NNN: False
+no match search region contains NNN: False
+no match search region contains NNN: False
+no match search region contains NNN: False
+no match search region contains NNN: False
+no match search region contains NNN: False
+region: 239125 263230
+search: 4156 4334
+ match: 4156 4334
+  gene: 227423 259173 -1
+----------------
+CCACAGTCTTTCTTTGACACCACTCCCATAGGGCGCATTATCAATCGGTTCTCCAAGGATATTTTTGTGATTGATGAAGTGTTGCCATCTACCATCTTAATGTTTCTGGGAACCTTCTTCAGCTCTCTCTCAGTCATGATTGTTATCATTTGCAGCACCCCTATATTTATAGTGGTCAT
+============================================
+416374 ENSG00000108846 ATP-binding cassette, sub-family C (CFTR/MRP), member 3 [Source:HGNC Symbol;Acc:54]
+found sequence for latimeria_chalumnae:
+left flank:    GGTGGCATTGGTGCAGCCCGAAAGCTTCACTTCGCATTGCTAGAGAATAAATTTCACACA
+right flank:   TAATACCACTAGCAGCTTTATACTTCTTTGTACAGGTATTGTTTGACTGTTAAACTTTAT
+translation:   PQSFFDTTPIGRIINRFSKDIFVIDEVLPSTILMFLGTFFSSLSVMIVIICSTPIFIVV
+template:      LLVMLAALTMAVGGMQAARLLHQALLHNKMRSPQSFFDTTPSGRILNRFSKDIYVIDEVLASTALMLLGSFFNCISTMVVIVSSTPIFIVVILPLGALYIYVQ
+human version: FLVMLAAMAMAAGGIQAARVLHQALLHNKIRSPQSFFDTTPSGRILNCFSKDIYVVDEVLAPVILMLLNSFFNAISTLVVIMASTPLFTVVILPLAVLYTLVQ
+template similarity to human:    0.89
+based on microcebus_murinus, exon 188674, position 98 - 276:
+storing to  latimeria_chalumnae_core_69_1
+stored as exon  1 to usearch_exon
+
+no match search region contains NNN: False
+no match search region contains NNN: False
+no match search region contains NNN: False
+no match search region contains NNN: False
+region: 7815002 7819066
+search: 736 865
+ match: 738 866
+  gene: 7791403 7822539 -1
+----------------
+TGGCAATAAAAGGCTACAAAAAGCCTCTGGAGGACAAAGACCTTTGGTCTCTGAACAAGCGCGACACCTCCAAGGTGGCGGTGATGAAGCTCCTCCAGGAGTGGGAAAAGGAGCTGGCCAAAGCCAAGAG
+============================================
+416374 ENSG00000108846 ATP-binding cassette, sub-family C (CFTR/MRP), member 3 [Source:HGNC Symbol;Acc:54]
+found sequence for gasterosteus_aculeatus:
+left flank:    ATCGTTTACATGTAAAGAATATGAGAACATTGAGACGCTGTTTCCCTTTCCCTCAGCATG
+right flank:   GTATGTTTGTACAAGAAGAGGAAGAGGGGGAAGCGTTGTCCTTTCCAAAAAATATAGTCC
+translation:   AIKGYKKPLEDKDLWSLNKRDTSKVAVMKLLQEWEKELAKAK
+template:      LAIKGYKMPLEAKDLWSLNQRDSSKKIVPKLLKEWEKEQTKVK
+human version: MAIYGYRHPLEEKDLWSLKEEDRSQMVVQQLLEAWRKQEKQTA
+template similarity to human:    0.58
+based on xiphophorus_maculatus, exon 380340, position 2 - 131:
+storing to  gasterosteus_aculeatus_core_69_1
+stored as exon  1 to usearch_exon
+
+no match search region contains NNN: False
+no match search region contains NNN: False
+done with  416374 ENSG00000108846 ATP-binding cassette, sub-family C (CFTR/MRP), member 3 [Source:HGNC Symbol;Acc:54]
+sought 18  found 3
+usearch 0.8 otolemur_garnettii 4902504 1
+usearch 0.0666667 ochotona_princeps 4902504 1
+usearch 0.183333 xiphophorus_maculatus 4902504 1
+usearch 1.0 nomascus_leucogenys 4902504 1
+usearch None xiphophorus_maculatus 4902924 1
+usearch 0.384615 echinops_telfairi 4903292 1
+usearch 0.569231 tetraodon_nigroviridis 4903343 1
+usearch 0.646154 takifugu_rubripes 4903343 2894
+usearch 0.0 nomascus_leucogenys 4903414 1
+usearch 0.0 nomascus_leucogenys 4903434 1
+usearch 0.684211 ochotona_princeps 4903453 1

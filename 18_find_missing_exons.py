@@ -485,7 +485,7 @@ def translation_check ( searchseq, match_start, match_end, mitochondrial, pepseq
 
 
 #########################################
-def find_search_region (acg, species,  prev_seq_region, next_seq_region):
+def find_search_region (acg, species,  prev_seq_region, next_seq_region, extension):
 
     # determine the search region, and extract it using fastacmd
     if not next_seq_region and not prev_seq_region:
@@ -497,11 +497,11 @@ def find_search_region (acg, species,  prev_seq_region, next_seq_region):
         searchfile   = next_seq_region.filename
         searchstrand = next_seq_region.strand
         if searchstrand==1:
-            searchstart = next_seq_region.start - MAX_SEARCH_LENGTH
+            searchstart = next_seq_region.start - extension
             searchend   = next_seq_region.start
         else:
             searchstart = next_seq_region.end
-            searchend   = next_seq_region.end   + MAX_SEARCH_LENGTH
+            searchend   = next_seq_region.end   + extension
 
     elif not next_seq_region:
         searchname   = prev_seq_region.name
@@ -510,9 +510,9 @@ def find_search_region (acg, species,  prev_seq_region, next_seq_region):
 
         if searchstrand==1:
             searchstart = prev_seq_region.end
-            searchend   = prev_seq_region.end   + MAX_SEARCH_LENGTH
+            searchend   = prev_seq_region.end   + extension
         else:
-            searchstart = prev_seq_region.start - MAX_SEARCH_LENGTH
+            searchstart = prev_seq_region.start - extension
             searchend   = prev_seq_region.start
 
     else:
@@ -612,11 +612,11 @@ def organize_and_store_sw_exon (cursor, acg, ensembl_db_name, species, gene_id,
 #########################################
 def brute_force_search(cfg, acg, query_seq, target_seq, method):
 
-    if method   == 'sw':
+    if method   == 'sw_sharp':
         resultstr = sw_search (cfg, acg, query_seq, target_seq)
         match = parse_sw_output(resultstr)
     elif method == 'usearch':
-        resultstr = usearch (cfg, acg, query_seq, target_seq, delete=False)
+        resultstr = usearch (cfg, acg, query_seq, target_seq, delete=True)
         match = parse_usearch_output(resultstr)
     else:
         print "unrecognized search method: ", method
@@ -649,9 +649,7 @@ def store_warning_map (cursor, ensembl_db_name,  species, human_exon, warning):
 
 #########################################
 def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  species, gene_id, gene_coords, 
-                      prev_seq_region, next_seq_region, template_info, mitochondrial):
-
-    method = 'usearch'
+                      prev_seq_region, next_seq_region, template_info, mitochondrial, method):
 
     matching_region = None
 
@@ -659,7 +657,8 @@ def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  
     
 
     # find the search region
-    ret = find_search_region (acg, species,  prev_seq_region, next_seq_region)
+    extension = MAX_SEARCH_LENGTH if method=='usearch' else 2*MAX_SEARCH_LENGTH
+    ret = find_search_region (acg, species,  prev_seq_region, next_seq_region, extension)
     if not ret: 
         print "no search region "
         #exit(1)
@@ -805,7 +804,7 @@ def right_region (seq_region, region_length):
 def find_missing_exons(human_gene_list, db_info):
 
     # 
-    [local_db, ensembl_db_name] = db_info
+    [local_db, ensembl_db_name, method] = db_info
     if local_db:
         db  = connect_to_mysql()
         cfg = ConfigurationReader()
@@ -827,8 +826,7 @@ def find_missing_exons(human_gene_list, db_info):
     found   = 0
     sought  = 0
     #human_gene_list.reverse()
-    #for human_gene_id in human_gene_list:
-    for human_gene_id in [416374]:
+    for human_gene_id in human_gene_list:
 
 	switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
 
@@ -868,12 +866,12 @@ def find_missing_exons(human_gene_list, db_info):
         for he in human_exons:
             maps_for_exon[he] =  get_maps(cursor, ensembl_db_name, he.exon_id, he.is_known) # exon data
             for m in maps_for_exon[he]:
-                #if m.source == 'usearch': continue
+                #if m.source ==  'usearch': continue
                 #if m.source == 'sw_sharp': continue
                 if m.source == 'sw_sharp': 
                     print 'sw_sharp'
                 if m.source == 'usearch': 
-                    print 'usearch',  m.similarity, m.species_2
+                    print 'usearch',  m.similarity, m.species_2, m.exon_id_1, m.exon_id_2
                 if not m.warning and m.similarity < 0.5: continue
                 m_previous = map_table[m.species_2][he]
                 if m_previous and m_previous.similarity > m.similarity:
@@ -927,7 +925,6 @@ def find_missing_exons(human_gene_list, db_info):
 
         species_sorted_from_human = species_sort(cursor,map_table.keys(),species)[1:]
         for species in species_sorted_from_human:
-        #for species in ['ochotona_princeps']:
             # see which exons have which neighbors
             #if verbose: print he.exon_id, species
             no_left  = []
@@ -988,7 +985,7 @@ def find_missing_exons(human_gene_list, db_info):
                 sought += 1
                 matching_region = search_and_store(cursor, ensembl_db_name, cfg, acg, he, maps_for_exon[he], 
                                                    species, gene_id,  gene_coords, prev_seq_region, 
-                                                   next_seq_region, template_info, mitochondrial)
+                                                   next_seq_region, template_info, mitochondrial, method)
                 if matching_region: found += 1
 
 
@@ -1017,7 +1014,7 @@ def find_missing_exons(human_gene_list, db_info):
                 sought         += 1
                 matching_region = search_and_store(cursor, ensembl_db_name, cfg, acg, he,  maps_for_exon[he], 
                                                    species,  gene_id, gene_coords, prev_seq_region, next_seq_region,
-                                                   template_info, mitochondrial)
+                                                   template_info, mitochondrial, method)
                 if matching_region: 
                     found += 1
                     next_seq_region = matching_region
@@ -1046,7 +1043,7 @@ def find_missing_exons(human_gene_list, db_info):
                 sought         += 1
                 matching_region = search_and_store (cursor, ensembl_db_name, cfg, acg, he,  maps_for_exon[he], 
                                                     species, gene_id, gene_coords, prev_seq_region, next_seq_region,
-                                                    template_info, mitochondrial)
+                                                    template_info, mitochondrial, method)
                 #print he.pepseq
                 #print template_pepseq
                 if matching_region: 
@@ -1057,12 +1054,33 @@ def find_missing_exons(human_gene_list, db_info):
         if verbose: print "sought", sought, " found", found
                 
 
-
 #########################################
 def main():
     
-    no_threads = 1
     special    = 'test'
+    no_threads = 10
+    method     = 'usearch'
+
+
+    if len(sys.argv) > 1 and  len(sys.argv)<4:
+        print "usage: %s <set name> <number of threads> <method>"
+        exit(1)
+    elif len(sys.argv)==4:
+
+        special = sys.argv[1]
+        special = special.lower()
+        if special == 'none': special = None
+
+        no_threads = int(sys.argv[2])
+        
+        method = sys.argv[3]
+        if not method =='usearch' or method=='sw_sharp':
+            print "unrecognized method: ", method
+            exit(1)
+
+
+    # sw_sharps chokes if there is only one graphics card
+    if method=='sw_sharp': no_threads = 1
 
     local_db   = False
 
@@ -1088,10 +1106,17 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, find_missing_exons, gene_list, [local_db, ensembl_db_name])
+    parallelize (no_threads, find_missing_exons, gene_list, [local_db, ensembl_db_name, method])
     
     return True
 
 #########################################
 if __name__ == '__main__':
 	main()
+
+
+
+
+'''
+    #for human_gene_id in [416374]:
+'''

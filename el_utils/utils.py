@@ -19,14 +19,13 @@ def sw_search (cfg, acg, query_seq, target_seq, delete= True):
 
     tgt_filename = "{0}/tgt_{1}.fa".format  (cfg.dir_path['scratch'], random_str)
     tgt_file = erropen( tgt_filename, "w")
-    tgt_file.write(outstr)
+    tgt_file.write(">tartget\n"+target_seq+"\n")
     tgt_file.close()
 
 
     # do  SW# search
     swsharpcmd = acg.generate_SW_nt (qry_filename, tgt_filename)
     resultstr  = commands.getoutput (swsharpcmd)
-    searchtmp.close()
 
     print swsharpcmd
 
@@ -36,7 +35,7 @@ def sw_search (cfg, acg, query_seq, target_seq, delete= True):
         resultstr = ""
 
     if delete:
-        cmd = "rm  {0}  {1}  {2}".format (qry_filename, tgt_filename, outname)
+        cmd = "rm  {0}  {1} ".format (qry_filename, tgt_filename)
         stdout  = commands.getoutput (cmd)
 
 
@@ -466,10 +465,14 @@ def  pairwise_fract_similarity (seq1, seq2):
     if ( not len(seq1)):
         return fract_similarity
 
+    common_length = 0.0
     for i in range(len(seq1)):
-        if (seq1[i] == '-'): continue
+        if (seq1[i] == '-' or seq2[i] == '-'): continue
         if is_similar_to[seq1[i]] == is_similar_to[seq2[i]]: fract_similarity += 1.0
-    
-    fract_similarity /= float(len(seq1))
+        common_length += 1.0
+
+    if not common_length: return 0.0
+
+    fract_similarity /= common_length
     return fract_similarity
 

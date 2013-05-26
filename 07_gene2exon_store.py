@@ -632,8 +632,7 @@ def gene2exon_orthologues(gene_list, db_info):
         db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    #for gene_id in gene_list:
-    for gene_id in [416374]:
+    for gene_id in gene_list:
 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
@@ -669,8 +668,26 @@ def gene2exon_orthologues(gene_list, db_info):
 def main():
 
     no_threads = 1
-    local_db   = False
     special    = 'genecards_top500'
+
+    if len(sys.argv) > 1 and  len(sys.argv)<3:
+        print "usage: %s <set name> <number of threads> <method>"
+        exit(1)
+    elif len(sys.argv)==3:
+
+        special = sys.argv[1]
+        special = special.lower()
+        if special == 'none': special = None
+
+        no_threads = int(sys.argv[2])
+
+
+
+
+    local_db   = False
+
+
+
 
     if local_db:
         db  = connect_to_mysql()

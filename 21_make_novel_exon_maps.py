@@ -278,7 +278,6 @@ def maps_evaluate (cursor, ensembl_db_name, human_exons, ortho_exons, aligned_se
 
                 map.cigar_line = ciggy
                 map.similarity = pairwise_fract_similarity (seq1, seq2)
-                
                 # bit of paranoia, but not misplaced:  do we already have a map for this exon by any chance?
                 better_map = False
                 for old_map in old_maps:
@@ -432,6 +431,7 @@ def  map_cleanup (cursor, ensembl_db_name, human_exons):
     for exon in human_exons:
         qry  = "delete from exon_map where exon_id = %d " % exon.exon_id
         qry += " and exon_known = %d " % exon.is_known
+        qry += " and cognate_exon_known > 1 " 
         rows = search_db (cursor, qry, verbose=False)
 
 
@@ -514,8 +514,8 @@ def maps_for_gene_list(gene_list, db_info):
     no_maps           = 0
 
     #######################################
-    #for gene_id in gene_list:
-    for gene_id in [416374]:
+    for gene_id in gene_list:
+
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         if not ct%10: print ct, "out of ", len(gene_list) 
@@ -531,7 +531,7 @@ def maps_for_gene_list(gene_list, db_info):
             #sys.exit(1)
 
         # get rid of the old maps # can't do that here bcs this script is only updating sw exons
-        #map_cleanup (cursor, ensembl_db_name, human_exons)
+        map_cleanup (cursor, ensembl_db_name, human_exons)
         ##########
         for ortho_species, db_name in ensembl_db_name.iteritems():
             if ortho_species == 'homo_sapiens': continue
@@ -588,6 +588,18 @@ def main():
     
     no_threads = 1
     special    = 'genecards_top500'
+
+
+    if len(sys.argv) > 1 and  len(sys.argv)<3:
+        print "usage: %s <set name> <number of threads> <method>"
+        exit(1)
+    elif len(sys.argv)==3:
+
+        special = sys.argv[1]
+        special = special.lower()
+        if special == 'none': special = None
+
+        no_threads = int(sys.argv[2])
 
     local_db   = False
 

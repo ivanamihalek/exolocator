@@ -2,7 +2,7 @@
 # make the best alignment we can using the maps
 # we currently have at hand
 
-import MySQLdb, commands, re
+import MySQLdb, commands, re, sys
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
@@ -56,8 +56,7 @@ def multiple_exon_alnmt(gene_list, db_info):
     no_pepseq      = 0
     no_orthologues = 0
 
-    #for gene_id in gene_list:
-    for gene_id in [416374]:
+    for gene_id in gene_list:
 
         start = time()
         gene_ct += 1
@@ -168,7 +167,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                   {"msa_bitstring":MySQLdb.escape_string(msa_bitmap)})
 
             ok += 1
-            #commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
+            commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
         if verbose: print " time: %8.3f\n" % (time()-start);
 
@@ -185,6 +184,18 @@ def main():
     no_threads = 1
     special    = 'test'
 
+
+    if len(sys.argv) > 1 and  len(sys.argv)<3:
+        print "usage: %s <set name> <number of threads> <method>"
+        exit(1)
+    elif len(sys.argv)==3:
+
+        special = sys.argv[1]
+        special = special.lower()
+        if special == 'none': special = None
+
+        no_threads = int(sys.argv[2])
+
     local_db = False
 
     if local_db:
@@ -197,7 +208,7 @@ def main():
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
-
+    print "running ", sys.argv[0]
     if special:
         print "using", special, "set"
         gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
