@@ -13,7 +13,7 @@ from   el_utils.ncbi    import  taxid2trivial
 
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
-from   el_utils.special_gene_sets  import human_genes_w_sw_sharp_annotation, get_theme_ids
+from   el_utils.special_gene_sets  import *
 from   el_utils.threads import  parallelize
 
 
@@ -209,9 +209,14 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
     print "running ", sys.argv[0]
+
     if special:
         print "using", special, "set"
-        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+        if special == 'complement':
+            gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
+        else:
+            gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+
     else:
         print "using all protein coding genes"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])

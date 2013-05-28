@@ -16,13 +16,13 @@ foreach (  "18_find_missing_exons.py", "20_novel_exon_cleanup.py",
 }
 
 #18_find_missing_exons
-$cmd = "18_find_missing_exons.py @ARGV";
+$cmd = "18_find_missing_exons.py  @ARGV";
 (system $cmd) && die "error running $cmd";
 
 pop @ARGV;
 
 #20_novel_exon_cleanup
-$cmd = "20_novel_exon_cleanup.py @ARGV";
+$cmd = "20_novel_exon_cleanup.py  @ARGV";
 (system $cmd) && die "error running $cmd";
 
 #07_gene2exon_store 

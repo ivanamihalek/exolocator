@@ -16,7 +16,7 @@ from el_utils.utils   import  *
 from el_utils.map     import  Map, get_maps
 from el_utils.tree    import  species_sort
 
-from el_utils.special_gene_sets  import  get_theme_ids
+from el_utils.special_gene_sets  import get_theme_ids, get_complement_ids
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from el_utils.config_reader      import ConfigurationReader
 from el_utils.threads import  parallelize
@@ -170,7 +170,7 @@ def store_novel_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene,
     switch_to_db(cursor, db_name)
 
     #################################
-    # exon table
+    # exon table                    #
     #################################
     fixed_fields  = {}
     update_fields = {}
@@ -200,7 +200,7 @@ def store_novel_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene,
 
 
     #################################
-    # exon seq
+    # exon seq                      # 
     #################################
     fixed_fields  = {}
     update_fields = {}
@@ -1074,7 +1074,7 @@ def main():
         no_threads = int(sys.argv[2])
         
         method = sys.argv[3]
-        if not method =='usearch' or method=='sw_sharp':
+        if not (method =='usearch' or method=='sw_sharp'):
             print "unrecognized method: ", method
             exit(1)
 
@@ -1097,7 +1097,11 @@ def main():
 
     if special:
         print "using", special, "set"
-        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+        if special == 'complement':
+            gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
+        else:
+            gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+
     else:
         print "using all protein coding genes"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])

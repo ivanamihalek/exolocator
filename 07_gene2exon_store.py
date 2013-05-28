@@ -7,7 +7,7 @@ from   el_utils.ensembl import  *
 from   el_utils.utils   import  *
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
-from   el_utils.special_gene_sets  import  get_theme_ids
+from   el_utils.special_gene_sets  import  *
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 
@@ -699,7 +699,11 @@ def main():
 
     [all_species, ensembl_db_name] = get_species (cursor)
     if special:
-        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+        print "using", special, "set"
+        if special == 'complement':
+            gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
+        else:
+            gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
         
     cursor.close()
     db    .close()
@@ -710,7 +714,6 @@ def main():
         parallelize (no_threads, gene2exon_all, all_species,  [local_db, ensembl_db_name])
     # 2) over orthologues for a given list of genes
     else:
-        print "using", special, "set"
         parallelize (no_threads, gene2exon_orthologues, gene_list,  [local_db, ensembl_db_name])
         
 

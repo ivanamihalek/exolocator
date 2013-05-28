@@ -14,7 +14,7 @@ from   el_utils.map     import  get_maps, Map
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.alignment          import smith_waterman, exon_aware_smith_waterman
-from   el_utils.special_gene_sets  import human_genes_w_sw_sharp_annotation, get_theme_ids
+from   el_utils.special_gene_sets  import *
 from   alignment import * # C implementation of smith waterman
 
 
@@ -614,8 +614,13 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
     if special:
+
         print "using", special, "set"
-        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+        if special == 'complement':
+            gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
+        else:
+            gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+
     else:
         print "using all protein coding genes that have an sw# patch"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])

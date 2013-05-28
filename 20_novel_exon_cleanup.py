@@ -8,7 +8,7 @@ from el_utils.mysql   import  *
 from el_utils.ensembl import  *
 from el_utils.utils   import  *
 from el_utils.config_reader      import ConfigurationReader
-from el_utils.special_gene_sets  import human_genes_w_sw_sharp_annotation, get_theme_ids
+from el_utils.special_gene_sets  import *
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from el_utils.threads import  parallelize
 # BioPython
@@ -325,7 +325,16 @@ def exon_cleanup(gene_list, db_info):
     # find db ids and common names for each species db
     all_species, ensembl_db_name = get_species (cursor)
 
-    mammals = ['ailuropoda_melanoleuca',   'bos_taurus',  'callithrix_jacchus',  'canis_familiaris',  'cavia_porcellus',  'choloepus_hoffmanni',  'dasypus_novemcinctus',  'dipodomys_ordii',  'echinops_telfairi',  'equus_caballus',  'erinaceus_europaeus',  'felis_catus',   'gorilla_gorilla',  'ictidomys_tridecemlineatus',   'loxodonta_africana',  'macaca_mulatta',  'macropus_eugenii',    'microcebus_murinus',  'monodelphis_domestica',  'mus_musculus',  'mustela_putorius_furo',  'myotis_lucifugus',  'nomascus_leucogenys',  'ochotona_princeps',   'ornithorhynchus_anatinus',  'oryctolagus_cuniculus',    'otolemur_garnettii',  'pan_troglodytes',   'pongo_abelii',  'procavia_capensis',  'pteropus_vampyrus',  'rattus_norvegicus',  'sarcophilus_harrisii',  'sorex_araneus',  'sus_scrofa',  'tarsius_syrichta',  'tupaia_belangeri',  'tursiops_truncatus',  'vicugna_pacos']
+    mammals = ['ailuropoda_melanoleuca',   'bos_taurus',  'callithrix_jacchus',  'canis_familiaris',  
+               'cavia_porcellus',  'choloepus_hoffmanni',  'dasypus_novemcinctus',  'dipodomys_ordii',  
+               'echinops_telfairi',  'equus_caballus',  'erinaceus_europaeus',  'felis_catus',   'gorilla_gorilla',  
+               'ictidomys_tridecemlineatus',   'loxodonta_africana',  'macaca_mulatta',  'macropus_eugenii',    
+               'microcebus_murinus',  'monodelphis_domestica',  'mus_musculus',  'mustela_putorius_furo',  
+               'myotis_lucifugus',  'nomascus_leucogenys',  'ochotona_princeps',   'ornithorhynchus_anatinus',  
+               'oryctolagus_cuniculus', 'otolemur_garnettii', 'pan_troglodytes', 'pongo_abelii',  
+               'procavia_capensis', 'pteropus_vampyrus', 'rattus_norvegicus', 'sarcophilus_harrisii',  
+               'sorex_araneus', 'sus_scrofa', 'tarsius_syrichta',  'tupaia_belangeri',  'tursiops_truncatus',  
+               'vicugna_pacos']
 
     tot         = 0
     tot_ok      = 0
@@ -377,7 +386,10 @@ def exon_cleanup(gene_list, db_info):
                          tot +=1
              
                          exon_seqs =  get_exon_seq_by_db_id (cursor, exon_seq_id, ensembl_db_name[species])
-                         if not exon_seqs: continue
+                         if not exon_seqs: 
+                             print "exon seq not stored "
+                             continue
+
                          [exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, 
                           left_flank, right_flank, dna_seq] = exon_seqs
 
@@ -649,7 +661,10 @@ def main():
     print "running ", sys.argv[0]
     if special:
         print "using", special, "set"
-        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+        if special == 'complement':
+            gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
+        else:
+            gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
     else:
         print "using all protein coding genes"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
