@@ -98,11 +98,12 @@ class Exon:
             print " at least 10 elements long"
             return False
         
-        self.exon_id             = table_row[0]
-        self.gene_id             = table_row[1]
-        self.start_in_gene       = table_row[2]
-        self.end_in_gene         = table_row[3]
-
+        self.exon_id               = table_row[0]
+        self.gene_id               = table_row[1]
+        self.start_in_gene         = table_row[2]
+        self.end_in_gene           = table_row[3]
+        self.maps_to_human_exon_id = table_row[4]
+        self.exon_seq_id           = table_row[5]
         self.template_exon_seq_id  = table_row[6]
         self.template_species      = table_row[7]
 
@@ -113,7 +114,7 @@ class Exon:
         self.is_coding           = 1
         self.is_canonical        = 0
         self.is_constitutive     = 0
-        self.analysis_id         = -1
+        self.analysis_id         = -1 if table=='sw_exon' else -2
         return True
 
     #################################################
@@ -137,6 +138,7 @@ class Exon:
     def __init__ (self):
         
         self.exon_id               = None
+        self.exon_seq_id           = None
         self.stable_id             = None
         self.gene_id               = None
         self.start_in_gene         = None
@@ -154,6 +156,7 @@ class Exon:
         self.is_canonical          = None
         self.covering_exon         = None
         self.covering_exon_known   = None
+        self.maps_to_human_exon_id = None
         self.analysis_id           = None
         self.pepseq                = None
         self.template_species      = None

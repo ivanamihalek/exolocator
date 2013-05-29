@@ -1,7 +1,45 @@
 import sys, os,  re, commands
 import string, random
 from subprocess import Popen, PIPE, STDOUT
-from tempfile     import NamedTemporaryFile
+from tempfile   import NamedTemporaryFile
+from math       import sqrt
+
+
+#########################################
+def unfold_cigar_line (seq_A, seq_B, cigar_line):
+
+    seq_A_aligned = ""
+    seq_B_aligned = ""
+
+    char_pattern = re.compile("\D")
+    a_ct     = 0
+    b_ct     = 0
+    prev_end = 0
+
+    for match in char_pattern.finditer(cigar_line):
+        this_start       = match.start()
+        no_repeats = int(cigar_line[prev_end:this_start])
+        alignment_instruction = cigar_line[this_start]
+        prev_end = match.end()
+
+        if alignment_instruction == 'M':
+            seq_A_aligned += seq_A[a_ct:a_ct+no_repeats]
+            a_ct         += no_repeats
+            seq_B_aligned += seq_B[b_ct:b_ct+no_repeats]
+            b_ct  += no_repeats
+
+        elif alignment_instruction == 'A':
+            seq_A_aligned += '-'*no_repeats 
+            seq_B_aligned += seq_B[b_ct:b_ct+no_repeats]
+            b_ct  += no_repeats
+            
+        elif alignment_instruction == 'B':
+            seq_A_aligned += seq_A[a_ct:a_ct+no_repeats]
+            a_ct          += no_repeats
+            seq_B_aligned += '-'*no_repeats 
+
+    return [seq_A_aligned, seq_B_aligned]
+
 
 #########################################
 def sw_search (cfg, acg, query_seq, target_seq, delete= True):
@@ -475,4 +513,44 @@ def  pairwise_fract_similarity (seq1, seq2):
 
     fract_similarity /= common_length
     return fract_similarity
+
+#########################################
+def  pairwise_tanimoto (seq1, seq2):
+    
+    is_similar_to = {}
+
+    # this is rather crude ...
+    for  char in string.printable:
+        is_similar_to[char] = char
+
+    is_similar_to['I'] = 'V';
+    is_similar_to['L'] = 'V';
+    is_similar_to['S'] = 'T';
+    is_similar_to['D'] = 'E';
+    is_similar_to['K'] = 'R';
+    is_similar_to['Q'] = 'N';
+    is_similar_to['.'] = '.';
+    is_similar_to['-'] = '.';
+
+    is_similar_to['A'] = 'V';
+    is_similar_to['M'] = 'V';
+    is_similar_to['G'] = 'V';
+    is_similar_to['F'] = 'Y';
+    is_similar_to['H'] = 'R';
+
+    tanimoto = 0.0
+    if ( not len(seq1) or  not len(seq1)):
+        return tanimoto
+
+    similar_length = 0.0
+    common_length = 0.0
+    for i in range(len(seq1)):
+        if (seq1[i] == '-' or seq2[i] == '-'): continue
+        if is_similar_to[seq1[i]] == is_similar_to[seq2[i]]: similar_length += 1.0
+        common_length += 1.0
+
+    if not common_length: return 0.0
+
+    tanimoto = sqrt(float(similar_length*similar_length)/(len(seq1)*len(seq2)))
+    return tanimoto
 

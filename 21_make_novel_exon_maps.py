@@ -5,8 +5,7 @@ import StringIO
 import MySQLdb, commands, re, sys
 from hashlib import sha1
 from random  import random
-from   el_utils.mysql   import  connect_to_mysql, connect_to_db
-from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
+from   el_utils.mysql   import  *
 from   el_utils.ensembl import  *
 from   el_utils.utils   import  *
 from   el_utils.threads import  parallelize
@@ -170,43 +169,6 @@ def cigar_line (seq_human, seq_other):
 
 
 #########################################
-def unfold_cigar_line (seq_A, seq_B, cigar_line):
-
-    seq_A_aligned = ""
-    seq_B_aligned = ""
-
-
-    char_pattern = re.compile("\D")
-    a_ct     = 0
-    b_ct     = 0
-    prev_end = 0
-
-    for match in char_pattern.finditer(cigar_line):
-        this_start       = match.start()
-        no_repeats = int(cigar_line[prev_end:this_start])
-        alignment_instruction = cigar_line[this_start]
-        prev_end = match.end()
-
-        if alignment_instruction == 'M':
-            seq_A_aligned += seq_A[a_ct:a_ct+no_repeats]
-            a_ct         += no_repeats
-            seq_B_aligned += seq_B[b_ct:b_ct+no_repeats]
-            b_ct  += no_repeats
-
-        elif alignment_instruction == 'A':
-            seq_A_aligned += '-'*no_repeats 
-            seq_B_aligned += seq_B[b_ct:b_ct+no_repeats]
-            b_ct  += no_repeats
-            
-        elif alignment_instruction == 'B':
-            seq_A_aligned += seq_A[a_ct:a_ct+no_repeats]
-            a_ct          += no_repeats
-            seq_B_aligned += '-'*no_repeats 
-
-    return [seq_A_aligned, seq_B_aligned]
-
-
-#########################################
 def overlap (start, end, other_start, other_end):
     if ( other_end < start): 
         return False
@@ -230,6 +192,10 @@ def maps_evaluate (cursor, ensembl_db_name, human_exons, ortho_exons, aligned_se
         other_species = species
         break
 
+    output_fasta ("tmp.afa", aligned_seq.keys(), aligned_seq)
+    
+    for e in ortho_exons:
+        if e.is_known>1: print e.exon_id, "  --->  ", e.maps_to_human_exon_id
 
     for human_exon_ct in range(len(human_exons)):
 
@@ -239,7 +205,7 @@ def maps_evaluate (cursor, ensembl_db_name, human_exons, ortho_exons, aligned_se
         [human_start, human_end] = exon_positions['homo_sapiens'][padded_count_human]
 
         human_exon = human_exons[human_exon_ct]
-        old_maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
+        old_maps   = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
 
 
         for ortho_exon_ct in range(len(ortho_exons)):
@@ -261,31 +227,42 @@ def maps_evaluate (cursor, ensembl_db_name, human_exons, ortho_exons, aligned_se
                 map.exon_known_1 = human_exons[human_exon_ct].is_known
                 map.exon_known_2 = ortho_exons[ortho_exon_ct].is_known
 
-                if ortho_exons[ortho_exon_ct].analysis_id == -1:
+                if ortho_exons[ortho_exon_ct].is_known == 2:
                     map.source   = 'sw_sharp' 
-                elif ortho_exons[ortho_exon_ct].analysis_id == -2:
+                elif ortho_exons[ortho_exon_ct].is_known == 3:
                     map.source   = 'usearch' 
                 else:
                     map.source   = 'ensembl'
 
                 exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end].replace('#','-')
-                exon_seq_other   =  aligned_seq[other_species][other_start:other_end].replace('#','-')
+                exon_seq_other   = aligned_seq[other_species][other_start:other_end].replace('#','-')
                 [seq_human, seq_other] = pad_the_alnmt (exon_seq_human,human_start,
                                                         exon_seq_other, other_start)
-
-                ciggy = cigar_line (seq_human, seq_other)
-                [seq1, seq2] = unfold_cigar_line (seq_human.replace('-',''), seq_other.replace('-',''), ciggy)
-
+                seq = {'human':seq_human, 'other':seq_other}
+                seq = strip_gaps(seq)
+                ciggy = cigar_line (seq['human'], seq['other'])
+  
                 map.cigar_line = ciggy
-                map.similarity = pairwise_fract_similarity (seq1, seq2)
+                map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
+                                                   
+                
+                if True and not map.source == 'ensembl':
+                    print
+                    print other_species, map.source
+                    print seq['human']
+                    print seq['other']
+                    print map.similarity
+
+                    #exit(1)
                 # bit of paranoia, but not misplaced:  do we already have a map for this exon by any chance?
-                better_map = False
-                for old_map in old_maps:
-                    if old_map.species_2  == other_species:
-                        if  old_map.similarity >  map.similarity:
-                            better_map = True
-                            break
-                if not better_map: maps.append(map)
+                #better_map = False
+                #for old_map in old_maps:
+                #    if old_map.species_2  == other_species:
+                #        if  old_map.similarity >  map.similarity:
+                #            better_map = True
+                #            break
+                #if not better_map: 
+                maps.append(map)
 
     return maps
 
@@ -368,15 +345,21 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
     relevant_human_exons = find_relevant_exons (cursor, human_exons, human=True)
 
 
-
     #print "##############################", ortho_species
     switch_to_db(cursor,  ensembl_db_name[ortho_species])
     relevant_ortho_exons = find_relevant_exons (cursor, ortho_exons, human=False)
+
+    if not relevant_ortho_exons:
+        print "bleep 2"
+        exit(1)
+
+
 
     human_seq = decorate_and_concatenate (relevant_human_exons)
     ortho_seq = decorate_and_concatenate (relevant_ortho_exons)
     
     if (not human_seq or not ortho_seq):
+        print "wuihyowi"
         return maps
     
     aligned_seq = {}
@@ -400,7 +383,8 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
         exon_positions[species] = find_exon_positions(seq)
 
     # fill in the actual map values
-    maps = maps_evaluate (cursor, ensembl_db_name, relevant_human_exons, relevant_ortho_exons, aligned_seq, exon_positions)
+    maps = maps_evaluate (cursor, ensembl_db_name, relevant_human_exons, 
+                          relevant_ortho_exons, aligned_seq, exon_positions)
 
     return maps
     
@@ -452,48 +436,6 @@ def gene_has_a_map (cursor, ensembl_db_name, human_exons):
     return has_a_map
 
 #########################################
-def exonify(cursor, ensembl_db_name, row_from_sw_exon_table, method):
-
-    exon = Exon()
-    
-    [sw_exon_id, gene_id, start_in_gene, end_in_gene, human_exon_id,
-     exon_seq_id, template_exon_id, template_species,
-     strand, phase, end_phase, has_NNN, has_stop, has_3p_ss, has_5p_ss] = row_from_sw_exon_table
-
-
-    human_coding = is_coding (cursor, human_exon_id, ensembl_db_name['homo_sapiens'])
-    
-    exon.gene_id             = gene_id
-    exon.exon_id             = sw_exon_id
-    exon.start_in_gene       = start_in_gene
-    exon.end_in_gene         = end_in_gene
-    exon.canon_transl_start  = -1
-    exon.canon_transl_end    = -1
-    exon.exon_seq_id         = exon_seq_id
-    exon.strand              = strand
-    exon.phase               = phase
-    exon.end_phase           = end_phase
-    exon.is_coding           = 1 if (human_coding and not has_stop) else 0
-    exon.is_canonical        = 0
-    exon.is_constitutive     = 0
-    exon.covering_exon       = -1
-    exon.covering_exon_known = -1 
-
-    if method == 'sw_sharp':
-        exon.is_known        =  2 # arbitrary index, used to indicate sw_sharp findings here
-        exon.analysis_id     = -1
-    elif  method == 'usearch':
-        exon.is_known        =  3 # arbitrary index, used to indicate usearch  findings 
-        exon.analysis_id     = -2
-    else:
-        exon.is_known        =  0 
-        exon.analysis_id     =  1
-        
-
-    return exon
-
-
-#########################################
 def maps_for_gene_list(gene_list, db_info):
     
 
@@ -532,48 +474,36 @@ def maps_for_gene_list(gene_list, db_info):
 
         # get rid of the old maps # can't do that here bcs this script is only updating sw exons
         map_cleanup (cursor, ensembl_db_name, human_exons)
+
+        orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
+        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+        orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
+
         ##########
-        for ortho_species, db_name in ensembl_db_name.iteritems():
-            if ortho_species == 'homo_sapiens': continue
+        for [ortho_gene_id, ortho_species] in orthologues:
+
+            switch_to_db (cursor, ensembl_db_name[ortho_species])
 
             ortho_exons   = []
-            ortho_gene_id = None
-            for human_exon in human_exons:
+            
+            ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'sw_sharp')
+            ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'usearch')
 
+            for e in ortho_exons:
+                print e
+            exit(1)
 
-                switch_to_db (cursor, db_name)
+            if not ortho_exons: continue # nothing new here, move on
+            ortho_exons +=  get_known_exons (cursor, ortho_gene_id, ortho_species)
+            ortho_exons +=  get_predicted_exons (cursor, ortho_gene_id, ortho_species)
 
-                # novel exon
-                for table in ['sw_exon', 'usearch_exon']:
-                    qry  = "select * from %s " % table
-                    qry += " where maps_to_human_exon_id = %d " % human_exon.exon_id
-                    rows = search_db (cursor, qry)
-                    if not rows: continue
-
- 
-                    method = 'sw_sharp' if table=='sw_exon' else 'usearch'
-                    for row in rows:
-                        # turn them to actual exon objects
-                        exon = exonify (cursor, ensembl_db_name, row, method)
-                        if not ortho_gene_id:
-                            ortho_gene_id = exon.gene_id
-                        elif not ortho_gene_id == exon.gene_id:
-                            print "funny error in gene assignment ..."
-                            continue
-                        #if not exon.is_coding: continue ? whats this?
-                        ortho_exons.append(exon)
-
-            if not ortho_exons: continue
-
-            # other exons from this species
-            ortho_exons += gene2exon_list(cursor, ortho_gene_id, db_name=db_name)
 
             maps = make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons) 
             if not maps:
                 print "\t", ortho_species, "no maps"
+                exit(1)
                 continue
 
-            
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
             store (cursor, maps, ensembl_db_name)
                 
@@ -587,7 +517,7 @@ def maps_for_gene_list(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'genecards_top500'
+    special    = 'one'
 
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
@@ -607,7 +537,7 @@ def main():
         db  = connect_to_mysql()
         cfg = ConfigurationReader()
     else:
-        db  = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 

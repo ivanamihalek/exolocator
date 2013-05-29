@@ -5,6 +5,116 @@ from   mysql import search_db, switch_to_db
 from   exon  import Exon
 import commands
 
+#########################################
+def get_gene_region (cursor, gene_id, is_known=None):
+
+    qry     = "select seq_region_id, seq_region_start, seq_region_end, "
+    qry    += " seq_region_strand "
+    qry    += " from  gene  where  gene_id=%d"  %  gene_id
+    if (not is_known is None and is_known):
+        qry  += " and  status='known' "
+    rows    = search_db (cursor, qry, verbose=False)
+
+    if (not rows):
+        rows    = search_db (cursor, qry, verbose=True)
+        return []
+    elif ( 'Error' in rows[0]):
+        print  rows[0]
+        return []
+
+    return rows[0]
+
+#########################################
+def get_known_exons (cursor, gene_id, species):
+
+    exons = []
+
+    qry  = "select distinct exon_transcript.exon_id from  exon_transcript, transcript "
+    qry += " where exon_transcript.transcript_id = transcript.transcript_id "
+    qry += " and transcript.gene_id = %d " % gene_id
+
+    rows = search_db (cursor, qry)
+    
+    if (not rows ):
+        return []
+    if ('Error' in rows[0]):
+        search_db (cursor, qry, verbose = True)
+        return []
+
+    # get the region on the gene
+    ret = get_gene_region (cursor, gene_id)
+    if  ret:
+        [gene_seq_id, gene_region_start, gene_region_end, 
+         gene_region_strand] = ret
+    else:
+        print "region not retrived for ", species, gene_id
+        return []
+
+    exon_ids = []
+    for row in rows:
+        exon_ids.append(row[0])
+
+    for exon_id in exon_ids:
+        qry = "select * from exon where exon_id=%d" % exon_id
+        rows = search_db (cursor, qry)
+        if (not rows or 'Error' in rows[0]):
+            search_db (cursor, qry, verbose = True)
+            continue
+        exon         = Exon()
+        exon.gene_id = gene_id
+        exon.load_from_ensembl_exon (gene_region_start, gene_region_end, rows[0])
+        exons.append(exon)
+
+    return exons
+
+
+#########################################
+def get_predicted_exons (cursor, gene_id, species):
+
+    exons = []
+
+    # get the region on the gene
+    ret = get_gene_region (cursor, gene_id)
+    if  ret:
+        [gene_seq_id, gene_region_start, gene_region_end, 
+         gene_region_strand] = ret
+    else:
+        print "region not retrived for ", species, gene_id
+        return []
+
+    qry    = "SELECT  * FROM  prediction_exon  WHERE seq_region_id = %d "  %  gene_seq_id
+    qry   += " AND  seq_region_start >= %d AND seq_region_start <= %d " %  \
+        (gene_region_start, gene_region_end)
+    qry   += " AND  seq_region_end   >= %d AND seq_region_end   <= %d " %  \
+        (gene_region_start, gene_region_end)
+    rows   = search_db (cursor, qry)
+
+    if (not rows):
+        return []
+    for row in rows:
+        exon         = Exon()
+        exon.gene_id = gene_id
+        exon.load_from_ensembl_prediction (gene_region_start, gene_region_end, row)
+        exons.append(exon)
+ 
+    return exons
+
+#########################################
+def get_novel_exons (cursor, gene_id, table):
+
+    exons = []
+
+    qry  = "select * from %s " % table
+    qry += " where gene_id = %d " % int(gene_id)
+    rows = search_db (cursor, qry)
+    if not rows: return exons
+
+    for row in rows:
+        exon         = Exon()
+        exon.load_from_novel_exon (row, table)
+        exons.append(exon)
+    return exons
+
 
 
 #########################################

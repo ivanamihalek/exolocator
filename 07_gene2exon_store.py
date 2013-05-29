@@ -11,24 +11,6 @@ from   el_utils.special_gene_sets  import  *
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 
-#########################################
-def get_gene_region (cursor, gene_id, is_known=None):
-
-    qry     = "select seq_region_id, seq_region_start, seq_region_end, "
-    qry    += " seq_region_strand "
-    qry    += " from  gene  where  gene_id=%d"  %  gene_id
-    if (not is_known is None and is_known):
-        qry  += " and  status='known' "
-    rows    = search_db (cursor, qry, verbose=False)
-
-    if (not rows):
-        rows    = search_db (cursor, qry, verbose=True)
-        return []
-    elif ( 'Error' in rows[0]):
-        print  rows[0]
-        return []
-
-    return rows[0]
 
 #########################################
 def get_canonical_transcript_id (cursor, gene_id):
@@ -46,103 +28,12 @@ def get_canonical_transcript_id (cursor, gene_id):
 
     return rows[0][0]
 
-#########################################
-def get_known_exons (cursor, gene_id, species):
-
-    exons = []
-
-    qry  = "select distinct exon_transcript.exon_id from  exon_transcript, transcript "
-    qry += " where exon_transcript.transcript_id = transcript.transcript_id "
-    qry += " and transcript.gene_id = %d " % gene_id
-
-    rows = search_db (cursor, qry)
-    
-    if (not rows ):
-        return []
-    if ('Error' in rows[0]):
-        search_db (cursor, qry, verbose = True)
-        return []
-
-    # get the region on the gene
-    ret = get_gene_region (cursor, gene_id)
-    if  ret:
-        [gene_seq_id, gene_region_start, gene_region_end, 
-         gene_region_strand] = ret
-    else:
-        print "region not retrived for ", species, gene_id
-        return []
-
-    exon_ids = []
-    for row in rows:
-        exon_ids.append(row[0])
-
-    for exon_id in exon_ids:
-        qry = "select * from exon where exon_id=%d" % exon_id
-        rows = search_db (cursor, qry)
-        if (not rows or 'Error' in rows[0]):
-            search_db (cursor, qry, verbose = True)
-            continue
-        exon         = Exon()
-        exon.gene_id = gene_id
-        exon.load_from_ensembl_exon (gene_region_start, gene_region_end, rows[0])
-        exons.append(exon)
-
-    return exons
-
-
-#########################################
-def get_predicted_exons (cursor, gene_id, species):
-
-    exons = []
-
-    # get the region on the gene
-    ret = get_gene_region (cursor, gene_id)
-    if  ret:
-        [gene_seq_id, gene_region_start, gene_region_end, 
-         gene_region_strand] = ret
-    else:
-        print "region not retrived for ", species, gene_id
-        return []
-
-    qry    = "SELECT  * FROM  prediction_exon  WHERE seq_region_id = %d "  %  gene_seq_id
-    qry   += " AND  seq_region_start >= %d AND seq_region_start <= %d " %  \
-        (gene_region_start, gene_region_end)
-    qry   += " AND  seq_region_end   >= %d AND seq_region_end   <= %d " %  \
-        (gene_region_start, gene_region_end)
-    rows   = search_db (cursor, qry)
-
-    if (not rows):
-        return []
-    for row in rows:
-        exon         = Exon()
-        exon.gene_id = gene_id
-        exon.load_from_ensembl_prediction (gene_region_start, gene_region_end, row)
-        exons.append(exon)
- 
-    return exons
-
-#########################################
-def get_novel_exons (cursor, gene_id, table):
-
-    exons = []
-
-    qry  = "select * from %s " % table
-    qry += " where gene_id = %d " % gene_id
-    rows = search_db (cursor, qry)
-    if not rows: return exons
-
-    for row in rows:
-        exon         = Exon()
-        exon.load_from_novel_exon (row, table)
-        exons.append(exon)
-    return exons
-
 
 #########################################
 def get_exons (cursor, gene_id, species, table):
 
     if (table == 'exon'):
-        return get_known_exons (cursor, gene_id, species)
+        return get_known_exons (cursor, gene_id, species) 
     elif (table == 'prediction_exon'):
         return get_predicted_exons (cursor, gene_id, species)
     elif (table == 'sw_exon'):
@@ -537,6 +428,8 @@ def find_exons (cursor, gene_id, species):
 
     # get all exons from the 'exon' table
     exons = get_exons (cursor, gene_id, species, 'exon')
+
+
     # get all exons from the 'predicted_exon' table
     if (not species == 'homo_sapiens'):
         exons += get_exons  (cursor, gene_id, species, 'prediction_exon')
@@ -551,6 +444,17 @@ def find_exons (cursor, gene_id, species):
     # mark coding exons
     mark_coding (cursor, gene_id, species, exons)
     
+    
+    nr_us = len(get_exons(cursor, gene_id, species, 'usearch_exon'))
+    if nr_us:
+        print
+        print species
+        print " pred ",    len(get_exons(cursor, gene_id, species, 'prediction_exon'))
+        print " sw ",      len(get_exons(cursor, gene_id, species, 'sw_exon'))
+        print " usearch ", nr_us
+        for e in exons:
+            if e.is_known <= 1: continue
+            print e.is_known, e.covering_exon
 
     return exons
 
@@ -649,12 +553,13 @@ def gene2exon_orthologues(gene_list, db_info):
                 print gene2stable (cursor, gene_id = ortho_gene_id), " no exons found for", ortho_species
                 print 
                 exit (1)  # if I got to here in the pipeline this shouldn't happen
-   
+                
+            
+            exons.sort(key=lambda exon: exon.start_in_gene)
             # store into gene2exon table
             for exon in exons:
-                #if exon.is_known>1: print exon
                 store_exon (cursor, exon)
-
+ 
         print "progress:  %8.3f " %  (float( int(gene_list.index(gene_id)) +1 )/len(gene_list))
 
     cursor.close()
@@ -668,7 +573,7 @@ def gene2exon_orthologues(gene_list, db_info):
 def main():
 
     no_threads = 1
-    special    = 'genecards_top500'
+    special    = 'one'
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
         print "usage: %s <set name> <number of threads> <method>"
@@ -682,11 +587,7 @@ def main():
         no_threads = int(sys.argv[2])
 
 
-
-
     local_db   = False
-
-
 
 
     if local_db:
@@ -720,3 +621,17 @@ def main():
 #########################################
 if __name__ == '__main__':
     main()
+
+
+'''
+            prev_end = -1
+            for exon in exons:
+                #if exon.is_known>1: print exon
+                #store_exon (cursor, exon)
+                if exon.covering_exon>0: continue
+                excl = ">>> !" if prev_end>exon.start_in_gene else ""
+                exon.pepseq  = get_exon_pepseq (cursor, exon,  ensembl_db_name[ortho_species])
+                print "  %8d |  %8d   %8d  %s  %s" % (prev_end, exon.start_in_gene,  
+                                                      exon.end_in_gene, exon.pepseq, excl)
+                prev_end = exon.end_in_gene
+'''
