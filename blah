@@ -1,91 +1,8074 @@
 using one set
+ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
 
-callithrix_jacchus
- pred  22
- sw  0
- usearch  2
-3 -1
-3 -1
+	 human 4523875 1
+	MDLEAAKNGTAWRPTSAEGDFELGIS
+checking maps ...
+	loxodonta_africana ensembl 94339 1
+	maps to  4523875 1
+	sim 0.655172
+	MEPEEGRNRTAGHPWRAEGDFEMGSS
+	 bitmap not assigned
 
-pteropus_vampyrus
- pred  20
- sw  0
- usearch  2
-3 -1
-3 -1
+	dipodomys_ordii ensembl 41919 1
+	maps to  4523875 1
+	sim 0.777778
+	MDVEAARNGTARRSRAAEGDFELGSP
+	 bitmap not assigned
 
-dipodomys_ordii
- pred  17
- sw  0
- usearch  2
-3 -1
-3 -1
+	dasypus_novemcinctus ensembl 157805 1
+	maps to  4523875 1
+	sim 0.692308
+	MDPETGVNGTDWHPKKTEGDFELGSS
+	 bitmap not assigned
 
-echinops_telfairi
- pred  29
- sw  0
- usearch  1
-3 -1
+	ailuropoda_melanoleuca ensembl 91173 1
+	maps to  4523875 1
+	sim 0.785714
+	MDLEAGRNGTVPCPRRAEGDFELGGS
+	 bitmap not assigned
 
-procavia_capensis
- pred  12
- sw  0
- usearch  1
-3 -1
+	mustela_putorius_furo ensembl 193736 1
+	maps to  4523875 1
+	sim 0.846154
+	MDLEAGRNGTVPRPGRAEGDFELGPS
+	 bitmap not assigned
 
-ochotona_princeps
- pred  27
- sw  0
- usearch  2
-3 -1
-3 -1
+	tetraodon_nigroviridis ensembl 59951 1
+	maps to  4523875 1
+	sim 0.307692
+	MTLKVAETNGDL
+	 bitmap not assigned
 
-macropus_eugenii
- pred  19
- sw  0
- usearch  2
-3 -1
-3 -1
+	bos_taurus ensembl 24992 1
+	maps to  4523875 1
+	sim 0.642857
+	MDPEVGRIATFRITETREDGFELGVS
+	 bitmap not assigned
 
-gadus_morhua
- pred  22
- sw  0
- usearch  1
-3 -1
+	vicugna_pacos ensembl 113780 1
+	maps to  4523875 1
+	sim 0.470588
+	MDFEMGSVATVRSSERALADFELGYG
+	 bitmap not assigned
 
-takifugu_rubripes
- pred  49
- sw  0
- usearch  2
-3 -1
-3 -1
+	pteropus_vampyrus ensembl 62115 1
+	maps to  4523875 1
+	sim 0.730769
+	MDPEAGRNGTARRRMRAEGDFELSSS
+	 bitmap not assigned
 
-xiphophorus_maculatus
- pred  56
- sw  0
- usearch  1
-3 -1
+	monodelphis_domestica ensembl 71966 1
+	maps to  4523875 1
+	sim 0.653846
+	MDREEERNGTAGSSEGDFELATT
+	 bitmap not assigned
 
-gasterosteus_aculeatus
- pred  0
- sw  0
- usearch  2
-3 3526
-3 -1
+	canis_familiaris ensembl 115151 1
+	maps to  4523875 1
+	sim 0.769231
+	MDLEAGRNGAARRPGRAEGDSEPGGS
+	 bitmap not assigned
 
-oreochromis_niloticus
- pred  52
- sw  0
- usearch  1
-3 -1
+	anolis_carolinensis ensembl 84006 1
+	maps to  4523875 1
+	sim 0.307692
+	MASEREMSVHVNGKIEEMKTADNVSDSESK
+	 bitmap not assigned
 
-pelodiscus_sinensis
- pred  4
- sw  0
- usearch  5
-3 -1
-3 237
-3 1
-3 -1
-3 -1
-progress:     1.000 
+	gallus_gallus ensembl 104876 1
+	maps to  4523875 1
+	sim 0.333333
+	MHSEDEKQKHTVDGNTYEIANSNQDQDPEDE
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25724 1
+	maps to  4523875 1
+	sim 0.884615
+	MDLEAARNGTARRPRTVEGDFELGSS
+	 bitmap not assigned
+
+	mus_musculus ensembl 149267 1
+	maps to  4523875 1
+	sim 0.777778
+	MDLEAARNGTARRLDGDFELGSI
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985146 1
+	maps to  4523875 1
+	sim 0.75
+	MELQAVRNGSARRPWTAEGDFGVGGS
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77952 1
+	maps to  4523875 1
+	sim 0.324324
+	MGSEEEIKHYINGRDDNIAVSYQNYGSEGK
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248572 1
+	maps to  4523875 1
+	sim 0.34375
+	VSPQAEMDSRRPEGAETDFELGNN
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103087 1
+	maps to  4523875 1
+	sim 0.586207
+	MDREDGRNGTAGSSSGAEGDFELATT
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 229957 1
+	maps to  4523875 1
+	sim 0.740741
+	MDLEAAGNGTARNLRRAEGDFELGSS
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96176 1
+	maps to  4523875 1
+	sim 0.633333
+	MDLEEARNGTTWSPGRTEDVFELGSP
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166061 1
+	maps to  4523875 1
+	sim 0.923077
+	MDLEAAKNGTAQRPRSAEGDFELGIS
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156042 1
+	maps to  4523875 1
+	sim 0.851852
+	MDLEAARNGTARSPRSAEGDLELGVS
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43341 1
+	maps to  4523875 1
+	sim 0.846154
+	MDLEAARNGTARRPGRAEGDFELGSS
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125178 1
+	maps to  4523875 1
+	sim 0.307692
+	TEGDFELGSN
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24784 1
+	maps to  4523875 1
+	sim 0.777778
+	MDLEAARNGTARRLDGDFELGSI
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685748 1
+	maps to  4523875 1
+	sim 0.961538
+	MDLEAAKNGTAWRPTSAEGDFELGNS
+	 bitmap not assigned
+
+
+	 human 4523878 1
+	KQKRKKTKTVKMIGVLTL
+checking maps ...
+	gasterosteus_aculeatus ensembl 108392 1
+	maps to  4523878 1
+	sim 0.521739
+	ESKDKKKEKEKEPKLPMVGPIDV
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158853 1
+	maps to  4523878 1
+	sim 0.478261
+	SNRQERKKMKKTHMISPLTL
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 41936 1
+	maps to  4523878 1
+	sim 0.666667
+	NQDRRKTKKVNLIGPLAL
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 94356 1
+	maps to  4523878 1
+	sim 0.611111
+	NQDGRKMKKVNLIGPLSL
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77953 1
+	maps to  4523878 1
+	sim 0.526316
+	SEDKRKPEKMNMVSPLTV
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 157818 1
+	maps to  4523878 1
+	sim 0.666667
+	HQDRKKRKKVNLIRPLTL
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193737 1
+	maps to  4523878 1
+	sim 0.684211
+	NQDKKKKKRMNLIGPLTL
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167369 1
+	maps to  4523878 1
+	sim 0.722222
+	KQDKEKTKKVNLIGPLTL
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62126 1
+	maps to  4523878 1
+	sim 0.722222
+	KQDRKKKVNLIGPLTL
+	 bitmap not assigned
+
+	bos_taurus ensembl 25009 1
+	maps to  4523878 1
+	sim 0.611111
+	SQAKEKMKKVNLIGPLTL
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 56756 1
+	maps to  4523878 1
+	sim 0.321429
+	KKSFIFSNEDKKKPKKPNTVSPLTM
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 252500 1
+	maps to  4523878 1
+	sim 0.416667
+	GIFSKKKKEPKVKTNMVGLFGL
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 77915 1
+	maps to  4523878 1
+	sim 0.433333
+	EKEENDEKKSKKKKKKEKEPKEPMVGPLSV
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 71968 1
+	maps to  4523878 1
+	sim 0.52381
+	NQQDRKKMKKSSMISPLTL
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83168 1
+	maps to  4523878 1
+	sim 0.37931
+	ETEKDDSKKGKKKKKEKPPKMPMVSPIKV
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84007 1
+	maps to  4523878 1
+	sim 0.722222
+	KEKKKKEKPKMVSALTV
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104885 1
+	maps to  4523878 1
+	sim 0.526316
+	KGKKKKGEKPQMVSPLAL
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985147 1
+	maps to  4523878 1
+	sim 0.666667
+	NQDRKKMKKVNLIGPLTL
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25728 1
+	maps to  4523878 1
+	sim 0.52381
+	NQDTQKMKKVNLIGPLTL
+	 bitmap not assigned
+
+	danio_rerio ensembl 648150 1
+	maps to  4523878 1
+	sim 0.416667
+	GEKNGKEEKEEKEKLEMVGPIEL
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91178 1
+	maps to  4523878 1
+	sim 0.684211
+	NQDKKKKKRMNLIGPLTL
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106220 1
+	maps to  4523878 1
+	sim 0.391304
+	NQDKNKMKKVNLIGPLAL
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104710 1
+	maps to  4523878 1
+	sim 0.305556
+	LNMVSCMSFRNEKNEKKKGKKKEKAPKEPMVSPIAV
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92400 1
+	maps to  4523878 1
+	sim 0.342857
+	SHDSKDDGAKNEKKKKNKKEKPPQEPMVGPITL
+	 bitmap not assigned
+
+	mus_musculus ensembl 149285 1
+	maps to  4523878 1
+	sim 0.666667
+	NQGREKKKKVNLIGLLTL
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248574 1
+	maps to  4523878 1
+	sim 0.526316
+	NQDKAMKKVNLIGPLAL
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104744 1
+	maps to  4523878 1
+	sim 0.391304
+	FSSEDKKKPEKMNMVSPLAV
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 229961 1
+	maps to  4523878 1
+	sim 0.611111
+	NQDRKKMKKVNSIAPLTL
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96178 1
+	maps to  4523878 1
+	sim 0.611111
+	DRDRKKIKKVNLIGPLTL
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24790 1
+	maps to  4523878 1
+	sim 0.611111
+	NQSREKKKKVNLIGPLTL
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166065 1
+	maps to  4523878 1
+	sim 0.944444
+	KQKRKKTKKVKMIGVLTL
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156045 1
+	maps to  4523878 1
+	sim 0.888889
+	NQKRKKTKKVKLIGVLTL
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43370 1
+	maps to  4523878 1
+	sim 0.611111
+	NQDRKKMKKVNLITPLTL
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331228 1
+	maps to  4523878 1
+	sim 0.666667
+	NQDKKKMKKVTLIGPLTL
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115164 1
+	maps to  4523878 1
+	sim 0.666667
+	YQDKKKMKRTKLIGSLTL
+	 bitmap not assigned
+
+	sorex_araneus ensembl 205975 1
+	maps to  4523878 1
+	sim 0.722222
+	NQDKKKMKKVKLIGPLTL
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685765 1
+	maps to  4523878 1
+	sim 1.0
+	KQKRKKTKTVKMIGVLTL
+	 bitmap not assigned
+
+
+	 human 4523884 1
+	FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFVDTAGNFSFP
+checking maps ...
+	gasterosteus_aculeatus ensembl 108400 1
+	maps to  4523884 1
+	sim 0.534483
+	FRFAKGLDILLILAGTVCAIANGVTLPLMCIVFGDMTDSLVTSASGQINST
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158854 1
+	maps to  4523884 1
+	sim 0.92
+	FRYSDWKDKLFMVLGTIMAIAHGSGLPLMMIVFGEMTDSFVNTAGNFSFP
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 41949 1
+	maps to  4523884 1
+	sim 0.92
+	FRYSDWQDKLFMYLGTIMAIAHGSGLPLMMIVFGEMTDKFVNNAGNFSLP
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77954 1
+	maps to  4523884 1
+	sim 0.764706
+	FRYSDQQDKLLMALGTAMAVLHGASLPLMMIVFGDMTDSFIASENITNP
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 157826 1
+	maps to  4523884 1
+	sim 0.92
+	FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDTFVTNAGNFSIP
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20807 1
+	maps to  4523884 1
+	sim 0.716981
+	FRYSSWSDKLLMILGTLLAIAHGSSLPFAMIIFGDMTDSFVSSGDKNPT
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193738 1
+	maps to  4523884 1
+	sim 0.94
+	FRYSDWQDKLLMSLGTIMAIAHGAGLPLMMIVFGQMTDKFVDTAGNFSFP
+	 bitmap not assigned
+
+	gadus_morhua ensembl 203580 1
+	maps to  4523884 1
+	sim 0.622642
+	FRFADGLDITLIVVGTLMSMVNGVVLPLMFMVFGDLTDSFVNHASNMT
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91181 1
+	maps to  4523884 1
+	sim 0.96
+	FRYSDWQDKLLMSLGTIMAIAHGSGLPLMMIVFGQMTDKFVDTAGNFSFP
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60036 1
+	maps to  4523884 1
+	sim 0.696429
+	FRFADRWDLVLLVSGTVMAMVNGTVMPLMCIVFGEMTDSFISSETGKHNFSDL
+	 bitmap not assigned
+
+	felis_catus ensembl 224914 1
+	maps to  4523884 1
+	sim 0.96
+	FRYSDWQDKLLMSLGTVMAIAHGSGLPLMMIVFGQMTDKFVDTAGNFSFP
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 256408 1
+	maps to  4523884 1
+	sim 0.413333
+	FRFADRWDIFLMVVGTLSAVGHGVTYPILFMVFGDMTSSFVDFGKVDQCQGNFSCIGNILANVTF
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62147 1
+	maps to  4523884 1
+	sim 0.38
+	MMIVFGDMTDRFVITSGNLSFP
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 77920 1
+	maps to  4523884 1
+	sim 0.637931
+	FRFADRWDILMIFIGTVMAVANGVVLPLMCIVFGDMTDSLVNSAIPNITANYS
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 252502 1
+	maps to  4523884 1
+	sim 0.6
+	FRFASGLDKLMMVVGLIFAIANGAALPVMIILFGEMTDTFVNDAQNNTGT
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 71970 1
+	maps to  4523884 1
+	sim 0.92
+	FRYSDWKDKLFMVLGTVMAIAHGSGLPLMMIVFGEMTDSFVNTAGNFSFP
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122399 1
+	maps to  4523884 1
+	sim 0.769231
+	FRYSDWHDKWLMFLGTAMAVAHGAGLPLLMIVFGEMTDSFIPTGNISAA
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88837 1
+	maps to  4523884 1
+	sim 0.9
+	FRYSDWKDKLFMSLDTVMAVAHGSGLPLMMIVFGEMTDSFINTPGNFSFP
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83169 1
+	maps to  4523884 1
+	sim 0.485294
+	FRFADRWDVLMIIAGTVMSMANGVVLPLMFIVLGDMTDSFIAQAASEFQMQACVHTGSSAII
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122530 1
+	maps to  4523884 1
+	sim 0.692308
+	FRYSSCLDKLYMCLGTLAAMIHGAALPSMMLIFGEMTDSFVDFGKL
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84008 1
+	maps to  4523884 1
+	sim 0.764706
+	FRYADWVDRALMLIGTLLAALHGSALPLMMVVFGDMTDSFVASGSPLPFP
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 94381 1
+	maps to  4523884 1
+	sim 0.92
+	FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDSFVYTTGNFSIP
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104899 1
+	maps to  4523884 1
+	sim 0.711538
+	FRYSSCTDKLLMIFGSLLAIAHGTSLPIAMIIFGDMTDSFVTSGMTNIT
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62085 1
+	maps to  4523884 1
+	sim 0.428571
+	MAIVNGTVNPLMCIVFGQMTDSFIQDARLTKNHNISNP
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 56844 1
+	maps to  4523884 1
+	sim 0.716981
+	FRYSDWLDKLLMVLGSAMAILHGAALPIVMIIFGDMTDSFVTSGTSL
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985149 1
+	maps to  4523884 1
+	sim 0.94
+	FRYSDWQDKLFMLLGTIMAIAHGSGLPLMMIVFGEMTDKFVNTAENFSFP
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25736 1
+	maps to  4523884 1
+	sim 0.92
+	FRYSDWQDKLFMFWGTVMAIAHGSGLPLMMIVFGEMTDRFVNTNGNFSFP
+	 bitmap not assigned
+
+	danio_rerio ensembl 648151 1
+	maps to  4523884 1
+	sim 0.642857
+	FRYADSIDILLMMLGLIMSMANGAVLPLMVIVFGDMTDSFVDDTLLDNLKNITLPP
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104711 1
+	maps to  4523884 1
+	sim 0.631579
+	FRFADGWDILMLVIGTVMAIANGAVLPLMCIVFGDMTDSLINGAPPNMTAGYP
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92401 1
+	maps to  4523884 1
+	sim 0.616667
+	FRFADRWDVVLLISGTVMAMVNGTVMPLMCIVFGEMTDSFIYADMAQHNASGWSEFLL
+	 bitmap not assigned
+
+	mus_musculus ensembl 149303 1
+	maps to  4523884 1
+	sim 0.92
+	FRYSDWQDKLFMFLGTLMAIAHGSGLPLMMIVFGEMTDKFVDNTGNFSLP
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248578 1
+	maps to  4523884 1
+	sim 0.94
+	FRYSDWQDKLFMSLGTIMAIAHGAGLPLMMIVFGEMTDRFINIGGNFSFP
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104747 1
+	maps to  4523884 1
+	sim 0.764706
+	FRYSDRQDKLLMVLGTTMAVLHGASLPLMMIVFGDMTDTFIASENTTYP
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103113 1
+	maps to  4523884 1
+	sim 0.9
+	FRYSDWKDKFFMVLGTIMAIAHGSGLPLMMIVFGEMTDSFVNTAGNFSFP
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 229964 1
+	maps to  4523884 1
+	sim 0.94
+	FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFITTTGNFSIP
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96181 1
+	maps to  4523884 1
+	sim 0.96
+	FRYSDWRDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFVDTSGNFSFP
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24796 1
+	maps to  4523884 1
+	sim 0.94
+	FRYSDWQDKLFMLLGTAMAIAHGSGLPLMMIVFGEMTDKFVDNAGNFSLP
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115180 1
+	maps to  4523884 1
+	sim 0.96
+	FRYSDWQDKLLMSLGTIMAIAHGSGLPLMMIVFGQMTDKFVDTAGNFSFP
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166068 1
+	maps to  4523884 1
+	sim 0.94
+	FRYSDWQDKLFMLLGTIMAIAHGSGLPLMMIVFGEMTDKFIDTAGDFYFP
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156048 1
+	maps to  4523884 1
+	sim 1.0
+	FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFVDTAGNFSFP
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138764 1
+	maps to  4523884 1
+	sim 0.74
+	MLLGTFMAIAHGSGLPLMMIVFGEMTDKFVDTAGNFSFP
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 267578 1
+	maps to  4523884 1
+	sim 0.96
+	FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFINTSGNFSFP
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43390 1
+	maps to  4523884 1
+	sim 0.98
+	FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFVNTAGNFSFP
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125201 1
+	maps to  4523884 1
+	sim 0.882353
+	FRYSDWQDKLFMSLGTIMAIAHGSGLPLLMIVFGEMTDSFVKNTGNFSLK
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685786 1
+	maps to  4523884 1
+	sim 1.0
+	FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFVDTAGNFSFP
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113798 1
+	maps to  4523884 1
+	sim 0.882353
+	FRYSDWQDKLFMSLGTIMAITHGSGLPLMMIVFGEMTDRFVNPGENFSLP
+	 bitmap not assigned
+
+	bos_taurus ensembl 25021 1
+	maps to  4523884 1
+	sim 0.92
+	FRYSDWQDKLFMSFGTIMAITHGSGLPLMMIVFGEMTDRFVNTGGNFSLP
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331264 1
+	maps to  4523884 1
+	sim 0.9
+	FRYSDWQDKLLMSLGTIMAIAHGSSLPLMMIIFGEMTDKFVNTEVNFSLP
+	 bitmap not assigned
+
+	sorex_araneus ensembl 205985 1
+	maps to  4523884 1
+	sim 0.96
+	FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDRFVNTAGNFSLP
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62135 1
+	maps to  4523884 1
+	sim 0.529412
+	FRYSDWQDKLFMSLGTIMAIAHGSAPLL
+	 bitmap not assigned
+
+
+	 human 4523887 1
+	NFSLSLLNPGKILEEEMT
+checking maps ...
+	sarcophilus_harrisii ensembl 158855 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLAMLNPARILEEEMT
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88843 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSVLNPGRILEEEMT
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 41962 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSMLNPGRILEEEMT
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193739 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSMLNPGRILEEEMT
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77957 1
+	maps to  4523887 1
+	sim 0.518519
+	NSTLVNFSMEFFSSLILGELEEEMT
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 408009 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSLLNPGRILEEEMT
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 157846 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLLLLNPGRILEEEMT
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 252506 1
+	maps to  4523887 1
+	sim 0.333333
+	VTESESLEDQMT
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91184 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSMLNPGRILEEEMT
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62158 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSMLNPGRILEEEMT
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 57089 1
+	maps to  4523887 1
+	sim 0.578947
+	NISSDPLMKLEEQMT
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122400 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLAMLNPARILEEEMT
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167415 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLLMLNPARILEEEMT
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60097 1
+	maps to  4523887 1
+	sim 0.5
+	FTVALNSTLQEDMQ
+	 bitmap not assigned
+
+	felis_catus ensembl 224920 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLSTLNPGRILEEEMT
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113809 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSMLNPGRILEDEMT
+	 bitmap not assigned
+
+	bos_taurus ensembl 25059 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLAMLNPGRILEEEMT
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108412 1
+	maps to  4523887 1
+	sim 0.347826
+	ITIPRNSTLEDEMT
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 77952 1
+	maps to  4523887 1
+	sim 0.421053
+	ASFPPSMFSDLEKEMT
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331304 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSMLNPGRILEEEMT
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104712 1
+	maps to  4523887 1
+	sim 0.578947
+	LTFINMTIDIEEEMT
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 71981 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLAMLNPARILEEEMT
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61581 1
+	maps to  4523887 1
+	sim 0.368421
+	ANSTLEEDMQ
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104927 1
+	maps to  4523887 1
+	sim 0.521739
+	NSSGLNSSADVFNKLEEEMT
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 94411 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSLLNPGRILEEEMT
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985152 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSLLNPGRILEEEMT
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25744 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSLINPGRILEEEMT
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106228 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLSLLNPGIILEEEMT
+	 bitmap not assigned
+
+	danio_rerio ensembl 648152 1
+	maps to  4523887 1
+	sim 0.409091
+	FTFPETSNITLGEKMT
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104756 1
+	maps to  4523887 1
+	sim 0.388889
+	GELEEEMT
+	 bitmap not assigned
+
+	mus_musculus ensembl 149317 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSMLNPGRILEEEMT
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103128 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLAMLNPARILEEEMT
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248602 1
+	maps to  4523887 1
+	sim 0.944444
+	NLSLSMLNPGRILEEEMT
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 229968 1
+	maps to  4523887 1
+	sim 0.888889
+	NFSLSLLNPSRFLEEEMT
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96185 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSLLNPGKILEEEMT
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115199 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSMLNPGRILEEEMT
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166071 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSLLNPGKILEEEMT
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427183 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSLLNPGKILEEEMT
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156050 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSLLNPGKILEEEMT
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138765 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSLLNPGKILEEEMT
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 267608 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSLLNPGRILEEEMT
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125210 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLSLLNPGRILEKEMT
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685804 1
+	maps to  4523887 1
+	sim 0.944444
+	NFSLSRLNPGKILEEEMT
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24802 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSMLNPGRILEEEMT
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206008 1
+	maps to  4523887 1
+	sim 1.0
+	NFSLSMLNPGRILEEEMT
+	 bitmap not assigned
+
+
+	 human 4523890 1
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIRKIRQKFFHAILRQEIGWFDINDTTELNTRLT
+checking maps ...
+	dipodomys_ordii ensembl 41983 1
+	maps to  4523890 1
+	sim 0.31746
+	LGAGVLVAAYIQVSFWTLAA
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193740 1
+	maps to  4523890 1
+	sim 0.984127
+	YAYYYSGLGAGVLVAAYVQVSFWTLAAGRQIRKIRQEFFHAVLRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62308 1
+	maps to  4523890 1
+	sim 0.777778
+	YAIAYSILGFSALVAAFLQVSLWMLASGRQVKRIRSLFFHRVTQQEISWFDVNETGDLNTRLS
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77959 1
+	maps to  4523890 1
+	sim 0.904762
+	YAYYYSGIGAGVLFAAYIQVSFWTLAASRQIKRIRQEFFHAIMRQEIGWFDVNDVCELNTRIV
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 408115 1
+	maps to  4523890 1
+	sim 0.968254
+	YAYYYSGLGAGVLIAAYIQVSFWTLAAGRQIKKIRQKFFHAILRQEVGWFDINNTAELNTRLT
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104759 1
+	maps to  4523890 1
+	sim 0.920635
+	YAYYYSGIGAGVLFAAYIQVSFWTLAAGRQIKRIRQEFFHAVMRQEIGWFDVNDVCELNTRIV
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20814 1
+	maps to  4523890 1
+	sim 0.805556
+	NFAFLFSYRYAYYYSGIAAGVLLAAYIQTSFWTLAAGRQIKKIREKFFHAIMRQEIGWFDVNDVGELNTRLL
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 157869 1
+	maps to  4523890 1
+	sim 0.984127
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIKKIRQKFFHAILRQEIGWFDINNTTELNTRLT
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91185 1
+	maps to  4523890 1
+	sim 0.968254
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQVRKIRQEFFHTILRQEIGWFDVNDTTELNTRLT
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122401 1
+	maps to  4523890 1
+	sim 0.873016
+	YAWYYSGLGGGVLIAAYGQVSFWTLAASRQIRTIRKECFRAVLRQEMGWFDVHDSSELHSRLT
+	 bitmap not assigned
+
+	gadus_morhua ensembl 203674 1
+	maps to  4523890 1
+	sim 0.873016
+	YAINYSIMGVIVLVAAYMQVAFWTLAAGRQAKRLRTLFFHRIMRQDIGWFDVNETGELNTRLI
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113818 1
+	maps to  4523890 1
+	sim 0.968254
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIKKIRQQFFHAILRKEIGWFDLNDTTELNTRLT
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167432 1
+	maps to  4523890 1
+	sim 0.984127
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIKKIRQEFFHAILRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62166 1
+	maps to  4523890 1
+	sim 0.904762
+	YAYYYSGLGAGVFIAAYIQVSFWTLAANRQIRKIRKEFFHAILRQEIGWFDTNDITELNTRLT
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108417 1
+	maps to  4523890 1
+	sim 0.825397
+	YAISYTILGFVVLVVAYGQVAFWTLSAGRQAKRIRTLFFHRIMQQDIGWFDVSETGELNTRLT
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92403 1
+	maps to  4523890 1
+	sim 0.818182
+	FCRFAIYYSVLGFVVLLAAYMQVSFWTITAGRQVKRIRSLFFHCIMQQEISWFDVNDTGELNTRLT
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60158 1
+	maps to  4523890 1
+	sim 0.675
+	FAIYYSILGFVVLLAAYMQVSFWTLTAGRQVKRIRSLFFHCIMQQEISWFDVNDTGELNTRLTEWVTQIPGGQRSNSGWL
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62091 1
+	maps to  4523890 1
+	sim 0.8
+	FSMYYSILGFVVLVVAYLQMSLWTLTAGRQVKRIRERFFHSIMQQEISWFDVNEIGELNTRLTEW
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 252508 1
+	maps to  4523890 1
+	sim 0.757576
+	YAYYYVGIGGGAFLASYIHISFWVLSASRQARRIRETFFHAVLRQEIGWFDVNQTGELNTRLTE
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 77980 1
+	maps to  4523890 1
+	sim 0.873016
+	FAIYYSILGAVVLIAAYLQVSLWTLAAGRQVKLIRKLFFHRIMQQDIGWFDVNETGELNTRLT
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 71987 1
+	maps to  4523890 1
+	sim 0.984127
+	YAYYYSGLGGGVLIAAYIQVSFWTLAAGRQIKKIRQKFFHAVLQQEIGWFDVNDTTELNTRLT
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88862 1
+	maps to  4523890 1
+	sim 0.714286
+	VIIAAYIQVAFWTLAAGRQIKKIRHEFFLVVLWQEIGWSDINDTTELKTRLT
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83171 1
+	maps to  4523890 1
+	sim 0.857143
+	HAIYFSIMGAGVLVAAYLQVALWALAAGRQVKRIRVLFFHQIMRQDIGWFDVNETGELNTRLT
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104958 1
+	maps to  4523890 1
+	sim 0.920635
+	YAYYYSAIAAAVLVAAYIQTSFWTLAAGRQVKKIREKFFHAIMRQEIGWFDVNDAGELNTRLI
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122539 1
+	maps to  4523890 1
+	sim 0.920635
+	YAYYYSGVGAGVLVVAYIQVAFWTLAAGRQIKKIRQHFFHAILRQEVSWFDVHDVGELNTRLS
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84010 1
+	maps to  4523890 1
+	sim 0.888889
+	YAYYYSGIGAGVLVAAYIEIACWTLAAGRQVRRIRLRFFHAVLRQEIGWFDVNDVGELNTRLI
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78017 1
+	maps to  4523890 1
+	sim 0.861538
+	RYAYYYSAIAAAVLVAAYVQTSFWTLAAGRQVKKIRKNFFHAIMRQEIGWFDVNDAGELNTRLI
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206029 1
+	maps to  4523890 1
+	sim 0.968254
+	YAYYYSGLGAGVLIAAYIQVSFWTLAAGRQIKKIRQQFFHAILRQEIGWFDIKDTTELNTRLT
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 57167 1
+	maps to  4523890 1
+	sim 0.920635
+	YAYYYSGIGAGVLLAAYMQVAFWTLAAGRQIKKIRQHFFHSIMRQEIGWFDVNDVGELNTRLI
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106232 1
+	maps to  4523890 1
+	sim 0.952381
+	YAYYYSGLGAAVLVAAYIQVSFWTLAAGRQIKKIRHKFFHAILQQEIGWFDIKDTTELNTRLT
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25749 1
+	maps to  4523890 1
+	sim 0.984127
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIKKIRQKFFHAILRQEIGWFDVNDTAELNTRLT
+	 bitmap not assigned
+
+	danio_rerio ensembl 648154 1
+	maps to  4523890 1
+	sim 0.859375
+	HAIYYSIMGFVVLVAAYMQVAFWTLAAGRQVKKLRKIFFHSIMKQEIGWFDVNETGQLNTRLT
+	 bitmap not assigned
+
+	mus_musculus ensembl 149337 1
+	maps to  4523890 1
+	sim 0.968254
+	YAYYYSGLGGGVLVAAYIQVSFWTLAAGRQIKKIRQKFFHAILRQEMGWFDIKGTTELNTRLT
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104714 1
+	maps to  4523890 1
+	sim 0.888889
+	FAVYYSIMGAVVLVAAYLQVSLWTIAAGRQVKRIRTLFFHKIMQQDIGWFDINETGELNTRLT
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331344 1
+	maps to  4523890 1
+	sim 0.984127
+	YAYYYSGLGAGVLIAAYIQVSFWTLAAGRQIKKIRQEFFHAILRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248610 1
+	maps to  4523890 1
+	sim 0.968254
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIKKIRQEFFHAILRQEIGWFDVSDTTELNTRLT
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103161 1
+	maps to  4523890 1
+	sim 0.920635
+	SGLGGGVLIAAYIQVSFWTLAAGRQIKKIRQKFFHAVLRQEIGWFDVNDTTELNTRLT
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24811 1
+	maps to  4523890 1
+	sim 0.968254
+	YAYYYSGLGGGVLLAAYIQVSFWTLAAGRQIRKIRQKFFHAILRQEMGWFDIKGTTELNTRLT
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 94442 1
+	maps to  4523890 1
+	sim 0.968254
+	YAYYYSGLGAAVLVAAYIQVSFWTLAAGRQIRKIRCEFFHAVLRQEIGWFDVNDTTELNTRLT
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96187 1
+	maps to  4523890 1
+	sim 0.952381
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIRKIRQEFFHAILRQEIGWFDISDITELNTRLT
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88621 1
+	maps to  4523890 1
+	sim 0.863636
+	RYAFYYTLVGIGVLVATYLQVSFWTLTAGRQIKKIRQWFFHAVLRQEIGWFDVNETGELNTRLT
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115217 1
+	maps to  4523890 1
+	sim 0.984127
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIRKIRQEFFHAILRQEIGWFDVNDTTELNTRLT
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166077 1
+	maps to  4523890 1
+	sim 1.0
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIRKIRQKFFHAILRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427184 1
+	maps to  4523890 1
+	sim 1.0
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIRKIRQKFFHAILRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156051 1
+	maps to  4523890 1
+	sim 1.0
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIRKIRQKFFHAVLRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138768 1
+	maps to  4523890 1
+	sim 1.0
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIRKIRQKFFHAILRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 267637 1
+	maps to  4523890 1
+	sim 0.968254
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIKKIRQKFFHAILRQEIGWFDINDIAELNTRLS
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43421 1
+	maps to  4523890 1
+	sim 1.0
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIRKIRQKFFHAILRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125221 1
+	maps to  4523890 1
+	sim 1.0
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIKKIRQKFFHAILRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685826 1
+	maps to  4523890 1
+	sim 1.0
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIRKIRQKFFHAILRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+	bos_taurus ensembl 25095 1
+	maps to  4523890 1
+	sim 0.952381
+	YAYYYSGLGAGVLVAAYIQVSFWTLAAGRQIKKIRQEFFHAILRQEIGWFDISDITELNTRLT
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985153 1
+	maps to  4523890 1
+	sim 1.0
+	YAYYYSGLGAGVLLAAYIQVSFWTLAAGRQIKKIRQKFFHAILRQEIGWFDINDTTELNTRLT
+	 bitmap not assigned
+
+
+	 human 4523892 1
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+checking maps ...
+	petromyzon_marinus ensembl 197385 1
+	maps to  4523892 1
+	sim 0.333333
+	TLVILAISPVLAISAGLWSK
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88867 1
+	maps to  4523892 1
+	sim 0.929825
+	DISKISEIIGDKVGMFFQAVAMFFAGFIVGFFRGWKLTLVIMAISPILGFSTAVWAK
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42099 1
+	maps to  4523892 1
+	sim 0.982456
+	DISKISEGIGDKVGIFFQAIATFFAGFIVGFIRGWKLTLVIMAISPLLGLSTAVWAK
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331382 1
+	maps to  4523892 1
+	sim 0.403509
+	DISKISEGIGDKVGMFFQAIATF
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20818 1
+	maps to  4523892 1
+	sim 0.859649
+	DVSKINEGIGDKIGLLVQSLTTFVTGFIVGLIRGWKLTLVILAVSPVLGLSAALWAK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62311 1
+	maps to  4523892 1
+	sim 0.536232
+	DVYKIQEGIGDKLGLLIQAYATFIISFIISFTVGWKLTLVILAVSPLVAITAALYNK
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193741 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFVRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 408213 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPVLGLSAAVWAK
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122402 1
+	maps to  4523892 1
+	sim 0.894737
+	SVAKIAEGIGDKAGMFFQAVATFLTGFLVGFLRGWKLTLVIMAISPILGLSSAAWAK
+	 bitmap not assigned
+
+	gadus_morhua ensembl 203698 1
+	maps to  4523892 1
+	sim 0.754386
+	DVFKIQEGIGDKMGTLIQSFTTFFASFIIGFVNGWKLTLVILSISPLLGVSAALFST
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62171 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPVLGLSAAVWAK
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167455 1
+	maps to  4523892 1
+	sim 0.982456
+	DISKISEGIGDKVGMFFQAIATFFAGFIVGFLRGWKLTLVIMAISPILGLSTAVWAK
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108428 1
+	maps to  4523892 1
+	sim 0.789474
+	DVYKIQEGIGDKAGKLIQAFSTFITAFTIGFVKGWKLTLVILAVSPALGISAGIFSK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60218 1
+	maps to  4523892 1
+	sim 0.721311
+	SVGSDVYKIQEGIGDKVGLLIQAYTTFITAFIIGFTTGWKLTLVILAISPALAISAAFFSK
+	 bitmap not assigned
+
+	bos_taurus ensembl 25134 1
+	maps to  4523892 1
+	sim 0.982456
+	DISKISEGIGDKVGMFFQAIATFFAGFIVGFIRGWKLTLVIMAISPILGLSTAVWAK
+	 bitmap not assigned
+
+	felis_catus ensembl 224933 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78029 1
+	maps to  4523892 1
+	sim 0.807018
+	DVYKIQEGIGDKVGMLIQSFSSFIAAFIIGFTKGWKLTLVILAVSPALGISAALFSK
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 71997 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 57326 1
+	maps to  4523892 1
+	sim 0.912281
+	DVSKINEGIGDKIGMLFQAVATFLTGFIVGFTKGWKLTLVILAVSPVLGLSAAIWAK
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83172 1
+	maps to  4523892 1
+	sim 0.754386
+	DVYKIQEGIGDKVGMLLQGFTSFVVSFIIGLSKGWKLTLVILAVSPVLGISAAFFSM
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331420 1
+	maps to  4523892 1
+	sim 0.578947
+	AGFIVGFIRGWKLTLVIMAISPILGLSAAIWAK
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104996 1
+	maps to  4523892 1
+	sim 0.842105
+	DVSKINDGIGDKIGFLIQSETTFLTGFIVGFIRGWKLTLVILAVSPVLGLSAALWAK
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122540 1
+	maps to  4523892 1
+	sim 0.877193
+	DVAKINEGIGDKIGMLFQALTTFFTGFIIGFTKGWKLTLVILAISPVLGFSAAVWAK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62113 1
+	maps to  4523892 1
+	sim 0.714286
+	LLPACSDVYKIQEGIGDKVGLLIQASSTFITSFIIGFVDGWKLTLVILAVSPVLGLSGALYSK
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84011 1
+	maps to  4523892 1
+	sim 0.877193
+	DVSKINEGIGDKIAMLIQGIAAFIAGLVIGFVKGWELTLVILAISPVLGLSAAIWAK
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115241 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFVRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206046 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAIWAK
+	 bitmap not assigned
+
+	danio_rerio ensembl 648156 1
+	maps to  4523892 1
+	sim 0.842105
+	DVYKINEGIGDKLGMLIQNLTTFIVGIIIGFAKGWKLTLVILAVSPLLGISAAVIGK
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985156 1
+	maps to  4523892 1
+	sim 1.0
+	DISRISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104762 1
+	maps to  4523892 1
+	sim 0.912281
+	DISKINEGIGEKIAMFFQAVATFFTGFIVGFTKGWKLTLVILALSPVLGFSSALWAK
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106237 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	mus_musculus ensembl 149344 1
+	maps to  4523892 1
+	sim 0.982456
+	DVSKISEGIGDKVGMFFQAIATFFAGFIVGFIRGWKLTLVIMAISPILGLSTAVWAK
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24819 1
+	maps to  4523892 1
+	sim 0.982456
+	DISKISEGIGDKVGMFFQAIATFFAGFIVGFIRGWKLTLVIMAISPILGLSTAVWAK
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104715 1
+	maps to  4523892 1
+	sim 0.807018
+	DVYKIQEGIGDKVGMLIQSVSSFITAFVIGFTKGWKLTLVILAVSPALGISGALFSK
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248621 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103176 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFMRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92404 1
+	maps to  4523892 1
+	sim 0.77193
+	DVYKIQEGIGDKVGLLIQAYTTFITAFIIGFTTGWKLTLVILAVSPALAISAAFFSK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77961 1
+	maps to  4523892 1
+	sim 0.912281
+	DISKINEGIGEKIAMFFQAVATFFTGFIVGFTKGWKLTLVILALSPVLGFSSALWAK
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 157898 1
+	maps to  4523892 1
+	sim 0.964912
+	DISKISEGIGDKVGMFFQAVATCFAGFIVGFIRGWKLTLVIMAISPILGLSSAVWAK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78018 1
+	maps to  4523892 1
+	sim 0.859649
+	DVSKINEGIGDKIGLLIQSETTFIAGFIVGLVRGWKLTLVILAVSPVLGLSAAIWAK
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 94556 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 229976 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96188 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88622 1
+	maps to  4523892 1
+	sim 0.894737
+	DISKINEGIGDKVAMLFQSLSTFVAGFVIGFVKGWKLTLVIVAISPVMGVSVALWSK
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166085 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVVMAISPILGLSAAIWAK
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427186 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156053 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIKGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138771 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 267665 1
+	maps to  4523892 1
+	sim 0.982456
+	DISKISEGIGDKVGMFFQAVATFFAGFTVGFIRGWKLTLVIMVISPILGLSAAVWAK
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43436 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPLLGLSAAVWAK
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125232 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685841 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFIRGWKLTLVIMAISPILGLSAAVWAK
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113829 1
+	maps to  4523892 1
+	sim 0.947368
+	DISKIGEGIGDKVGMFFQAIATFFAGFIVGFTRGWKLTLVVMAISPVLGLSTAIWAK
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91186 1
+	maps to  4523892 1
+	sim 0.982456
+	DISKISEGIGDKVGMFFQAVATFFAGFIVGFVRGWKLTLVIMAISPILGLSTAVWAK
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25759 1
+	maps to  4523892 1
+	sim 1.0
+	DISKISEGIGDKVGMFFQAIATFFAGFIVGFIRGWKLTLVIMAISPLLGLSAAVWAK
+	 bitmap not assigned
+
+
+	 human 4523896 1
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+checking maps ...
+	loxodonta_africana ensembl 94629 1
+	maps to  4523896 1
+	sim 0.97561
+	ILSTFTDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 408310 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193742 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDRELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20823 1
+	maps to  4523896 1
+	sim 0.926829
+	VLSAFTDKEQAAYAKAGAVAEEVLAAIRTVIAFGGQEKEIK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77963 1
+	maps to  4523896 1
+	sim 0.878049
+	IISTFTNKELTAYAKAGAVAEEVLAAVRTVVAFGGQRKETE
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60282 1
+	maps to  4523896 1
+	sim 0.780488
+	VLASFTNKEQTAYAKAGAVAEEVLSAIRTVFAFSGQTKEIE
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122421 1
+	maps to  4523896 1
+	sim 0.902439
+	ILSAFTDREMSAYAKAGAVAEEALAAIKTVTAFGGQSKELA
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167481 1
+	maps to  4523896 1
+	sim 0.853659
+	SDKELAAYAKAGAVAEEALGAIKTVIAFGGQNRELK
+	 bitmap not assigned
+
+	gadus_morhua ensembl 203733 1
+	maps to  4523896 1
+	sim 0.780488
+	VLTSFTSKEQSAYAKAGAVAEEVLSAIRTVFAFNGQDKEIS
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92374 1
+	maps to  4523896 1
+	sim 0.780488
+	VLASFTSKEQTAYAKAGAVAEEVLSAIRTVFAFSGQTREIE
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331459 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFTDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	bos_taurus ensembl 25172 1
+	maps to  4523896 1
+	sim 0.97561
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQKRELE
+	 bitmap not assigned
+
+	felis_catus ensembl 224945 1
+	maps to  4523896 1
+	sim 0.97561
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELN
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78091 1
+	maps to  4523896 1
+	sim 0.780488
+	LLANFTTKEQSAYAKAGAVAEEVLSAIRTVYAFSGQKKEIE
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108435 1
+	maps to  4523896 1
+	sim 0.756098
+	LLATFTSKEQAAYAKAGAVASEVISAVRTVFAFSGQEREIK
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72007 1
+	maps to  4523896 1
+	sim 0.97561
+	ILSAFSDKELAAYAKAGAVAEEALSAIKTVIAFGGQNKELE
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104716 1
+	maps to  4523896 1
+	sim 0.804878
+	VLTSFTSKEQSAYAKAGAVAEEVLSSIRTVFAFSGQNKEIE
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84012 1
+	maps to  4523896 1
+	sim 0.902439
+	VITAFTNKELAAYAKAGSVAEEVLTAIRTVIAFGGQKKEID
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83173 1
+	maps to  4523896 1
+	sim 0.780488
+	VLTSFTSKEQTAYAKAGAVAEEVISSIRTVFAFSGQEKEIE
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105038 1
+	maps to  4523896 1
+	sim 0.902439
+	ILTAFTDKEQAAYAKAGAVAEEVLSAVRTVIAFGGQEKEIK
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122541 1
+	maps to  4523896 1
+	sim 0.878049
+	ILSSFTDQELKAYAKAGAVAEEVLSAIRTVIAFGGQKKELE
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61618 1
+	maps to  4523896 1
+	sim 0.780488
+	LLTSFTSKEQTAYAKAGAVAEEVLSAIRTVFAFSGQNKAIK
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206064 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	danio_rerio ensembl 648158 1
+	maps to  4523896 1
+	sim 0.780488
+	VMTTFTSKEQTAYAKAGAVAEEVLSSIRTVFAFGGQKKEIK
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985157 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25766 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104767 1
+	maps to  4523896 1
+	sim 0.878049
+	IISTFTNKELTAYAKAGAVAEEVLAAVRTVVAFGGQRKETE
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106241 1
+	maps to  4523896 1
+	sim 0.97561
+	ILSAFTDKELAAYAKAGAVAEEALGAIRTVIAFGGQKKELE
+	 bitmap not assigned
+
+	mus_musculus ensembl 149362 1
+	maps to  4523896 1
+	sim 0.97561
+	ILSTFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 197448 1
+	maps to  4523896 1
+	sim 0.853659
+	ILTSFTNRELLAYSKAGAVAEEVLSAIRTVMAFGGQEKELK
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24829 1
+	maps to  4523896 1
+	sim 0.97561
+	ILSTFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248641 1
+	maps to  4523896 1
+	sim 0.97561
+	IISAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQSKELE
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103194 1
+	maps to  4523896 1
+	sim 0.951219
+	ILSAFSDKELAAYAKAGAVAEEALSAIKTVIAFGGQSKELE
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 157921 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKEIE
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78020 1
+	maps to  4523896 1
+	sim 0.926829
+	ILTAFTDKEQAAYAKAGAVAEEVLGAVRTVIAFGGQEKEIK
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158860 1
+	maps to  4523896 1
+	sim 0.740741
+	SKKMNVWVLLSFQILSAFSDKELAAYAKAGAVAEEALSAIKTVIAFGGQNKELE
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96189 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 57470 1
+	maps to  4523896 1
+	sim 0.853659
+	ILSAFTDKELTAYAKAGAVAEEVLSSIRTVIAFGGEKKEIK
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88623 1
+	maps to  4523896 1
+	sim 0.804878
+	VLTSFSSKEQNVYAKAGSVAEEVLSAIRTVVAFGGQEKEIQ
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166089 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427188 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156056 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138775 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 267695 1
+	maps to  4523896 1
+	sim 0.97561
+	ILSTFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43452 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125240 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685859 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113841 1
+	maps to  4523896 1
+	sim 0.926829
+	ILSTFSDKELAAYAKAGAVAAEALGGIRTVIAFGGQNRELQ
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91187 1
+	maps to  4523896 1
+	sim 1.0
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELE
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115261 1
+	maps to  4523896 1
+	sim 0.97561
+	ILSAFSDKELAAYAKAGAVAEEALGAIRTVIAFGGQNKELK
+	 bitmap not assigned
+
+
+	 human 4523898 1
+	YQKHLENAKEIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+checking maps ...
+	dipodomys_ordii ensembl 42128 1
+	maps to  4523898 1
+	sim 0.964912
+	YQKHLENAKQIGIKKAISTNISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20832 1
+	maps to  4523898 1
+	sim 0.385965
+	SYALAFWYGTTLILNDDYTIGKVLT
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193743 1
+	maps to  4523898 1
+	sim 0.964912
+	YEKHLENAKRIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20827 1
+	maps to  4523898 1
+	sim 0.403509
+	YHKNLEDAKRIGIRKAITANISMGAAF
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77966 1
+	maps to  4523898 1
+	sim 0.824561
+	YQKNLEDAKRIGIQKAISANISMGISFFLIYGSYALAFWYGTVLVLSDDYTIGKVFT
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91193 1
+	maps to  4523898 1
+	sim 0.964912
+	YEKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 408418 1
+	maps to  4523898 1
+	sim 0.982456
+	YQKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113850 1
+	maps to  4523898 1
+	sim 0.929825
+	YQRHLENAKKIGIKKVTSASISMGIAFLLIYASYALAFWYGSILVISKEYTIGNALT
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122429 1
+	maps to  4523898 1
+	sim 0.894737
+	YKRHLEEAEKIGIKKAITANLSLGTAFLLIYASYALAFWYGSSLILSKEYTLGNTMT
+	 bitmap not assigned
+
+	gadus_morhua ensembl 203757 1
+	maps to  4523898 1
+	sim 0.807018
+	YSKNLEDAKRMGIKKAVSTNIAMGFTFLIIYLSYALAFWYGSTLVLSEEYTIGTVLI
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 267721 1
+	maps to  4523898 1
+	sim 0.947368
+	YQKHLENAKKIAIKKAISANISMGISFLLIYASYALAFWYGSTLVISNEYTIGNAMT
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158861 1
+	maps to  4523898 1
+	sim 0.982456
+	YQRHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNALT
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167506 1
+	maps to  4523898 1
+	sim 0.964912
+	YQKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVIAKEYTVGNAMT
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60365 1
+	maps to  4523898 1
+	sim 0.824561
+	YHKNLRDAKDVGIKKAISSNIAMGFTFLMIYLSYALAFWYGSTLILNQEYTIGNLLT
+	 bitmap not assigned
+
+	bos_taurus ensembl 25210 1
+	maps to  4523898 1
+	sim 0.947368
+	YQKHLENAKRIGIKKAISANISMGTAFLLIYASYALAFWYGSTLVIAKEYTIGNAIT
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78153 1
+	maps to  4523898 1
+	sim 0.824561
+	YHKNLEDAKSMGIRKAISANIAMGFTFLMIYLSYALAFWYGSTLILNDEYTIGSVLT
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 197521 1
+	maps to  4523898 1
+	sim 0.711864
+	YDKNLVEARNIGIKKAITTNLSIGFTMFIVYASYSLAFWYGSRLVLEDTSYTIGNVMI
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72021 1
+	maps to  4523898 1
+	sim 0.982456
+	YQRHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNALT
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104717 1
+	maps to  4523898 1
+	sim 0.824561
+	YHKNLQQAKKMGMKKAISANIAMGFTFLMIYFSYALAFWYGSTLILSGEYTIGSVLT
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83174 1
+	maps to  4523898 1
+	sim 0.842105
+	YHKNLEDAKRMGIKKAISANISMGVTFLFIYLSYALAFWYGSTLILNGEYTIGTVLT
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84013 1
+	maps to  4523898 1
+	sim 0.842105
+	YSKNLENAKNMGIKKAIMANISIGIAFLLIYAAYALGFWYGTTLILENKYTIGKVLT
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108442 1
+	maps to  4523898 1
+	sim 0.77193
+	YIKNLEDAKNMGIKKATYANFAFGINFLMIYLSYALAFWYGSTLILKEEYTIGTVLT
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62168 1
+	maps to  4523898 1
+	sim 0.824561
+	YHKNLEDARDMGIKKGVAANAATGFTFLMIYLSYALAFWYGTTLVLNQEYTIGNLLT
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115288 1
+	maps to  4523898 1
+	sim 0.929825
+	YEKYLEHAKKMGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122542 1
+	maps to  4523898 1
+	sim 0.896552
+	YNKNLEEAKKVGIKKAITANISIGVAFLLIYASYALAFWYGTTLILTEEYTIGEVLTV
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206078 1
+	maps to  4523898 1
+	sim 0.982456
+	YQKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	danio_rerio ensembl 648159 1
+	maps to  4523898 1
+	sim 0.807018
+	YHKNLEDAKNVGVRKAITVNIAMGFTFFMIYMSYALAFWYGSTLILGGEYTIGMLLT
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985158 1
+	maps to  4523898 1
+	sim 0.982456
+	YQKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106246 1
+	maps to  4523898 1
+	sim 0.982456
+	YQKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISREYTIGNAMT
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104769 1
+	maps to  4523898 1
+	sim 0.824561
+	YQKNLEDAKRMGIQKAISANISMGVSFFLIYGSYALAFWYGTILVLSEDYTIGKVFT
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331495 1
+	maps to  4523898 1
+	sim 0.964912
+	YHKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25776 1
+	maps to  4523898 1
+	sim 0.964912
+	YQKYLENAKKIGIKKAISANLSMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105081 1
+	maps to  4523898 1
+	sim 0.877193
+	YHKNLEDAKRIGIRKAITSNISMGAAFLLIYASYALAFWYGTTLILANEYSIGNVLT
+	 bitmap not assigned
+
+	mus_musculus ensembl 149383 1
+	maps to  4523898 1
+	sim 0.982456
+	YQKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248672 1
+	maps to  4523898 1
+	sim 0.982456
+	YQKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92375 1
+	maps to  4523898 1
+	sim 0.824561
+	YHKNLRDAKDVGVKKAISSNIAMGFTFLMIYLSYALAFWYGSTLILNFEYTIGNLLT
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24835 1
+	maps to  4523898 1
+	sim 0.982456
+	YQKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 57634 1
+	maps to  4523898 1
+	sim 0.877193
+	YHKNLEDAKNIGIKKAITANISMGIAFLLIYSSYALAFWYGTTLVLSEDYSIGKVLT
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103216 1
+	maps to  4523898 1
+	sim 0.982456
+	YQRHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNALT
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 157931 1
+	maps to  4523898 1
+	sim 0.929825
+	YQKYLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLIIAKEYTIGNTMT
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78021 1
+	maps to  4523898 1
+	sim 0.877193
+	YHKNLEDAKRIGIRKAITSNISMGAAFLLIYASYALAFWYGTTLILNDDYTIGNVLT
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 94716 1
+	maps to  4523898 1
+	sim 0.964912
+	YQKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISREYTFGNALT
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96192 1
+	maps to  4523898 1
+	sim 0.964912
+	YKKHLEKAKEIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88624 1
+	maps to  4523898 1
+	sim 0.754386
+	YHKNLIDAKNIGIRKAIVTSVSIGFTFFIIYASYALAFWYGSTLILQEEYSIGKVLT
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166092 1
+	maps to  4523898 1
+	sim 1.0
+	YQKHLENAKEIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427190 1
+	maps to  4523898 1
+	sim 0.982456
+	YQKHLENAKNIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156059 1
+	maps to  4523898 1
+	sim 1.0
+	YQKHLENAKEIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138778 1
+	maps to  4523898 1
+	sim 1.0
+	YQKHLENAKEIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43467 1
+	maps to  4523898 1
+	sim 0.982456
+	YQKHLENAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125256 1
+	maps to  4523898 1
+	sim 0.947368
+	YQKHLEDAKKIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNTMT
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685880 1
+	maps to  4523898 1
+	sim 1.0
+	YQKHLENAKEIGIKKAISANISMGIAFLLIYASYALAFWYGSTLVISKEYTIGNAMT
+	 bitmap not assigned
+
+	felis_catus ensembl 224961 1
+	maps to  4523898 1
+	sim 0.894737
+	YEKHLQDAKKIGIKKAISASISMGIAFLLIYASYALAFWYGSTLVIAKEYTIGNAMT
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62189 1
+	maps to  4523898 1
+	sim 1.0
+	YQKHLENAKEIGIKKAISANISMGIAFLLIYASYALAFWYGSTLIISKEYTLGNAMT
+	 bitmap not assigned
+
+
+	 human 4523900 1
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+checking maps ...
+	macropus_eugenii ensembl 103233 1
+	maps to  4523900 1
+	sim 0.973684
+	VFFSILIGAFSVGQAAPCIDSFANARGAAYAIFDIIDN
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108454 1
+	maps to  4523900 1
+	sim 0.710526
+	VFFVVLIGAFTVGQTSPNIQTFATARGAAHKVYNIIDH
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193744 1
+	maps to  4523900 1
+	sim 0.921053
+	VFFSILVGAFSVGQAAPCIDAFANARGAAYTIFNIIDS
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20837 1
+	maps to  4523900 1
+	sim 0.868421
+	VFFSVLIGAFSIGQTAPSIEAFASARGAAYTIFNIIDN
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91200 1
+	maps to  4523900 1
+	sim 0.947368
+	VFFSVLVGAFSVGQAAPCIDAFANARGAAYAIFNIIDS
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 408526 1
+	maps to  4523900 1
+	sim 0.947368
+	VFFSILIGAFSVGQAAPCVDAFANARGAAYVIFNIIDS
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77968 1
+	maps to  4523900 1
+	sim 0.947368
+	VFFSILVGAFSVGQAAPSMEAFANARGAAYAIFNIIDN
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122432 1
+	maps to  4523900 1
+	sim 0.894737
+	VFFSIVYGAFSVGQAAPCMDAFANARGAAKSVFEIIDS
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113860 1
+	maps to  4523900 1
+	sim 0.973684
+	VFFSILIGAFSIGQAAPCINAFANARGAAYAIFDIIDN
+	 bitmap not assigned
+
+	gadus_morhua ensembl 203777 1
+	maps to  4523900 1
+	sim 0.763158
+	VFFTVLIGAFSLGQTTPNFQAFASARGAAHKVYNIIDN
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60439 1
+	maps to  4523900 1
+	sim 0.710526
+	VFFVVLIGAFSVGQTSPNIQTFASARGAAHKVYAIIDH
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167536 1
+	maps to  4523900 1
+	sim 0.973684
+	VFFSIMIGAFSVGQAAPCIDAFANARGAAYAIFAIIDN
+	 bitmap not assigned
+
+	bos_taurus ensembl 25247 1
+	maps to  4523900 1
+	sim 0.947368
+	VFFSILIGAFSIGQAAPCIDAFANARGAAYAIFAIIDS
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92376 1
+	maps to  4523900 1
+	sim 0.763158
+	VFFVVLIGAFSVGQTSPNIQNFASARGAAYKVYSIIDN
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78208 1
+	maps to  4523900 1
+	sim 0.710526
+	VFFVVIIGVFAMGQTSPNIQTFASARGAAYKVYSIIDH
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72034 1
+	maps to  4523900 1
+	sim 0.973684
+	VFFSILIGAFSVGQAAPCIDSFANARGAAYAIFDIIDN
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158862 1
+	maps to  4523900 1
+	sim 0.973684
+	VFFSILIGAFSVGQAAPCIDSFANARGAAYAIFDIIDN
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115303 1
+	maps to  4523900 1
+	sim 0.921053
+	VFFSILIGAFSVGQAAPCIDSFANARGAAYAIFNIIDS
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62195 1
+	maps to  4523900 1
+	sim 0.684211
+	VFFVILYGTYILGQTSPNIQSFASARGAANLVYSIIDQ
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83175 1
+	maps to  4523900 1
+	sim 0.763158
+	VFFSVLIGAFSLGQTSPNIQTFASARGAAYKVYNIIDH
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84014 1
+	maps to  4523900 1
+	sim 0.868421
+	IFFAVLIGAFSLGQASPNLEAFAIARGAAYAIYNIIDN
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105115 1
+	maps to  4523900 1
+	sim 0.921053
+	VFFSVLIGAFSIGQTAPSIEAFANARGAAYAIFNIIDN
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 197619 1
+	maps to  4523900 1
+	sim 0.789474
+	VFFAVIIGAFGIGQAAPFLEAISVARGAAYTIFEIIDR
+	 bitmap not assigned
+
+	danio_rerio ensembl 648161 1
+	maps to  4523900 1
+	sim 0.657895
+	IFFAVLIGAFGLGQTSPNIQTFSSARGAAHKVFQIIDH
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138784 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206093 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985172 1
+	maps to  4523900 1
+	sim 0.947368
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYAIFSIIDS
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106250 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDVIDN
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104772 1
+	maps to  4523900 1
+	sim 0.947368
+	VFFSILVGAFSVGQAAPSMEAFANARGAAYAIFNIIDN
+	 bitmap not assigned
+
+	mus_musculus ensembl 149398 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248694 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104718 1
+	maps to  4523900 1
+	sim 0.710526
+	VFFVVIIGVFTMGQTSPNIQTFASARGAAHKVYNIIDK
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24844 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 157951 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78023 1
+	maps to  4523900 1
+	sim 0.894737
+	VFFSVLIGAFSIGQTTPSIEAFANARGAAYAIFNIIDN
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 94786 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCVDAFANARGAAYVIFDVIDN
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 57823 1
+	maps to  4523900 1
+	sim 0.894737
+	VFFAILIGAFSVGQTAPSMEAFANARGAAYAIFNIIDN
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331530 1
+	maps to  4523900 1
+	sim 0.973684
+	VFFSILIGAFSTGQAAPCIDAFANARGAAYAIFDIIDN
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96194 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYAIFDIIDN
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88625 1
+	maps to  4523900 1
+	sim 0.894737
+	VFFSVIMGVFTVGQAAPSMEAIANARGAAHGIFKIIDN
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166093 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427191 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156063 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43475 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685901 1
+	maps to  4523900 1
+	sim 1.0
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42157 1
+	maps to  4523900 1
+	sim 0.763158
+	LFGTFSIGQAAPCIDAFANARGATYVVFGIIDN
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62198 1
+	maps to  4523900 1
+	sim 0.973684
+	VFFSILIGAFNVGQAAPCIDAFANARGAAYVIFDIIDN
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25785 1
+	maps to  4523900 1
+	sim 0.973684
+	VFFSILIGAFSVGQAAPCIDAFANARGAAYVIFDIIDS
+	 bitmap not assigned
+
+
+	 human 4523902 1
+	NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK
+checking maps ...
+	mustela_putorius_furo ensembl 193745 1
+	maps to  4523902 1
+	sim 0.891892
+	NPKIDSFSERGHKPNSIKGNLEFIDVHFSYPARADVK
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20841 1
+	maps to  4523902 1
+	sim 0.648649
+	EPQIDSYSETGYKPDHIKGNLELKNVYFNYPSRPDVE
+	 bitmap not assigned
+
+	gadus_morhua ensembl 203804 1
+	maps to  4523902 1
+	sim 0.72973
+	TPSIDSYSESGLRPDSIRGDIEFRNIHFNYPSRSDVK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77970 1
+	maps to  4523902 1
+	sim 0.675676
+	EPQIDSSSNAGYKPDNIKGNLEFQNVYFSYPARPDIK
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91206 1
+	maps to  4523902 1
+	sim 0.972973
+	NPKIDSFSERGHKPDSIKGNVEFNDVHFSYPARANVK
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113872 1
+	maps to  4523902 1
+	sim 0.837838
+	NPKIDSFSERGHKPDNIKGALEFNGVHFSYPARPDVK
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122439 1
+	maps to  4523902 1
+	sim 0.702703
+	DPQIDSFSERGDKPGNLKGNLEFRNVHFSYPARPDIQ
+	 bitmap not assigned
+
+	bos_taurus ensembl 25263 1
+	maps to  4523902 1
+	sim 0.810811
+	DPKIDSFSERGHKPDNIKGNLEFRDVHFSYPARPDVQ
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104775 1
+	maps to  4523902 1
+	sim 0.648649
+	EPQIDSSSNAGYKLDHVKGNLEFQNVYFSYPARPDIK
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62211 1
+	maps to  4523902 1
+	sim 0.891892
+	NPKIDSFSERGHKPDNIKGNLEFSDVHFSYPARPNVK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60499 1
+	maps to  4523902 1
+	sim 0.702703
+	KPNIDSFSEDGFKPDYIKGDIEFKNIHFRYPSRPEVK
+	 bitmap not assigned
+
+	felis_catus ensembl 224983 1
+	maps to  4523902 1
+	sim 0.945946
+	SPKIDSFSERGHKPDSIKGNLEFNDVHFSYPARANVK
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104719 1
+	maps to  4523902 1
+	sim 0.72973
+	EPIIDSYSEDGFKPDFIKGDIEFSNIHFTYPSRPDVK
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78250 1
+	maps to  4523902 1
+	sim 0.783784
+	NPTIDSYSQTGFKPDFIKGNIEFKDIHFSYPSRPDVK
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72046 1
+	maps to  4523902 1
+	sim 0.864865
+	NPKIDSFSETGHKPDHIKGNLEFRNVHFSYPSRADVK
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83176 1
+	maps to  4523902 1
+	sim 0.756757
+	VPSIDSYSEAGYKPESIKGDIEFKNVHFSYPSRDDIK
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108463 1
+	maps to  4523902 1
+	sim 0.702703
+	KPTIDSYSEAGFKPDSITGNIEFKNIHFSYPSRPDTE
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61663 1
+	maps to  4523902 1
+	sim 0.702703
+	KPNIDSFSEDGFKPDYIKGDIEFKNIHFSYPSRPEVQ
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84015 1
+	maps to  4523902 1
+	sim 0.675676
+	EPQIDSFSESGYKPDHIKGDMAFHNVHFSYPARADVQ
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88877 1
+	maps to  4523902 1
+	sim 0.891892
+	NPKIDSFSEKGYKLDSIKRNLEFNDVHFSYSSHANVK
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115324 1
+	maps to  4523902 1
+	sim 0.918919
+	NPKIDSFSERGHKPDSIKGNLEFIDVHFSYPARADVK
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105146 1
+	maps to  4523902 1
+	sim 0.72973
+	EPEIDSYSDAGHKPDHIKGNLEFQNVFFNYPSRPDVE
+	 bitmap not assigned
+
+	danio_rerio ensembl 648163 1
+	maps to  4523902 1
+	sim 0.702703
+	EPKINSFSEEGYKLDVVKGNIEFKNIHFRYPSRDDVK
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122564 1
+	maps to  4523902 1
+	sim 0.702703
+	EPNIDSYSEDGYKPGAIKGNLEFKNVHFSYPSRKEVQ
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206104 1
+	maps to  4523902 1
+	sim 0.945946
+	NPKIDSFSERGHKPDNIKGNLEFNDVHFSYPARANVK
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158863 1
+	maps to  4523902 1
+	sim 0.864865
+	NPKIDSFSEIGHKPDHIKGNLEFRNVHFSYPSRADVK
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985181 1
+	maps to  4523902 1
+	sim 1.0
+	NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK
+	 bitmap not assigned
+
+	mus_musculus ensembl 149406 1
+	maps to  4523902 1
+	sim 0.945946
+	NPKIDSFSERGHKPDNIKGNLEFSDVHFSYPSRANIK
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106253 1
+	maps to  4523902 1
+	sim 0.972973
+	NPKIDSFSERGHKPDNIKVNLEFNDVHFSYPSRANVK
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248706 1
+	maps to  4523902 1
+	sim 0.864865
+	NPKIDSFSERGHKPVNIKGNLEFSDVHFSYPARPNVK
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92377 1
+	maps to  4523902 1
+	sim 0.702703
+	KPNIDSFSEDGFKPDFIKGDIEFKNIHFNYPSRPEVK
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103254 1
+	maps to  4523902 1
+	sim 0.864865
+	NPKIDSFSEAGHKPDHIKGNLEFRNVHFSYPSRADVK
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331611 1
+	maps to  4523902 1
+	sim 0.540541
+	DSIKGNLEFSDVHFSYPARTNVK
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 157959 1
+	maps to  4523902 1
+	sim 0.972973
+	NPKIDSFSESGHKPDSIKGNLEFNDVHFSYPSRANVK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78024 1
+	maps to  4523902 1
+	sim 0.72973
+	EPQIDSYSDAGHKPDHIKGNLEFQNVFFNYPSRPDVE
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 58000 1
+	maps to  4523902 1
+	sim 0.72973
+	EPHIDSFSEAGYKPDNIKGNLEFHNVFFNYPSRQDVK
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331570 1
+	maps to  4523902 1
+	sim 0.324324
+	NPKIDSSSERGHK
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 94866 1
+	maps to  4523902 1
+	sim 0.918919
+	NPKIDSFSERGYKPDSIKGNLEFSDVHFSYPSRGDVK
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96196 1
+	maps to  4523902 1
+	sim 0.972973
+	NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPARANVK
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88626 1
+	maps to  4523902 1
+	sim 0.756757
+	EPKIDSFSESGYKPEKIKGNIEFKNVHFTYPSRPEVQ
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166095 1
+	maps to  4523902 1
+	sim 0.972973
+	NPKIDSFSERGHKPDSIKGNLEFSDVHFSYPSRANVK
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427193 1
+	maps to  4523902 1
+	sim 0.972973
+	NPKIDSFSERGHKPDSITGNLEFNDVHFSYPSRANIK
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138787 1
+	maps to  4523902 1
+	sim 1.0
+	NPKIDSFSERGHKPESIKGNLEFNDVHFSYPSRANVK
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156065 1
+	maps to  4523902 1
+	sim 1.0
+	NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 267781 1
+	maps to  4523902 1
+	sim 1.0
+	NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43498 1
+	maps to  4523902 1
+	sim 0.945946
+	NPKIDSFSERGHKPDSIKGDLEFNDVHFSYPSRTNVK
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125277 1
+	maps to  4523902 1
+	sim 1.0
+	NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685918 1
+	maps to  4523902 1
+	sim 0.972973
+	NPKIDSFSERGHKPDSIQGNLEFNDVHFSYPSRANVK
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24851 1
+	maps to  4523902 1
+	sim 0.972973
+	NPKIDSFSERGHKPDSIKGNLEFSDVHFSYPSRANIK
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25790 1
+	maps to  4523902 1
+	sim 0.972973
+	NPKIDSFSERGHKPDSIKGNLEFSDVHFSYPSRANVK
+	 bitmap not assigned
+
+
+	 human 4523907 1
+	ILKGLNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT
+checking maps ...
+	taeniopygia_guttata ensembl 20844 1
+	maps to  4523907 1
+	sim 0.928571
+	ILKGLNLKINSGQTVALVGGSGCGKSTTVQLIQRFYDPKEGT
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193746 1
+	maps to  4523907 1
+	sim 0.904762
+	ILKGLNLTVESGQTVALVGNSGCGKSTTVQLIQRLYDPDEGR
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91214 1
+	maps to  4523907 1
+	sim 0.904762
+	ILKGLSLKVESGQTVALVGNSGCGKSTTVQLLQRLYDPDEGR
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77972 1
+	maps to  4523907 1
+	sim 0.863636
+	AQILKGLNLKINCGQTVALVGGSGCGKSTTVQLIQRFYDPKEGT
+	 bitmap not assigned
+
+	gadus_morhua ensembl 203833 1
+	maps to  4523907 1
+	sim 0.833333
+	VLNNLSLSVKTGQTIALVGSSGCGKSTTIQLLQRFYDPQEGS
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113879 1
+	maps to  4523907 1
+	sim 0.880952
+	ILKGLSLKVQRGQMVALVGNSGCGKSTTVQLVQRLYDPDEGM
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122442 1
+	maps to  4523907 1
+	sim 0.904762
+	ILRGLNLKVNSGQTVALVGNSGCGKSTAVQLIQRLYDPTVGS
+	 bitmap not assigned
+
+	bos_taurus ensembl 25291 1
+	maps to  4523907 1
+	sim 0.904762
+	ILKGLNLKVESGQTVALVGNSGCGKSTVVQLVQRLYDPDVGS
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 232673 1
+	maps to  4523907 1
+	sim 0.442308
+	LQGVSFSVEPGTVVALVGPSGGGKSTIVALLQRFYDPSAGSIIF
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60560 1
+	maps to  4523907 1
+	sim 0.833333
+	ILNNMSLSVKSGQTMALVGSSGCGKSTTVQLLQRFYDPEEGA
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78306 1
+	maps to  4523907 1
+	sim 0.809524
+	ILDEMCLSVSSGQTIALVGSSGCGKSTTIQLLQRFYDPQEGF
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72071 1
+	maps to  4523907 1
+	sim 0.952381
+	ILKGLNLKVNSGQTVALVGNSGCGKSTTVQLIQRLYDPLEGT
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84016 1
+	maps to  4523907 1
+	sim 0.928571
+	VLKGLNLKVNSGQTVALVGSSGCGKSTTVQLIQRFYDPLEGM
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83177 1
+	maps to  4523907 1
+	sim 0.809524
+	VLNGLNLTVKRGQTFALVGSSGCGKSTTIQLLQRFYDPQEGN
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61682 1
+	maps to  4523907 1
+	sim 0.809524
+	ILNDMSLHVRNGQTMALVGSSGCGKSTTIQLLQRFYDPQKGS
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88884 1
+	maps to  4523907 1
+	sim 0.809524
+	ILKGLNLKVQTGQMVALVGKSTVVQLIQRLYDPTEGT
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105186 1
+	maps to  4523907 1
+	sim 0.863636
+	AQILKGLNLKVNCGQTVALVGGSGCGKSTTVQLIQRFYDPKEGT
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78026 1
+	maps to  4523907 1
+	sim 0.904762
+	ILKGLNLKINCGQTVALVGGSGCGKSTTVQLIQRFYDPKEGT
+	 bitmap not assigned
+
+	danio_rerio ensembl 648164 1
+	maps to  4523907 1
+	sim 0.904762
+	VLNGMNLKVMSGQTIALVGSSGCGKSTTIQLLQRFYDPQEGS
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122578 1
+	maps to  4523907 1
+	sim 0.928571
+	ILKGLNLKVNSGQTVALVGNSGCGKSTTVQLIQRLYDPIVGS
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158864 1
+	maps to  4523907 1
+	sim 0.952381
+	ILKGINLKVNSGQTVALVGNSGCGKSTTVQLIQRLYDPLEGT
+	 bitmap not assigned
+
+	mus_musculus ensembl 149413 1
+	maps to  4523907 1
+	sim 0.904762
+	ILKGLNLKVKSGQTVALVGNSGCGKSTTVQLLQRLYDPTEGK
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104780 1
+	maps to  4523907 1
+	sim 0.863636
+	AQILKGLNLKVNCGQTVALVGGSGCGKSTTVQLIQRFYDPKEGT
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985182 1
+	maps to  4523907 1
+	sim 0.952381
+	ILKGLNLKVRSGQTVALVGSSGCGKSTTVQLMQRLYDPTEGT
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104722 1
+	maps to  4523907 1
+	sim 0.809524
+	ILENMSLSVKSGQTMALVGSSGCGKSTTIQLLQRFYDPVEGN
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92378 1
+	maps to  4523907 1
+	sim 0.833333
+	ILNNMSLSVKSGQTIALVGSSGCGKSTTIQLLQRFYDPEEGA
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103265 1
+	maps to  4523907 1
+	sim 0.952381
+	ILKGINLKVNSGQTVALVGNSGCGKSTTVQLIQRLYDPLEGT
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24859 1
+	maps to  4523907 1
+	sim 0.928571
+	ILKGLNLKVKSGQTVALVGNSGCGKSTTVQLLQRLYDPTEGT
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 197728 1
+	maps to  4523907 1
+	sim 0.770833
+	SIAFCQVLKGVNLQVKSGQTVALVGSSGCGKSTTIQLLQRFYDPQQGT
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108474 1
+	maps to  4523907 1
+	sim 0.857143
+	ILHDLSLSVKSGQTIALVGSSGCGKSTTIQLLQRFYDPHEGS
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 157994 1
+	maps to  4523907 1
+	sim 0.952381
+	ILKGLSLKVQSGQTVALVGNSGCGKSTTVQLIQRLYDPDEGT
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331649 1
+	maps to  4523907 1
+	sim 0.97619
+	ILKGLNLKVQSGQTVALVGNSGCGKSTTVQLMQRLYDPDEGT
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 58176 1
+	maps to  4523907 1
+	sim 0.904762
+	ILKGLNLKVNCGQTVALVGSSGCGKSTTVQLIQRFYDPEKGM
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 94969 1
+	maps to  4523907 1
+	sim 0.928571
+	IFKGLNLKVQSGQTVALVGNSGCGKSTTVQLIQRLYDPTEGT
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96198 1
+	maps to  4523907 1
+	sim 0.97619
+	ILKGLNLKVQSGQTVALVGSSGCGKSTMIQLIQRLYDPDEGT
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88627 1
+	maps to  4523907 1
+	sim 0.904762
+	ILKGLNLKVNSGQTIALVGGSGCGKSTVVQLIQRFYDPDEGM
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166098 1
+	maps to  4523907 1
+	sim 0.97619
+	ILKGLNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGM
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427196 1
+	maps to  4523907 1
+	sim 0.97619
+	ILKGLNLKVQSGQTVALVGSSGCGKSTMVQLIQRLYDPDEGT
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138790 1
+	maps to  4523907 1
+	sim 0.97619
+	ILKGFNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156068 1
+	maps to  4523907 1
+	sim 1.0
+	ILKGLNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43513 1
+	maps to  4523907 1
+	sim 0.97619
+	ILKGLNFKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125286 1
+	maps to  4523907 1
+	sim 0.97619
+	ILQGLNLKIQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685936 1
+	maps to  4523907 1
+	sim 1.0
+	ILKGLNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115344 1
+	maps to  4523907 1
+	sim 0.952381
+	ILKGLNLKVQSGQTVALVGNSGCGKSTTVQLMQRLYDPDEGM
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248719 1
+	maps to  4523907 1
+	sim 0.904762
+	ILKGLNLRVESGQTVALVGNSGCGKSTTVQLIQRLYDPDGGM
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206300 1
+	maps to  4523907 1
+	sim 0.952381
+	ILKGLNLKVQCGQTVALVGNSGCGKSTTVQLIQRLYDPDEGT
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62221 1
+	maps to  4523907 1
+	sim 0.761905
+	ILKGLNLQIQSGQTVALVGNSGCGKSTTVQLIQR
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25798 1
+	maps to  4523907 1
+	sim 0.952381
+	ILKGLNLKVQSGQTVALVGNSGSGKSTTVQLIQRLYDPDEGT
+	 bitmap not assigned
+
+
+	 human 4523908 1
+	INIDGQDIRNFNVNYLREIIGVVSQEPVLFSTTIAENICYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+checking maps ...
+	ornithorhynchus_anatinus ensembl 122579 1
+	maps to  4523908 1
+	sim 0.823529
+	ISIDGQDIQTLNVRFLREVTGVVSQEPVLFATTIAENIRYGRGDVTMDEIIQAVKEANAYDFIMRLPK
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193747 1
+	maps to  4523908 1
+	sim 0.955882
+	INIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYDFIMKLPQ
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108482 1
+	maps to  4523908 1
+	sim 0.797101
+	VSVDGHDIRSLNIRYLREMIGVVSQEPVLFATTIAENIRYGRLDVTDQEITQAAKEANAYNFIMGLPN
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20848 1
+	maps to  4523908 1
+	sim 0.838235
+	ITIDGQDIKTLNVRYLREVIGVVNQEPVLFATTIAENIRYGREDVTMEEIEKATKEANAYDFIMKLPN
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77975 1
+	maps to  4523908 1
+	sim 0.823529
+	ITIDGQDLKSLNVRYLREIIGVVNQEPVLFATTIAENIRYGREDVTMEEIEKATKEANAYDFIMKLPK
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91223 1
+	maps to  4523908 1
+	sim 0.941176
+	ISIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYDFIMKLPQ
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 408903 1
+	maps to  4523908 1
+	sim 0.632353
+	SQEPVLFSTTIAENIRYGRGNVTMEEIKQAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	bos_taurus ensembl 25350 1
+	maps to  4523908 1
+	sim 0.897059
+	IIIDGQDIRTFNVKYLREIIGVVSQEPVLFATTIAENIRYGRGNVTMDEIQQAVKEANAYEFIMRLPQ
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113892 1
+	maps to  4523908 1
+	sim 0.411765
+	ITIDGQDIRTFNVRYLREIIGVVSQEPVLFS
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122445 1
+	maps to  4523908 1
+	sim 0.808824
+	ISIDGRDIQTLNVRFLREVTGVVSQEPVLFATTIAENVRYGRGDVTMDEIIQAVKEANAYDFIMRLPK
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167607 1
+	maps to  4523908 1
+	sim 0.941176
+	ITIDGQDIRMFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60622 1
+	maps to  4523908 1
+	sim 0.794118
+	IFVDGHDIRSLNIRYLREMIGVVSQEPILFATTIAENIRYGRLDVTQEEIERATKESNAYDFIMSLPD
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78027 1
+	maps to  4523908 1
+	sim 0.823529
+	ITIDGQDLKSLNVRYLREIIGVVNQEPVLFATTIAENIRYGREDVTMEEIEKATKEANAYDFIMKLPK
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78359 1
+	maps to  4523908 1
+	sim 0.768116
+	VSIDGHDIRSLNVSYLRGMIGVVSQEPILFATTIAENIRYGRPDVTQMEIEQAAKEANAYDFIMNLPD
+	 bitmap not assigned
+
+	felis_catus ensembl 225005 1
+	maps to  4523908 1
+	sim 0.955882
+	INIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYDFIMKLPQ
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72091 1
+	maps to  4523908 1
+	sim 0.882353
+	INIDGQDIRTLNVRYLREIIGVVSQEPVLFATTIAENIRYGREDATMDEVKKAVKDANAYEFIMKLPE
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92379 1
+	maps to  4523908 1
+	sim 0.779412
+	VFIDGHDIRSLNIRYLREMIGVVSQEPVLFATTITENIRYGRLDVTQEEIERATKESNAYDFIMNLPD
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158865 1
+	maps to  4523908 1
+	sim 0.882353
+	INIDGQDIRTLNVRYLREIIGVVSQEPVLFATTIAENIRYGKEDATMDEVKKAVKDANAYDFIMKLPE
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 232677 1
+	maps to  4523908 1
+	sim 0.426471
+	GTDLRELDPQWFRQTMAVVSQEPVLFATTIHKNISYGREATFEE
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61702 1
+	maps to  4523908 1
+	sim 0.794118
+	IFIDGHDIRSLNIRYLREMIGVVSQEPILFATTIAENIRYGRLDVTQEEIERATKESNAYDFIMSLPD
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42213 1
+	maps to  4523908 1
+	sim 0.926471
+	ISIDGHDIRNFNVRHLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMEEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83178 1
+	maps to  4523908 1
+	sim 0.779412
+	VLVDGHDLRSLNVRHLREMIGVVSQEPILFATTITENIRYGRTDVTQEEIVQAAKEANAYDFIMKLPD
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115365 1
+	maps to  4523908 1
+	sim 0.955882
+	INIDGQDIKTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88890 1
+	maps to  4523908 1
+	sim 0.632353
+	VNIDGQDIRTFNVRYLREIIGVVSLEPVLFSATIAENIHHGRENVTMEETK
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84017 1
+	maps to  4523908 1
+	sim 0.84058
+	VTIDGQDIKTLNIRYLREIIGVVNQEPVLFATTIAENIRYGREGVTMEEMEKAVKEANAYDFIMKLPD
+	 bitmap not assigned
+
+	danio_rerio ensembl 648168 1
+	maps to  4523908 1
+	sim 0.779412
+	VSIDGHDIRSLNVRGLRELIGVVSQEPVLFATTIAENIRYGRQDVTQDEIEQAAREANAYNFIMKLPD
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105217 1
+	maps to  4523908 1
+	sim 0.823529
+	ITIDGQDLKSLNVRYLREIIGVVNQEPVLFATTIAENIRYGREDVTMEEIERATKEANAYDFIMKLPK
+	 bitmap not assigned
+
+	mus_musculus ensembl 149426 1
+	maps to  4523908 1
+	sim 0.926471
+	ISIDGQDIRNFNVRCLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIEKAVKEANAYDFIMKLPQ
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104783 1
+	maps to  4523908 1
+	sim 0.823529
+	ITIDGQDLKSLNVRYLREIIGVVNQEPVLFATTIAENIRYGREDVTMEEIERATKEANAYDFIMKLPK
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985183 1
+	maps to  4523908 1
+	sim 0.926471
+	INIDGQDIRTLNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKQAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 58330 1
+	maps to  4523908 1
+	sim 0.852941
+	ITIDGQDIKTLNLRYLREIIGVVNQEPVLFATTIAENIRYGREDVTMEEIEKAVKEANAYDFIMKLPN
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106266 1
+	maps to  4523908 1
+	sim 0.941176
+	ISIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIADNIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104723 1
+	maps to  4523908 1
+	sim 0.779412
+	VSIDGHDIRSLNVRYLREMIGVVSQEPILFATTISENIRYGRPDVTQPEIEQAAKEANAYDFIMNLPN
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248743 1
+	maps to  4523908 1
+	sim 0.941176
+	VTIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 197754 1
+	maps to  4523908 1
+	sim 0.764706
+	IMVDGRDVRTLNLRSLRQLIGVVSQEPVLFATTIAENIRFGHEKVTMEDIERAARNANAYDFISQMPE
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103283 1
+	maps to  4523908 1
+	sim 0.882353
+	INIDGQDIRTLNVRYLREIIGVVSQEPVLFATTIAENIRYGREDATMDEVKKAVKDANAYEFIMKLPE
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24865 1
+	maps to  4523908 1
+	sim 0.926471
+	ISIDGQDIRNFNVRCLREFIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYDFIMKLPQ
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331723 1
+	maps to  4523908 1
+	sim 0.764706
+	YLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIEKAVKEANAYDFIMKLPQ
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158012 1
+	maps to  4523908 1
+	sim 0.941176
+	INIDGQDIRNFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMEEIKKAVIEANAYEFIMKLPK
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95035 1
+	maps to  4523908 1
+	sim 0.926471
+	INIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRENVTMEEIKKAVKEANAYEFIMNLPQ
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230003 1
+	maps to  4523908 1
+	sim 0.911765
+	VNIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIMKAVKAANAYDFIMNLPQ
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88628 1
+	maps to  4523908 1
+	sim 0.710145
+	ITVDDHDIRSLNVHHLREFIGVVNQEPVLFATTIAENIRYGHEGIAMSDIENAAKEANAYNFIMKLPD
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166101 1
+	maps to  4523908 1
+	sim 0.970588
+	INIDGQDIRNFNVSYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138793 1
+	maps to  4523908 1
+	sim 0.941176
+	INIDGQDIRNFNVSYLREIIGVVNQEPVLFSTTIAENIRYGRENVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156071 1
+	maps to  4523908 1
+	sim 0.308824
+	INIDGQDIRNFNVSYLREIIGV
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 267891 1
+	maps to  4523908 1
+	sim 0.573529
+	INIDGEDIRTLNVRYLREMIGVVNQESVLFSTTITANIRYGRGNVTMNE
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43535 1
+	maps to  4523908 1
+	sim 0.955882
+	INIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125299 1
+	maps to  4523908 1
+	sim 0.926471
+	INIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMNEIKKAVIEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685959 1
+	maps to  4523908 1
+	sim 0.985294
+	INIDGQDIRNFNVNYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206315 1
+	maps to  4523908 1
+	sim 0.941176
+	INIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKQAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25805 1
+	maps to  4523908 1
+	sim 0.955882
+	ISIDGQDIRNFNVTYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96200 1
+	maps to  4523908 1
+	sim 0.955882
+	VNIDGQDIRTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427197 1
+	maps to  4523908 1
+	sim 0.970588
+	INIDGQDIRNFNVSYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 bitmap not assigned
+
+
+	 human 4523911 1
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+checking maps ...
+	mustela_putorius_furo ensembl 193748 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGDRGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20852 1
+	maps to  4523911 1
+	sim 0.964912
+	KFETVVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESESVVQAALDK
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108495 1
+	maps to  4523911 1
+	sim 0.947368
+	KFETMVGDRGTQMSGGQKQRIAIARALVRNPKILLLDEATSALDSESETIVQAALDK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77977 1
+	maps to  4523911 1
+	sim 0.964912
+	KFETVVGERGAQMSGGQKQRIAIARALVRNPKILLLDEATSALDTESESVVQAALDK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78028 1
+	maps to  4523911 1
+	sim 0.964912
+	KFETVVGERGAQMSGGQKQRIAIARALVRNPKILLLDEATSALDTESESVVQAALDK
+	 bitmap not assigned
+
+	gadus_morhua ensembl 203901 1
+	maps to  4523911 1
+	sim 0.912281
+	KFETLVGDRGTQMSGGQKQRIAIARALVRNPKILLLDEATSALDAESETIVQEALDK
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113961 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	bos_taurus ensembl 25377 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122447 1
+	maps to  4523911 1
+	sim 0.982456
+	KFDTLVGDRGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAAVQAALDK
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 232686 1
+	maps to  4523911 1
+	sim 0.586207
+	EGYETLVGERGVRLSGGQKQRIAIARALIMNPVLLLLDE
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42227 1
+	maps to  4523911 1
+	sim 1.0
+	KFETLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 408992 1
+	maps to  4523911 1
+	sim 0.982456
+	KFNTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDSESEAEVQAALDK
+	 bitmap not assigned
+
+	danio_rerio ensembl 648175 1
+	maps to  4523911 1
+	sim 0.929825
+	KFETLVGDRGTQMSGGQKQRIAIARALVRNPKILLLDEATSALDAESETIVQAALDK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60678 1
+	maps to  4523911 1
+	sim 0.929825
+	KFETLVGDRGTQLSGGQKQRIAIARALVRNPKILLLDEATSALDAESETIVQAALDK
+	 bitmap not assigned
+
+	felis_catus ensembl 225016 1
+	maps to  4523911 1
+	sim 0.982456
+	KFETLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQTALDK
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78416 1
+	maps to  4523911 1
+	sim 0.929825
+	KFETLVGDRGTQMSGGQKQRIAIARALVRNPKILLLDEATSALDAESETIVQAALDK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61738 1
+	maps to  4523911 1
+	sim 0.929825
+	KFETLVGDRGTQLSGGQKQRIAIARALVRNPKILLLDEATSALDAESETIVQAALDK
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84018 1
+	maps to  4523911 1
+	sim 0.982456
+	KFETMVGDRGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAVVQAALDK
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88900 1
+	maps to  4523911 1
+	sim 0.45614
+	KFDTLVGDKGAQLSGGQKQRITIARSLV
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83179 1
+	maps to  4523911 1
+	sim 0.929825
+	KFETLVGDRGTQMSGGQKQRIAIARALVRNPKILLLDEATSALDAESETIVQAALDK
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 197858 1
+	maps to  4523911 1
+	sim 0.929825
+	RFNTLVGDRGAQLSGGQKQRIAIARALIRNPKLLLLDEATSALDGESEAIVQEALDK
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105249 1
+	maps to  4523911 1
+	sim 0.964912
+	KFETVVGERGAQMSGGQKQRIAIARALVRNPKILLLDEATSALDTESESVVQAALDK
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115382 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104785 1
+	maps to  4523911 1
+	sim 0.964912
+	KFETVVGERGAQMSGGQKQRIAIARALVRNPKILLLDEATSALDTESESVVQAALDK
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122580 1
+	maps to  4523911 1
+	sim 0.982456
+	KFDTLVGDRGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAVVQAALDK
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206328 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	mus_musculus ensembl 149444 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGDRGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106273 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGDRGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104724 1
+	maps to  4523911 1
+	sim 0.912281
+	KFETLVGDRGTQMSGGQKQRIAIARALVRNPKILLLDEATSALDAESETIVQSALDK
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248774 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGDRGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92380 1
+	maps to  4523911 1
+	sim 0.929825
+	KFETLVGDRGTQLSGGQKQRIAIARALVRNPKILLLDEATSALDAESETIVQAALDK
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 4 3
+	maps to  4523911 1
+	sim 0.578947
+	GGQKQRIAIARALIRNPKILLLDEATSALDTES
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24872 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGDRGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158866 1
+	maps to  4523911 1
+	sim 0.982456
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESESEVQAALDK
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331762 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALIRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 58524 1
+	maps to  4523911 1
+	sim 0.947368
+	KFETMVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESESVVQTALDK
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95088 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGDRGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88906 1
+	maps to  4523911 1
+	sim 0.45614
+	NPKILLLDKATSALDTESEAEVQAALDT
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96203 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230008 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88629 1
+	maps to  4523911 1
+	sim 0.964912
+	KFDTLVGEKGTQLSGGQKQRVAIARALVRNPKILLLDEATSALDTESEAIVQAALDK
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166106 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427200 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138796 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43547 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDSESEAEVQAALDK
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125305 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 685983 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91229 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGDRGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985184 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167615 1
+	maps to  4523911 1
+	sim 0.666667
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEXXXXXXXXXXXXXXXXXXX
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25817 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156081 1
+	maps to  4523911 1
+	sim 1.0
+	KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 bitmap not assigned
+
+
+	 human 4523913 1
+	AREGRTTIVIAHRLSTVRNADVIAGFEDGVIVEQGSHSELMKKEGVYFKLVNMQ
+checking maps ...
+	petromyzon_marinus ensembl 197938 1
+	maps to  4523913 1
+	sim 0.87037
+	AREGRTTIVIAHRLSTIRNADIIAGFDGGVIVELGTHDELMKRNGVYHTLVSMQ
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 409103 1
+	maps to  4523913 1
+	sim 0.87037
+	AREGRTTIVIAHRLSTIRNADIIAGLEDGVIVEQGSHRELMEKGGVYCKLVTTQ
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113973 1
+	maps to  4523913 1
+	sim 0.944444
+	AREGRTTIVIAHRLSTIRNADVIAGLEDGVIVEQGNHGELMKKEGMYFRLVNMQ
+	 bitmap not assigned
+
+	bos_taurus ensembl 25410 1
+	maps to  4523913 1
+	sim 0.962963
+	AREGRTTIVIAHRLSTIRNADVIAGFDDGVIVEQGSHGELMKKEGVYFRLVNTQ
+	 bitmap not assigned
+
+	gadus_morhua ensembl 203925 1
+	maps to  4523913 1
+	sim 0.8
+	VRQGRTTLVVAHRLSTIRNADVIAGFRNGEIVEMGTHSELMKKQGVYHTLVTTQV
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122449 1
+	maps to  4523913 1
+	sim 0.888889
+	ARQGRTTVVVAHRLSTIRNADVIAGLEDGVIVEQGTHDELMSKDGVYSKLVAMQ
+	 bitmap not assigned
+
+	danio_rerio ensembl 648179 1
+	maps to  4523913 1
+	sim 0.814815
+	VRLGRTTIVVAHRLSTIRNADVIAGFQNGEIVELGTHDELMERKGIYHSLVNMQ
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193749 1
+	maps to  4523913 1
+	sim 0.981481
+	AREGRTTIVIAHRLSTIRNADVIAGFEDGVIVEQGSHRELMKKEGVYFRLVNMQ
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158867 1
+	maps to  4523913 1
+	sim 0.981481
+	AREGRTTIVIAHRLSTIRNADVIAGFEDGVITEQGSHSELMKREGVYFKLVNMQ
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78459 1
+	maps to  4523913 1
+	sim 0.796296
+	VRLGRTTLTVAHRLSTIRNADVIAGFQQGKVAELGTHSDLMAKHGVYHTLVTMQ
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72120 1
+	maps to  4523913 1
+	sim 0.962963
+	AREGRTTIVIAHRLSTIRNADVIAGFEDGIITEQGSHNELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60728 1
+	maps to  4523913 1
+	sim 0.777778
+	VRLGRTTIVVAHRLSTIRNANIIAGFSQGAIVEMGTHSQLMDMKGVYHGLVTMQ
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156083 1
+	maps to  4523913 1
+	sim 1.0
+	AREGRTTIVIAHRLSTVRNADVIAGFEDGVIVEQGSHSELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78030 1
+	maps to  4523913 1
+	sim 0.888889
+	AREGRTTVVVAHRLSTVRNADLIAVFDNGVITEQGNHSQLIEKKGIYYKLVNMQ
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61771 1
+	maps to  4523913 1
+	sim 0.796296
+	VRLGRTTIVIAHRLSTIRNADIIAGFSKGEIVELGTHSQLMEKQGVYHGLVTMQ
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88911 1
+	maps to  4523913 1
+	sim 0.545455
+	ASEGRTTIVIAHRLSTVRNVDVIAGLEDGVIVKC
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88916 1
+	maps to  4523913 1
+	sim 0.333333
+	SHSELMKKEGVYFKLVNMM
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84019 1
+	maps to  4523913 1
+	sim 0.925926
+	AREGRTTIVIAHRLSTVRNADLIAAFEDGTITEQGSHNELMKRKGVYYKLVNMQ
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105288 1
+	maps to  4523913 1
+	sim 0.888889
+	AREGRTTVVVAHRLSTVRNADLIAVFESGVITEQGNHSQLIEKKGIYYKLVNMQ
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83180 1
+	maps to  4523913 1
+	sim 0.814815
+	VRLGRTTLIVAHRLSTIRNADVIAGFRDGKVVEVGTHSELMEGRGVYQTLVSMQ
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115391 1
+	maps to  4523913 1
+	sim 0.962963
+	AREGRTTIVIAHRLSTIRNADVIAGFEDGVIVEQGNHRELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122581 1
+	maps to  4523913 1
+	sim 0.925926
+	ARQGRTTIVIAHRLSTIRNADVIAGFEDGVIVEQGTHDELMRKDGVYSKLVALQ
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985186 1
+	maps to  4523913 1
+	sim 0.962963
+	AREGRTTIVIAHRLSTVRNADVIAGLEDGVVVEQGSHSELMKKEGVYFKLVTMQ
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20858 1
+	maps to  4523913 1
+	sim 0.597403
+	AREGRTTVVVAHRLSTVRNADVIAVFEGGVITELGNHAKLLEKKGIYYKLVNMQVLLSLAVASFPFFSPAHIVIFAE
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106280 1
+	maps to  4523913 1
+	sim 0.981481
+	AREGRTTIVIAHRLSTIRNADVIAGLEDGVAVEQGSHSELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+	mus_musculus ensembl 149454 1
+	maps to  4523913 1
+	sim 1.0
+	AREGRTTIVIAHRLSTIRNADVIAGFEDGVIVEQGSHSELMKKEGIYFRLVNMQ
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104788 1
+	maps to  4523913 1
+	sim 0.851852
+	IRKGRTILVIAHRLSTVRNADLIAAFENGVITEQGTHDELMEQKGVYYKLVNMQ
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248796 1
+	maps to  4523913 1
+	sim 0.944444
+	AREGRTTIVIAHRLSTIRNADIIAGFDDGVIVEQGSHKELMQKGGVYFRLVNMQ
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104725 1
+	maps to  4523913 1
+	sim 0.814815
+	VRLGRTTLIVAHRLSTIRNADVIAGFQNGKVVEVGTHSELMEKQGVYRMLVTMQ
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92381 1
+	maps to  4523913 1
+	sim 0.8
+	VRLGRTTIVVAHRLSTIRNADIIAGFSNGKIVEQGTHSQLMEIKGVYHGLVTMQ
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103318 1
+	maps to  4523913 1
+	sim 0.981481
+	AREGRTTIVIAHRLSTIRNADVIAGFEDGVITEQGSHSELMKREGVYFKLVNMQ
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24878 1
+	maps to  4523913 1
+	sim 1.0
+	AREGRTTIVIAHRLSTVRNADVIAGFEDGVIVEQGSHSELIKKEGIYFRLVNMQ
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331798 1
+	maps to  4523913 1
+	sim 0.962963
+	AREGRTTIVVAHRLSTIRNADVIAGFGDGVIVEQGSHSELMQKEGIYFKLVNMQ
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 58749 1
+	maps to  4523913 1
+	sim 0.907407
+	AREGRTTIVIAHRLSTVRNADLIAAFEDGVITEQGTHHELIKINGIYSKLVNMQ
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77982 1
+	maps to  4523913 1
+	sim 0.851852
+	IRKGRTILVIAHRLSTVRNADLIAAFENGVITEQGTHDELMEQKGVYYKLVNMQ
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158048 1
+	maps to  4523913 1
+	sim 0.962963
+	AREGRTTIVIAHRLSTIRNADVIAGFGDGVVVEQGSHSELMKKEGVYFKLVSMQ
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95154 1
+	maps to  4523913 1
+	sim 0.981481
+	AREGRTTIVIAHRLSTIRNADVIAGFENGVVVEQGSHSELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88630 1
+	maps to  4523913 1
+	sim 0.814815
+	VREGRTTIVIAHRLSTVQNADVIAGLQNGVIIEQGTHEELMKGNGLYYTLVSTQ
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96205 1
+	maps to  4523913 1
+	sim 0.944444
+	AREGRTTIVIAHRLSTVRNADVIAGLEDGVIVEQGSHSELMKKDGVYSKLVDMQ
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108505 1
+	maps to  4523913 1
+	sim 0.591549
+	VRQGRTTIIVAHRLSTIRNADVIAGFQQGQVVELGTHSKLMEEKGVYHTLVSMQVDTHGNISHYLVGLESQ
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166108 1
+	maps to  4523913 1
+	sim 0.981481
+	AREGRTTIVIAHRLSTVRNADVIAGFEDGVIVEQGSHSELMKKEGVYFKLVKMQ
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427201 1
+	maps to  4523913 1
+	sim 1.0
+	AREGRTTIVIAHRLSTVRNADVIVGFEDGVIVEQGSHSELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138798 1
+	maps to  4523913 1
+	sim 1.0
+	AREGRTTIVIAHRLSTVRNADVIAGFEDGVIVEQGSHSELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 267971 1
+	maps to  4523913 1
+	sim 1.0
+	AREGRTTIVIAHRLSTIRNADVIAGFEDGVIVEQGSHSELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43564 1
+	maps to  4523913 1
+	sim 1.0
+	AREGRTTIVIAHRLSTVRNADVIAGFEDGVIVEQGSHSELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125315 1
+	maps to  4523913 1
+	sim 0.981481
+	AREGRTTIVIAHRLSTIRNADIIVGFEDGVVVEQGSHSELMKKEGVYFKLVSMQ
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91237 1
+	maps to  4523913 1
+	sim 0.981481
+	AREGRTTIVIAHRLSTIRNADVIAGFEDGVIVEQGSHRELMKKEGVYFRLVNMQ
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206347 1
+	maps to  4523913 1
+	sim 1.0
+	AREGRTTIVIAHRLSTIRNADVIAGFEDGVIVEQGSHSELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62274 1
+	maps to  4523913 1
+	sim 0.981481
+	AREGRTTIVIAHRLSTIRNADVIAGYEDGVIVEQGSHSELMKKEGLYFKLVNM
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25826 1
+	maps to  4523913 1
+	sim 0.787879
+	AREGRTTIVIAHRLSTIRNADVIAGLEDGVIVEQGSHRDLMKKEGVYFKLMNMQVTAAQEFCTINN
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686007 1
+	maps to  4523913 1
+	sim 1.0
+	AREGRTTIVIAHRLSTVRNADVIAGFEDGVIVEQGSHSELMKKEGVYFKLVNMQ
+	 bitmap not assigned
+
+
+	 human 4523915 1
+	TSGSQIQSEEFELNDEKAATRMAPNGWKSRLFRHSTQKNLKNSQMCQKSLDVETDGL
+checking maps ...
+	meleagris_gallopavo ensembl 77984 1
+	maps to  4523915 1
+	sim 0.352113
+	TSETEDQLHKEDSNASGVSEEALNGSVLTGRKRQSTRKSIKRFRIWNDELDEKTDQL
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 409165 1
+	maps to  4523915 1
+	sim 0.631579
+	TSRKQNQPEELELSGEEAVTRMAPNGWKSSIFRNSTHKSLRKAQMQQNGLDTETSEF
+	 bitmap not assigned
+
+	bos_taurus ensembl 25436 1
+	maps to  4523915 1
+	sim 0.492063
+	ISGSQIQSEEFKVALADEKPAMGLTHPIVRRSLHKSLRSSRQYQNGFDVETSEL
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 113988 1
+	maps to  4523915 1
+	sim 0.586207
+	TLESQTQSELNDEEALAPNGWKTHRIVRNSTHKSRRNSRKRQSGLDEETSGS
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62289 1
+	maps to  4523915 1
+	sim 0.728814
+	TSGNQIQSEEFEVGLNDEKAAMGMAPNGWKSRLFRNSTHKSLRNSRRYQNGHDVETNEL
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158868 1
+	maps to  4523915 1
+	sim 0.644068
+	TSGNQIQSEEFEVELKDENATGMASNGLKSRLFRNSTHKSFRNSRKHQNSFDVAPEEL
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204048 1
+	maps to  4523915 1
+	sim 0.318182
+	MDHKSPSIMSVSESSLHQRKSTKATSFIGSEGEKEVVEKNQKKKEKTEE
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122451 1
+	maps to  4523915 1
+	sim 0.424242
+	ASGNQWEPEESEEGDGGEMNGTRMSSNGHVFRRSARSSVRRSRRDQRIPKAEEP
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91243 1
+	maps to  4523915 1
+	sim 0.728814
+	TSGNQIQPGEFDLELNEKAAADMAPNGWKSHIFRNSTRKSLRNSRKYQKGLDVETEEL
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167692 1
+	maps to  4523915 1
+	sim 0.484375
+	TLGSQIQPEEFKVARTDENPAMGLARPIVRSSFHKSLRNSRKYQNAFDVETIEL
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104789 1
+	maps to  4523915 1
+	sim 0.385714
+	ASETEDQLQEEGNASSVSEEALNGSVLTGQKRQSTRKSIKRVRIQNDELDVKADQL
+	 bitmap not assigned
+
+	danio_rerio ensembl 648182 1
+	maps to  4523915 1
+	sim 0.352113
+	MFKSTEVAEEDSEEMTMDEKSPSVSSMNERTLFRQKSRSGSEKELKEEEKPTEE
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72138 1
+	maps to  4523915 1
+	sim 0.633333
+	TSGNQIQSEEFEAELKDENTPVMAPNGLKSRLFRNSTHKSFRNSRKHQNSFDVAPEEL
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156087 1
+	maps to  4523915 1
+	sim 0.894737
+	ISGSQTQSEEFELNDEKAATGMAPNGWKSRLFRHSTQKHLKNSQMCQNSLDVEIDGL
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88920 1
+	maps to  4523915 1
+	sim 0.627119
+	TRENQILSEFEVGLNSENVTTGMAPNGWKSCIFRNSTHESLRNSQKPKNSLDVETSEL
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193750 1
+	maps to  4523915 1
+	sim 0.694915
+	TSGNQVQSGEFDLELNNEKAAADMAPNGWKSRLFRNSTHKSLRNSRKYQNGLEVEAKEL
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84020 1
+	maps to  4523915 1
+	sim 0.414286
+	SIDTEVHSEESDENEPSFQKQEPLKRVLSNGVRRRSTRRSVKNPEASDEDPEVQTVQP
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83181 1
+	maps to  4523915 1
+	sim 0.361111
+	KNAEEEHEQSADERSPGIRSLSESSLFKRKSTKGASFKASEGDKEEKEKLTGDNLE
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985188 1
+	maps to  4523915 1
+	sim 0.7
+	TSGSQIQSEEYEVELNGEEAATAMAPNGWKSRIVRNSTHKSIRNSRMHQNGHDTEDSEL
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122582 1
+	maps to  4523915 1
+	sim 0.41791
+	MSGSHVGTESGAHAAGRKNGIAGTVPSDASSILRRRSTHGSIRKPKAEENSLEGENDKA
+	 bitmap not assigned
+
+	mus_musculus ensembl 149466 1
+	maps to  4523915 1
+	sim 0.661017
+	TAGSQILSEEFEVELSDEKAAGDVAPNGWKARIFRNSTKKSLKSPHQNRLDEETNEL
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106286 1
+	maps to  4523915 1
+	sim 0.728814
+	SSGNHIQSEDFEGDLNDESAATGMAPNGWKPRIYRNSTHKSLRNSRMHHSSLDEETDEL
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104726 1
+	maps to  4523915 1
+	sim 0.333333
+	KADDGEEESEADEKSPLAKQLSDSTLFRKKSTRGSSVNSDTRKDEKKSFKKGKDK
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248812 1
+	maps to  4523915 1
+	sim 0.52459
+	TSGSQIPSEEFKVALTVEKPPMGLAPDGQKTHYILRNKSLRNSRKYQSGLDVEINEL
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 2809 3
+	maps to  4523915 1
+	sim 0.612903
+	TSGSQNQSEEFEAELKDENASGMAPNGLKSRLFRNSTHKSFRNSRKYQNSFDVAPEE
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331834 1
+	maps to  4523915 1
+	sim 0.689655
+	TSGNQIQSEFEIELDEKIATANGWKSRISRNSTHKSLRNSRRYQNGLDMETSEL
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 58896 1
+	maps to  4523915 1
+	sim 0.484848
+	TIGTEVQSEEAEHTTKVAPKEPVENGLRRRSTRKSTKKSEIQDDSLDVKTVEP
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158059 1
+	maps to  4523915 1
+	sim 0.728814
+	TSGNQIQSEEPEVDLHDEMAATGMAPNGWKSRIFRNSTRKSLRNSRMHQNGLDVESNEL
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95215 1
+	maps to  4523915 1
+	sim 0.711864
+	TSGNQIPSEFEVGLNDENATTDMAPNGWKPRIFRSSTHKSLRNSRMHQSSLDVETNEL
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88631 1
+	maps to  4523915 1
+	sim 0.396825
+	TFSDGADEVTQKTVDDKNSPETKSAPSQSLRRRSTHTSFKKTLSEKSSVTTIEP
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96206 1
+	maps to  4523915 1
+	sim 0.719298
+	TSGNQIQSEEFELNEEKAATGLAPNGWKSSTCRNSTRKSLRNSRKYQNGHDVETNEL
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230014 1
+	maps to  4523915 1
+	sim 0.736842
+	TSGSQIQSEAFELNDEKAATGMTPNGWKSRTFRNSTHKSLRNSRMYQNGFKVETKEL
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166111 1
+	maps to  4523915 1
+	sim 0.929825
+	TSGSQIQSEEFELNDEKAATGMAPSGWKSRLFRHSTQKNLKNSQMRQNSLDVETDGL
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427202 1
+	maps to  4523915 1
+	sim 0.859649
+	TLGSQIQSEEFELNDEKAAPGMTPNGWKSRLFRHSTQKNLKNSRICQNSFDVEIDGL
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138801 1
+	maps to  4523915 1
+	sim 0.964912
+	TSGSQIQSEEFELNDEKAATGMAPNGWKSRLFRHSTQKNLKNSQMCQNSLDVETDGL
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686029 1
+	maps to  4523915 1
+	sim 0.982456
+	TSGSQIQSEEFELNDEKAATGMAPNGWKSRLFRHSTQKNLKNSQMCQKSLDVETDGL
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 267994 1
+	maps to  4523915 1
+	sim 0.779661
+	TSGSQMQSEEFEVELTDEKAATGMAPNGWKSRVFRNSTHKSLRNSRMNQNGLDVKTDDL
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43573 1
+	maps to  4523915 1
+	sim 0.684211
+	TSGNQIQPEEFELTDEKTATSMTPNGWKSCMLRNSTQKSLRNSRKYQNGLDAEASEL
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125325 1
+	maps to  4523915 1
+	sim 0.745763
+	TSGNQIQSEKSDVDLNDEMAATGMAPNGWKPRIFRNSTRKSLRNSQMHQNGLDVESNEL
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24885 1
+	maps to  4523915 1
+	sim 0.711864
+	TSGSQILSEEFEVELSDEKAAGGVAPNGWKARIFRNSTKKSLKSSRAHQNRLDVETNEL
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115403 1
+	maps to  4523915 1
+	sim 0.66129
+	TSGNQTQSGEFDVELNNEKAVGDKAPNGWKSRIFRNSTQKSLRNSRKYHNGLDVESKEL
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25836 1
+	maps to  4523915 1
+	sim 0.666667
+	ELNEEKANTGMAPNGWKTRIFRNSTNKSLKNSQMHQNGLDAETDEL
+	 bitmap not assigned
+
+
+	 human 4523917 1
+	EANVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGGLQPAFSVIFSEIIA
+checking maps ...
+	meleagris_gallopavo ensembl 77987 1
+	maps to  4523917 1
+	sim 0.897959
+	DKNIPPSSFFKIMKLNKTEWPYFVVGTLCAIINGALQPTFSVMISDVIG
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88925 1
+	maps to  4523917 1
+	sim 0.857143
+	DADVPLVSFLKVLKLKKTEWPYFVVGTTCTIANGALQPALSLVFSEMIE
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122583 1
+	maps to  4523917 1
+	sim 0.897959
+	AADVPPVSFLKVLKLNKTEWPYFVVGIFCAIINGGLQPAFSIIFSRIIG
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42294 1
+	maps to  4523917 1
+	sim 0.959184
+	DANVPPVSFLKVLKLNKTEWPYFVVGTLCAIANGALQPAISIILSEMIA
+	 bitmap not assigned
+
+	bos_taurus ensembl 25467 1
+	maps to  4523917 1
+	sim 0.938776
+	DESVPPVSFLKILKLNKTEWPYLVVGTLCAVANGALQPAFSVIFSEMIA
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114004 1
+	maps to  4523917 1
+	sim 0.897959
+	DEDVPPASFLKILQLNKTEWPYLVVGTLCAIANGALQPAFSIIFYEMIA
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204072 1
+	maps to  4523917 1
+	sim 0.816327
+	DEDVPPVSFLKVLRLNLPEWPYIVVGLICATINGAIQPLFAILFSKIVA
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62295 1
+	maps to  4523917 1
+	sim 0.959184
+	DENVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGALQPAFSVIFSEMIE
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108526 1
+	maps to  4523917 1
+	sim 0.795918
+	DEDVAPMSFPKLLYLNRNEWPYILVGTICAIINGAMQPLFAIIFSKIIT
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193751 1
+	maps to  4523917 1
+	sim 0.979592
+	DENVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGALQPAFSIIFSEMIA
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60814 1
+	maps to  4523917 1
+	sim 0.72
+	KEEVPDASFFSVLRLNIPEWPYIFVGTFCAMINGAMQPVFAILFSKIIT
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72149 1
+	maps to  4523917 1
+	sim 0.959184
+	DPDVPPVSFLKVLKLNKTEWPYFVVGTLCAIVNGALQPAFSIIFSEMLA
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 409270 1
+	maps to  4523917 1
+	sim 0.959184
+	DASVPPVSFLKILKLNKTEWPYFVIGTVCAVTNGALQPAFSVIFSEMIA
+	 bitmap not assigned
+
+	felis_catus ensembl 225044 1
+	maps to  4523917 1
+	sim 0.92
+	DENVPPVSFLKILKLNKTEWPYFVVGIACAIANGALQPAFAIMFSEMLA
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198069 1
+	maps to  4523917 1
+	sim 0.78
+	EVKIPKVSFWKVLALNKKEWPYITLGTLCAGVNGALQPAFAVIFSRIIG
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78535 1
+	maps to  4523917 1
+	sim 0.78
+	EEAVPMVSFFRVLRLNASEWPYILVGLICATINGAIQPLFAVLFSKIIT
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61820 1
+	maps to  4523917 1
+	sim 0.857143
+	DEKAPPVSFFKVMRFNISEWPYILVGTICAVITGAMQPVFSIIFTEIIV
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84021 1
+	maps to  4523917 1
+	sim 0.938776
+	DENLPPVSFLRIMSLNKSEWPYFLVGTLSAIINGAMQPAFSVVFSEIIG
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115424 1
+	maps to  4523917 1
+	sim 0.959184
+	DENVPSVSFLKVLKLNKTEWPYFVIGTMCAIANGALQPAFSIIFSEMIA
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83182 1
+	maps to  4523917 1
+	sim 0.816327
+	DEDVPPVSFLKVMALNSSELPYILLGTLCAIVNGAIQPAFAVIFSKIIN
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105359 1
+	maps to  4523917 1
+	sim 0.918367
+	DEELPPVSFLKLMKLNKNEWPYFVAGTFCAIVNGALQPAFSVIFSEIIG
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78033 1
+	maps to  4523917 1
+	sim 0.9
+	AEELPPVSFLKVMKLNRKEWPYFVAGTLCAVINGALQPAFAVIFSEIIG
+	 bitmap not assigned
+
+	danio_rerio ensembl 648185 1
+	maps to  4523917 1
+	sim 0.77551
+	EKVPNVSFLTVLKLNYPEWPYMVVGILCATINGGMQPAFAVIFSKIIA
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206377 1
+	maps to  4523917 1
+	sim 0.96
+	DENVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGALQPAFSVLFSEMIA
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985190 1
+	maps to  4523917 1
+	sim 0.979592
+	DATVPPVSFLKILKLNKTEWPYFVVGTVCAVANGALQPAFSVIFSEMIA
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122453 1
+	maps to  4523917 1
+	sim 0.897959
+	TADVPPVSFLKVLKLNRREWPYFVVGTLCSIVNGALQPAFSVIFSEMIT
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20870 1
+	maps to  4523917 1
+	sim 0.92
+	AEELPPASFLKIMKLNKTEWPYFVAGTLCAIINGGLQPAFAVIFSEIIG
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104790 1
+	maps to  4523917 1
+	sim 0.918367
+	DKNMPPSSFFKIMKLNKTEWPYFVVGTLCAIINGALQPIFSVMISDVIG
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106290 1
+	maps to  4523917 1
+	sim 0.979592
+	DANVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGALQPAFSLIFSEMIE
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248822 1
+	maps to  4523917 1
+	sim 0.959184
+	EENVPSVSFMKILKLNKTEWPYFVVGTLCAVANGALQPAFSIIFSEMIA
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88633 1
+	maps to  4523917 1
+	sim 0.938776
+	DGNVPPVSFLRVLKLNKTEWPYFVLGTFCAIINGGLQPAFAIIFSKIIG
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92406 1
+	maps to  4523917 1
+	sim 0.698113
+	VPQDEDVPDVSFFKVLHLNIPEWPYILVGLICATINGAMQPVFAILFSKIIT
+	 bitmap not assigned
+
+	oryzias_latipes ensembl 104727 1
+	maps to  4523917 1
+	sim 0.68
+	DEDVPEVSFFRVLMLNKSEWPFIFLGTFCAIINGGIQPVFA
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91248 1
+	maps to  4523917 1
+	sim 0.938776
+	DEDVPSVSFLKVLKLNKTEWPYFVVGTVCAIANGALQPAFSIIFSEMIA
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103377 1
+	maps to  4523917 1
+	sim 0.959184
+	DPDAPPVSFLKVLKLNKTEWPYFVVGTLCAIVNGALQPAFSIIFSEMLA
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 59000 1
+	maps to  4523917 1
+	sim 0.918367
+	DEDVPPVSFLKVMKLNKTEWPYFVVGTLSAIVNGALQPAFAIIFSEIIG
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24891 1
+	maps to  4523917 1
+	sim 0.979592
+	DANVPPVSFLKVLRLNKTEWPYFVVGTLCAIANGALQPAFSIILSEMIA
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331875 1
+	maps to  4523917 1
+	sim 0.959184
+	DENVPPVSFLKVLKLNKTEWPYFVVGTLCAIINGALQPAFSVIFSEMIE
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158869 1
+	maps to  4523917 1
+	sim 0.959184
+	DSDVPPVSFLKVLKLNKTEWPYFVVGTLCAIVNGALQPAFSIIFSEMLA
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158106 1
+	maps to  4523917 1
+	sim 0.938776
+	NTDVPPVSFLKVLKLNKTEWPYFVVGTVCAIVNGALQPAFSVIFSEILA
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95276 1
+	maps to  4523917 1
+	sim 1.0
+	DANVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGALQPAFSLLFSEMIA
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96209 1
+	maps to  4523917 1
+	sim 0.959184
+	DANVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGGLQPTFSIIFSEIIE
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230017 1
+	maps to  4523917 1
+	sim 0.959184
+	DENVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGGLQPAFSVIFSEMIE
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427211 1
+	maps to  4523917 1
+	sim 1.0
+	EANVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGGLQPAFSVIFSEMIA
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156089 1
+	maps to  4523917 1
+	sim 0.979592
+	EANVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGGLQPAFSVIFSEIIE
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138803 1
+	maps to  4523917 1
+	sim 0.979592
+	EANVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGGLQPAFSVIFSEIIE
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43584 1
+	maps to  4523917 1
+	sim 0.979592
+	DENVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGALQPAFSIIFSEMIA
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125333 1
+	maps to  4523917 1
+	sim 0.959184
+	DANVPSVSFLKVLKLNKTEWPYFVVGTVCAIANGALQPAFAVIFSEILA
+	 bitmap not assigned
+
+	mus_musculus ensembl 149480 1
+	maps to  4523917 1
+	sim 0.979592
+	DANVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGALQPAFSIILSEMIA
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25845 1
+	maps to  4523917 1
+	sim 0.979592
+	DENVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGALQPAFSIIFSEMIA
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166113 1
+	maps to  4523917 1
+	sim 1.0
+	EANVPPVSFLKVLKLNKTEWPYFVVGTVCAIVNGGLQPAFSVIFSEIIA
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686056 1
+	maps to  4523917 1
+	sim 1.0
+	EANVPPVSFLKVLKLNKTEWPYFVVGTVCAIANGGLQPAFSVIFSEIIA
+	 bitmap not assigned
+
+
+	 human 4523921 1
+	IFGPGDDAVKQQKCNIFSLIFLFLGIISFFTFFLQ
+checking maps ...
+	bos_taurus ensembl 25508 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDEVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204101 1
+	maps to  4523921 1
+	sim 0.722222
+	VFSEPNKDVVREKSALFSILFAVIGVVSFFTLFLQ
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 409339 1
+	maps to  4523921 1
+	sim 0.971429
+	IFGPGDDAVKQQKCNMFSLLFLGLGILSFFTFFLQ
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114021 1
+	maps to  4523921 1
+	sim 0.914286
+	IFEPGDDEVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122455 1
+	maps to  4523921 1
+	sim 0.914286
+	VFGPGDEAVKRQKCDMFSVVFLVLGIVSFFTFFLQ
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60869 1
+	maps to  4523921 1
+	sim 0.621622
+	VFVDPDLESVRKKTEFFSLMFVVIGCVSFVTMFLQ
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108534 1
+	maps to  4523921 1
+	sim 0.72973
+	VFAEPDPEIIRQRSSFFSLMFVVIGAVTFITMFLQ
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72173 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDDVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78565 1
+	maps to  4523921 1
+	sim 0.657895
+	VFAEPDLKVVRERSNFFSLMFVAIGVVCFFTMFLQ
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20874 1
+	maps to  4523921 1
+	sim 0.75
+	IFSETDKDVLRKQSNLYSLLFLALGIISFFTFFFQ
+	 bitmap not assigned
+
+	felis_catus ensembl 225052 1
+	maps to  4523921 1
+	sim 0.914286
+	VFGPGDDEVKQWKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92384 1
+	maps to  4523921 1
+	sim 0.621622
+	VFADPDRDSVRRKSEFISLMFVVIGCVSFVTMFLQ
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88935 1
+	maps to  4523921 1
+	sim 0.583333
+	RHKCDMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84022 1
+	maps to  4523921 1
+	sim 0.615385
+	IFAEQENLRERSNMYSLLFLGIGIVSFITFFLQ
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105391 1
+	maps to  4523921 1
+	sim 0.714286
+	IFSETDQKVLREKSNLYSLLFLALGIISFFTFFVQ
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115437 1
+	maps to  4523921 1
+	sim 0.942857
+	VFGPGDDEVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83183 1
+	maps to  4523921 1
+	sim 0.702703
+	VFAEPDQDVVRQRSVFFSLMFAAIGAGSFVTMFLQ
+	 bitmap not assigned
+
+	danio_rerio ensembl 648187 1
+	maps to  4523921 1
+	sim 0.783784
+	VFAEPDQNLVRQRCDLYSLLFAGIGVLSFFTLFLQ
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78036 1
+	maps to  4523921 1
+	sim 0.742857
+	IFSEEDEKVLREKSNLYSLLFLVLGIISFFTFFVQ
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985191 1
+	maps to  4523921 1
+	sim 0.942857
+	VFGPGDDAVKQRKCNMFSLLFLGLGILSFFTFFLQ
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206393 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDEVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122584 1
+	maps to  4523921 1
+	sim 0.694444
+	VFGTTDDPETKRHKSNLFAVLFLVLGIISFITFFLQ
+	 bitmap not assigned
+
+	mus_musculus ensembl 149493 1
+	maps to  4523921 1
+	sim 0.971429
+	IFGPGDDAVKQQKCNMFSLVFLGLGVLSFFTFFLQ
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106294 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDEVKQQKCNLFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104799 1
+	maps to  4523921 1
+	sim 0.447368
+	ETNSTYALLFLGFGLISFVTFFLQ
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42320 1
+	maps to  4523921 1
+	sim 0.971429
+	IFGPGDDAVKQQKCNLFSLVFLCLGIISFFTFFLQ
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193752 1
+	maps to  4523921 1
+	sim 0.942857
+	VFGPGDDDVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103396 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDEVKQQKCNMFSLLFLGLGILSFFTFFLQ
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77991 1
+	maps to  4523921 1
+	sim 0.575
+	MFVEKGKAAMRETNSTYALLFLGFGLISFVTSFLQ
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 59180 1
+	maps to  4523921 1
+	sim 0.722222
+	IFAESDPTIVRNKANLYSLLFFALGIISFVTFFLQ
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24899 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDTVKQQKCNMFSLVFLGLGVLSFFTFFLQ
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91253 1
+	maps to  4523921 1
+	sim 0.942857
+	VFGPGDDEIKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158870 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDEMKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95356 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDEVKQQKCNMFSLLFLSLGIISFFTFFLQ
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158122 1
+	maps to  4523921 1
+	sim 0.885714
+	IFGPGDDEVKQQKCNTISLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198141 1
+	maps to  4523921 1
+	sim 0.72973
+	VFAETDLVKREEQSNLYSLLFLVLGIVSFVTFFLQ
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88634 1
+	maps to  4523921 1
+	sim 0.702703
+	VFAEPDKDVVREKSNMFSLLFLALGCVSFIAFFFQ
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96210 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDNAVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230021 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDEVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166114 1
+	maps to  4523921 1
+	sim 0.971429
+	IFGPGDDAVKQQKCNIFSLLFLCLGIISFFTFFLQ
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427217 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDAVKQQKCNMISLLFLCLGIISFFTFFLQ
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156094 1
+	maps to  4523921 1
+	sim 0.971429
+	IFGPGDDAVKQQKCNMFSLLFLCLGIISFFTFFLQ
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138804 1
+	maps to  4523921 1
+	sim 0.971429
+	IFGPGDDAVKQQKCNIFSLLFLCLGIISFFTFFLQ
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686079 1
+	maps to  4523921 1
+	sim 1.0
+	IFGPGDDAVKQQKCNIFSLIFLFLGIISFFTFFLQ
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43599 1
+	maps to  4523921 1
+	sim 0.971429
+	IFGPGDDAVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125345 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDEVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331914 1
+	maps to  4523921 1
+	sim 0.771429
+	IFRPGDDEVKQQKCDMFSLLFLGLGIISFFTSXXXX
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167778 1
+	maps to  4523921 1
+	sim 0.942857
+	IFGPGDDEVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248842 1
+	maps to  4523921 1
+	sim 0.942857
+	VFGPGDDEVKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62299 1
+	maps to  4523921 1
+	sim 0.828571
+	IFGLRDDEVKQQKCNMISLLFLGLGITSFFTFFLQ
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25854 1
+	maps to  4523921 1
+	sim 0.971429
+	IFGPGDDAIKQQKCNMFSLLFLGLGIISFFTFFLQ
+	 bitmap not assigned
+
+
+	 human 4523922 1
+	GFTFGKAGEILTRRLRSMAFKAMLRQ
+checking maps ...
+	bos_taurus ensembl 25542 1
+	maps to  4523922 1
+	sim 0.923077
+	GFTFGKAGEILTTRLRLMAFKAMLRQ
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204124 1
+	maps to  4523922 1
+	sim 0.807692
+	GYCFGKAGEILTMKLRLRAFTAMMRQ
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88939 1
+	maps to  4523922 1
+	sim 0.846154
+	GFTFGKAGEILTTRLPLMAFKATLKQ
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20877 1
+	maps to  4523922 1
+	sim 0.923077
+	GFTFGKAGEILTMRLRFMAFKAMLRQ
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114035 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 409422 1
+	maps to  4523922 1
+	sim 0.923077
+	GFMFGKAGEILTTRLRSMAFRAMLRQ
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122459 1
+	maps to  4523922 1
+	sim 0.884615
+	GYTFGKAGEILTGRLRFLAFGAMLRQ
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167806 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72207 1
+	maps to  4523922 1
+	sim 0.923077
+	GFTFGKAGEILTTRLRYMAFKAMLRQ
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78598 1
+	maps to  4523922 1
+	sim 0.777778
+	GFCFGKSGEILTLKLRLGAFKSMMRQ
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166118 1
+	maps to  4523922 1
+	sim 1.0
+	GFTFGKAGEILTRRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	felis_catus ensembl 225058 1
+	maps to  4523922 1
+	sim 0.884615
+	GFTLGKAGEILTTRLRLMAFKAMLRQ
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77993 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTMRLRSMAFRAILRQ
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198214 1
+	maps to  4523922 1
+	sim 0.846154
+	GFLFGRSGELLTMKLRSMGLRAMLRQ
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62213 1
+	maps to  4523922 1
+	sim 0.53125
+	FLGGFQGFCFSKSGEILTLNLRLKAFTSMMRQ
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60926 1
+	maps to  4523922 1
+	sim 0.75
+	GYCFGKSGEILTLKLRLRAFTAMMRQ
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105440 1
+	maps to  4523922 1
+	sim 0.884615
+	GFAFGKAGEILTMKLRFMAFKAMLRQ
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115456 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSLAFRAMLRQ
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84023 1
+	maps to  4523922 1
+	sim 0.923077
+	GYTFGKAGEVLTMKLRYMGFKAMLRQ
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83184 1
+	maps to  4523922 1
+	sim 0.75
+	GFCFGKSGEVLTLKLRLRAFKSMMRQ
+	 bitmap not assigned
+
+	danio_rerio ensembl 648189 1
+	maps to  4523922 1
+	sim 0.807692
+	GFCFGKAGELLTMRLRFKAFNAMMRQ
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206412 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122585 1
+	maps to  4523922 1
+	sim 0.923077
+	GYTFGKAGEILTRRLRFWAFRAMLRQ
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985193 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFRAMLRQ
+	 bitmap not assigned
+
+	mus_musculus ensembl 149508 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106298 1
+	maps to  4523922 1
+	sim 0.923077
+	GFTFGKAGEILTTRLRLMAFKAMLRQ
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104801 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTMRLRSMAFRAILRQ
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42338 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103414 1
+	maps to  4523922 1
+	sim 0.923077
+	GFTFGKAGEILTTRLRFMAFKAMLRQ
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92385 1
+	maps to  4523922 1
+	sim 0.75
+	GYCFGKSGEILTLKLRLRAFTAMMRQ
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331951 1
+	maps to  4523922 1
+	sim 0.923077
+	GFTFGTAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108544 1
+	maps to  4523922 1
+	sim 0.807692
+	GFCFGKSGEILTMKLRRDAFKAMMRQ
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 59342 1
+	maps to  4523922 1
+	sim 0.923077
+	GFTFGKAGEILTMRLRFMAFKAMLRQ
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24906 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158871 1
+	maps to  4523922 1
+	sim 0.923077
+	GFTFGKAGEILTTRLRFMAFKAMLRQ
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95453 1
+	maps to  4523922 1
+	sim 0.923077
+	GFTFGKAGEILTTRLRLMAFKAMLRQ
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125367 1
+	maps to  4523922 1
+	sim 0.807692
+	FGKAGEILTTRLRLMAFKAMLRQ
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158137 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96214 1
+	maps to  4523922 1
+	sim 0.884615
+	GFTFGKAGEILTTRLRSKAFEAMLRQ
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230024 1
+	maps to  4523922 1
+	sim 0.923077
+	GFTFGKAGEILTTRLRSKAFKAMLRQ
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78037 1
+	maps to  4523922 1
+	sim 0.884615
+	GFAFGKAGEILTMRLRFMAFKAMLRQ
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91264 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSLAFRAMLRQ
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427220 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156097 1
+	maps to  4523922 1
+	sim 1.0
+	GFTFGKAGEILTRRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138807 1
+	maps to  4523922 1
+	sim 1.0
+	GFTFGKAGEILTRRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686095 1
+	maps to  4523922 1
+	sim 1.0
+	GFTFGKAGEILTRRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 268164 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43609 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193753 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSLAFRAMLRQ
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248877 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62307 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25865 1
+	maps to  4523922 1
+	sim 0.961538
+	GFTFGKAGEILTTRLRSMAFKAMLRQ
+	 bitmap not assigned
+
+
+	 human 4523925 1
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+checking maps ...
+	ochotona_princeps ensembl 409512 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDPKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 60963 1
+	maps to  4523925 1
+	sim 0.892857
+	DLSWYDDPKNTVGALTTRLAADAAQVQG
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167827 1
+	maps to  4523925 1
+	sim 0.928571
+	DMSWFDDHKNSTGALSTRLAIDASQVQG
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122460 1
+	maps to  4523925 1
+	sim 0.821429
+	DMSWFDDPRNGPGALTAQLATDAAQVQG
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72224 1
+	maps to  4523925 1
+	sim 0.928571
+	DMSWFDDPKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156101 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 179970 1
+	maps to  4523925 1
+	sim 0.404762
+	LLVRALQEIRWFYNHKNNTGALTAQLSTDAAQVQG
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77994 1
+	maps to  4523925 1
+	sim 0.785714
+	EISWFDEPKNSTGELITRLANDASQVKG
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78631 1
+	maps to  4523925 1
+	sim 0.892857
+	DLGWFDSPKNSTGALTTRLATDAAQVQG
+	 bitmap not assigned
+
+	felis_catus ensembl 225063 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42352 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198271 1
+	maps to  4523925 1
+	sim 0.892857
+	DMMWFDDPKNSTGALTTRLATDASQVQG
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62226 1
+	maps to  4523925 1
+	sim 0.821429
+	DLSWYDNPKNTVGALTTRLSADAAQVQG
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88944 1
+	maps to  4523925 1
+	sim 0.892857
+	DISWFNDHKKSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84024 1
+	maps to  4523925 1
+	sim 0.785714
+	DIGWFDDPKNSTGALTTRLAHDASEVKG
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83185 1
+	maps to  4523925 1
+	sim 0.857143
+	DLGWFDQPKNSVGALTTRLATDAAQVQG
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206442 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDHKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105489 1
+	maps to  4523925 1
+	sim 0.821429
+	DMAWFDDPKNSTGALTTRLANDASQVKG
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20883 1
+	maps to  4523925 1
+	sim 0.785714
+	DMAWFDNPKNSTGALTTRLANDASNVKG
+	 bitmap not assigned
+
+	danio_rerio ensembl 648191 1
+	maps to  4523925 1
+	sim 0.821429
+	DLAWYDDTKNSVGALTTRLAADTAQVQG
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25874 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122586 1
+	maps to  4523925 1
+	sim 0.892857
+	DISWFDDPKNSTGALTTRLATDASQVKG
+	 bitmap not assigned
+
+	mus_musculus ensembl 149519 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248900 1
+	maps to  4523925 1
+	sim 0.928571
+	DMSWFDDHNNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104803 1
+	maps to  4523925 1
+	sim 0.785714
+	EISWFDEPKNSTGELITRLANDASQVKG
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103435 1
+	maps to  4523925 1
+	sim 0.928571
+	DMSWFDDPKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92386 1
+	maps to  4523925 1
+	sim 0.821429
+	DLSWYDNPQNTVGALTTRLAADAAQVQG
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204153 1
+	maps to  4523925 1
+	sim 0.857143
+	DLGWYDDPKNSVGSLTTRLATDAAQVQG
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 331986 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDHKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 59534 1
+	maps to  4523925 1
+	sim 0.821429
+	DIGWFDDPKNSTGALTTRLANDASQVKG
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78039 1
+	maps to  4523925 1
+	sim 0.821429
+	DMAWFDDPKNSTGALTTRLANDASQVKG
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91270 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDHKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24911 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125380 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDHKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158872 1
+	maps to  4523925 1
+	sim 0.928571
+	DMSWFDDPKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95515 1
+	maps to  4523925 1
+	sim 0.964286
+	DISWFDDHKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108552 1
+	maps to  4523925 1
+	sim 0.862069
+	DLGWYDHPKNSVGALTTRLATDAAQVQG
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193754 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDHKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96216 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDHKNSTGALSTRLAMDAAQVQG
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230027 1
+	maps to  4523925 1
+	sim 0.928571
+	DMSWFDDPANSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166120 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427225 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDHKNSTGALSTRLATDAAQVHG
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138812 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686112 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 268189 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHRNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43619 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDHKNNTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	bos_taurus ensembl 25568 1
+	maps to  4523925 1
+	sim 0.928571
+	DMSWFDDHKNSTGALSTRLAMDASQVQG
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106301 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDHKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985199 1
+	maps to  4523925 1
+	sim 1.0
+	DMSWFDDHKNSTGALSTRLATDAAQVQG
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115472 1
+	maps to  4523925 1
+	sim 0.964286
+	DMSWFDDHKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62314 1
+	maps to  4523925 1
+	sim 0.928571
+	DISWFDDYKNSTGALSTRLATDASQVQG
+	 bitmap not assigned
+
+
+	 human 4523928 1
+	ATGTRLALIAQNIANLGTGIIISFIYGWQLTLLLLAVVPIIAVSGIVEMKLLAGNAKRDKKELEAAGK
+checking maps ...
+	pteropus_vampyrus ensembl 62323 1
+	maps to  4523928 1
+	sim 0.955882
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPIMAVSGIVEMKMLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 409590 1
+	maps to  4523928 1
+	sim 0.970588
+	ATGTRLALIAQNTANLGTGIIISFLYGWQLTLLLLSVVPIIAVSGIVEMKMLAGNARRDKKELEAAGK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77996 1
+	maps to  4523928 1
+	sim 0.926471
+	ATGSRLALVAQNIANLGTGIVLSLIYGWQLTLLLLAIVPIIAITGMIQMKMLAGHAKKDKKELETLGE
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61002 1
+	maps to  4523928 1
+	sim 0.838235
+	AAGVRLATITQNIANLGTSIIIAFVYGWELTLLILAVVPLIAAAGAAEVKLLAGHAAKDKKELEKAGK
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167848 1
+	maps to  4523928 1
+	sim 0.941176
+	ATGTRLALIAQNTANLGTGIIIAFVYGWQLTLLMLSVVPIIAVSGIVEMKLLAGNAKRDKKELETVGK
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 179971 1
+	maps to  4523928 1
+	sim 0.60274
+	ATGRRAGMLVQNVSGLATGLLIALLVGWKLALLMLAFMPFMVGAGLVQSVLQGSEATTIKRAYEQASK
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156105 1
+	maps to  4523928 1
+	sim 1.0
+	ATGTRLALIAQNIANLGTGIIISFIYGWQLTLLLLAVVPIIAVSGIVEMKLLAGNAKRDKKELEAAGK
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78682 1
+	maps to  4523928 1
+	sim 0.823529
+	ASGVRLATFAQNIANLGTGVILAFVYGWELTLLILAVVPVIALAGAVQMKMLTGHAAEDKKELEKAGK
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72249 1
+	maps to  4523928 1
+	sim 0.970588
+	ATGSRLALIAQNTANLGTGIIISFVYGWQLTLLLLSVVPIIAVSGIIEIKMLAGNAKRDKKELEAAGK
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104806 1
+	maps to  4523928 1
+	sim 0.941176
+	ATGSRLALVAQNIANLGTGIVLSLIYGWQLTLLLLAIVPIIAITGMIQMKMLAGHAKKDKKELETLGK
+	 bitmap not assigned
+
+	felis_catus ensembl 225072 1
+	maps to  4523928 1
+	sim 0.764706
+	ATGTRLALIAQNAANLGTGIVISFIYGWQLTLLLLSVVPIIALSGIVEMKMLA
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204194 1
+	maps to  4523928 1
+	sim 0.852941
+	ATGLRMATLVQNVANLGTSLIISFVYGWEMTLLLLSIVPIMALAGAVQLKMLGGHATKDKKELEKAGK
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88948 1
+	maps to  4523928 1
+	sim 0.838235
+	ATGTGLALIAQNTADLGSGIIVSFVYVWQLSLLLLSVVPIIAVSGIVEMKMMAGNAKREKK
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84025 1
+	maps to  4523928 1
+	sim 0.926471
+	ATGARLAMLAQNLANLGTGIIISFVYGWQMTLLILAVVPIIAIGGLIEMRMLSGHAKKDKKELESAGK
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105528 1
+	maps to  4523928 1
+	sim 0.926471
+	ATGVRLALIAQNIANLGTGIIISLVYGWQLTLLLLAVVPIIAVAGMIEMKMLAGHAKKDKIELEAAGK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62240 1
+	maps to  4523928 1
+	sim 0.828571
+	GQAAGVRLAVITQNMANLGTGIIISFVYGWELTLLILVVVPILAVAGAAEVKLLTGHAAEDKKELEKAGK
+	 bitmap not assigned
+
+	danio_rerio ensembl 648192 1
+	maps to  4523928 1
+	sim 0.882353
+	ATGVRLATLAQNVANLGTAIVISFVYGWQLTLLILSIVPIMAVAGAIQMKLLAGHALKDKKELEQAGK
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 268216 1
+	maps to  4523928 1
+	sim 0.426471
+	ATGTRLALIAQNTANLGTGIIISFVYGWQLXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115493 1
+	maps to  4523928 1
+	sim 0.955882
+	ATGMRLALIAQNTANLGTGIIISFIYGWQLTLLLLVVVPVIAVSGIVEMKMLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122587 1
+	maps to  4523928 1
+	sim 0.926471
+	ATGARLAVVAQNIANLGTGIIISLVYGWQLTLLLLAIVPIIAIAGVIEMKMLAGHAQKDKKELEGAGK
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20888 1
+	maps to  4523928 1
+	sim 0.926471
+	ATGVRLALIAQNIANLGTGIIISLIYVWKLTLLLLAVVPIIAVAGMIEMKMLAGHAKKDKRELEAAGK
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206473 1
+	maps to  4523928 1
+	sim 0.955882
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPIIAISGIVEMKMLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25885 1
+	maps to  4523928 1
+	sim 0.955882
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPIIALSGIVEMKMLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	mus_musculus ensembl 149533 1
+	maps to  4523928 1
+	sim 0.941176
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPFIAVAGIVEMKMLAGNAKRDKKEMEAAGK
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83186 1
+	maps to  4523928 1
+	sim 0.823529
+	AAGVRMATLAQNFANMGTGLILGFVYGWELTLLLLSLVPIIGVAGAIEMKMLGGHAAEDKKELEKAGK
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106305 1
+	maps to  4523928 1
+	sim 0.985294
+	ATGTRLALIAQNTANLGTGIIISFVYGWQLTLLLLLVVPIIAVSGIVEMKMLAGNAKRDKKELEAAGK
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122465 1
+	maps to  4523928 1
+	sim 0.941176
+	VTGARLALMAQNIANLGTGVVISFVYGWQLTLLLLAIVPIIAVAGVIEMKMLAGHAQRDKRELEIAGK
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114063 1
+	maps to  4523928 1
+	sim 0.941176
+	ATGTRLALIAQNTANLGTGIIISFVYGWQLTLLLLSVVPVIAVSGIVEMKLLAGNAKRDQKELETAGK
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248918 1
+	maps to  4523928 1
+	sim 0.970588
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLLVVPIIAVSGIVEMKLLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92387 1
+	maps to  4523928 1
+	sim 0.838235
+	AAGVRLATIMQNFANLGTSIIIAFVYGWELTLLILAVVPLIAAAGAAEIKLLAGHAAKDKKELEKAGK
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103449 1
+	maps to  4523928 1
+	sim 0.970588
+	ATGSRLALIAQNTANLGTGIIISFVYGWQLTLLLLSVVPIIALSGIIEMKMLAGNAKRDKKELEAAGK
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 59733 1
+	maps to  4523928 1
+	sim 0.732558
+	ATGARLAMIAQNIANLGTGIIISLVYGWQLTLLILAVVPVIAIAGIIEMKMLSGHAKKDKKELEAAGKVSSNEVHVSLYILLCNSV
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42367 1
+	maps to  4523928 1
+	sim 0.955882
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPFIAVSGIVEMKMLAGNAKRDKKELEVAGK
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 332022 1
+	maps to  4523928 1
+	sim 0.941176
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPIIAISGIVEIKMLTGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24918 1
+	maps to  4523928 1
+	sim 0.941176
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPFIAVAGIVEMKMLAGNAKRDKKEMEAAGK
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158873 1
+	maps to  4523928 1
+	sim 0.970588
+	ATGSRLALIAQNTANLGTGIIISFVYGWQLTLLLLSVVPIIAISGIIEMKMLAGNAKRDKKELEAAGK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78040 1
+	maps to  4523928 1
+	sim 0.926471
+	ATGVRLALIAQNIANLGTGIIISLVYGWQLTLLLLAVVPIIAVAGMIEMKMLAGHAKKDKIELEAAGK
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125396 1
+	maps to  4523928 1
+	sim 0.955882
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPIIAVSGIVEMKMLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95621 1
+	maps to  4523928 1
+	sim 0.955882
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPIIALSGIVEMKMLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193755 1
+	maps to  4523928 1
+	sim 0.955882
+	ATGMRLALVAQNTANLGTGIIISFIYGWQLTLLLLAVVPIIAVSGIVEMKMLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198339 1
+	maps to  4523928 1
+	sim 0.838235
+	ATGARLATIAQNIANMGTAIVISFVYGWELTLLILAIVPFVGAAGFLEMQALTGQANRDKKLLEEAGK
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108564 1
+	maps to  4523928 1
+	sim 0.867647
+	ATGVRMASLAQNVANMGTSVIISFVYGWQLTLLVLAVVPFMAAAGAVEMKALTGYAAKDKKELEKAGK
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91278 1
+	maps to  4523928 1
+	sim 0.941176
+	ATGMRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPIIAVSGIVEMKMLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96217 1
+	maps to  4523928 1
+	sim 0.970588
+	ATGTRLALIAQNVANLGTGIIISFIYGWQLTLLLLSVVPIIAISGIVEMKMLAGNAKKDKKELETAGK
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230030 1
+	maps to  4523928 1
+	sim 0.955882
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPIIAVSGIVEMKMLAGNARRDKKELETAGK
+	 bitmap not assigned
+
+	bos_taurus ensembl 25600 1
+	maps to  4523928 1
+	sim 0.941176
+	ATGTRLALIAQNTANLGTGIIIAFIYGWQLTLLLLSVVPIIAVSGIVEMKLLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138814 1
+	maps to  4523928 1
+	sim 1.0
+	ATGTRLALIAQNMANLGTGIIISFIYGWQLTLLLLAVVPIIAVSGIVEMKLLAGNAKRDKKELEVAGK
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43624 1
+	maps to  4523928 1
+	sim 0.955882
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPIIAVSGIVEMKMLAGNAKRDKKELETAGK
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985204 1
+	maps to  4523928 1
+	sim 0.970588
+	ATGTRLALIAQNTANLGTGIIISFIYGWQLTLLLLSVVPIIAVSGIVEMKMLAGNAKRDKKELEAAGK
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166128 1
+	maps to  4523928 1
+	sim 1.0
+	ATGTRLALIAQNIANLGTGIIISFIYGWQLTLLLLAVVPIIAVSGIVEMKLLAGNAKRDKKELEAAGK
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427229 1
+	maps to  4523928 1
+	sim 0.985294
+	ATGTRLALIAQNVANLGTGIIISFIYGWQLTLLLLSVVPIIAVSGIVEMKLLAGNAKRDKKELEAAGK
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686131 1
+	maps to  4523928 1
+	sim 1.0
+	ATGTRLALIAQNIANLGTGIIISFIYGWQLTLLLLAVVPIIAVSGIVEMKLLAGNAKRDKKELEAAGK
+	 bitmap not assigned
+
+
+	 human 4523930 1
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGPY
+checking maps ...
+	ochotona_princeps ensembl 409656 1
+	maps to  4523930 1
+	sim 0.939394
+	IAAEVIENIRTVVSLTQERKFESMYVEKLRGPY
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62331 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGAY
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193756 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGAY
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122466 1
+	maps to  4523930 1
+	sim 0.818182
+	IAAEAIGNIRTVVSLTRERKFESTYGESLLGPY
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167875 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGAY
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61058 1
+	maps to  4523930 1
+	sim 0.848485
+	IATEAIENVRTVVSLSREPKFETLYEENLRVPY
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 179973 1
+	maps to  4523930 1
+	sim 0.647059
+	ISTEAVQNIRTVASLCLEEKFSGMFEQCLLEPY
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78722 1
+	maps to  4523930 1
+	sim 0.848485
+	IATEAIENIRTVASLTREPKFESLYQENLVVPY
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108574 1
+	maps to  4523930 1
+	sim 0.787879
+	IATEAIGNIRTVVSLNREPKFESLYQENLEVPY
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72290 1
+	maps to  4523930 1
+	sim 0.939394
+	IATEAIENIRTVVSLTQERKFESMYGENLNGPY
+	 bitmap not assigned
+
+	felis_catus ensembl 225088 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGAY
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84026 1
+	maps to  4523930 1
+	sim 0.727273
+	IATEAIGNIRTVVSLNREGKFEFMYEQNLLVPY
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105573 1
+	maps to  4523930 1
+	sim 0.909091
+	IATEAIENIRTVASLTREKRFELMYGERLLVPY
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62259 1
+	maps to  4523930 1
+	sim 0.757576
+	IATEAMVNIRTVVSLAREPTFEALYIENLSVPY
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122588 1
+	maps to  4523930 1
+	sim 0.848485
+	IATEAIENFRTVVSLTRERKFESMYRENLQGPY
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115510 1
+	maps to  4523930 1
+	sim 0.909091
+	IATEAIENIRTVVSLARERKFESMYVEKLYGAY
+	 bitmap not assigned
+
+	danio_rerio ensembl 648193 1
+	maps to  4523930 1
+	sim 0.848485
+	IATEAIENVRTVVSLTRESKFESLYEENLIVPY
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985207 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTLVSLTQERKFESMYVEKLRGPY
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206502 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGAY
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114074 1
+	maps to  4523930 1
+	sim 0.909091
+	IATEAIENITTVVSLTQERNFESMYAEKLYGAY
+	 bitmap not assigned
+
+	mus_musculus ensembl 149547 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTVVSLTQERKFESMYVEKLHGPY
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20891 1
+	maps to  4523930 1
+	sim 0.909091
+	IATEAIENIRTVVSLTLERKFELMYGEHLILPY
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248938 1
+	maps to  4523930 1
+	sim 0.939394
+	IATEAIENIRTVVSLTQERKFESMYVAKLYGAY
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106308 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGPY
+	 bitmap not assigned
+
+	bos_taurus ensembl 25646 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGAY
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92388 1
+	maps to  4523930 1
+	sim 0.818182
+	IATEAIENVRTVVSLSREPKFECLYEENLRVPY
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104810 1
+	maps to  4523930 1
+	sim 0.684211
+	VASEAIENIRTVVALTQERKFEYMYGQNLQVSY
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 77999 1
+	maps to  4523930 1
+	sim 0.657895
+	IASEAIENIRTVVALTRERKFEYMYGQNLQVSY
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24924 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTVVSLTQERKFESMYVEKLHGPY
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 332096 1
+	maps to  4523930 1
+	sim 0.333333
+	ERKFESMYVEK
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 332061 1
+	maps to  4523930 1
+	sim 0.484848
+	IATEAIENIRTVVSLT
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125408 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFESMYVDKLYGPY
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158874 1
+	maps to  4523930 1
+	sim 0.939394
+	IATEAIDNIRTVVSLTQERKFESMYGENLNGPY
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 268239 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIGTVVSLTQERKFESMYVEKLYGPF
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204220 1
+	maps to  4523930 1
+	sim 0.848485
+	IATEVIENIRTVASLTREPKFESLYQENLLVPY
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95681 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGPY
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42378 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGPY
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158191 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVMSLTQERKFESMYVEKLYGPY
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83187 1
+	maps to  4523930 1
+	sim 0.787879
+	IATEAIENIRTVVCLTREEKFEALYQENLDVPY
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198426 1
+	maps to  4523930 1
+	sim 0.757576
+	IATEAVENIRTVASLTRERTLEKIYQDSLEGPA
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78042 1
+	maps to  4523930 1
+	sim 0.909091
+	IATEAVENIRTVASLTREKRFELMYGEHLHVPY
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91281 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGAY
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88641 1
+	maps to  4523930 1
+	sim 0.818182
+	IATEAVENFRTVVSLTRERKFEVMYEESLRGPY
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96220 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGPY
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166130 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGPY
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427234 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGPY
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156108 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFESMYAEKLYGPY
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138817 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFETMYVEKLYGPY
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686150 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGPY
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43631 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENITTVVSLTQERKFESMYVEKLYGPY
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25893 1
+	maps to  4523930 1
+	sim 0.969697
+	IATEAIENIRTVVSLTQERKFEAMYVEKLYGPY
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230034 1
+	maps to  4523930 1
+	sim 1.0
+	IATEAIENIRTVVSLTQERKFESMYVEKLYGPY
+	 bitmap not assigned
+
+
+	 human 4523932 1
+	NSVQKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+checking maps ...
+	ornithorhynchus_anatinus ensembl 122471 1
+	maps to  4523932 1
+	sim 0.847826
+	NSVRQAHVYGIAFGIAQAFVYFAYAGCFRLGAYLVVNGHLRFRDVI
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88960 1
+	maps to  4523932 1
+	sim 0.869565
+	NSVQKAHIYSITFSISQAFMYFSYAGGFWSGAYLTVNGHMCFRDII
+	 bitmap not assigned
+
+	tursiops_truncatus ensembl 167910 1
+	maps to  4523932 1
+	sim 0.956522
+	NSVRKAHIYGITFSISQAFMYFSHAGCFRFGAYLIVNGHMHFRDVI
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204248 1
+	maps to  4523932 1
+	sim 0.73913
+	NSKKKAHIYGFTFSFSQAMIYFAYAGCFRFGAWLIEAGRMDFESVL
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 179975 1
+	maps to  4523932 1
+	sim 0.638298
+	VIKRRGYLFSVTFGFTQGILCFAYAAVFRLGGFLVAQGELTFQDVY
+	 bitmap not assigned
+
+	bos_taurus ensembl 25673 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHVYGISFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91295 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72350 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 268262 1
+	maps to  4523932 1
+	sim 1.0
+	NSIQKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 409738 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78001 1
+	maps to  4523932 1
+	sim 0.652174
+	NSVKKAHIFGFTFAFTQAVMYFTYAGCFRFGAYLV
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84027 1
+	maps to  4523932 1
+	sim 0.804348
+	NSVKKAHIHGLTFSVSQAMMYFTYAGCFRFGAWLVAGGYMEFKSVF
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20898 1
+	maps to  4523932 1
+	sim 0.782609
+	NSVKKAHIFGFCFALSQAMMFFTYAGCFRFGAYLVVNDHTEYKRVF
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61107 1
+	maps to  4523932 1
+	sim 0.695652
+	NSQKKAHVYGFTYSFSQAMIYFAYAACFRFGAWLIEAGRMNVEAVF
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122590 1
+	maps to  4523932 1
+	sim 0.787234
+	NSQHKAQIFGISFALTQAIMYFSYAACFRFGAFLVKNGYMEFQDVF
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 68649 1
+	maps to  4523932 1
+	sim 0.708333
+	MKKAHIFGFTFGLTQAIMYFTYAASFRFGAYLVGNGYMDYKSVF
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105605 1
+	maps to  4523932 1
+	sim 0.847826
+	NSVKKAHIFGFCFSLSQAMMFFTYAGCFRFGAYLVVNGHIEYKTVF
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61986 1
+	maps to  4523932 1
+	sim 0.652174
+	NSRKKANIYGLTYSFCQAMIFFVYAASFRFGAWLIEAGRMTMEGVF
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83188 1
+	maps to  4523932 1
+	sim 0.702128
+	NSKKMAHIYGLTFSFSQAMIYFAYAACFRFGAWLVIAGRMGVE
+	 bitmap not assigned
+
+	danio_rerio ensembl 648194 1
+	maps to  4523932 1
+	sim 0.632653
+	NAKKKAHVFGLTFSFSQAMIYFAYAGCFKFGSWLIEQKLMTFEGVF
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985210 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248964 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	mus_musculus ensembl 149559 1
+	maps to  4523932 1
+	sim 0.956522
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGSYLIVNGHMRFKDVI
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92389 1
+	maps to  4523932 1
+	sim 0.615385
+	NSQKKAHVYGLTYSFSQAMIYFAYAACFRFGAWLIEAGRMDVEGVF
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104812 1
+	maps to  4523932 1
+	sim 0.869565
+	NSIKKAHIFGFTFAFTQAIMYFTYAGCFRFGAYLVKNGHMRFKDVL
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103487 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24930 1
+	maps to  4523932 1
+	sim 0.956522
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGSYLIVNGHMRFKDVI
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78044 1
+	maps to  4523932 1
+	sim 0.847826
+	NSVKKAHIFGFCFSLSQAMMFFTYAGCFRFGAYLVVNGHMEYKSVF
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114088 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFTYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125424 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLVVNGHMRFRDVI
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158875 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95738 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78748 1
+	maps to  4523932 1
+	sim 0.653061
+	NSQKKAHVHGFTFSFSQAMIYFAYAACFRFGAWLIIKGRMDVEGVF
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198511 1
+	maps to  4523932 1
+	sim 0.565217
+	TAKKKSQFYGLTYGFSQGVVYLAQAAAFRFGAFLVTAGRMEFENVF
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108582 1
+	maps to  4523932 1
+	sim 0.7
+	NSQKNAHVHGLTFSLTQAMIYFAYAGCFRFGAWLIVTGRMDVEGVF
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88642 1
+	maps to  4523932 1
+	sim 0.666667
+	LRNSKKKAHIYGIALGLSEAILLFAYAGCFRFGAYLVANQYMGFEDVF
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193757 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158204 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230039 1
+	maps to  4523932 1
+	sim 1.0
+	NSVQKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42390 1
+	maps to  4523932 1
+	sim 0.956522
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGYMRFRDVI
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96224 1
+	maps to  4523932 1
+	sim 0.956522
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGYMRFRDVI
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166135 1
+	maps to  4523932 1
+	sim 0.327586
+	EAEEMVTSILICFSGIPCRRHTSMELLLVSHKHLCIFPMPVVFDL
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427235 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156110 1
+	maps to  4523932 1
+	sim 1.0
+	NSVQKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138821 1
+	maps to  4523932 1
+	sim 1.0
+	NSVQKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686175 1
+	maps to  4523932 1
+	sim 1.0
+	NSVQKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43639 1
+	maps to  4523932 1
+	sim 0.630435
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRF
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43649 1
+	maps to  4523932 1
+	sim 0.347826
+	GAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106310 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVQKAHIYGIMFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115524 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFREVI
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62340 1
+	maps to  4523932 1
+	sim 0.956522
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMLFRDVI
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206531 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25901 1
+	maps to  4523932 1
+	sim 0.978261
+	NSVRKAHIYGITFSISQAFMYFSYAGCFRFGAYLIVNGHMRFRDVI
+	 bitmap not assigned
+
+
+	 human 4523934 1
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLKP
+checking maps ...
+	tetraodon_nigroviridis ensembl 61165 1
+	maps to  4523934 1
+	sim 0.730769
+	VISAVLYGAMAVGEANTFAPNYAKAKMAASYLMMLINKKPAIDNLSEEGVSP
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 409817 1
+	maps to  4523934 1
+	sim 1.0
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 179976 1
+	maps to  4523934 1
+	sim 0.75
+	VFGAIIFGALAVGQAMAMAPNYGRAKVSAARILALLRREMAIDSYSEGGIQP
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91308 1
+	maps to  4523934 1
+	sim 0.961538
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLLERQPLIDSYGEEGLRP
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72401 1
+	maps to  4523934 1
+	sim 0.961538
+	VFSAIVFGAMALGHASSFAPDYAKAKLSAAHLFMLFEREPLIDSYSEAGLKP
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78770 1
+	maps to  4523934 1
+	sim 0.730769
+	VISAVLFGAMAVGEANSFAPNYAKAKMSASHLLMLLNKEPEIDNLSEQGDKP
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 268294 1
+	maps to  4523934 1
+	sim 0.980769
+	VFSAIVLGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	procavia_capensis ensembl 1194 3
+	maps to  4523934 1
+	sim 0.903846
+	VFSAILLSAVALGHASSFAPDYAKAKSSAAHLFMLFERQPLIDSYSEEGL
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84028 1
+	maps to  4523934 1
+	sim 0.846154
+	VFSCIVFGAMALGQTSSFTPDYAKAKISAAHLFALFEREPLIDNYSEKGERP
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20903 1
+	maps to  4523934 1
+	sim 0.903846
+	VFSAVVFGAMALGQTSSFAPDYAKAKISAAHLFLLFERVPSIDSYSEEGDKP
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105642 1
+	maps to  4523934 1
+	sim 0.865385
+	VFSAVVFGAMALGQTSSFAPDYAKAKISAAHLFVLFNRVPPIDSYREDGEKP
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115543 1
+	maps to  4523934 1
+	sim 0.980769
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLLERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122591 1
+	maps to  4523934 1
+	sim 0.865385
+	VFSAIVFGAMALGQTSSFAPDYAKAKISASHIFMLLERKPLIDSYSVGGLKP
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 68652 1
+	maps to  4523934 1
+	sim 0.903846
+	VFSAIVFGAMALGQASSFTPDYAKAKMSAAHMFMLFESVPLIDGYSEEGLKP
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92390 1
+	maps to  4523934 1
+	sim 0.711538
+	VVSAVLYGAMAVGEANTFAPNYAKAKMAASYLMMLINKKPAIDNLSEEGTSP
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78005 1
+	maps to  4523934 1
+	sim 0.903846
+	VFSAIVFGAMALGQSTSFTPDYAKAKMSAAHLFLLFERVPLIDSYSEEGEKP
+	 bitmap not assigned
+
+	danio_rerio ensembl 648197 1
+	maps to  4523934 1
+	sim 0.75
+	VISAVVYGAMAVGEANSFTPNYAKAKMSASHVLMLINRAPAIDNSSEDGDKP
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985213 1
+	maps to  4523934 1
+	sim 1.0
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206556 1
+	maps to  4523934 1
+	sim 1.0
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLKP
+	 bitmap not assigned
+
+	mus_musculus ensembl 149572 1
+	maps to  4523934 1
+	sim 0.903846
+	VFSAIVLGAVALGHASSFAPDYAKAKLSAAYLFSLFERQPLIDSYSGEGLWP
+	 bitmap not assigned
+
+	sus_scrofa ensembl 248986 1
+	maps to  4523934 1
+	sim 0.961538
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFRLFERQPLIDSHSEEGLRP
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204273 1
+	maps to  4523934 1
+	sim 0.730769
+	VFSAVLYGAMAVGEANTFTPNYAKAKISASHLMMLIEREPAINNLSQGGEKP
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62346 1
+	maps to  4523934 1
+	sim 1.0
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104817 1
+	maps to  4523934 1
+	sim 0.903846
+	VFSAIVFGAMALGQSTSFTPDYAKAKMSAAHLFLLFERVPLIDSYSEEGEKP
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114102 1
+	maps to  4523934 1
+	sim 0.903846
+	VFSAIVLGAVALGHASSFAPDYAQAKLSAACLFRLFERQPLIDSDSEDGLRP
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122472 1
+	maps to  4523934 1
+	sim 0.865385
+	VFSAMVLGATALGHASSFAPDYARAKLAAAHLFLLLERKPLVDSCSDRGLKP
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24936 1
+	maps to  4523934 1
+	sim 0.903846
+	VFSAIVLGAVALGHASSFAPDYAKAKLSAAYLFSLFERQPLIDSYSREGMWP
+	 bitmap not assigned
+
+	bos_taurus ensembl 25738 1
+	maps to  4523934 1
+	sim 0.942308
+	VFSAIVLGAVALGHASSFAPDYAKAKLSAAHLFKLFERQPLIDSHSEEGLRP
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158876 1
+	maps to  4523934 1
+	sim 0.980769
+	VFSAIVFGAMALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEAGLKP
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125439 1
+	maps to  4523934 1
+	sim 0.980769
+	FSAMVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95802 1
+	maps to  4523934 1
+	sim 1.0
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88643 1
+	maps to  4523934 1
+	sim 0.846154
+	VFSAIVFGAMALGQTSSFTPDYAKAKMSAAHIFSLLERVPLIDSFSKEGDKP
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198618 1
+	maps to  4523934 1
+	sim 0.796296
+	VFSAIVFGAMAVGQTSSFAPDYAKAKTSANHLFYLFQLIPAIDSYSDEGEKL
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193758 1
+	maps to  4523934 1
+	sim 0.961538
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLLERRPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108591 1
+	maps to  4523934 1
+	sim 0.730769
+	VISAILYGAMALGEANSFAPNYAKAKISASHLMMLLNKVSAIDNLSEEGESP
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62008 1
+	maps to  4523934 1
+	sim 0.711538
+	VVMTILYGAMAVGEANTYAPNYAKAKLAASHLMMLIYRKPLVDNLSEEGASP
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78045 1
+	maps to  4523934 1
+	sim 0.884615
+	VFSAVVFGAMALGQTSSFAPDYAKAKISAAHLFVLFDRVPSIDSYCEDGEKP
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42410 1
+	maps to  4523934 1
+	sim 0.942308
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFNLFERQPLIDSYSKEGLWP
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158237 1
+	maps to  4523934 1
+	sim 0.980769
+	VFSAMVLGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230044 1
+	maps to  4523934 1
+	sim 0.980769
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSDSEEGLRP
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96229 1
+	maps to  4523934 1
+	sim 1.0
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427236 1
+	maps to  4523934 1
+	sim 1.0
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLKP
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156112 1
+	maps to  4523934 1
+	sim 0.980769
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDNYSEEGLKP
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138824 1
+	maps to  4523934 1
+	sim 1.0
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPVIDSYSEEGLKP
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686193 1
+	maps to  4523934 1
+	sim 1.0
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLKP
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43655 1
+	maps to  4523934 1
+	sim 1.0
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106313 1
+	maps to  4523934 1
+	sim 0.980769
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRL
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 332203 1
+	maps to  4523934 1
+	sim 0.980769
+	VFSAIVFGAVALGHASSFALDYAKAKLSAAHLFMLFERQPLIDSYSEEGLRP
+	 bitmap not assigned
+
+	felis_catus ensembl 225106 1
+	maps to  4523934 1
+	sim 0.942308
+	VFTAIVFGAVALGHASSFAPDYAKSKLSAAHLFMLLERQPLIDSYSKEGLRP
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25908 1
+	maps to  4523934 1
+	sim 0.942308
+	VFSAIVFGAVALGHASSFAPDYAKAKLSAAHLFKLFERQPLIDSYSTEGLWP
+	 bitmap not assigned
+
+
+	 human 4523938 1
+	DKFEGNITFNEVVFNYPTRANVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGTV
+checking maps ...
+	ornithorhynchus_anatinus ensembl 122490 1
+	maps to  4523938 1
+	sim 0.647059
+	SRPAVPVLQGLSLYVGKGQTVALVGGSGCGKSTVVQLLERFYEPLGGSL
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62315 1
+	maps to  4523938 1
+	sim 0.5
+	NRRRMLKLELWQRRCWPLQEKFNGEISLENVRFNYPSRPSVPVLQGLSLTVKNGETLALVGSSGCGKSTTIQLLERFYDPREGRV
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61225 1
+	maps to  4523938 1
+	sim 0.75
+	GTYDGNVLFESVKFNYPSRPDVPILQGLNLKVKKGETLALVGSSGCGKSTTIQLLERFYDARNGRV
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72421 1
+	maps to  4523938 1
+	sim 0.939394
+	SKFEGNVSFNEVVFNYPTRPNVPVLQGLSLEVKKGHTLALVGSSGCGKSTVVQLLERFYDPLAGKV
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78838 1
+	maps to  4523938 1
+	sim 0.787879
+	DTFDGNVSFESVKFNYPSRPDIPILRGLNLSVKKGETLALVGSSGCGKSTTIQLLERFYDPREGRV
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114116 1
+	maps to  4523938 1
+	sim 0.939394
+	DKFEGNVTLHEVVFNYPTRPNVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGKV
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 268320 1
+	maps to  4523938 1
+	sim 0.969697
+	VKFEGNVTFNEVVFNYPSRPNVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPIAGTV
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122592 1
+	maps to  4523938 1
+	sim 0.925373
+	GKFEGNISFRDVAFNYPSRPAVPVLQGLSLDVGKGQTVALVGSSGCGKSTVVQLLERFYDPLAGSL
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88968 1
+	maps to  4523938 1
+	sim 0.863636
+	DKFEGNVTLNDTVFNYPTRSNVPVLQKLSLEVKKHQTLALVGSSGCGKSPVIQLLQRFYDSLAGAV
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158877 1
+	maps to  4523938 1
+	sim 0.969697
+	DKFEGNVTFNEVVFNYPTRPNVPVLQGLTLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGKV
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84029 1
+	maps to  4523938 1
+	sim 0.80303
+	QQFGGNTTFKDVVFNYPTRPDVTVLNGLKVAVAKGQTLALVGSSGCGKSTLVQLLERFYDPLSGEV
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62028 1
+	maps to  4523938 1
+	sim 0.787879
+	EKYDGNVLFEHVKFNYPSRPDVPILQGLNLKVQKGETLALVGSSGCGKSTTIQLLERFYDPREGRV
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105673 1
+	maps to  4523938 1
+	sim 0.761194
+	EKFGGNTRIKDVKFNYPNRPEVKILQGLNLAVEKGETLALVGSSGCGKSTVVQLLERFYDPLSGEI
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115563 1
+	maps to  4523938 1
+	sim 0.954545
+	DKFEGNVTFNEVMFNYPTRPKVPVLQGLSLKVKKGQTLALVGSSGCGKSTVVQLLERFYDPVAGTV
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 68654 1
+	maps to  4523938 1
+	sim 0.833333
+	ETFGGNIAFKEVVFNYPTRPDVQVLQGLNMNVEKGQTLALVGSSGCGKSTVVQLLERFYDPLGGEM
+	 bitmap not assigned
+
+	danio_rerio ensembl 648201 1
+	maps to  4523938 1
+	sim 0.80303
+	DKFEGNVGFEHVYFKYPSRPDVPVLQGLKLRVKKGQTLALVGSSGCGKSTTIQLLERFYDPQQGRV
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985216 1
+	maps to  4523938 1
+	sim 0.939394
+	GKFEGNVAFNDVVFNYPTRPNVPVLQGLSVEVKKGQTLALVGSSGCGKSTVVQLLERFYDPMSGTV
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 179979 1
+	maps to  4523938 1
+	sim 0.652174
+	DAFDGELQLSGVHFRYPTRPHAEVLRGVSLRVAPGQTLALVGPSGSGKSTIMQLLLRFYDSSAGQL
+	 bitmap not assigned
+
+	mus_musculus ensembl 149578 1
+	maps to  4523938 1
+	sim 0.984848
+	DKFEGSVTFNEVVFNYPTRANVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPMAGSV
+	 bitmap not assigned
+
+	sus_scrofa ensembl 249014 1
+	maps to  4523938 1
+	sim 0.939394
+	DKFEGNVTLNDVVFRYPTRPNVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPVFGTV
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204299 1
+	maps to  4523938 1
+	sim 0.848485
+	DKFDGNVRFQDVRFTYPSRPDLPVLQGLNLEVCKGETLALVGSSGCGKSTTVQLLERFYDPLEGSV
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106315 1
+	maps to  4523938 1
+	sim 0.893939
+	GQFEGNVTLSDVVFSYPTRPNVPVLQGLTLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPMTGTV
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92391 1
+	maps to  4523938 1
+	sim 0.791045
+	EKYDGNVHFEGVKFNYPSRPDVTILQGLNLKVKKGETLALVGSSGCGKSTTIQLLERFYDPREGRV
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104820 1
+	maps to  4523938 1
+	sim 0.820895
+	KMFGGNITFKDVAFKYPTRPEVKVLQGLNIEVEKGQTLALVGSSGCGKSTVVQLLERFYDPLSGEV
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103527 1
+	maps to  4523938 1
+	sim 0.924242
+	AKFEGNVAFNEVVFNYPTRPNVPVLQGLTLKVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGKV
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24943 1
+	maps to  4523938 1
+	sim 0.984848
+	DKFEGSVTFNEVVFNYPTRANVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPMAGTV
+	 bitmap not assigned
+
+	bos_taurus ensembl 25781 1
+	maps to  4523938 1
+	sim 0.954545
+	DKFEGNVTLNEVVFNYPTRPNVPVLRGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGTV
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198683 1
+	maps to  4523938 1
+	sim 0.772727
+	EDCEGNVEFQSVGFNYPMRPNVEVLKGLSLKVENGQTLALVGSSGCGKSTSVQLLERFYDTLSGNV
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95864 1
+	maps to  4523938 1
+	sim 0.954545
+	DKFEGNVTLNDIVFNYPTRPNVPVLQKLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPIAGTV
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88644 1
+	maps to  4523938 1
+	sim 0.818182
+	ELFEGNVKFKDLEFKYPSRPDVPVLQGMNIEVQKGQTLALVGSSGCGKSTTVQLLERFYDPLDGYV
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193759 1
+	maps to  4523938 1
+	sim 0.939394
+	DTFEGNVTFNEVVFNYPTRPDIPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPVAGAV
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108599 1
+	maps to  4523938 1
+	sim 0.787879
+	DKFEGNVHFESVFFNYPSRPDVPVLQGLNLKVSKGETLALVGSSGCGKSTTIQLLERFYDPREGRV
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78046 1
+	maps to  4523938 1
+	sim 0.746269
+	VTFGGNTRIKDVKFNYPNRPEVKILQGLNLKVEKGQTLALVGSSGCGKSTVVQLLERFYDPLSGEI
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 1 3
+	maps to  4523938 1
+	sim 0.454545
+	LQVKKGQTLALVGSSGCGKSTVVQLLERFYD
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158253 1
+	maps to  4523938 1
+	sim 0.666667
+	XXXXXXXXXXXXXXXXXXXXXXPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPIGGTV
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91317 1
+	maps to  4523938 1
+	sim 0.969697
+	DKFEGNVTFNEVVFNYPTRPKVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPVAGTV
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96232 1
+	maps to  4523938 1
+	sim 0.969697
+	GKFEGNVTFNEVVFNYPTRPNVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGTV
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78007 1
+	maps to  4523938 1
+	sim 0.80597
+	KIFGGNITFKDVAFKYPTRPEVKVLQGLNTEVEKGQTLALVGSSGCGKSTVIQLLERFYDPLSGEV
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20909 1
+	maps to  4523938 1
+	sim 0.818182
+	ETFEGNITMKDVAFNYPNRPEVKILQGLNLKVEKGQTLALVGSSGCGKSTVVQLLERFYDPLDGEM
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 332239 1
+	maps to  4523938 1
+	sim 0.893939
+	EKLEGNVTFNEVMFNYPTRPNVPVLQRLSLEVKKGQTLALVGPSGCGNSTVVQLLERFYDPMAGXX
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427238 1
+	maps to  4523938 1
+	sim 0.954545
+	DKFEGNVTFSEVMFNYPTRQNVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPSAGTV
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156114 1
+	maps to  4523938 1
+	sim 0.984848
+	DKFEGNITFNEVVFNYPTRPNVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGTV
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138828 1
+	maps to  4523938 1
+	sim 0.969697
+	DKFEGNITFNEVVFNYPTQPNVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGTV
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686213 1
+	maps to  4523938 1
+	sim 1.0
+	DKFEGNITFNEVVFNYPTRANVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGTV
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62356 1
+	maps to  4523938 1
+	sim 0.969697
+	DKFEGNVTFNEVMFNYPTRPNVPVLQGLSLQVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGTV
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43662 1
+	maps to  4523938 1
+	sim 0.924242
+	GKFEGNVTLNEVVFNYPTRPKVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLTGTV
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25915 1
+	maps to  4523938 1
+	sim 0.984848
+	EKFEGNVTFNEVVFNYPTRPNVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPMAGTV
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230049 1
+	maps to  4523938 1
+	sim 0.954545
+	DKFEGNVAFNEVVFNYPSRPKVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGTV
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166143 1
+	maps to  4523938 1
+	sim 0.984848
+	DKFEGNITFNEVVFNYPTRPNVPVLQGLSLEVKKGQTLALVGSSGCGKSTVVQLLERFYDPLAGTV
+	 bitmap not assigned
+
+
+	 human 4523952 1
+	FVDFGFQLLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVSAAKAANIHPFIETLPH
+checking maps ...
+	tursiops_truncatus ensembl 168039 1
+	maps to  4523952 1
+	sim 0.947368
+	FVDFGFQLLDGQEAKKLNIQWLRAQLGIVSQEPVLFDCSIADNIAYGDNSRSVKMPEIVSAAKAANIHPFIETLPK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62319 1
+	maps to  4523952 1
+	sim 0.75
+	ALDGVNVKELNIRWLRSQMGIVSQEPVLFDCSLAENIAYGDNSRSVAMDEIVAAAKAANIHSFIDGLPQ
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88976 1
+	maps to  4523952 1
+	sim 0.342105
+	YGDHSRVVSQAETVSAAKAANIHPFIKTLPD
+	 bitmap not assigned
+
+	monodelphis_domestica ensembl 72454 1
+	maps to  4523952 1
+	sim 0.444444
+	LLDGQETKKLNVQWLRSQLGIVSQEPMLFDCSIAENIAYGNNSREGHRRRLECSQSC
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78874 1
+	maps to  4523952 1
+	sim 0.736842
+	VMDKIDVKQLNIRWLRSQIGIVSQEPVLFDCTLAENIAYGDNTRKVTMEEIEAAAKAANIHNFINELPQ
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122496 1
+	maps to  4523952 1
+	sim 0.815789
+	LLDGQDARQLNVQWLRGQIGVVSQEPVLFDCSIAENIAYGDLGRAVSRDEIVRAAQAANIHPFIETLPD
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 268346 1
+	maps to  4523952 1
+	sim 0.960526
+	FMDFDFQLLDGQEAKKLNVQWLRAHLGIVSQEPILFDCSIGENIAYGDNSRFVSQDEIVSAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122593 1
+	maps to  4523952 1
+	sim 0.815789
+	LLDGQDARQLNVQWLRGQIGIVSQEPVLFDCSIAENIAYGDLGRAVSRDEIVRAAQAANIHPFIETLPD
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105711 1
+	maps to  4523952 1
+	sim 0.776316
+	VFDDIDAKTLNIQWLRSHIGIVSQEPILFDFTIAENIAYGDNSREVSHEEIISAAKAANIHSFIDSLPE
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84030 1
+	maps to  4523952 1
+	sim 0.776316
+	LLDGQNAKQLHLQWLRSQIGIVSQEPVLFDCSIADNIAYGDNSREVPFEEIVEVAKAANIHSFIESLPD
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62275 1
+	maps to  4523952 1
+	sim 0.708861
+	LLDSVDTKELNIRWLRSQMGIVSQEPVLFDCSLAENIAYGDNSRSVAMDEIVAAAKAANIHSFIDGLPQVTK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61274 1
+	maps to  4523952 1
+	sim 0.565789
+	ALDGVNVKELNIHWLRSQMGIVSQEPVLFDCSLAENIAYGDNSRSVAMDEI
+	 bitmap not assigned
+
+	pelodiscus_sinensis ensembl 68658 1
+	maps to  4523952 1
+	sim 0.772152
+	LLDGQHAKALNIQWLRAQIGIVSQEPILFDCSIAENIAYGDNNREVSHEEIINAAKAANIHSFIDSLPNVS
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115592 1
+	maps to  4523952 1
+	sim 0.973684
+	FVDFGFQLLDGQEAKKLNIQWLRAHLGIVSQEPVLFDCSIAENIAYGDNSRAVSQDEIVNAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	danio_rerio ensembl 648205 1
+	maps to  4523952 1
+	sim 0.776316
+	MLDDNDAKQLNIHWLRSQIGIVSQEPVLFDCSLAENIAYGDNSREVDQEEIVEAAKAANIHSFIENLPQ
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985221 1
+	maps to  4523952 1
+	sim 0.894737
+	LLDGQEAKKLNVQWLRAQLGIVSQEPVLFDCSIAENIAYGDNSRAVSQEEVVRAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206667 1
+	maps to  4523952 1
+	sim 0.881579
+	LLDGQEAKKLNIQWLRAQLGIVSQEPILFDCSIADNIAYGDNSRVVSKDEIVNAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 410038 1
+	maps to  4523952 1
+	sim 0.881579
+	SVDLGFQLLDGQEAKKLNVQWLRAHLGIVSQEPILFDCSISENIAYGDNSRVVSQEEIVKAAKEANIHAFIEMLPQ
+	 bitmap not assigned
+
+	sus_scrofa ensembl 249032 1
+	maps to  4523952 1
+	sim 0.868421
+	LLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRIVTLEEIVWAAKEANIHPFIETLPH
+	 bitmap not assigned
+
+	mus_musculus ensembl 149591 1
+	maps to  4523952 1
+	sim 0.842105
+	LLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVPHDEIVRAAKEANIHPFIETLPQ
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106317 1
+	maps to  4523952 1
+	sim 0.947368
+	FVGFGFQLLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVAHDEIVSAAKAANIHPFIETLPQ
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204323 1
+	maps to  4523952 1
+	sim 0.697368
+	ILDNMDVKMLNIHWLRSQIGIVSQEPVLFDCSLAENIAYGDNSRTVNIKEIQAAAESANIHSFIDGLPQ
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92392 1
+	maps to  4523952 1
+	sim 0.75
+	SLDGVNVKQLNIHWLRSQIGIVSQEPVLFDCSLAENIAYGDNSRSVSMDEIVAAAKAANIHSFIEGLPQ
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104823 1
+	maps to  4523952 1
+	sim 0.815789
+	LLDGRNTKTLNIQWLRAQIGIVSQEPILFDCTIAENIAYGDNSREVSHEEIVSAAKAANIHSFIESLPK
+	 bitmap not assigned
+
+	macropus_eugenii ensembl 103545 1
+	maps to  4523952 1
+	sim 0.857143
+	SVVSCLQLLDGQETKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGNNSRMVSHEEIVNAAKAANIHPFIETLPE
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24953 1
+	maps to  4523952 1
+	sim 0.868421
+	LLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVRAAKEANIHPFIETLPQ
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198750 1
+	maps to  4523952 1
+	sim 0.815789
+	LIDGKDVRSLHIQWLRAQMGIVSQEPVLFDCSMAENIAYGDNSRIVPQDEIVAAARAANIHTFIDSLPE
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114140 1
+	maps to  4523952 1
+	sim 0.828947
+	LLDGQDAKTLNIQWLRAQLGIVCQEPILFDCSIAENIAYGDNSRVVTMAEIVSAAEAANIHPFIETLPQ
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158878 1
+	maps to  4523952 1
+	sim 0.842105
+	LLDGQETKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGNNSREVSQEEIVNAAKAANIHPFIETLPE
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78047 1
+	maps to  4523952 1
+	sim 0.776316
+	EFDDKDAKTLNIQWLRSHIGIVSQEPILFDFTIAENIAYGDNTREVSHEEIISAAKAANIHSFIDSLPE
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193760 1
+	maps to  4523952 1
+	sim 0.881579
+	LLDGQEAKKLNIQWLRAHLGIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVNAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95931 1
+	maps to  4523952 1
+	sim 0.881579
+	LLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVSAAIAANIHPFIEMLPH
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88645 1
+	maps to  4523952 1
+	sim 0.815789
+	ALDNQDAKKLNIQWLRAQMGLVSQEPVLFDCSIAENIAYGDNTRVVSRIEIVAAAEAANIHSFVESLPD
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78010 1
+	maps to  4523952 1
+	sim 0.815789
+	LLDGRNTKTLNIQWLRAQIGIVSQEPILFDCTIAENIAYGDNSREVSREEIISAAKAANIHSFIESLPK
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91328 1
+	maps to  4523952 1
+	sim 0.868421
+	LLDGQEAKKLNIQWLRAHLGIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVKAAKAANIHPFIETLPY
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108607 1
+	maps to  4523952 1
+	sim 0.717949
+	LLDNTNAKQLNLQWLRSQIGIVSQEPVLFDCTLGENIAYGDNSRTATVAEIQDAAKAANIHTFIESLPQ
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 179981 1
+	maps to  4523952 1
+	sim 0.763158
+	LLNGVEVRQLNLGWLRRQLGVVSQEPVLFGCSIAENIAYGDVSRAVSRDEVVAAARAANLHDFVESLPQ
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42445 1
+	maps to  4523952 1
+	sim 0.973684
+	IMEFCFQLLDGQEAKKLNIQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRIVSQEEIVSAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158273 1
+	maps to  4523952 1
+	sim 0.947368
+	FVDFGFKLLDGQDAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNNRDVSQDEIVNAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	bos_taurus ensembl 25823 1
+	maps to  4523952 1
+	sim 0.842105
+	LLDGHEAKKLNVQWLRAQLGIVLQEPVLFDCSIADNIAYGDNSRPVTMPEIVSAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96234 1
+	maps to  4523952 1
+	sim 0.868421
+	LLDGHQAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVSAAKAANIHPFIETLPQ
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166144 1
+	maps to  4523952 1
+	sim 0.907895
+	LLDGQEAKKLNVQWLRAQLGIVSQEPVLFDCSIAENIAYGDNSRVVSQDEIVSAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20914 1
+	maps to  4523952 1
+	sim 0.789474
+	IFDGKNAKALNIQWLRAQIGIVSQEPILFDCTIAENIAYGDNSREVSFEEIVSAAKQANIHSFIDSLPD
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 332354 1
+	maps to  4523952 1
+	sim 0.631579
+	IVSQEPILFDCSIAENIAYGDNSRVVSKDEIVSAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427241 1
+	maps to  4523952 1
+	sim 0.973684
+	FVDFGFQRLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVSAAKAANIHHFVETLPH
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156116 1
+	maps to  4523952 1
+	sim 1.0
+	FVDFGFQLLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVSAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138831 1
+	maps to  4523952 1
+	sim 0.907895
+	LLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVSAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686239 1
+	maps to  4523952 1
+	sim 0.986842
+	FVDFGFQLLDGQEAKKLNVQWLRAQLRIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVSAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	pteropus_vampyrus ensembl 62361 1
+	maps to  4523952 1
+	sim 0.960526
+	FVDFGFQLLDGQEAKKLNVQWLRAQLGIVSQEPVLFDCSIAENIAYGDNSRFVSQDEIVNAAKAANIDPFIETLPH
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230054 1
+	maps to  4523952 1
+	sim 0.934211
+	VDFGFQLLDGQQAKKLNVQWLRARLGIVSQEPILFDCSIAENIAYGDNSRTVSQDEIVSAAKAANIHPFIETLPQ
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43668 1
+	maps to  4523952 1
+	sim 0.986842
+	FVDLGFQLLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVSQEEIVSAAKAANIHPFIETLPH
+	 bitmap not assigned
+
+	felis_catus ensembl 225130 1
+	maps to  4523952 1
+	sim 0.894737
+	FQLLDGHEAKKLNIQWLRAHLGIVSQEPVLFDCSIAENIAYGDNSRVVSQDEIVNAAKAANIHPFIETLPR
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25921 1
+	maps to  4523952 1
+	sim 0.855263
+	LLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRFVSQEEIVKAAKAANIHPFIEMLPQ
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125469 1
+	maps to  4523952 1
+	sim 0.960526
+	FVDFGFQLLDGQEAKKLNVQWLRAQLGIVSQEPILFDCSIAENIAYGDNSRVVSQDEIVKAAKEANIHPFIEMLPH
+	 bitmap not assigned
+
+
+	 human 4523943 1
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+checking maps ...
+	tursiops_truncatus ensembl 168070 1
+	maps to  4523943 1
+	sim 0.959184
+	KYETRVGDKGTQLSGGQKQRIAIARALIRHPRILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61314 1
+	maps to  4523943 1
+	sim 0.959184
+	KYDTQAGDKGTQLSGGQKQRIAIARAIIRNPKLLLLDEATSALDTESEK
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88983 1
+	maps to  4523943 1
+	sim 0.408163
+	VGDKGTQLSGGQKQKTAIARA
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122641 1
+	maps to  4523943 1
+	sim 0.938776
+	RYETRVGDKGAQLSGGQKQRIAIARALVRHPPILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	felis_catus ensembl 225138 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78921 1
+	maps to  4523943 1
+	sim 0.938776
+	KYNTQAGDKGTQLSGGQKQRVAIARAILRNPKVLLLDEATSALDTESEK
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 410140 1
+	maps to  4523943 1
+	sim 0.938776
+	KYATRVGDKGTQLSGGQKQRIAIARALLRQPPILLLDEATSALDTQSEK
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84031 1
+	maps to  4523943 1
+	sim 0.918367
+	KYNTAVGDKGTQLSGGQKQRIAIARALIRRPTILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62286 1
+	maps to  4523943 1
+	sim 0.635135
+	DGSLVVHEAVRHHVRRITSSSLLEQKYDTQAGDKGTQLSGGQKQRIAIARAIIRNPKLLLLDEATSALDTESEK
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88646 1
+	maps to  4523943 1
+	sim 0.938776
+	KYNTRVGDKGAQLSGGQKQRVAIARALIRNPKILLLDEATSALDTESER
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122498 1
+	maps to  4523943 1
+	sim 0.882353
+	RYDTRVGDGGAQLSGGQKQRIAIARALVRRPPILLLDEATSALDTESEKVA
+	 bitmap not assigned
+
+	danio_rerio ensembl 648207 1
+	maps to  4523943 1
+	sim 0.938776
+	RYQTQAGDKGTQLSGGQKQRIAIARAILRNPKVLLLDEATSALDTESEK
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985225 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDRGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115613 1
+	maps to  4523943 1
+	sim 0.769231
+	KYETRVGDKGTQLSGGQNKRCYRRALIRQLKILCKDEATSALDTESEK
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83195 1
+	maps to  4523943 1
+	sim 0.959184
+	KYDTQAGDKGTQLSGGQKQRIAIARAILRNPKLLLLDEATSALDTESEK
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206695 1
+	maps to  4523943 1
+	sim 1.0
+	KYETKVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25928 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGTQLSGGQKQRIAIARALVRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	mus_musculus ensembl 149603 1
+	maps to  4523943 1
+	sim 0.959184
+	KYNTRVGDKGTQLSGGQKQRIAIARALIRQPRVLLLDEATSALDTESEK
+	 bitmap not assigned
+
+	sus_scrofa ensembl 249061 1
+	maps to  4523943 1
+	sim 0.979592
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPRILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106322 1
+	maps to  4523943 1
+	sim 0.653061
+	GQKQRIAIARALIRHPHILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104827 1
+	maps to  4523943 1
+	sim 0.938776
+	KYNTRVGDKGAQLSGGQKQRIAIARALIRQPRILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92393 1
+	maps to  4523943 1
+	sim 0.959184
+	RYDTQAGDKGTQLSGGQKQRVAIARAIIRNPKLLLLDEATSALDTESEK
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24959 1
+	maps to  4523943 1
+	sim 0.979592
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPRVLLLDEATSALDTESEK
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198824 1
+	maps to  4523943 1
+	sim 0.959184
+	KYNTKVGDKGTQLSGGQKQRIAIARALVRQPKILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158879 1
+	maps to  4523943 1
+	sim 0.959184
+	KYETRVGDKGTQLSGGQKQRIAIARALIRHPRILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114149 1
+	maps to  4523943 1
+	sim 0.979592
+	KYETRVGDRGTQLSGGQKQRIAIARALIRQPRILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105742 1
+	maps to  4523943 1
+	sim 0.959184
+	KYNTRVGDKGTQLSGGQKQRIAIARALIRKPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	choloepus_hoffmanni ensembl 125481 1
+	maps to  4523943 1
+	sim 0.979592
+	KYETRVGDKGTQLSGGQKQRIAIARALIRHPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 95992 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGTQLSGGQKQRIAIARALIRNPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108623 1
+	maps to  4523943 1
+	sim 0.938776
+	KYDTQAGDKGAQLSGGQKQRIAIARAILRNPKVLLLDEATSALDTESEK
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 179984 1
+	maps to  4523943 1
+	sim 0.877551
+	AYDTVVGERGAQLSGGQKQRVAIARALLRDPRVLLLDEATSALDAESEK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78049 1
+	maps to  4523943 1
+	sim 0.938776
+	KYNTRVGDKGAQLSGGQKQRIAIARALVRKPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193761 1
+	maps to  4523943 1
+	sim 0.979592
+	KYATRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91338 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	bos_taurus ensembl 25872 1
+	maps to  4523943 1
+	sim 0.959184
+	KYETRVGDKGTQLSGGQKQRIAIARALIRHPRILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42463 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158299 1
+	maps to  4523943 1
+	sim 0.979592
+	KYETRVGDKGTQLSGGQKQRIAIARALIRHPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78012 1
+	maps to  4523943 1
+	sim 0.9
+	KYNTRVGDKGALLSGGQKQRIAIARALVRQPRILLLDEATSALDTESEKV
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96236 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166147 1
+	maps to  4523943 1
+	sim 0.979592
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTVSEK
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204348 1
+	maps to  4523943 1
+	sim 0.938776
+	KYNTQAGDKGTQLSGGQKQRIAIARAILRNPKVLLLDEATSALDTESEK
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20921 1
+	maps to  4523943 1
+	sim 0.959184
+	KYNTRVGDKGTQLSGGQKQRIAIARALVRKPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 332393 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427243 1
+	maps to  4523943 1
+	sim 0.979592
+	KYKTKVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156118 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGSQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138834 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686248 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230059 1
+	maps to  4523943 1
+	sim 1.0
+	KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+	 bitmap not assigned
+
+
+	 human 4523953 1
+	VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGRVKEHGTHQQLLAQKGIYFSMVSVQAGTQNL
+checking maps ...
+	tursiops_truncatus ensembl 168103 1
+	maps to  4523953 1
+	sim 0.941176
+	IVQEALDKAREGRTCIVIAHRLSTIQNADLIVVIENGKVKEHGTHQQLLAQRGIYFSMVSVQAGTQK
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 61363 1
+	maps to  4523953 1
+	sim 0.785714
+	VVQEALDQARKGRTCIVVAHRLSTIQNADCIAVFQGGVVVEKGTHQQLIAKKGVYHMLVTKQMGHNGE
+	 bitmap not assigned
+
+	xiphophorus_maculatus ensembl 78950 1
+	maps to  4523953 1
+	sim 0.742857
+	VVQDALDQASKGRTCIIVAHRLSTIRNADRIAVFQGGVVVEQGTHQQLLAKKGVYHMLVTTQLGHRTE
+	 bitmap not assigned
+
+	procavia_capensis ensembl 88993 1
+	maps to  4523953 1
+	sim 0.956522
+	VVQDALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGKIKEHGTHRQLLAHKGIYFTMVSVQAGTQNLQ
+	 bitmap not assigned
+
+	felis_catus ensembl 225147 1
+	maps to  4523953 1
+	sim 1.0
+	IVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGKVKEHGTHQQLLAQKGIYFSMVSVQAGTQNL
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122651 1
+	maps to  4523953 1
+	sim 0.808824
+	LVQDALDRAREGRTCVVIAHRLSTIQNADRIVVIQDGRVQEQGTHSELLARGGLYFSLVNVQTGTHRM
+	 bitmap not assigned
+
+	gallus_gallus ensembl 104832 1
+	maps to  4523953 1
+	sim 0.838235
+	IVQEALDKAREGRTCIVIAHRLSTIQNADKIAVIQNGKVIEQGTHQQLLAEKGFYYSLVNVQSGPRTV
+	 bitmap not assigned
+
+	gallus_gallus ensembl 105773 1
+	maps to  4523953 1
+	sim 0.867647
+	IVQEALDKAREGRTCIVIAHRLSTIQNADKIAVIQNGKVIEQGTHQQLLAEKGFYYSLVNVQSGSCNM
+	 bitmap not assigned
+
+	tupaia_belangeri ensembl 268387 1
+	maps to  4523953 1
+	sim 0.985294
+	VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGRIKEHGTHQQLLAQKGIYFSMVSVQTGTQNL
+	 bitmap not assigned
+
+	anolis_carolinensis ensembl 84032 1
+	maps to  4523953 1
+	sim 0.838235
+	VVQEALDKARQGRTCIVIAHRLSTVQNADSIAVIQNGKVIEQGTHQQLLAMKGVYHSLVNVQAGTATE
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62291 1
+	maps to  4523953 1
+	sim 0.811594
+	VVQEALDQARKGRTCIVVAHRLSTIQNADCIAVFQGGVVVEKGTHQQLIAKKGVYHMLVTKQMGHNAE
+	 bitmap not assigned
+
+	danio_rerio ensembl 648211 1
+	maps to  4523953 1
+	sim 0.732394
+	IVQDALDKASKGRTCIIVAHRLSTIQNADCIAVVQNGVVVEQGTHQQLLSQQGAYYTLVTSQMSH
+	 bitmap not assigned
+
+	ornithorhynchus_anatinus ensembl 122504 1
+	maps to  4523953 1
+	sim 0.764706
+	LVQDALDRAREGRTCVVIAHRLSTVQNADRIAVIRDGRVQEQGTHSELLARGGLYFSLVNVGSGTRRF
+	 bitmap not assigned
+
+	canis_familiaris ensembl 115752 1
+	maps to  4523953 1
+	sim 0.985294
+	IVQEALDKAREGRTCIVIAHRLSTIQNADIIVVFQNGKVKEHGTHQQLLAQKGIYFSMVSVQTGTQNL
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 179987 1
+	maps to  4523953 1
+	sim 0.691176
+	VVQDALEKAQQGRTCIVIAHRLSTVRAADVIAVLQDGDICELGSHEELLSARGLYYRLVEAQ
+	 bitmap not assigned
+
+	oryctolagus_cuniculus ensembl 985226 1
+	maps to  4523953 1
+	sim 0.911765
+	VVQEALDKAREGRTCVVIAHRLSTIQNADMIVVLHNGRVKECGTHHQLLAQKGIYFSMVSIQTGTQN
+	 bitmap not assigned
+
+	sus_scrofa ensembl 249103 1
+	maps to  4523953 1
+	sim 0.941176
+	IVQEALDKAREGRTCIVIAHRLSTIQNADLIVVIQNGKVQEHGTHQQLLAQKGIYFSMVSVQAGTPN
+	 bitmap not assigned
+
+	sorex_araneus ensembl 206729 1
+	maps to  4523953 1
+	sim 0.955882
+	IVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGRIKEQGTHQQLLAQKGLYYSMVSVQTGTQTL
+	 bitmap not assigned
+
+	mus_musculus ensembl 149621 1
+	maps to  4523953 1
+	sim 0.955882
+	VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVIENGKVKEHGTHQQLLAQKGIYFSMVNIQAGTQNL
+	 bitmap not assigned
+
+	echinops_telfairi ensembl 106325 1
+	maps to  4523953 1
+	sim 0.970588
+	IVQEALDKAREGRTCIVIAHRLSTIQSADLIVVFQNGKIKEHGTHQQLLAQKGIYFSMVTVQAGTQNS
+	 bitmap not assigned
+
+	takifugu_rubripes ensembl 92407 1
+	maps to  4523953 1
+	sim 0.771429
+	VVQEALDQARKGRTCIVVAHRLSTIQNADCIAVFQGGVVVEKGTHQQLIAKKGVYHMLVTKQMGYH
+	 bitmap not assigned
+
+	oreochromis_niloticus ensembl 83196 1
+	maps to  4523953 1
+	sim 0.708333
+	VVQEALDQASKGRTCIIVAHRLSTIQNADRIAVFQGGVVVEQGTHQQLLAKKGVYHMLVNRQMGHGDK
+	 bitmap not assigned
+
+	rattus_norvegicus ensembl 24967 1
+	maps to  4523953 1
+	sim 0.955882
+	VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVIDNGKVKEHGTHQQLLAQKGIYFSMVNIQAGTQNL
+	 bitmap not assigned
+
+	erinaceus_europaeus ensembl 332431 1
+	maps to  4523953 1
+	sim 0.323529
+	IVQEALDKAREARTCIVIAHHL
+	 bitmap not assigned
+
+	sarcophilus_harrisii ensembl 158880 1
+	maps to  4523953 1
+	sim 0.955882
+	IVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGKVKEQGTHQQLLAQKGIYFSLVNVQTGTQNL
+	 bitmap not assigned
+
+	petromyzon_marinus ensembl 198885 1
+	maps to  4523953 1
+	sim 0.823529
+	IVQEALDRAREGRTCIVIAHRLSTVQTADKIAVIQNGQVIEQGTHQQLLAKKGAYHLLVNAQVSQI
+	 bitmap not assigned
+
+	meleagris_gallopavo ensembl 78050 1
+	maps to  4523953 1
+	sim 0.867647
+	VVQEALDKAREGRTCIVIAHRLSTIQNADKIAVIQNGKVTEQGTHQQLLAEKGFYYSLVNVQSGSCNM
+	 bitmap not assigned
+
+	vicugna_pacos ensembl 114157 1
+	maps to  4523953 1
+	sim 0.867647
+	VVQEALDKAREGRTCIVIAHCLSTIQNADVIVVIENGRVMEHGTHQQLLAQKGIYHSMVSVQAGA
+	 bitmap not assigned
+
+	tetraodon_nigroviridis ensembl 62324 1
+	maps to  4523953 1
+	sim 0.335366
+	VHEAVRHHVRRINSSSLLEQKYDTQAGDKGTQLSGGQKQRIAIARAIIRNPKLLLLDEATSALDTESEKVSGDSPWVHLMDPSGLYRAGDSRLQVVQEALDQARKGRTCIVVAHRLSTIQNADCIAVFQGGVVVEKGTHQQLIAKKGVYHMLVTKQMGHNDE
+	 bitmap not assigned
+
+	ailuropoda_melanoleuca ensembl 91348 1
+	maps to  4523953 1
+	sim 0.955882
+	IVQEALDKAREGRTCIVIAHRLSTIQNADFIVVLQNGKVKEHGTHQQLLAQKGIYFSMVSIQAGTQN
+	 bitmap not assigned
+
+	mustela_putorius_furo ensembl 193762 1
+	maps to  4523953 1
+	sim 0.970588
+	IVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGKVKEHGTHQQLLAQKGIYFSMVSVQNGKQNL
+	 bitmap not assigned
+
+	gasterosteus_aculeatus ensembl 108639 1
+	maps to  4523953 1
+	sim 0.768116
+	VVQEALDEASKGRTCIIVAHRLSTIQNADRIAVFNGGVVMELGTHQQLLAQKGVYHMLVDKQMGHQRK
+	 bitmap not assigned
+
+	dipodomys_ordii ensembl 42482 1
+	maps to  4523953 1
+	sim 0.926471
+	VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVIQNGKVKEYGTHQQLLAQKGIYFSMVNIQTGTQHL
+	 bitmap not assigned
+
+	dasypus_novemcinctus ensembl 158335 1
+	maps to  4523953 1
+	sim 0.970588
+	VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFENGKIKEHGTHQQLLAQKGIYFSMVNVQAGTQNL
+	 bitmap not assigned
+
+	gadus_morhua ensembl 204369 1
+	maps to  4523953 1
+	sim 0.768116
+	VVQEALDQASQGRTCIVVAHRLSTIQNADRIVVFQDGVVVEQGTHQQLLAQKGFYHTLVTKQMGH
+	 bitmap not assigned
+
+	bos_taurus ensembl 25915 1
+	maps to  4523953 1
+	sim 0.955882
+	IVQEALDKAREGRTCIVIAHRLSTIQNADLIVVIENGRVREHGTHQQLLAQKGIYFTMVSVQAGTQN
+	 bitmap not assigned
+
+	latimeria_chalumnae ensembl 88647 1
+	maps to  4523953 1
+	sim 0.838235
+	IVQEALDKARKGRTCIIIAHRLSTIQNADTIAVIQNGQVVELGTHNQLLANKGPYYSLVMGQVGQK
+	 bitmap not assigned
+
+	ochotona_princeps ensembl 410230 1
+	maps to  4523953 1
+	sim 0.955882
+	VVQEALDKAREGRTCIVIAHRLSTIQNADMIVVFQNGRVKECGTHHQLLAQRGIYYTMVSVQAGTQI
+	 bitmap not assigned
+
+	otolemur_garnettii ensembl 96239 1
+	maps to  4523953 1
+	sim 0.941176
+	VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGKVKECGTHQQLLAQKGIYFSMVSVQAGI
+	 bitmap not assigned
+
+	nomascus_leucogenys ensembl 166151 1
+	maps to  4523953 1
+	sim 1.0
+	VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGRVKEHGTHQQLLAQKGIYFSMVSVQAGTQNL
+	 bitmap not assigned
+
+	taeniopygia_guttata ensembl 20927 1
+	maps to  4523953 1
+	sim 0.826087
+	IVQEALDKAREGRTCIMIAHRLSTIQNADKISVVQNGRVVEQGTHQQLLAEKGIYYSLVNVQSG
+	 bitmap not assigned
+
+	macaca_mulatta ensembl 156122 1
+	maps to  4523953 1
+	sim 1.0
+	LVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGRVKEHGTHQQLLAQKGIYFSMVSVQVGTQNL
+	 bitmap not assigned
+
+	pongo_abelii ensembl 138838 1
+	maps to  4523953 1
+	sim 0.985294
+	VVQEALDEAREGRTCIVIAHRLSTIQNADLIVVFQNGRVKEHGTHQQLLAQKGIYFSMVSVQAGTQNL
+	 bitmap not assigned
+
+	pan_troglodytes ensembl 686272 1
+	maps to  4523953 1
+	sim 1.0
+	VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGRVKEHGTHQQLLAQKGIYFSMVSVQAGTQNL
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230065 1
+	maps to  4523953 1
+	sim 0.382353
+	VVQEALDKAREGRTCIVIAHRLSTVQS
+	 bitmap not assigned
+
+	microcebus_murinus ensembl 230068 1
+	maps to  4523953 1
+	sim 0.573529
+	ADSIVVFQNGKVKEHGTHQQLLAQKGIYFSMVSVQAGIQNL
+	 bitmap not assigned
+
+	tarsius_syrichta ensembl 43681 1
+	maps to  4523953 1
+	sim 0.720588
+	VVQQALDKAREGRTCIVIAHRLSTIQSADLIVVFQNGRVKEHGTHQQLLAQ
+	 bitmap not assigned
+
+	loxodonta_africana ensembl 96046 1
+	maps to  4523953 1
+	sim 0.955882
+	IVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFENGKIKEHGTHQQLLAQKGIYFSMINVQAGTQSL
+	 bitmap not assigned
+
+	ictidomys_tridecemlineatus ensembl 25934 1
+	maps to  4523953 1
+	sim 0.985294
+	VVQEALDKAREGRTCIVIAHRLSTIQNADMIVVFQNGKVKEQGTHQQLLAQKGIYFSMVSIQAGTQNL
+	 bitmap not assigned
+
+	callithrix_jacchus ensembl 427246 1
+	maps to  4523953 1
+	sim 0.985294
+	VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGRVKEQGTHQQLLAQKGIYFSMVSVQAGTQNL
+	 bitmap not assigned
+
+397176 1 1
+1 1

@@ -2,7 +2,7 @@
 # make the best alignment we can using the maps
 # we currently have at hand
 
-import MySQLdb, commands, re
+import sys, MySQLdb, commands, re
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
@@ -12,6 +12,7 @@ from   el_utils.tree    import  species_sort
 from   el_utils.ncbi    import  taxid2trivial
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
+from   el_utils.special_gene_sets  import  get_theme_ids
 
 
 from bitstring import Bits
@@ -20,23 +21,48 @@ from bitstring import Bits
 #########################################
 def main():
 
+
+    no_threads = 1
+    special    = 'one'
+
+    if len(sys.argv) > 1 and  len(sys.argv)<3:
+        print "usage: %s <set name> <number of threads> " % sys.argv[0]
+        exit(1)
+    elif len(sys.argv)==3:
+
+        special = sys.argv[1]
+        special = special.lower()
+        if special == 'none': special = None
+
+        no_threads = int(sys.argv[2])
+
     local_db = False
 
     if local_db:
-        db     = connect_to_mysql()
+        db  = connect_to_mysql()
+        cfg = ConfigurationReader()
     else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
     species                        = 'homo_sapiens'
     switch_to_db (cursor,  ensembl_db_name[species])
-    gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+
+    if special:
+        print "using", special, "set"
+        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+    else:
+        print "using all protein coding genes"
+        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
+        gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        
+
+
     with_map = 0
     tot = 0
-    #or gene_id in [412667]: #  wls
-    #for gene_id in gene_list: 
-    for gene_id in [374433]:
+    for gene_id in gene_list: 
         
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         print  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
@@ -47,16 +73,15 @@ def main():
         has_a_map = False
         for human_exon in human_exons:
             if ( not human_exon.is_canonical or  not human_exon.is_coding): continue
-            #print  
-            #print "\t human",   human_exon.exon_id,  human_exon.is_known
-            #print "\t", get_exon_pepseq(cursor, human_exon.exon_id, human_exon.is_known, 
-            #                                         ensembl_db_name['homo_sapiens'])
-            #print "checking maps ..."
+            print  
+            print "\t human",   human_exon.exon_id,  human_exon.is_known
+            print "\t", get_exon_pepseq(cursor, human_exon, ensembl_db_name['homo_sapiens'])
+            print "checking maps ..."
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
             if maps:
                 has_a_map = True
-            #else:
-            #print"no maps"
+            else:
+                print"no maps"
             if 1:
                 for map in maps:
                     species            = map.species_2
@@ -64,7 +89,8 @@ def main():
                     unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
                     if (1 or map.source=='sw_sharp'):
                         print "\t", species,  map.source, map.exon_id_2, map.exon_known_2
-                        print "\t maps to ",  map.exon_id_1, map.exon_known_1
+                        print "\tmaps to ",  map.exon_id_1, map.exon_known_1
+                        print "\tsim",  map.similarity
                         print "\t", unaligned_sequence
                         if not map.bitmap:
                             print "\t bitmap not assigned"

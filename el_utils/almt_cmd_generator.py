@@ -46,8 +46,6 @@ class AlignmentCommandGenerator(object):
         
         self.configReader = ConfigurationReader(user, passwd, host, port, check)
         # blast tools
-        
-        
         self.fastacmd  = self.configReader.get_path('fastacmd')
         self._check_exists(self.fastacmd)
 
@@ -55,7 +53,7 @@ class AlignmentCommandGenerator(object):
         self._check_exists(self.blastall)
 
         self.blastp    = self.configReader.get_path('blastall')
-        self.blastp    += " -p blastp -e "+ self.configReader.get_value('blastp_e_value')
+        self.blastp    += " -p blastp -e "+ str(self.configReader.get_value('blastp_e_value'))
 
         # ensembl database
         self.ensembldb = self.configReader.get_path('ensembl_fasta')
@@ -81,6 +79,7 @@ class AlignmentCommandGenerator(object):
         self.scan3   = self.configReader.get_path('score3')
         self.scan5   = self.configReader.get_path('score5')
         self.maxent_homedir = self.configReader.get_path('maxentscan')
+
         
     def generate_fastacmd_gene_command (self, species, seq_name, fasta_db_file, 
                                    strand = None, 

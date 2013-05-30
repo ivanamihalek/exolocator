@@ -227,7 +227,7 @@ def overlap (start, end, other_start, other_end):
 
 
 #########################################
-def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
+def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
 
     maps = []
    
@@ -239,6 +239,8 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
         if species == 'homo_sapiens': continue
         other_species = species
         break
+
+    min_similarity = cfg.get_value('min_accptbl_exon_sim')
 
     for human_exon_ct in range(len(human_exons)):
 
@@ -272,11 +274,21 @@ def maps_evaluate (human_exons, ortho_exons, aligned_seq, exon_positions):
                 [seq_human, seq_other] = pad_the_alnmt (exon_seq_human,human_start,
                                                         exon_seq_other, other_start)
 
-                ciggy = cigar_line (seq_human, seq_other)
-                [seq1, seq2]   = unfold_cigar_line (seq_human.replace('-',''), seq_other.replace('-',''), ciggy)
+                seq = {'human':seq_human, 'other':seq_other}
+                seq = strip_gaps(seq)
+                if not seq:  
+                    c=inspect.currentframe()
+                    print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
+                    exit(1)
 
+                map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
+
+                if map.similarity < min_similarity: continue
+
+
+                ciggy = cigar_line (seq['human'], seq['other'])
                 map.cigar_line = ciggy
-                map.similarity = pairwise_fract_similarity(seq1, seq2)
+                                                   
 
                 maps.append(map)                
 
@@ -383,7 +395,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
         exon_positions[species] = find_exon_positions(seq)
 
     # fill in the actual map values
-    maps = maps_evaluate (relevant_human_exons, relevant_ortho_exons, aligned_seq, exon_positions)
+    maps = maps_evaluate (cfg, relevant_human_exons, relevant_ortho_exons, aligned_seq, exon_positions)
 
     return maps
     
@@ -503,7 +515,7 @@ def maps_for_gene_list(gene_list, db_info):
         if  not ct%10:
             datastring = StringIO.StringIO()
             print >> datastring, "processed ", ct, "genes,  out of ", len(gene_list), "  ",
-            print >> datastring, no_maps, " maps;   no_exon_info: ", missing_exon_info , "no_seq_info:", missing_seq_info 
+            print >> datastring, no_maps, " maps;  no_exon_info: ", missing_exon_info, "no_seq_info:", missing_seq_info 
             print datastring.getvalue()
     cursor.close()
     db.close()
@@ -514,8 +526,22 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
+
+
     no_threads = 1
-    special    = 'circadian_clock'
+    special    = 'one'
+
+    if len(sys.argv) > 1 and  len(sys.argv)<3:
+        print "usage: %s <set name> <number of threads> " % sys.argv[0]
+        exit(1)
+    elif len(sys.argv)==3:
+
+        special = sys.argv[1]
+        special = special.lower()
+        if special == 'none': special = None
+
+        no_threads = int(sys.argv[2])
+
 
     local_db   = False
 

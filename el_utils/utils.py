@@ -301,9 +301,11 @@ def get_fasta (acg, species, searchname, searchfile, searchstrand, searchstart, 
 def check_seq_length(sequence, msg):
 
     if not sequence.values():
+        print "no sequences (?)"
         return False
     aln_length = len(sequence.values()[0])
     if not aln_length:
+        print "aln length zero (?)"
         return False
     for name, seq in sequence.iteritems():
         if not len(seq) == aln_length:
@@ -323,11 +325,12 @@ def strip_gaps (sequence):
     all_gaps = {}  
 
     if not check_seq_length(sequence, 'in_strip_gaps'): 
-        return sequence
+        return ""
     
     aln_length = len(sequence.itervalues().next())
 
     if aln_length is None or aln_length==0:
+        print "aln length zero (?)"
         return sequence
     
     for name, seq in sequence.iteritems():

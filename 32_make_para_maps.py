@@ -260,7 +260,7 @@ def maps_evaluate (template_exons, para_exons, aligned_seq, exon_positions):
                 [seq1, seq2] = unfold_cigar_line (seq_template.replace('-',''), seq_other.replace('-',''), ciggy)
 
                 map.cigar_line = ciggy
-                map.similarity = pairwise_fract_similarity (seq1, seq2)
+                map.similarity = pairwise_tanimoto (seq1, seq2)
                 
                 maps.append(map)
 

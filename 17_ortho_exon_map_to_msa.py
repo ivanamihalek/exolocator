@@ -55,6 +55,7 @@ def multiple_exon_alnmt(gene_list, db_info):
     no_maps        = 0
     no_pepseq      = 0
     no_orthologues = 0
+    min_similarity = cfg.get_value('min_accptbl_exon_sim')
 
     for gene_id in gene_list:
 
@@ -98,7 +99,7 @@ def multiple_exon_alnmt(gene_list, db_info):
 
                 switch_to_db (cursor, ensembl_db_name[map.species_2])
 
-                if map.similarity < 0.3: continue
+                if map.similarity < min_similarity: continue
                 exon    = map2exon(cursor, ensembl_db_name, map)
                 pepseq  = get_exon_pepseq (cursor,exon)
                 if (not pepseq):
@@ -128,6 +129,7 @@ def multiple_exon_alnmt(gene_list, db_info):
             mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
             #mafftcmd = "muscle -in" + fasta_fnm + " -out" + afa_fnm
             ret      = commands.getoutput(mafftcmd)
+
 
             # read in the alignment
             inf = erropen(afa_fnm, "r")

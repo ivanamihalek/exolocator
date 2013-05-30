@@ -179,7 +179,7 @@ def overlap (start, end, other_start, other_end):
 
 
 #########################################
-def maps_evaluate (cursor, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions):
+def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions):
 
     maps = []
    
@@ -194,8 +194,7 @@ def maps_evaluate (cursor, ensembl_db_name, human_exons, ortho_exons, aligned_se
 
     output_fasta ("tmp.afa", aligned_seq.keys(), aligned_seq)
     
-    for e in ortho_exons:
-        if e.is_known>1: print e.exon_id, "  --->  ", e.maps_to_human_exon_id
+    min_similarity = cfg.get_value('min_accptbl_exon_sim')
 
     for human_exon_ct in range(len(human_exons)):
 
@@ -240,18 +239,27 @@ def maps_evaluate (cursor, ensembl_db_name, human_exons, ortho_exons, aligned_se
                                                         exon_seq_other, other_start)
                 seq = {'human':seq_human, 'other':seq_other}
                 seq = strip_gaps(seq)
-                ciggy = cigar_line (seq['human'], seq['other'])
-  
-                map.cigar_line = ciggy
+                if not seq:  
+                    c=inspect.currentframe()
+                    print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
+                    exit(1)
+
                 map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
+
+                if map.similarity < min_similarity: continue
+
+
+                ciggy = cigar_line (seq['human'], seq['other'])
+                map.cigar_line = ciggy
                                                    
-                
-                if True and not map.source == 'ensembl':
+
+                if False and not map.source == 'ensembl':
                     print
                     print other_species, map.source
                     print seq['human']
                     print seq['other']
                     print map.similarity
+                    print
 
                     #exit(1)
                 # bit of paranoia, but not misplaced:  do we already have a map for this exon by any chance?
@@ -383,7 +391,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
         exon_positions[species] = find_exon_positions(seq)
 
     # fill in the actual map values
-    maps = maps_evaluate (cursor, ensembl_db_name, relevant_human_exons, 
+    maps = maps_evaluate (cursor, cfg, ensembl_db_name, relevant_human_exons, 
                           relevant_ortho_exons, aligned_seq, exon_positions)
 
     return maps
@@ -486,22 +494,19 @@ def maps_for_gene_list(gene_list, db_info):
 
             ortho_exons   = []
             
-            ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'sw_sharp')
-            ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'usearch')
-
-            for e in ortho_exons:
-                print e
-            exit(1)
+            ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'sw_exon')
+            ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'usearch_exon')
 
             if not ortho_exons: continue # nothing new here, move on
+
             ortho_exons +=  get_known_exons (cursor, ortho_gene_id, ortho_species)
             ortho_exons +=  get_predicted_exons (cursor, ortho_gene_id, ortho_species)
 
 
             maps = make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons) 
+
             if not maps:
                 print "\t", ortho_species, "no maps"
-                exit(1)
                 continue
 
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])

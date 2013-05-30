@@ -226,13 +226,13 @@ def main():
     dir_path = {}
     dir_path['ensembl_fasta'] = '/mnt/ensembl-mirror/release-69/fasta'
     # local juggling of data from one database base to the other
-    dir_path['afs_dumps']  = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
-    dir_path['afs_dumps'] += 'ExoLocator/results/dumpster'
-    dir_path['resources']  = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
-    dir_path['resources'] += 'pypeworks/exolocator/resources'
-    dir_path['scratch']    = '/tmp'
-    dir_path['maxentscan']   = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
-    dir_path['maxentscan']  += 'pypeworks/exolocator/pl_utils/maxentscan'
+    dir_path['afs_dumps']     = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
+    dir_path['afs_dumps']    += 'ExoLocator/results/dumpster'
+    dir_path['resources']     = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
+    dir_path['resources']    += 'pypeworks/exolocator/resources'
+    dir_path['scratch']       = '/tmp'
+    dir_path['maxentscan']    = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
+    dir_path['maxentscan']   += 'pypeworks/exolocator/pl_utils/maxentscan'
 
     util_path = {}
     util_path['mafft']    = '/usr/bin/mafft'
@@ -246,6 +246,7 @@ def main():
     parameter = {}
     parameter['blastp_e_value'] = "1.e-10" # it will be used as a string  when fmting the blastp cmd
     parameter['blosum_hacked']  = "blosum_hacked.txt" # filename, to be found in resources
+    parameter['min_accptbl_exon_sim'] = 0.4 #minimum acceptable exon similarity
 
     # check if the paths are functioning (at this point at least)
     for util in util_path.values():

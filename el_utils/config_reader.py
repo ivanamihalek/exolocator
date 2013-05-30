@@ -96,6 +96,13 @@ class ConfigurationReader:
             sys.exit (1)
         for row in rows:
             [name, value]        = row
+            if value.isdigit():
+                value= int(value)
+            else:
+                try: 
+                    value = float(value)
+                except:
+                    pass
             self.parameter_value[name] = value
 
         cursor.close()

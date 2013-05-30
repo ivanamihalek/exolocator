@@ -493,7 +493,7 @@ def align_exonwise (cfg, acg, human_exons, ortho_exons, ortho_species ):
         for o in range(len(ortho_exons)):
             o_exon = ortho_exons[o]
             aligned_pep_seqs[h][o] = mafft_align (cfg, acg, h_exon.pepseq, o_exon.pepseq)
-            sim_matrix[h][o]       = pairwise_fract_identity (aligned_pep_seqs[h][o])
+            sim_matrix[h][o]       = pairwise_tanimoto (aligned_pep_seqs[h][o])
             
     [human2ortho_map, ortho2human_map] = smith_waterman (sim_matrix)
 

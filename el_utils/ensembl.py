@@ -862,8 +862,29 @@ def exon2stable (cursor, exon_id=None, db_name=None):
             print rows
             exit (1)
 
-
     qry = "select stable_id from exon where exon_id=%d" % exon_id
+    rows = search_db (cursor, qry, verbose = False)
+    
+    if (not rows):
+        rows = search_db (cursor, qry, verbose = True)
+        return ""
+
+    return rows[0][0]
+    
+    
+########
+def stable2exon (cursor, stable_id, db_name=None):
+
+
+    if  (db_name):
+        qry  = "use %s " % db_name
+        rows = search_db (cursor, qry)
+        if (rows):
+            rows = search_db (cursor, qry, verbose = True)
+            print rows
+            exit (1)
+
+    qry  = "select exon_id from exon where stable_id='%s'" % stable_id
     rows = search_db (cursor, qry, verbose = False)
     
     if (not rows):

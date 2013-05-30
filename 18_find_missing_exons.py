@@ -839,7 +839,7 @@ def find_missing_exons(human_gene_list, db_info):
 	gene_ct += 1
 	if (not gene_ct%10): 
             print "processed ",   gene_ct, " out of ", len(human_gene_list), "genes"
-            print "exons found: ",  found, "out of ", sought, "sought"
+            print "exons found: ",  found, " out of ", sought, "sought"
 
 	# find all human exons for this gene that we are tracking in the database 
 	human_exons = [e for e in gene2exon_list(cursor, human_gene_id) 
@@ -872,7 +872,7 @@ def find_missing_exons(human_gene_list, db_info):
                     print 'sw_sharp'
                 if m.source == 'usearch': 
                     print 'usearch',  m.similarity, m.species_2, m.exon_id_1, m.exon_id_2
-                if not m.warning and m.similarity < 0.5: continue
+                if not m.warning and m.similarity < 0.3: continue
                 m_previous = map_table[m.species_2][he]
                 if m_previous and m_previous.similarity > m.similarity:
                         continue
@@ -1063,7 +1063,7 @@ def main():
 
 
     if len(sys.argv) > 1 and  len(sys.argv)<4:
-        print "usage: %s <set name> <number of threads> <method>"
+        print "usage: %s <set name> <number of threads> <method>" % sys.argv[0]
         exit(1)
     elif len(sys.argv)==4:
 
