@@ -192,8 +192,6 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
         other_species = species
         break
 
-    output_fasta ("tmp.afa", aligned_seq.keys(), aligned_seq)
-    
     min_similarity = cfg.get_value('min_accptbl_exon_sim')
 
     for human_exon_ct in range(len(human_exons)):
@@ -253,7 +251,7 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
                 map.cigar_line = ciggy
                                                    
 
-                if False and not map.source == 'ensembl':
+                if False and  not map.source == 'ensembl':
                     print
                     print other_species, map.source
                     print seq['human']
@@ -359,15 +357,13 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
 
     if not relevant_ortho_exons:
         print "bleep 2"
-        exit(1)
-
-
+        return maps
 
     human_seq = decorate_and_concatenate (relevant_human_exons)
     ortho_seq = decorate_and_concatenate (relevant_ortho_exons)
     
     if (not human_seq or not ortho_seq):
-        print "wuihyowi"
+        print "bleep 3"
         return maps
     
     aligned_seq = {}
@@ -380,6 +376,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
 
     if (not aligned_seq['homo_sapiens'] or 
         not aligned_seq[ortho_species]):
+        print "bleep 4"
         return []
 
     # find the positions of the exons in the alignment

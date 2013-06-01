@@ -479,7 +479,7 @@ def is_mitochondrial (cursor, gene_id, db_name=None):
     return is_mitochondrial
 
 #########################################
-def get_exon_pepseq (cursor, exon, db_name=None):
+def get_exon_pepseq (cursor, exon, db_name=None, verbose=False):
 
     if (db_name):
         if not switch_to_db(cursor, db_name):
@@ -498,9 +498,14 @@ def get_exon_pepseq (cursor, exon, db_name=None):
         return ""
 
     rows = search_db(cursor, qry)
+
+
     if (not rows):
-        #rows = search_db(cursor, qry, verbose = True)
+        if verbose:
+            rows = search_db(cursor, qry, verbose = True)
+            print rows
         return ""
+
 
     protein_seq = rows[0][0]
     if (protein_seq is None):

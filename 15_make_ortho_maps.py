@@ -285,11 +285,9 @@ def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
 
                 if map.similarity < min_similarity: continue
 
-
                 ciggy = cigar_line (seq['human'], seq['other'])
                 map.cigar_line = ciggy
                                                    
-
                 maps.append(map)                
 
     return maps
@@ -352,9 +350,33 @@ def mafft_align (cfg, acg, seq1, seq2):
     aligned_seqs.append(seq)
     
     commands.getoutput("rm "+fastafile)
- 
 
     return aligned_seqs
+
+
+#########################################
+def self_maps (cursor, ensembl_db_name, human_exons):
+
+    maps = []
+    switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+    # this should fill in the seqs for the coding exons
+    relevant_human_exons = find_relevant_exons (cursor, human_exons) 
+    for he in relevant_human_exons:
+        map = Map()
+        map.species_1    = 'homo_sapiens'
+        map.species_2    = 'homo_sapiens'                
+        map.exon_id_1    = he.exon_id
+        map.exon_id_2    = he.exon_id
+
+        map.exon_known_1 = he.is_known
+        map.exon_known_2 = he.is_known
+        map.similarity   = 1.0
+
+        pepseq = get_exon_pepseq (cursor, he, verbose=True)
+        map.cigar_line   = cigar_line (pepseq, pepseq)
+        map.source       = 'ensembl'
+        maps.append(map)  
+    return maps
 
 #########################################
 def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons):
@@ -487,6 +509,10 @@ def maps_for_gene_list(gene_list, db_info):
         # get rid of the old maps
         map_cleanup (cursor, ensembl_db_name, human_exons)
 
+        # human as its own orthologue - let's be systematic
+        maps = self_maps (cursor, ensembl_db_name, human_exons)
+        store (cursor, maps, ensembl_db_name)
+
         # one2one   orthologues
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         known_orthologues      = get_orthos (cursor, gene_id, 'orthologue')
@@ -494,8 +520,9 @@ def maps_for_gene_list(gene_list, db_info):
         # not-clear orthologues
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         unresolved_orthologues = get_orthos (cursor, gene_id, 'unresolved_ortho')
-        #
-        for [ortho_gene_id, ortho_species] in known_orthologues+unresolved_orthologues:
+
+        orthologues =  known_orthologues+unresolved_orthologues
+        for [ortho_gene_id, ortho_species] in orthologues:
             #if not ortho_species == 'dipodomys_ordii': continue
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
             if not ortho_exons:

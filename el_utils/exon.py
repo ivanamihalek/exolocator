@@ -107,9 +107,13 @@ class Exon:
         self.template_exon_seq_id  = table_row[6]
         self.template_species      = table_row[7]
 
-        self.strand              = table_row[8]
-        self.phase               = table_row[9]
+        self.strand              = table_row [8]
+        self.phase               = table_row [9]
         self.end_phase           = table_row[10]
+        self.has_NNN             = table_row[11]
+        self.has_stop            = table_row[12]
+        self.has_3p_ss           = table_row[13]
+        self.has_5p_ss           = table_row[14]
         self.is_known            = 2 if table=='sw_exon' else 3
         self.is_coding           = 1
         self.is_canonical        = 0
@@ -129,7 +133,6 @@ class Exon:
             else:
                 printstr += " %-20s    None"  % attr
             printstr += "\n"
-
 
         return printstr
 
@@ -161,5 +164,8 @@ class Exon:
         self.pepseq                = None
         self.template_species      = None
         self.template_exon_seq_id  = None
-
+        self.has_NNN               = None
+        self.has_stop              = None
+        self.has_3p_ss             = None
+        self.has_5p_ss             = None
 

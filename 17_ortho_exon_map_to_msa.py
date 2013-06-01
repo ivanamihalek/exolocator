@@ -170,6 +170,8 @@ def multiple_exon_alnmt(gene_list, db_info):
 
             ok += 1
             commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
+            #print afa_fnm
+            #exit(1)
 
         if verbose: print " time: %8.3f\n" % (time()-start);
 

@@ -190,7 +190,7 @@ def get_exon_end(cursor, exon_id):
     qry += "where exon_id = %d " % exon_id
     rows = search_db (cursor, qry)
     if (not rows or 'Error' in rows[0]):
-        print "start not found gor ", exon_id
+        print "start not found for ", exon_id
         return None
 
     return rows[0][0]
@@ -445,16 +445,7 @@ def find_exons (cursor, gene_id, species):
     mark_coding (cursor, gene_id, species, exons)
     
     
-    nr_us = len(get_exons(cursor, gene_id, species, 'usearch_exon'))
-    if nr_us:
-        print
-        print species
-        print " pred ",    len(get_exons(cursor, gene_id, species, 'prediction_exon'))
-        print " sw ",      len(get_exons(cursor, gene_id, species, 'sw_exon'))
-        print " usearch ", nr_us
-        for e in exons:
-            if e.is_known <= 1: continue
-            print e.is_known, e.covering_exon
+    nr_us = len(get_exons(cursor, gene_id, species, 'sw_exon'))
 
     return exons
 

@@ -139,7 +139,6 @@ def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_names_of
     return new_names_of_exons
 
 
-
 #########################################
 def check_notes_directory (cfg):
     
@@ -209,7 +208,8 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
     out_string += "\n" 
     out_string += "% The following exons appear in the alignment\n" 
 
-
+    novel       = []
+    novel_annot = {}
  
     for name in sorted_seq_names:
         if not stable_gene_id.has_key(name): 
@@ -217,7 +217,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
             continue
         out_string += "\n" 
         out_string += "%% sequence name: %s   corresponding to the gene: %s \n" % (name, stable_gene_id[name])
-        out_string += "%% %20s  %10s  %10s  %6s  %6s    %-s  %-s\n" % \
+        out_string += "%% %50s  %10s  %10s  %6s  %6s    %-s  %-s\n" % \
            ('exon_id', 'gene_from', 'gene_to', 'coding', 'canon', 'source', 'maps_to_human_exon')
 
         for exon_name in names_of_exons[name]:
@@ -230,9 +230,10 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
                 exon_stable_id = exon_name
 
             if (exon_known ==2 or exon_known ==3):
+
                 source = "SW#, " if (exon_known ==2) else "usearch, "
                 
-                template_species = exon.template_species
+                template_species     = exon.template_species
                 template_exon_seq_id = exon.template_exon_seq_id
                 [template_exon_id, template_exon_known] = exon_seq_id2exon_id (cursor, 
                                                         template_exon_seq_id, 
@@ -241,22 +242,58 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
                     template_stable = exon2stable(cursor, int(template_exon_id), ensembl_db_name[template_species])
                 else:
                     template_stable = 'novel'
-                source += "by sim to " + template_stable + ", " + template_species
+
+                novel.append(exon_stable_id)
+                if exon.has_NNN is None:
+                     unseq = '-'
+                elif exon.has_NNN: 
+                     unseq = 'Y'
+                else:
+                     unseq = 'N'
+
+                if exon.has_stop is None:
+                     has_stop = '-'
+                elif exon.has_stop: 
+                     has_stop = 'Y'
+                else:
+                     has_stop = 'N'
+
+                if exon.has_5p_ss is None:
+                    fivep_ss = '-'
+                else:
+                    fivep_ss = exon.has_5p_ss
+
+                if exon.has_3p_ss is None:
+                    threep_ss = '-'
+                else:
+                    threep_ss = exon.has_3p_ss
+
+                novel_annot[exon_stable_id] =  [exon_stable_id, source, template_stable, template_species, unseq, 
+                                                has_stop, fivep_ss, threep_ss]
             else:
                 source = get_logic_name (cursor, exon.analysis_id,  ensembl_db_name[species])
                 
             maps_to_human_stable = find_maps_to (cursor, ensembl_db_name, human_exon_map, name, exon_name)
                 
-            out_string += "  %20s   %10s  %10s     %-6s  %-10s   %-s   %-s \n" % \
+            out_string += "  %50s   %10s  %10s     %-6s  %-10s   %-s   %-s \n" % \
                 (exon_stable_id,  exon.start_in_gene, exon.end_in_gene,
                  exon.is_coding, exon.is_canonical, source, maps_to_human_stable)
                
-    
+    if novel:
+        out_string += "\n" 
+        out_string += "%% exons found by the exolocator pipeline: \n" 
+        out_string += "%% (unseq_regions: the  region contains NNNN stretches \n" 
+        out_string += "%% (me_score:  MaxEntScan score for the intron splice signal\n" 
+        out_string += "%% %50s  %10s  %15s  %30s    %-10s  %-10s   %-s  %-s\n" % \
+           ('name   ', 'source   ',' template_stable', 'template_species', 
+            'unseq_regions', 'has_stop', '5p_splice_signal', '3_splice_signal')
+        for exon_name in novel:
+            out_string += " %50s  %10s  %15s  %30s   %-10s  %-10s   %-s  %-s\n" %  tuple(novel_annot[exon_name])
 
 
     directory = check_notes_directory (cfg)
     notes_fnm = directory + '/'+stable_id+'.txt'
-    # print notes_fnm
+    print notes_fnm
     of = erropen (notes_fnm, "w")
     print >> of, out_string
     of.close()
@@ -319,7 +356,7 @@ def name2count (output_pep, names_of_exons):
         # sanity checking
         if not nonempty_exon_ct == len( names_of_exons[name]):
             print " foul:    nonempty_exon_ct={0}".format(nonempty_exon_ct),
-            print " len(names_of_exons[name])={0}".format(len(names_of_exons[name]))
+            print " len(names_of_exons[name])={0}".format(len(names_of_exons[name])),
             print name
             return [{},{}]
 
@@ -560,14 +597,13 @@ def realign_slice (pep_slice, seq_to_fix, pep_seq_pieces):
 def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_map,
                   names_of_exons, seq_to_fix, overlapping_maps, alnmt_pep, output_pep):
 
-    #pdb.set_trace()
 
     count = 0
 
-    #no overlapping maps - nothing to resolve"
+    #pdb.set_trace()
+    # no overlapping maps - nothing to resolve"
     if not overlapping_maps: return [output_pep, names_of_exons]
-        
-
+    # not sure how this could happen
     if not output_pep.has_key('human'): return [output_pep, names_of_exons]
 
     # 
@@ -692,7 +728,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         if not check_seq_length(new_alignment_pep, "new_alignment_pep"):
             del output_pep[seq_to_fix]
             print "abort 4"
-            exit (1)
             return [output_pep, names_of_exons]
 
         boundary_cleanup(new_alignment_pep, new_alignment_pep.keys())
@@ -700,7 +735,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         if not new_alignment_pep:  
             c=inspect.currentframe()
             print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-            exit(1)
+            print "abort 5"
+            return [output_pep, names_of_exons]
         
         current_pep = new_alignment_pep
 
@@ -1118,8 +1154,7 @@ def make_alignments ( gene_list, db_info):
                 if not human_exon_map[concat_seq_name].has_key(human_exon): 
                     human_exon_map[concat_seq_name][human_exon] = []
                 human_exon_map[concat_seq_name][human_exon].append(exon_seq_name)
-
-
+ 
         # >>>>>>>>>>>>>>>>>>
         # flag the cases when one orthologue exon maps to many human (and vice versa) for later
         for concat_seq_name, concat_exons in names_of_exons.iteritems():
@@ -1134,7 +1169,6 @@ def make_alignments ( gene_list, db_info):
         headers     = []
         output_pep  = {}
         output_dna  = {}
-
         for concat_seq_name in names_of_exons.keys():
 
             if not human_exon_map.has_key(concat_seq_name):  continue # this shouldn't happen but oh well
@@ -1162,6 +1196,7 @@ def make_alignments ( gene_list, db_info):
                     exon_seq_name = human_exon_map[concat_seq_name][human_exon][0]
                     pep = alnmt_pep[human_exon][exon_seq_name]
                     if not pep:  # what's this?
+                        print exon_seq_name, " pep empty"
                         pep = '-'*aln_length
                 else: 
                     # no exon in this species
@@ -1184,15 +1219,15 @@ def make_alignments ( gene_list, db_info):
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
- 
+
         for seq_to_fix in overlapping_maps.keys():
             # fix_one2many changes both output_pep and names_of_exons
+            if not overlapping_maps[seq_to_fix]: continue
             [output_pep, names_of_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
                                                          canonical_human_exons, human_exon_map, 
                                                          names_of_exons, seq_to_fix, 
                                                          overlapping_maps[seq_to_fix], 
                                                          alnmt_pep, output_pep)
-
             # we may have chosen to delete some sequences
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
@@ -1204,23 +1239,10 @@ def make_alignments ( gene_list, db_info):
             # >>>>>>>>>>>>>>>>>>
             boundary_cleanup(output_pep, sorted_seq_names)
             output_pep = strip_gaps(output_pep)
-            if not output_dna:
-                print "no output pep: moving on"
+            if not output_pep:
+                print "no output pep 3: moving on"
                 continue
 
-        if (1):
-            # >>>>>>>>>>>>>>>>>>
-            #output_pep = fix_split_codons (cursor, ensembl_db_name, cfg, acg, 
-            #                               sorted_trivial_names, mitochondrial, names_of_exons,  
-            #                               alnmt_pep, output_pep, flank_length)
-
-
-            afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-            ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
-            if not ret: continue
-
-            if verbose: print afa_fnm
-            
         if (1):
             # >>>>>>>>>>>>>>>>>>
             output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
@@ -1236,6 +1258,20 @@ def make_alignments ( gene_list, db_info):
             #if not ret: continue
             if verbose: print afa_fnm
 
+        # >>>>>>>>>>>>>>>>>>
+        output_pep = fix_split_codons (cursor, ensembl_db_name, cfg, acg, 
+                                           sorted_trivial_names, mitochondrial, names_of_exons,  
+                                           alnmt_pep, output_pep, flank_length)
+
+        if not output_pep:
+            print "no output pep 4: moving on"
+            continue
+
+        afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+        ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
+ 
+        if verbose: print afa_fnm
+            
 
 
         #continue

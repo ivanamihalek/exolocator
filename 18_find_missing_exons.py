@@ -149,7 +149,7 @@ def find_novel_exon_id (cursor, human_exon_id, table):
 def find_exon_seq_id (cursor, sw_exon_id, method):
 
     query  = "select exon_seq_id  from exon_seq "
-    if method == 'sw':
+    if method == 'sw_sharp':
         query += " where exon_id = %d  and is_sw = 1 " % sw_exon_id
     elif method == 'usearch':
         query += " where exon_id = %d  and is_sw = 2 " % sw_exon_id
@@ -187,7 +187,7 @@ def store_novel_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene,
     update_fields['template_exon_seq_id'] = template_exon_seq_id
     update_fields['template_species'] = template_species
 
-    if method=='sw':
+    if method=='sw_sharp':
         store_or_update (cursor, 'sw_exon', fixed_fields, update_fields)
         novel_exon_id = find_novel_exon_id (cursor, human_exon_id, 'sw_exon')
         if not novel_exon_id: return False
@@ -206,7 +206,7 @@ def store_novel_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene,
     update_fields = {}
 
     fixed_fields ['exon_id']             = novel_exon_id
-    if method == 'sw':
+    if method == 'sw_sharp':
         fixed_fields ['is_sw']           = 1
         update_fields['is_known']        = 2
     elif method == 'usearch':
@@ -227,11 +227,13 @@ def store_novel_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene,
     if not exon_seq_id: return False
 
     #################################
-    if method == 'sw':
+    if method == 'sw_sharp':
         qry  = "update sw_exon set exon_seq_id = {0} where exon_id = {1}".format(exon_seq_id, novel_exon_id)
     elif method == 'usearch':
         qry  = "update usearch_exon set exon_seq_id = {0} where exon_id = {1}".format(exon_seq_id, novel_exon_id)
-        
+    else:
+        print "unrecognized method: ", method
+        exit(1)
     cursor.execute(qry)
 
     return novel_exon_id
@@ -565,7 +567,6 @@ def organize_and_store_sw_exon (cursor, acg, ensembl_db_name, species, gene_id,
                                 template_species, template_exon_seq_id, 
                                 template_start, template_end, patched, method):
 
-    
     [gene_seq_id, gene_start, gene_end, gene_strand] = gene_coords
 
     dnaseq     = searchseq [match_start:match_end]
@@ -574,7 +575,9 @@ def organize_and_store_sw_exon (cursor, acg, ensembl_db_name, species, gene_id,
     # check one more time that the translation that we are storing matches:
     # if we patched the translation will not work out
     if not patched:
-        if not translation_check (searchseq, match_start, match_end, mitochondrial, pepseq): return None
+        if not translation_check (searchseq, match_start, match_end, mitochondrial, pepseq):
+            print "failed translation check"
+            return None
                 
     # flanking seqeunces
     flanklen    = FLANK_LENGTH
@@ -602,7 +605,9 @@ def organize_and_store_sw_exon (cursor, acg, ensembl_db_name, species, gene_id,
                                  start_in_gene, end_in_gene, gene_strand, dnaseq, left_flank, right_flank, pepseq,
                                  has_NNN, has_stop, template_exon_seq_id, template_species, method)
     
-    if not sw_exon_id: return None
+    if not sw_exon_id: 
+        print "no sw exon id"
+        return None
 
 
     # the return is used for diagnostic purposes
@@ -768,7 +773,7 @@ def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  
         print "storing to ", ensembl_db_name[species]
         if ret: 
             print "stored as exon " , sw_exon_id,
-            if method=='sw':
+            if method=='sw_sharp':
                 print "to sw_exon"
             elif method=='usearch':
                 print "to usearch_exon"
@@ -776,6 +781,7 @@ def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  
                 print "oink ?!"
         else:
             print "not stored"
+            exit(1)
         print 
        
  
@@ -1077,7 +1083,6 @@ def main():
         if not (method =='usearch' or method=='sw_sharp'):
             print "unrecognized method: ", method
             exit(1)
-
 
     # sw_sharps chokes if there is only one graphics card
     if method=='sw_sharp': no_threads = 1
