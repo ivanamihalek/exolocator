@@ -455,10 +455,10 @@ def store_exon (cursor, exon):
     fixed_fields  = {}
     update_fields = {}
 
-    fixed_fields['gene_id']  = exon.gene_id
     fixed_fields['exon_id']  = exon.exon_id
     fixed_fields['is_known'] = exon.is_known
 
+    update_fields['gene_id']  = exon.gene_id
     update_fields['start_in_gene']      = exon.start_in_gene
     update_fields['end_in_gene']        = exon.end_in_gene
     update_fields['exon_seq_id']        = exon.exon_seq_id
@@ -590,6 +590,8 @@ def main():
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
+    print '======================================='
+    print sys.argv[0]
     if special:
         print "using", special, "set"
         if special == 'complement':

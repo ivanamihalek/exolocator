@@ -231,7 +231,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
 
             if (exon_known ==2 or exon_known ==3):
 
-                source = "SW#, " if (exon_known ==2) else "usearch, "
+                source = "SW# " if (exon_known ==2) else "usearch"
                 
                 template_species     = exon.template_species
                 template_exon_seq_id = exon.template_exon_seq_id
@@ -269,7 +269,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
                     threep_ss = exon.has_3p_ss
 
                 novel_annot[exon_stable_id] =  [exon_stable_id, source, template_stable, template_species, unseq, 
-                                                has_stop, fivep_ss, threep_ss]
+                                                has_stop, threep_ss, fivep_ss]
             else:
                 source = get_logic_name (cursor, exon.analysis_id,  ensembl_db_name[species])
                 
@@ -282,11 +282,16 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
     if novel:
         out_string += "\n" 
         out_string += "%% exons found by the exolocator pipeline: \n" 
-        out_string += "%% (unseq_regions: the  region contains NNNN stretches \n" 
-        out_string += "%% (me_score:  MaxEntScan score for the intron splice signal\n" 
-        out_string += "%% %50s  %10s  %15s  %30s    %-10s  %-10s   %-s  %-s\n" % \
+        out_string += "%%    unseq_regions: the  region contains NNNN stretches \n" 
+        out_string += "%%    me_score:  MaxEntScan score for the intron splice signal\n" 
+        out_string += "%%    3pss: 3' splice signal check\n" 
+        out_string += "%%    5pss: 5' splice signal check\n" 
+        out_string += "%%    (note: by convention 5' and 3' refer to the intervening introns, not the exons;\n" 
+        out_string += "%%     thus 3' check refers to checking the region flanking the exon's 5' end)\n" 
+
+        out_string += "%% %50s  %10s  %15s  %30s    %-10s  %-10s   %-20s  %-20s\n" % \
            ('name   ', 'source   ',' template_stable', 'template_species', 
-            'unseq_regions', 'has_stop', '5p_splice_signal', '3_splice_signal')
+            'unseq_regions', 'has_stop', '3ss', '5pss' )
         for exon_name in novel:
             out_string += " %50s  %10s  %15s  %30s   %-10s  %-10s   %-s  %-s\n" %  tuple(novel_annot[exon_name])
 

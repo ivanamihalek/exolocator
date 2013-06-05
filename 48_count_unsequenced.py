@@ -659,7 +659,7 @@ def store_warning_map (cursor, ensembl_db_name,  species, human_exon, warning):
 
 
 #########################################
-def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  species, gene_id, gene_coords, 
+def find_NNN (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  species, gene_id, gene_coords, 
                       prev_seq_region, next_seq_region, template_info, mitochondrial, method):
 
     matching_region = None
@@ -678,113 +678,15 @@ def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  
         print "no search region (fasta empty)"
         return matching_region
 
-        
     # give me that sequence,  now that you have it    
     searchseq = "".join(fasta.splitlines()[1:])
     # does the search region contain NNNN?
     searchseq_contains_NNN = ('NNN' in searchseq)
 
-    # do brute force search 
-    match = brute_force_search(cfg, acg, template_dna, searchseq, method)
-
-    if  match: 
-        [search_start, search_end, template_start, template_end, 
-         aligned_target_seq, aligned_template_seq] = match
-    else: 
-        if searchseq_contains_NNN:
-            #store_warning_map (cursor, ensembl_db_name, species,  human_exon, 'has NNN')
-            pass
-        else:
-            #print "no match",
-            #print template_species, template_pepseq
-            #print "search region contains NNN:", searchseq_contains_NNN
-            pass
-        return matching_region
+    if searchseq_contains_NNN:
+        return "NNN"
         
-    # patch isolated gaps == keep track of the positions that are patched
-    [patch_failure, patched_target_seq, patched_positions] = patch_aligned_seq (aligned_target_seq, 
-                                                                                aligned_template_seq, 
-                                                                                template_start, mitochondrial)
-
-    patched = False
-    if patch_failure: 
-        print "patching failure ?"
-        #store_warning_map (cursor, ensembl_db_name, species,  human_exon, 'gappy')
-        return matching_region
-    elif patched_positions:
-        warnstr =  "patched: "+str(patched_positions)
-        store_warning_map (cursor, ensembl_db_name, species,  human_exon, warnstr)
-        patched = True
-        print warnstr
-
-    # how different is translation from the translated template?
-    # align in all three frames and pick one which is the most similar to the template 
-    # check for the length of the peptide # should I perhaps check if one of the
-    # solutions that are usb-optimal in length give lnger peptide?
-    # something I chould defineitley come back to one fine day
-    [pepseq, match_start, match_end] = find_the_most_similar_frame (cursor, mitochondrial,
-                                                                    template_pepseq, searchseq, 
-                                                                    search_start, search_end,
-                                                                    patched_target_seq)
-    if len(pepseq)<3: return matching_region
-
-    [gene_seq_region_id, gene_start, gene_end, gene_strand] = gene_coords
-
-
-    ret = []
-    ret = organize_and_store_sw_exon(cursor, acg, ensembl_db_name, species, gene_id,  
-                               gene_coords, region_start, searchseq, human_exon,
-                               match_start, match_end, mitochondrial, pepseq,
-                               template_species, template_exon_seq_id, 
-                               template_start, template_end, patched, method)
-
-    # abs coordinates:
-    if ( gene_strand >  0 ):
-        start = region_start + match_start
-        end   = region_start + match_end
-    else:
-        end   = region_end - match_start
-        start = region_end - match_end
-   
-    matching_region = Seq_Region(region_name, region_file, int(gene_strand), int(start), int (end))
-
-    if verbose:# Print out some debugging info
-        if ret:
-            [left_flank, right_flank, has_stop, sw_exon_id] = ret
-        print "============================================"
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-	human_stable      = gene2stable     (cursor, human_exon.gene_id)
-        human_description = get_description (cursor, human_exon.gene_id)
-        print human_exon.gene_id, human_stable, human_description 
-        print "found sequence for {0}:".format(species)
-        #print dnaseq
-        if  ret:
-            print "left flank:    " + left_flank 
-            print "right flank:   " + right_flank
-        #print "translation:   " + pepseq + (" (Stop codon)" if has_stop == 1 else "")
-        print "translation:   " + pepseq 
-        print "template:      " + template_pepseq
-        print "human version: " + human_exon.pepseq
-        print "template similarity to human:  %6.2f" % template_similarity_to_human
-        print "based on {0}, exon {1}, position {2} - {3}:".format(template_species,template_exon_seq_id,
-                                                                   template_start, template_end)
-        
-        print "storing to ", ensembl_db_name[species], "  db id", species2genome_db_id(cursor, species)
-        if ret: 
-            print "stored as exon " , sw_exon_id,
-            if method=='sw_sharp':
-                print "to sw_exon"
-            elif method=='usearch':
-                print "to usearch_exon"
-            else:
-                print "oink ?!"
-        else:
-            print "not stored"
-            #exit(1)
-        print 
-       
- 
-    return matching_region
+    return "fail"
 
 #########################################
 def left_region (seq_region, region_length):
@@ -832,6 +734,7 @@ def find_missing_exons(human_gene_list, db_info):
     gene_ct = 0
     found   = 0
     sought  = 0
+    unsequenced = 0
     #human_gene_list.reverse()
     for human_gene_id in human_gene_list:
 
@@ -933,7 +836,7 @@ def find_missing_exons(human_gene_list, db_info):
         species_sorted_from_human = species_sort(cursor,map_table.keys(),species)[1:]
 
         for species in species_sorted_from_human:
-
+            print species
             # see which exons have which neighbors
             #if verbose: print he.exon_id, species
             no_left  = []
@@ -987,10 +890,11 @@ def find_missing_exons(human_gene_list, db_info):
                                                            map_table, species, gene_coords, he, next[he])
                 if not next_seq_region: continue
                 sought += 1
-                matching_region = search_and_store(cursor, ensembl_db_name, cfg, acg, he, maps_for_exon[he], 
+                reply = find_NNN (cursor, ensembl_db_name, cfg, acg, he, maps_for_exon[he], 
                                                    species, gene_id,  gene_coords, prev_seq_region, 
                                                    next_seq_region, template_info, mitochondrial, method)
-                if matching_region: found += 1
+                if reply=='NNN':
+                    unsequenced += 1
 
 
             # work backwards
@@ -1016,12 +920,11 @@ def find_missing_exons(human_gene_list, db_info):
                 # the previous and the  next region frame the search region
                 prev_seq_region = left_region (next_seq_region, MAX_SEARCH_LENGTH)
                 sought         += 1
-                matching_region = search_and_store(cursor, ensembl_db_name, cfg, acg, he, maps_for_exon[he], 
+                reply = find_NNN (cursor, ensembl_db_name, cfg, acg, he, maps_for_exon[he], 
                                                    species,  gene_id, gene_coords, prev_seq_region, next_seq_region,
                                                    template_info, mitochondrial, method)
-                if matching_region: 
-                    found += 1
-                    next_seq_region = matching_region
+                if reply=='NNN':
+                    unsequenced += 1
  
             # repeat the whole procedure on the right
             prev_seq_region = None
@@ -1045,17 +948,13 @@ def find_missing_exons(human_gene_list, db_info):
                 # the following region is eyeballed from the previous 
                 next_seq_region = right_region (prev_seq_region, MAX_SEARCH_LENGTH)
                 sought         += 1
-                matching_region = search_and_store (cursor, ensembl_db_name, cfg, acg, he,  maps_for_exon[he], 
+                reply = find_NNN (cursor, ensembl_db_name, cfg, acg, he,  maps_for_exon[he], 
                                                     species, gene_id, gene_coords, prev_seq_region, next_seq_region,
                                                     template_info, mitochondrial, method)
-                #print he.pepseq
-                #print template_pepseq
-                if matching_region: 
-                    found += 1
-                    prev_seq_region = matching_region
+                if reply=='NNN':
+                    unsequenced += 1
                     
-        if verbose: print "done with ",  human_gene_id, human_stable, human_description 
-        if verbose: print "sought", sought, " found", found
+            print species, "sought", sought, " unseq", unsequenced
                 
 
 #########################################

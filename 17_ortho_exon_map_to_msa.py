@@ -70,7 +70,7 @@ def multiple_exon_alnmt(gene_list, db_info):
         human_exons = gene2exon_list(cursor, gene_id)
 
         for human_exon in human_exons:
-
+            
             tot += 1
             if verbose: print "\texon no.", tot, " id", human_exon.exon_id
             # find all orthologous exons the human exon  maps to

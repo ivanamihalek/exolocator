@@ -61,8 +61,9 @@ def make_map_table (cursor, ensembl_db_name, all_species, human_exons):
     for he in human_exons:
         maps_for_exon[he] =  get_maps(cursor, ensembl_db_name, he.exon_id, he.is_known) # exon data
         for m in maps_for_exon[he]:
-            if not m.source == 'ensembl': continue
-            if m.similarity < 0.5: continue
+            #if not m.source == 'ensembl': continue
+            #if m.similarity < 0.33333: continue
+            if not m.species_2 in all_species: continue
             map_table[m.species_2][he] = m
            #if m.source =='sw_sharp': print m.source
     # get rid of species that do not have the gene at all
@@ -79,7 +80,7 @@ def make_map_table (cursor, ensembl_db_name, all_species, human_exons):
 
 
 #########################################
-def exon_stats (cursor, ensembl_db_name, all_species,human_gene_list):
+def exon_stats (cursor, ensembl_db_name, all_species, human_gene_list):
 
     tot =             0
     exons_not_found = 0
@@ -109,21 +110,25 @@ def exon_stats (cursor, ensembl_db_name, all_species,human_gene_list):
         for species in map_table.keys():
             for he in human_exons:
                 table_size += 1
-                if not map_table[species][he]:
+                map = map_table[species][he]
+                if not map or map.similarity < 0.2:
                     holes += 1
-                elif map_table[species][he].source =='sw_sharp':
+                elif map.source =='sw_sharp':
+                    holes += 1
                     from_sw_sharp += 1
-                elif map_table[species][he].source =='usearch':
+                elif map.source =='usearch':
+                    holes += 1
                     from_usearch  += 1
+        if table_size and holes: print " % 4d  %4d  %5.2f   %5.2e   %5.2e " %  \
+                (table_size, holes,  float(holes)/table_size, float(from_usearch)/holes, float(from_sw_sharp)/holes)
 
-        #if table_size and holes: print " % 4d  %4d  %5.2f   %5.2e " %  \
-        #    (table_size, holes,  float(holes+from_sw_sharp)/table_size, float(from_sw_sharp)/holes)
+ 
+        print " %20s   %5d " % ("tot", tot)
 
-    print " %20s   %5d " % ("tot", tot)
     print " %20s   %5d " % ("exons_not_found", exons_not_found)
     print " %20s   %5d " % ("map_fail", map_fail)
-    if table_size and holes: print " % 4d  %4d  %5.2f   %5.2e " %  \
-            (table_size, holes,  float(holes+from_sw_sharp)/table_size, float(from_sw_sharp)/holes)
+    if table_size and holes: print " % 4d  %4d  %5.2f   %5.2e   %5.2e " %  \
+            (table_size, holes,  float(holes)/table_size, float(from_usearch)/holes, float(from_sw_sharp)/holes)
 
 
 #########################################
@@ -141,10 +146,18 @@ def main():
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
+    mammals = ['ailuropoda_melanoleuca',   'bos_taurus',  'callithrix_jacchus',  'canis_familiaris',  
+               'cavia_porcellus',  'choloepus_hoffmanni',  'dasypus_novemcinctus',  'dipodomys_ordii',  
+               'echinops_telfairi',  'equus_caballus',  'erinaceus_europaeus',  'felis_catus',   'gorilla_gorilla',  
+               'ictidomys_tridecemlineatus',   'loxodonta_africana',  'macaca_mulatta',  'macropus_eugenii',    
+               'microcebus_murinus',  'monodelphis_domestica',  'mus_musculus',  'mustela_putorius_furo',  
+               'myotis_lucifugus',  'nomascus_leucogenys',  'ochotona_princeps',   'ornithorhynchus_anatinus',  
+               'oryctolagus_cuniculus', 'otolemur_garnettii', 'pan_troglodytes', 'pongo_abelii',  
+               'procavia_capensis', 'pteropus_vampyrus', 'rattus_norvegicus', 'sarcophilus_harrisii',  
+               'sorex_araneus', 'sus_scrofa', 'tarsius_syrichta',  'tupaia_belangeri',  'tursiops_truncatus',  
+               'vicugna_pacos']
 
-    for special in  ['telomere_maintenance',
-                     'nonhom_end_joining', 'egfr_signaling', 'cell_cycle_checkpoints',
-                     'genecards_top500', 'wnt_pathway',  'enzymes']:
+    for special in  ['wnt_pathway']:
 
         species   = 'homo_sapiens'
         switch_to_db (cursor,  ensembl_db_name[species])
@@ -161,7 +174,7 @@ def main():
         print "(known, not predicited)"
 
         # how many  have orthologues reported?
-        exon_stats (cursor, ensembl_db_name, all_species, human_gene_list)    
+        exon_stats (cursor, ensembl_db_name, mammals, human_gene_list)    
 
 
     # how often does it happen that one  exon does not have
@@ -190,7 +203,11 @@ if __name__ == '__main__':
     main()
 
 '''
-        prev_end = 0
+       'telomere_maintenance',
+                     'nonhom_end_joining', 'egfr_signaling', 'cell_cycle_checkpoints',
+                     'genecards_top500', 'wnt_pathway',  'enzymes'
+
+       prev_end = 0
         for human_exon in human_exons:
 
             first_exon = (human_exons.index(human_exon) == 0)

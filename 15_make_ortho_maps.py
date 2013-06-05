@@ -501,10 +501,6 @@ def maps_for_gene_list(gene_list, db_info):
         if (not human_exons):
             print 'no exons for ', gene_id
             continue
-    
-        # check maps
-        #if gene_has_a_map (cursor, ensembl_db_name, human_exons):
-        #    continue
 
         # get rid of the old maps
         map_cleanup (cursor, ensembl_db_name, human_exons)
@@ -553,8 +549,6 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-
-
     no_threads = 1
     special    = 'one'
 
@@ -569,8 +563,7 @@ def main():
 
         no_threads = int(sys.argv[2])
 
-
-    local_db   = False
+    local_db = False
 
     if local_db:
         db  = connect_to_mysql()
@@ -581,7 +574,9 @@ def main():
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
-
+    
+    print '======================================='
+    print sys.argv[0]
     if special:
         print "using", special, "set"
         gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )

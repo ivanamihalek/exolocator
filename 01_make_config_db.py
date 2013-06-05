@@ -246,7 +246,7 @@ def main():
     parameter = {}
     parameter['blastp_e_value'] = "1.e-10" # it will be used as a string  when fmting the blastp cmd
     parameter['blosum_hacked']  = "blosum_hacked.txt" # filename, to be found in resources
-    parameter['min_accptbl_exon_sim'] = 0.4 #minimum acceptable exon similarity
+    parameter['min_accptbl_exon_sim'] = 0.33333 #minimum acceptable exon similarity
 
     # check if the paths are functioning (at this point at least)
     for util in util_path.values():

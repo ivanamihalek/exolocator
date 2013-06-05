@@ -242,7 +242,17 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
                     print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
                     exit(1)
 
+                    
                 map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
+                #print other_species, map.exon_id_2,  map.exon_known_2, map.similarity
+
+                if False  and not map.source == 'ensembl':
+                    print
+                    print other_species, map.source
+                    print seq['human']
+                    print seq['other']
+                    print map.similarity
+                    print
 
                 if map.similarity < min_similarity: continue
 
@@ -251,23 +261,6 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
                 map.cigar_line = ciggy
                                                    
 
-                if False and  not map.source == 'ensembl':
-                    print
-                    print other_species, map.source
-                    print seq['human']
-                    print seq['other']
-                    print map.similarity
-                    print
-
-                    #exit(1)
-                # bit of paranoia, but not misplaced:  do we already have a map for this exon by any chance?
-                #better_map = False
-                #for old_map in old_maps:
-                #    if old_map.species_2  == other_species:
-                #        if  old_map.similarity >  map.similarity:
-                #            better_map = True
-                #            break
-                #if not better_map: 
                 maps.append(map)
 
     return maps
@@ -407,7 +400,7 @@ def store (cursor, maps, ensembl_db_name, source = None):
         fixed_fields ['source']               = map.source 
         update_fields['cigar_line']           = map.cigar_line
         update_fields['similarity']           = map.similarity
-        #####
+        ################################
         switch_to_db(cursor,ensembl_db_name['homo_sapiens']) 
         store_or_update (cursor, 'exon_map', fixed_fields, update_fields)
 
@@ -487,6 +480,9 @@ def maps_for_gene_list(gene_list, db_info):
         ##########
         for [ortho_gene_id, ortho_species] in orthologues:
 
+            #if not ortho_species=='ochotona_princeps': continue
+            #print ortho_species, ortho_gene_id, species2genome_db_id (cursor, ortho_species)
+
             switch_to_db (cursor, ensembl_db_name[ortho_species])
 
             ortho_exons   = []
@@ -545,14 +541,14 @@ def main():
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
+    print '======================================='
+    print sys.argv[0]
     if special:
-
         print "using", special, "set"
         if special == 'complement':
             gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
         else:
             gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
-
     else:
         print "using all protein coding genes that have an sw# patch"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])

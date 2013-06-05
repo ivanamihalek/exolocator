@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 
 
@@ -253,15 +254,29 @@ def check_coordinates_in_the_gene (cursor, cfg, acg, ensembl_db_name, species, s
 
 
     if ( gene_strand >  0 ):
-        region_start = gene_start + start_in_gene
-        region_end   = gene_start + end_in_gene
+        if ( start_in_gene< 0 ):
+            region_start = gene_start + start_in_gene
+        else: 
+            region_start = gene_start 
 
+        if (end_in_gene > gene_end):
+            region_end = gene_start + end_in_gene
+        else:
+            region_end = gene_end
     else:
-        region_end   = gene_end - start_in_gene
-        region_start = gene_end - end_in_gene
+        if ( start_in_gene< 0 ):
+            region_end = gene_end - start_in_gene
+        else: 
+            region_end = gene_end
+
+        if (end_in_gene > gene_end):
+            region_start = gene_end - end_in_gene
+        else:
+            region_start = gene_end
         
 
     qry  = "select name, file_name "
+
     qry += " from seq_region where seq_region_id = %d " % int(gene_seq_region_id)
     rows = search_db(cursor, qry)
     [name, file_names] = rows[0]
@@ -274,11 +289,8 @@ def check_coordinates_in_the_gene (cursor, cfg, acg, ensembl_db_name, species, s
     resultstr = usearch (cfg, acg, exon_dna_seq, qry_seq, delete)
     match = parse_usearch_output (resultstr)
 
-    if not match:# should do something in this case
-        print "no match - the stored in-gene coordinates ",
-        print " (%s, %s) probably wrong" % (start_in_gene, end_in_gene)
-        print sw_exon
-        #exit(1)
+    if not match:
+        print "no match" # should do something in this case
         return []
     else:
         [match_start, match_end, template_start, template_end, 
@@ -291,9 +303,8 @@ def check_coordinates_in_the_gene (cursor, cfg, acg, ensembl_db_name, species, s
         start_in_gene_corrected = match_start - (region_end - gene_end) + 1
         end_in_gene_corrected   = match_end   - (region_end - gene_end) + 1
         
- 
 
-    return [start_in_gene, end_in_gene]
+    return [start_in_gene_corrected, end_in_gene_corrected]
 
 
 #########################################
@@ -351,14 +362,14 @@ def exon_cleanup(gene_list, db_info):
             first_exon = (human_exons.index(human_exon) == 0)
 
             for species in mammals: # maxentscan does not work for fish 
-                 
+
                  for table in ['sw_exon','usearch_exon']:
                      switch_to_db(cursor, ensembl_db_name[species])
                      qry      = "select * from %s where maps_to_human_exon_id = %d " % (table, human_exon.exon_id)
                      sw_exons = search_db(cursor, qry)
 
                      if not sw_exons:
-                         #print  "human_exon: ", human_exon.exon_id, "no", table,  "for", species
+                         #print "no", table,  "for", species
                          continue
                      ct = 0
                      ok = 0
@@ -371,6 +382,7 @@ def exon_cleanup(gene_list, db_info):
                          [sw_exon_id, gene_id, start_in_gene, end_in_gene,  maps_to_human_exon_id, exon_seq_id,
                           template_exon_seq_id, template_species,  strand, phase, end_phase, has_NNN, has_stop, 
                           has_3p_ss, has_5p_ss] = sw_exon
+
 
                          tot +=1
              
@@ -408,7 +420,7 @@ def exon_cleanup(gene_list, db_info):
                                      dna_seq     = dna_seq[:-phase]
                                  else: 
                                      print "no match ..."
-                                     exit(0) # don't want to shut-off the pipeline here
+                                     exit(1)
                              
                              pepseq_transl_start = 0
                              pepseq_transl_end   = len(dna_seq)

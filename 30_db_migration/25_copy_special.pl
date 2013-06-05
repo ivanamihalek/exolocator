@@ -30,7 +30,7 @@ while ( <IF> ) {
     print $cmd, "\n";
     (system $cmd) && print "error ...\n";
 
-    print `grep SW  $to_dir/notes/$ensembl_id.txt | wc -l`;
+    print `grep usearch  $to_dir/notes/$ensembl_id.txt | wc -l`;
     print "\n";
 	
 }

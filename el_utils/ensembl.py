@@ -16,7 +16,7 @@ def get_gene_region (cursor, gene_id, is_known=None):
     rows    = search_db (cursor, qry, verbose=False)
 
     if (not rows):
-        rows    = search_db (cursor, qry, verbose=True)
+        rows = search_db (cursor, qry, verbose=True)
         return []
     elif ( 'Error' in rows[0]):
         print  rows[0]

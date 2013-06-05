@@ -1,56 +1,209 @@
-using one set
+xenopus_tropicalis
+xiphophorus_maculatus
+=======================================
+.//07_gene2exon_store.py
+using blah set
+progress:     1.000 
+=======================================
+.//15_make_ortho_maps.py
+using blah set
 397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
-usearch 0.678571 callithrix_jacchus 4523875 3
-sw_sharp
-usearch 0.98 callithrix_jacchus 4523884 2
-usearch 0.675676 dipodomys_ordii 4523902 2
-usearch 0.710526 ochotona_princeps 4523902 4
-sw_sharp
-usearch 0.857143 echinops_telfairi 4523907 1611
-sw_sharp
-usearch 0.823529 pteropus_vampyrus 4523908 3
-usearch 0.964912 monodelphis_domestica 4523911 1909
-sw_sharp
-usearch 0.578947 macropus_eugenii 4523911 4
-usearch 0.754386 pelodiscus_sinensis 4523911 2
-usearch 0.485714 macropus_eugenii 4523915 2809
-usearch 0.903846 procavia_capensis 4523934 1194
-usearch 0.884615 tursiops_truncatus 4523934 1549
-usearch 0.893939 ochotona_princeps 4523938 1696
-usearch 0.42029 dipodomys_ordii 4523938 1
-usearch 0.836735 monodelphis_domestica 4523943 1908
-usearch 0.918367 pelodiscus_sinensis 4523943 237
-usearch 0.789474 pteropus_vampyrus 4523943 2
-usearch 0.5 pelodiscus_sinensis 4523953 2587
-region: 259469049 259569049
-search: 28894 29091
- match: 28894 29091
+=======================================
+.//18_find_missing_exons.py
+using blah set
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+region: 60246586 60346586
+ match: 91847 91997
+  gene: 60338430 60400276 1
+in gene: 4 154
+============================================
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+found sequence for callithrix_jacchus:
+left flank:    ATTATGGAACAGGAGAAATTCCATTCCACAGCTAAGTATGATTTTATTTCCTTTTTTTAG
+right flank:   GGTGAGCATTTCTTTACCTTTTAAAAATAATCCATAGCATTTCTTTAACTGGGTAAAAGT
+translation:   FRYSDWQDKLFMSLGTIMAIAHGSGLPIMMIVFGEMTDKFVDTSGNFSFP
+template:      FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFVDTAGNFSFP
+human version: FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFVDTAGNFSFP
+template similarity to human:    1.00
+based on pan_troglodytes, exon 124386, position 0 - 150:
+storing to  callithrix_jacchus_core_69_321
+stored as exon  1 to usearch_exon
+
+region: 60238433 60338433
+ match: 93674 93759
+  gene: 60338430 60400276 1
+in gene: -6322 -6237
+============================================
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+found sequence for callithrix_jacchus:
+left flank:    GGCTGGACGCCCCGAGCCAGAGCGGGTGCACTTGGACCTGAGGCTGTGGTTTCTCCCCAG
+right flank:   GGTACATTCCCAGCAGCCACTGGCTTTTCCGTTACATGAGGATCAGCAGGGTCAAGTTCA
+translation:   AEMDPEAARNGTAPRRGREEGDFELGSS
+template:      MDLEAAKNGTAWRPTSAEGDFELGNS
+human version: MDLEAAKNGTAWRPTSAEGDFELGIS
+template similarity to human:    0.96
+based on pan_troglodytes, exon 124384, position 0 - 85:
+storing to  callithrix_jacchus_core_69_321
+stored as exon  2 to usearch_exon
+
+patching failure ?
+region: 1 62406
+ match: 16097 16191
+  gene: 40663 109541 -1
+in gene: 63233 63327
+============================================
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+found sequence for dipodomys_ordii:
+left flank:    AATGAAGTGAAGTTCAACTACCCCACCCGGCCAGACATCCCAGTGCTTCAGGGACTGAGT
+right flank:   CATTGGCCGGCACGGTGGTGAGCACGCTTTCTTAAAAAACTGAATGAAGACTGCATTTTA
+translation:   LQVKKGQTLALVGSSGCGKSTVVQLLERFYD
+template:      ILKGLNLKVKSGQTVALVGNSGCGKSTTVQLLQRLYDPTEGK
+human version: ILKGLNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT
+template similarity to human:    0.90
+based on mus_musculus, exon 206356, position 18 - 112:
+storing to  dipodomys_ordii_core_69_1
+stored as exon  1 to usearch_exon
+
+region: 81693 181693
+ match: 21961 22049
+  gene: 40663 109541 -1
+in gene: -50190 -50102
+============================================
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+found sequence for dipodomys_ordii:
+left flank:    CATTGAAAACTTGTTACTGTAGTAATCTTCTAATATTTTTCATCTGTTTAGAAGCCAAGT
+right flank:   GAAAGGAAGTTAAGGTACCATGACAAATAATTAAGCTATTTGATGAAGAATTTCTGATAC
+translation:   IDSFSTSGHRPDNIKGNLEFRNIHFSYPS
+template:      NPKIDSFSERGHKPDNIKGNLEFSDVHFSYPSRANIK
+human version: NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK
+template similarity to human:    0.95
+based on mus_musculus, exon 206355, position 9 - 97:
+storing to  dipodomys_ordii_core_69_1
+stored as exon  2 to usearch_exon
+
+region: 1 58090
+ match: 20892 20970
+  gene: 33553 78155 -1
+in gene: 40958 41036
+============================================
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+found sequence for ochotona_princeps:
+left flank:    GGAAACGTGACACTCAATGAAGTTGTGTTCAACTACCCCATGCGGCCCAACGTGCCAGTG
+right flank:   GTGGTGCAGCTGCTTGAGCGCTTCTACGACCCCTTGGCCGGGACAGTGGTGAGCACCCTT
+translation:   LQGLSLEVKKGQTLALVGPSGCGKST
+template:      ILKGLNLKVRSGQTVALVGSSGCGKSTTVQLMQRLYDPTEGT
+human version: ILKGLNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT
+template similarity to human:    0.95
+based on oryctolagus_cuniculus, exon 228947, position 4 - 79:
+storing to  ochotona_princeps_core_69_1
+stored as exon  1 to usearch_exon
+
+region: 63703 163703
+ match: 27813 27901
+  gene: 33553 78155 -1
+in gene: -57734 -57646
+============================================
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+found sequence for ochotona_princeps:
+left flank:    TGACATGTCACTAAAAGTATTACAACTTCATTACCCTTTTATTTTGTTCAGGAGCCAAGC
+right flank:   GGAAAGAAGTCAAGGTACAGTGATCTCTGCTCAGTCAGTGATGACACAGTCTATTGAAGA
+translation:   IDSYSENGHKPDNIKGNLEFRNVHFSYPS
+template:      NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK
+human version: NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK
+template similarity to human:    1.00
+based on oryctolagus_cuniculus, exon 228946, position 9 - 97:
+storing to  ochotona_princeps_core_69_1
+stored as exon  2 to usearch_exon
+
+region: 113245 213245
+ match: 29990 30069
+  gene: 170394 237632 -1
+in gene: 54378 54457
+============================================
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+found sequence for tursiops_truncatus:
+left flank:    AACTATCCCACGCGGCCAAACGTGCCCGTGCTTCAGGGGCTGAGCCTCGAGGTGAAGAAG
+right flank:   CCTTGGCTGGCACAGTGGTGAGCACACTTTCTTAAATTAGTAACTTGATTTAAGGCAGTA
+translation:   GQTLALVGSSGCGKSTVVQLLERFYD
+template:      ILKGLNLKVESGQTVALVGNSGCGKSTVVQLVQRLYDPDVGS
+human version: ILKGLNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT
+template similarity to human:    0.90
+based on bos_taurus, exon 49325, position 33 - 112:
+storing to  tursiops_truncatus_core_69_1
+stored as exon  1 to usearch_exon
+
+region: 584407 684407
+ match: 34914 35015
+  gene: 649389 711483 -1
+in gene: 61991 62092
+============================================
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+found sequence for pteropus_vampyrus:
+left flank:    ATTAATGGCAACTTGCAGAAATATGAAACAAGAGTGGGAGATAAAGGAACTCAGCTCTCA
+right flank:   AAAAGTATGGCCTCCCATCTCATGTTCCATTTAATTTGTAAAATAGAAGTTTTTGTGCTG
+translation:   GGQKQRIAIARALIRQPRILLLDEATSALDTES
+template:      KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+human version: KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+template similarity to human:    1.00
+based on canis_familiaris, exon 220246, position 42 - 143:
+storing to  pteropus_vampyrus_core_69_1
+stored as exon  1 to usearch_exon
+
+region: 690130 790130
+ match: 11091 11283
+  gene: 649389 711483 -1
+in gene: -67555 -67363
+============================================
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+found sequence for pteropus_vampyrus:
+left flank:    ACACATTACAACTCTGCAATGTATAAAATTCATACTTACTTTTTATTTCAGATCAGTGTT
+right flank:   AATGTAAGTCCTTCTTGACTTTTGTCATGCTAGAGGTTCAAGGCATAGAATGTTGGCCTA
+translation:   DGQDIRTINVRYLREITGVVSQEPVLFATTIAENIRYGRENVTMDEIEKAVKEANAYDFIMKLP
+template:      INIDGQDIKTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+human version: INIDGQDIRNFNVNYLREIIGVVSQEPVLFSTTIAENICYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+template similarity to human:    0.96
+based on canis_familiaris, exon 220245, position 7 - 199:
+storing to  pteropus_vampyrus_core_69_1
+stored as exon  2 to usearch_exon
+
+region: 259421471 259521471
+ match: 52421 52551
   gene: 259421285 259524026 -1
-----------------
-GTTGTCCAAGAAGCCCTGGACAAGGCCAGAGAAGGTCGCACGTGTATTGTGATCGCCCATCGGCTCTCCACCATCCAGAATGCTGACCTTATTGTGGTATTCCAGGATGGCAAGGTCAAGGAACAAGGCACACACCAAGAGCTGATGGCTCAGAAAGGCCTCTATTTTTCACTGGTCAATGTTCAGAGTGGGGCAAAG
+in gene: 54977 55107
 ============================================
 397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
 found sequence for monodelphis_domestica:
-left flank:    ACTAAGAAGTTAGAGTGGATTTTTCTCTTACAAATAATCATGTATGTAATCACCACATAG
-right flank:   GCGCATTTAAACTCCTTTTACTCACTTCATACATTTCATAAGTTAAATGTTTCCTCTATT
-translation:   VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQDGKVKEQGTHQELMAQKGLYFSLVNVQSGA
-template:      VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGRVKEHGTHQQLLAQKGIYFSMVSVQAGTQNL
-human version: VVQEALDKAREGRTCIVIAHRLSTIQNADLIVVFQNGRVKEHGTHQQLLAQKGIYFSMVSVQAGTQNL
-template similarity to human:    1.00
-based on homo_sapiens, exon 139538, position 0 - 197:
+left flank:    CCCTGAACCACCTTCTGTTCCTTCAACTGCTCTCTGTGTTAACAGAAATTTGACACTCTG
+right flank:   CAGAGGTGCAGGCAGCTCTGGATAAGGTCAGTGCATCCCAAAGAACCTAAGATAAGCTGC
+translation:   VGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESE
+template:      KYETRVGDKGTQLSGGQKQRIAIARALIRHPRILLLDEATSALDTESEK
+human version: KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+template similarity to human:    0.96
+based on sarcophilus_harrisii, exon 279701, position 14 - 143:
 storing to  monodelphis_domestica_core_69_5
-stored as exon  1910 to usearch_exon
+stored as exon  1 to usearch_exon
 
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
+region: 407 85042
+ match: 45028 45129
+  gene: 180 82807 -1
+in gene: 42794 42895
+============================================
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+found sequence for macropus_eugenii:
+left flank:    GCTGCTCTCTATTAACAGAAATTTGACACTCTGGTTGGAGAAAGAGGGGCCCAGCTGAGT
+right flank:   ATTTGAGGTACAAGCGGCTCTGGATAAGGTCAGTGCACCCCAAAGAACTCAAAATAAACA
+translation:   GGQKQRIAIARALIRNPKILLLDEATSALDTES
+template:      KYETRVGDKGTQLSGGQKQRIAIARALIRHPRILLLDEATSALDTESEK
+human version: KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+template similarity to human:    0.96
+based on sarcophilus_harrisii, exon 279701, position 42 - 143:
+storing to  macropus_eugenii_core_69_1
+stored as exon  1 to usearch_exon
+
 region: 4873627 4880133
-search: 5487 5573
  match: 5487 5573
   gene: 4880133 4891134 1
-----------------
-ATTGCTACTGAAGCCATAGAAAATATCCGAACAGTAGTTACTTTGACCAAGGAAAGAAAATTTGAATATATGTATGGACAAAATTTG
+in gene: -1018 -932
 ============================================
 397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
 found sequence for pelodiscus_sinensis:
@@ -64,62 +217,168 @@ based on taeniopygia_guttata, exon 33538, position 0 - 86:
 storing to  pelodiscus_sinensis_core_69_1
 stored as exon  1 to usearch_exon
 
-no match search region contains NNN: False
-region: 87496 88795
-search: 785 901
- match: 785 901
-  gene: 75627 95567 -1
-----------------
-ATCGACGGGCATGATGTGCGCTCCCTCAACGTGCGCTTCCTGAGGGAAAAGATCGGCGTGGTGAGCCAGGAGCCCATCCTCTTCGCCACCACCATCACAGAGAATATCCGGTACGGC
+region: 4891134 4991134
+ match: 2108 2254
+  gene: 4880133 4891134 1
+in gene: 13110 13256
 ============================================
 397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
-found sequence for gadus_morhua:
-left flank:    GGGGCACATAGACGGACCCCTTCTTCCCTTATCTCTTAAATCCCCCTCCCCTAGGTGCAC
-right flank:   CTGGCCCGAGGTCACCCAGCNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-translation:   IDGHDVRSLNVRFLREKIGVVSQEPILFATTITENIRY
-template:      VFIDGHDIRSLNIRYLREMIGVVSQEPVLFATTITENIRYGRLDVTQEEIERATKESNAYDFIMNLPD
-human version: INIDGQDIRNFNVNYLREIIGVVSQEPVLFSTTIAENICYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
-template similarity to human:    0.78
-based on takifugu_rubripes, exon 139934, position 6 - 122:
-storing to  gadus_morhua_core_69_1
-stored as exon  3 to usearch_exon
-
-no match search region contains NNN: False
-region: 115874 116198
-search: 72 101
- match: 73 103
-  gene: 103925 124831 1
-----------------
-TCTGAACAGCACGTTACAGGAGGACATGCA
-============================================
-397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
-found sequence for takifugu_rubripes:
-left flank:    ACACCAATCCTGATTAAGCACCAACAACGCCTTTTGTCTTCAGATTCTACTACTACTATT
-right flank:   AGGTGTGTTTACCGCCTGCTTTCTTACTGTAACTTTAAAAGCCCTCCTGAAGGCCCTGAC
-translation:   LNSTLQEDMQ
-template:      FTVALNSTLQEDMQ
-human version: NFSLSLLNPGKILEEEMT
-template similarity to human:    0.50
-based on tetraodon_nigroviridis, exon 141359, position 13 - 42:
-storing to  takifugu_rubripes_core_69_4
+found sequence for pelodiscus_sinensis:
+left flank:    CATATCCAGGCTAAATTGCTGGTTGGACACACCTTCTAAACTTGTATTTATTATATTTAG
+right flank:   GGTATGTAGTGTTTATGTACACAGGGGAAATCTAGAACCATAGTTGTTAATCCAACAATT
+translation:   KYNTSVGDKGTQLSGGQKQRIAIARALVRHPQILLLDEATSALDSESE
+template:      KYNTRVGDKGTQLSGGQKQRIAIARALVRKPQILLLDEATSALDTESEK
+human version: KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK
+template similarity to human:    0.96
+based on taeniopygia_guttata, exon 33543, position 0 - 146:
+storing to  pelodiscus_sinensis_core_69_1
 stored as exon  2 to usearch_exon
 
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-no match search region contains NNN: False
-prev_seq_region.name != next_seq_region.name  GL485986 GL477923
-(cannot handle such cases yet)
-no search region 
-no match search region contains NNN: False
-no match search region contains NNN: False
 done with  397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
-sought 26  found 4
+sought 125  found 13
+=======================================
+.//20_novel_exon_cleanup.py
+using blah set
+#############################################
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+callithrix_jacchus usearch_exon
+	  template 124384 pan_troglodytes 125
+	  template left flank GTGGTTTCTCCTCAG GCT
+	           left flank GGCTGGACGCCCCGAGCCAGAGCGGGTGCACTTGGACCTGAGGCTGTGGTTTCTCCCCAG GCT
+	           True 6 0
+	  template right flank CAG GTACATCCCCAGCAG
+	           right flank AGC GGTACATTCCCAGCAGCCACTGGCTTTTCCGTTACATGAGGATCAGCAGGGTCAAGTTCAAGGTACATTCCCAGCAGCCACTGGCTTTTCCGTTACATGAGGATCAGCAGGGTCAAGTTCA
+	           False 1 0 4.893
+	     human MDLEAAKNGTAWRPTSAEGDFELGIS 4523875 -1
+	  template MDLEAAKNGTAWRPTSAEGDFELGNS
+	 deposited AEMDPEAARNGTAPRRGREEGDFELGSS
+	 corrected MDPEAARNGTAPRRGREEGDFELGSS
+#############################################
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+callithrix_jacchus usearch_exon
+	  template 124386 pan_troglodytes 125
+	  template left flank ATTTCCTTTTTTTAG TTT
+	           left flank ATTATGGAACAGGAGAAATTCCATTCCACAGCTAAGTATGATTTTATTTCCTTTTTTTAG TTT
+	           True 0 0 9.667
+	  template right flank CAG GTAAGCATTTCTTTA
+	           right flank CCA GGTGAGCATTTCTTTACCTTTTAAAAATAATCCATAGCATTTCTTTAACTGGGTAAAAGT
+	           True 1 1 9.602
+	     human FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFVDTAGNFSFP 4523884 0
+	  template FRYSDWQDKLFMSLGTIMAIAHGSGLPLMMIVFGEMTDKFVDTAGNFSFP
+	 deposited FRYSDWQDKLFMSLGTIMAIAHGSGLPIMMIVFGEMTDKFVDTSGNFSFP
+	 corrected FRYSDWQDKLFMSLGTIMAIAHGSGLPIMMIVFGEMTDKFVDTSGNFSFP
+#############################################
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+dipodomys_ordii usearch_exon
+	  template 206355 mus_musculus 134
+	  template left flank TTTTGTTTTATTTAG AAT
+	           left flank CATTGAAAACTTGTTACTGTAGTAATCTTCTAATATTTTTCATCTGTTTAGAAGCCAAGT ATC
+	           False -9 0 5.672
+	  template right flank AAG GTACTGTCAGCAACA
+	           right flank TCT GAAAGGAAGTTAAGGTACCATGACAAATAATTAAGCTATTTGATGAAGAATTTCTGATACCGAAAGGAAGTTAAGGTACCATGACAAATAATTAAGCTATTTGATGAAGAATTTCTGATAC
+	           True 14 2 7.874
+	     human NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK 4523902 0
+	  template NPKIDSFSERGHKPDNIKGNLEFSDVHFSYPSRANIK
+	 deposited IDSFSTSGHRPDNIKGNLEFRNIHFSYPS
+	 corrected IDSFSTSGHRPDNIKGNLEFRNIHFSYPSERKL
+#############################################
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+ochotona_princeps usearch_exon
+	  template 228946 oryctolagus_cuniculus 108
+	  template left flank TTTTGTTTTATTTAG AAT
+	           left flank TGACATGTCACTAAAAGTATTACAACTTCATTACCCTTTTATTTTGTTCAGGAGCCAAGC ATC
+	           True -9 0 7.711
+	  template right flank AAG GTACTGTGATATTTA
+	           right flank TCT GGAAAGAAGTCAAGGTACAGTGATCTCTGCTCAGTCAGTGATGACACAGTCTATTGAAGACGGAAAGAAGTCAAGGTACAGTGATCTCTGCTCAGTCAGTGATGACACAGTCTATTGAAGA
+	           True 14 2 8.043
+	     human NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK 4523902 0
+	  template NPKIDSFSERGHKPDSIKGNLEFNDVHFSYPSRANVK
+	 deposited IDSYSENGHKPDNIKGNLEFRNVHFSYPS
+	 corrected EPSIDSYSENGHKPDNIKGNLEFRNVHFSYPSGKKS
+#############################################
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+dipodomys_ordii usearch_exon
+	  template 206356 mus_musculus 134
+	  template left flank TGCTTTCCTCTGCAG ATC
+	           left flank AATGAAGTGAAGTTCAACTACCCCACCCGGCCAGACATCCCAGTGCTTCAGGGACTGAGT CTG
+	           False None 0 1.826
+	  template right flank AAG GTAAGTGGGAAGAAC
+	           right flank GAC CATTGGCCGGCACGGTGGTGAGCACGCTTTCTTAAAAAACTGAATGAAGACTGCATTTTACCATTGGCCGGCACGGTGGTGAGCACGCTTTCTTAAAAAACTGAATGAAGACTGCATTTTA
+	           True 17 2 6.64
+	     human ILKGLNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT 4523907 0
+	  template ILKGLNLKVKSGQTVALVGNSGCGKSTTVQLLQRLYDPTEGK
+	 deposited LQVKKGQTLALVGSSGCGKSTVVQLLERFYD
+	 corrected LQVKKGQTLALVGSSGCGKSTVVQLLERFYDHWPAR
+#############################################
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+ochotona_princeps usearch_exon
+	  template 228947 oryctolagus_cuniculus 108
+	  template left flank TCTCCTTCCTTGCAG ATC
+	           left flank GGAAACGTGACACTCAATGAAGTTGTGTTCAACTACCCCATGCGGCCCAACGTGCCAGTG CTG
+	           False None 0 2.571
+	  template right flank ACG GTAAGTGGGGAGAAC
+	           right flank ACC GTGGTGCAGCTGCTTGAGCGCTTCTACGACCCCTTGGCCGGGACAGTGGTGAGCACCCTT
+	           True 48 0 6.64
+	     human ILKGLNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT 4523907 0
+	  template ILKGLNLKVRSGQTVALVGSSGCGKSTTVQLMQRLYDPTEGT
+	 deposited LQGLSLEVKKGQTLALVGPSGCGKST
+	 corrected LQGLSLEVKKGQTLALVGPSGCGKSTVVQLLERFYDPLAGTV
+#############################################
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+tursiops_truncatus usearch_exon
+	  template 49325 bos_taurus 122
+	  template left flank TCTCTTCCCTTAAAG ATC
+	           left flank AACTATCCCACGCGGCCAAACGTGCCCGTGCTTCAGGGGCTGAGCCTCGAGGTGAAGAAG GGC
+	           False -24 0 5.479
+	  template right flank AGT GTAAGTGGGAAGAAC
+	           right flank GAC CCTTGGCTGGCACAGTGGTGAGCACACTTTCTTAAATTAGTAACTTGATTTAAGGCAGTACCCTTGGCTGGCACAGTGGTGAGCACACTTTCTTAAATTAGTAACTTGATTTAAGGCAGTA
+	           True 17 2 6.64
+	     human ILKGLNLKVQSGQTVALVGSSGCGKSTTVQLIQRLYDPDEGT 4523907 0
+	  template ILKGLNLKVESGQTVALVGNSGCGKSTVVQLVQRLYDPDVGS
+	 deposited GQTLALVGSSGCGKSTVVQLLERFYD
+	 corrected GQTLALVGSSGCGKSTVVQLLERFYDPWLAQ
+#############################################
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+pteropus_vampyrus usearch_exon
+	  template 220245 canis_familiaris 135
+	  template left flank ATTTCTTTCTTTCAG ATT
+	           left flank ACACATTACAACTCTGCAATGTATAAAATTCATACTTACTTTTTATTTCAGATCAGTGTT GAT
+	           True -9 0 9.245
+	  template right flank CAG GTAAAGTCTCTGTTA
+	           right flank CCT AATGTAAGTCCTTCTTGACTTTTGTCATGCTAGAGGTTCAAGGCATAGAATGTTGGCCTA
+	           True 3 0 8.623
+	     human INIDGQDIRNFNVNYLREIIGVVSQEPVLFSTTIAENICYGRGNVTMDEIKKAVKEANAYEFIMKLPQ 4523908 0
+	  template INIDGQDIKTFNVRYLREIIGVVSQEPVLFSTTIAENIRYGRGNVTMDEIKKAVKEANAYEFIMKLPQ
+	 deposited DGQDIRTINVRYLREITGVVSQEPVLFATTIAENIRYGRENVTMDEIEKAVKEANAYDFIMKLP
+	 corrected ISVDGQDIRTINVRYLREITGVVSQEPVLFATTIAENIRYGRENVTMDEIEKAVKEANAYDFIMKLPN
+#############################################
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+pteropus_vampyrus usearch_exon
+	  template 220246 canis_familiaris 135
+	  template left flank TGTTTTCTGTCATAG AAA
+	           left flank ATTAATGGCAACTTGCAGAAATATGAAACAAGAGTGGGAGATAAAGGAACTCAGCTCTCA GGA
+	           False None 0 -3.657
+	  template right flank AAG GTCAGTCAACCCGAA
+	           right flank AGT AAAAGTATGGCCTCCCATCTCATGTTCCATTTAATTTGTAAAATAGAAGTTTTTGTGCTGGAAAAAGTATGGCCTCCCATCTCATGTTCCATTTAATTTGTAAAATAGAAGTTTTTGTGCTG
+	           False 4 1 3.766
+	     human KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK 4523911 0
+	  template KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEAEVQAALDK
+	 deposited GGQKQRIAIARALIRQPRILLLDEATSALDTES
+#############################################
+397176 ENSG00000005471 ATP-binding cassette, sub-family B (MDR/TAP), member 4 [Source:HGNC Symbol;Acc:45]
+monodelphis_domestica usearch_exon
+	  template 279701 sarcophilus_harrisii 121
+	  template left flank AAAATGTTCTTTCAG AAA
+	           left flank CCCTGAACCACCTTCTGTTCCTTCAACTGCTCTCTGTGTTAACAGAAATTTGACACTCTG GTT
+	           True -15 0 9.149
+	  template right flank AAG GTATAAGCTATTACA
+	           right flank GAA CAGAGGTGCAGGCAGCTCTGGATAAGGTCAGTGCATCCCAAAGAACCTAAGATAAGCTGCTCAGAGGTGCAGGCAGCTCTGGATAAGGTCAGTGCATCCCAAAGAACCTAAGATAAGCTGC
+	           True 26 2 8.679
+	     human KYETRVGDKGTQLSGGQKQRIAIARALIRQPQILLLDEATSALDTESEK 4523943 0
+	  template KYETRVGDKGTQLSGGQKQRIAIARALIRHPRILLLDEATSALDTESEK
+	 deposited VGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESE
+	 corrected KFDTLVGERGAQLSGGQKQRIAIARALVRNPKILLLDEATSALDTESEQRCRQLWI
+=======================================
+.//07_gene2exon_store.py
+using blah set
+progress:     1.000 

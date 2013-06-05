@@ -180,13 +180,13 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
     if not sequence_stripped_pep:  
         c=inspect.currentframe()
         print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
-        exit(1)
+        return ['','']
     # strip common gaps
     sequence_stripped_dna = strip_gaps (sequence_dna)
     if not sequence_stripped_dna:  
         c=inspect.currentframe()
         print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
-        exit(1)
+        return ['', '']
 
     return [sequence_stripped_pep, sequence_stripped_dna]
 
