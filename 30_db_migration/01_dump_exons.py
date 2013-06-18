@@ -84,6 +84,7 @@ def dump_exons (species_list, db_info):
                     ct += 1
                     continue
                 # human readable string describing the source of annotation for this exon
+                print exon
                 analysis       = source[exon.analysis_id] 
                 # the first field return by get_exon_seqs is the exon_seq_id, so get rid of it
                 gene_stable_id = gene2stable(cursor,gene_id)
