@@ -52,7 +52,6 @@ def dump_exons (species_list, db_info):
         #    continue
         outfile  = "{0}/{1}_exon_dump.txt".format(out_path, species)
         of       = erropen (outfile,"w")
-        print of
         switch_to_db (cursor,  ensembl_db_name[species])
 
         if (species=='homo_sapiens'):
@@ -84,12 +83,20 @@ def dump_exons (species_list, db_info):
                     ct += 1
                     continue
                 # human readable string describing the source of annotation for this exon
-                print exon
-                analysis       = source[exon.analysis_id] 
+                if exon.is_known==2:
+                    analysis = 'sw_sharp'
+                elif exon.is_known==3:
+                    analysis = 'usearch'
+                else:
+                    analysis = source[exon.analysis_id] 
                 # the first field return by get_exon_seqs is the exon_seq_id, so get rid of it
                 gene_stable_id = gene2stable(cursor,gene_id)
-                if ( exon.is_known):
+                if ( exon.is_known == 1):
                     exon_stable_id = exon2stable(cursor,exon.exon_id)
+                elif ( exon.is_known == 2):
+                    exon_stable_id = 'sw_sharp_'+str(exon.exon_id)
+                elif ( exon.is_known == 3):
+                    exon_stable_id = 'usearch_'+str(exon.exon_id)
                 else:
                     exon_stable_id = "anon"
 
