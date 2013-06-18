@@ -117,7 +117,7 @@ def store(cursor, in_path, infile, species):
         is_constitutive = int(field[9])
         species         =     field[10]
         source          =     field[11]
-        if source == 'sw_sharp':
+        if source == 'sw_sharp' or source=='usearch':
             human_exon      = field[12]
             protein_seq     = field[13]
             # here I have two fields showing where the peptide translation starts and where it ends
