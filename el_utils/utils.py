@@ -455,8 +455,10 @@ def  fract_identity (cigar_line):
         elif alignment_instruction == 'B':
             lengthA += no_repeats
             
-    shorter = lengthA if lengthA<=lengthB else lengthB
-
+    if lengthA<=lengthB:
+        shorter = lengthA
+    else:
+        shorter = lengthB
     if shorter == 0: return fraction # fraction is still set to 0
 
     if total_length:
