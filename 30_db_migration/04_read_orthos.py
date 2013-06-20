@@ -76,25 +76,18 @@ def check_exon_table_size(cursor, db_name, species):
 
 
 #########################################
-def store(cursor, in_path, infile, species):
+def store(cursor, in_path, infile):
 
-    table =  'exon_' + species
     inf   = erropen (in_path+"/"+infile, "r")
 
     print "storing contents of ", in_path, " file ", infile
-    if 0:
-        qry = "create index key_id on  " + table + "(exon_key)";
-        rows = search_db(cursor, qry)
-        if rows:
-            print rows
-            exit(1)
     
     ct = 0
     start = time()
     for line in inf:
         ct += 1
         if (not ct%1000):
-            print "   %s   %5d    %8.3f" % (species, ct,  time()-start);
+            print "     %5d    %8.3f" % (ct,  time()-start);
             start = time()
 
         fixed_fields    = {}
@@ -102,57 +95,17 @@ def store(cursor, in_path, infile, species):
 
 
         line   = line.rstrip()
-        field  = line.split("\t")
-        if len(field) < 18: continue
-
-        exon_id         = int(field[0])
-        ensembl_gene_id =     field[1]
-        ensembl_exon_id =     field[2]
-        start_in_gene   = int(field[3])
-        end_in_gene     = int(field[4])
-        strand          = int(field[5])
-        is_known        = int(field[6])
-        is_coding       = int(field[7])
-        is_canonical    = int(field[8])
-        is_constitutive = int(field[9])
-        species         =     field[10]
-        source          =     field[11]
-        #if source == 'sw_sharp' or source=='usearch':
-        #    human_exon      = field[12]
-        #    protein_seq     = field[13]
-        # here I have two fields showing where the peptide translation starts and where it ends
-        #   left_flank      = field[16]
-        #    right_flank     = field[17]
-        #    dna_seq         = field[18]
-        #    fixed_fields['maps_to_human_exon_id'] = human_exon
-        #else:
-        protein_seq     =     field[12]
-        # here I have two fields showing where the peptide translation starts and where it ends
-        left_flank      =     field[15]
-        right_flank     =     field[16]
-        dna_seq         =     field[17]
-
-
-        exon_key = ensembl_gene_id + "_" + str(exon_id) + "_" + str(is_known)
-        fixed_fields ['exon_key']        = exon_key  
+        field = line.split("\t")
+        if len(field) < 4: continue
+        [human_stable_id, cognate_stable_id, species, common_name]  =  field
   
-        update_fields['ensembl_gene_id'] = ensembl_gene_id
-        update_fields['ensembl_exon_id'] = ensembl_exon_id
-        update_fields['start_in_gene']   = start_in_gene 
-        update_fields['end_in_gene']     = end_in_gene  
-        update_fields['strand']          = strand      
-        update_fields['is_known']        = is_known    
-        update_fields['is_coding']       = is_coding    
-        update_fields['is_canonical']    = is_canonical 
-        update_fields['is_constitutive'] = is_constitutive
-        update_fields['species']         = species         
-        update_fields['source']          = source      
-        update_fields['protein_seq']     = protein_seq  
-        update_fields['left_flank']      = left_flank   
-        update_fields['right_flank']     = right_flank  
-        update_fields['dna_seq']         = dna_seq     
-
-        store_or_update (cursor, table, fixed_fields, update_fields)
+        fixed_fields ['ensembl_gene_id'] = human_stable_id  
+        fixed_fields ['species']         = species  
+  
+        update_fields['cognate_gene_id'] = cognate_stable_id
+        update_fields['common_name']     = common_name
+ 
+        store_or_update (cursor, 'ortholog', fixed_fields, update_fields)
 
     inf.close()
     
@@ -167,17 +120,8 @@ def load_from_infiles (infiles, in_path):
     ###############
     infiles.reverse()
     for infile in infiles:
-        if 'homo_sapiens' in infile: continue
-        print infile
-        start = time()
-        print "reading ", infile
-        fields = infile.split ("_")
-        species = fields[0] + "_" + fields[1] 
-        if ('mustela') in fields[0]:
-            species += "_" + fields[2]
-            
-        
-        store  (cursor, in_path, infile, species)
+         
+        store  (cursor, in_path, infile)
         #print "\t done in  %8.3f sec" % (time()-start) 
         
     
@@ -204,7 +148,7 @@ def main():
     
     ###############
     os.chdir(in_path)
-    filenames = glob.glob("*exon_dump.txt")
+    filenames = glob.glob("orthologue_dump.txt")
     
     parallelize (no_threads, load_from_infiles, filenames, in_path)
 
