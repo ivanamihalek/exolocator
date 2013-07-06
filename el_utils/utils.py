@@ -63,7 +63,7 @@ def sw_search (cfg, acg, query_seq, target_seq, delete= True):
 
     # do  SW# search
     swsharpcmd = acg.generate_SW_nt (qry_filename, tgt_filename)
-    print swsharpcmd
+    #print swsharpcmd
     resultstr  = commands.getoutput (swsharpcmd)
 
 
