@@ -49,13 +49,13 @@ def check_exon_table(cursor, db_name, species, verbose = False):
     
     if ( check_table_exists (cursor, db_name, table)):
         if verbose: print table, " found in ", db_name
-        #qry = "drop table "+table
-        #rows = search_db(cursor, qry)
-        #make_exon_table (cursor, table)
-        #if rows:
-        #    return rows[0][0]
-        #else:
-        #   return 0
+        qry = "drop table "+table
+        rows = search_db(cursor, qry)
+        make_exon_table (cursor, table)
+        if rows:
+            return rows[0][0]
+        else:
+           return 0
     else:
         if verbose: print table, " not found in ", db_name
         make_exon_table (cursor, table)
