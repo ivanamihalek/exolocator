@@ -133,14 +133,21 @@ def check_left_flank (acg, left_flank, dna_seq, template_dna_seq):
     tmp_in_file.flush()
 
 
-    cmd     = acg.generate_maxentscan_cmd (3, tmp_in_file.name)
-    scores  = commands.getoutput (cmd).split("\n")
+    cmd    = acg.generate_maxentscan_cmd (3, tmp_in_file.name)
+    blah   = commands.getoutput (cmd).split("\n")
+    scores = []
+    for sc in blah:
+        try:
+            num = float(sc)
+        except:
+            num = None
+        if not num == None:    scores.append(num)
     tmp_in_file.close()
 
     # find the position of the max score   
     index_of_max_score = None
     for i in range(len(scores)):
-        sc = float(scores[i])
+        sc = scores[i]
         if max_score < sc: 
             max_score =sc
             index_of_max_score = i
@@ -208,7 +215,17 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
     tmp_in_file.flush()
 
     cmd     = acg.generate_maxentscan_cmd (5, tmp_in_file.name)
-    scores  = commands.getoutput (cmd).split("\n")
+    blah   = commands.getoutput (cmd).split("\n")
+    scores = []
+    for sc in blah:
+        try:
+            num = float(sc)
+        except:
+            num = None
+        if not num == None:    scores.append(num)
+
+
+
     tmp_in_file.close()
 
     if not scores:

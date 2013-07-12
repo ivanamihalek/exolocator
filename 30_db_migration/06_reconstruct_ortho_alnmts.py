@@ -221,7 +221,6 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
            ('exon_id', 'gene_from', 'gene_to', 'coding', 'canon', 'source', 'maps_to_human_exon')
 
         for exon_name in names_of_exons[name]:
-
             [species, exon_id, exon_known] = parse_aln_name(exon_name)
             exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
             if exon_known == 1:
@@ -294,7 +293,8 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
             'unseq_regions', 'has_stop', '3ss', '5pss' )
         for exon_name in novel:
             out_string += " %50s  %10s  %15s  %30s   %-10s  %-10s   %-s  %-s\n" %  tuple(novel_annot[exon_name])
-
+    else:
+        print 'no novel'
 
     directory = check_notes_directory (cfg)
     notes_fnm = directory + '/'+stable_id+'.txt'
@@ -1075,6 +1075,12 @@ def make_alignments ( gene_list, db_info):
 
         gene_ct += 1
 
+        if verbose: 
+            print gene_id, stable_id, get_description (cursor, gene_id)
+        elif (not gene_ct%100): 
+            print gene_ct, "out of ", len(gene_list)
+
+
         afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
         #afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
         #if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0):
@@ -1082,11 +1088,6 @@ def make_alignments ( gene_list, db_info):
         notes_fnm = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
         #if (os.path.exists(notes_fnm) and os.path.getsize(notes_fnm) > 0):
         #    continue
-
-        if verbose: 
-            print gene_id, stable_id, get_description (cursor, gene_id)
-        elif (not gene_ct%100): 
-            print gene_ct, "out of ", len(gene_list)
 
         # find all exons we are tracking in the database
         human_exons     = gene2exon_list(cursor, gene_id)
@@ -1098,6 +1099,12 @@ def make_alignments ( gene_list, db_info):
 
         # the exons are not guaranteed to be in order
         canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
+        has_sw_exons = False
+        for human_exon in canonical_human_exons:
+            has_sw_exons |= check_has_sw_exons (cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known,  min_similarity)
+        print 'has sw: ', has_sw_exons
+        if not has_sw_exons: continue
+
 
         # >>>>>>>>>>>>>>>>>>
         # reconstruct the per-exon alignment with orthologues
@@ -1114,7 +1121,12 @@ def make_alignments ( gene_list, db_info):
                bad_exons.append(human_exon)
 
         canonical_human_exons = filter (lambda x: not x in bad_exons, canonical_human_exons)
-        
+        has_sw_exons = False
+        for human_exon in canonical_human_exons:
+            has_sw_exons |= check_has_sw_exons (cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known,  min_similarity)
+        print 'has sw redux: ', has_sw_exons
+        if not has_sw_exons: continue
+       
         # >>>>>>>>>>>>>>>>>>
         # bail out if there is a problem
         if not canonical_human_exons: 
@@ -1126,6 +1138,7 @@ def make_alignments ( gene_list, db_info):
         ortho_exon_to_human_exon = {}
         for human_exon in canonical_human_exons:
             for exon_seq_name in alnmt_pep[human_exon].keys():
+                if exon_seq_name[-1]=='3': print exon_seq_name
                 if not ortho_exon_to_human_exon.has_key(exon_seq_name):
                     ortho_exon_to_human_exon[exon_seq_name] = [human_exon]
                 else:
@@ -1279,11 +1292,12 @@ def make_alignments ( gene_list, db_info):
             
 
 
-        #continue
-
         # notes to accompany the alignment:
         print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id, human_exon_map)
-        
+
+        exit(1)
+
+       
     return 
 
 

@@ -106,6 +106,24 @@ def expand_pepseq (aligned_pep_sequence, exon_seqs, flank_length):
 
 
 #########################################
+def check_has_sw_exons (cursor, ensembl_db_name, human_exon_id, human_exon_known, minsim):
+
+    has_sw_exons = False
+
+    # find all other exons that map to the human exon
+    maps    = get_maps(cursor, ensembl_db_name, human_exon_id, human_exon_known)
+    maps    = filter (lambda m: not m.exon_id_2 is None, maps)
+    maps_sw = filter (lambda m: m.source=='sw_exon' and m.similarity >minsim, maps)
+
+    if maps_sw:  
+        has_sw_exons = True
+        for map in maps_sw:
+            print map
+
+ 
+    return has_sw_exons
+
+#########################################
 def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known, mitochondrial, 
                         min_similarity,  flank_length):
 
@@ -124,6 +142,10 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
     for map in maps:
 
         if map.similarity < min_similarity: continue
+
+        if map.exon_known_2==3:
+            print " ** "
+            print map
         # get the raw (unaligned) sequence for the exon that maps onto human
         exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
         if (not exon_seqs):
@@ -165,6 +187,7 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
         # come up with a unique name for this sequence
         species       = map.species_2
         sequence_name = species + "_" + str(map.exon_id_2)+"_"+str(map.exon_known_2)
+
 
         if reconst_pepseq: 
             sequence_pep[sequence_name] = reconst_pepseq
