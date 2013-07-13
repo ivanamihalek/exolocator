@@ -402,7 +402,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
             = exon_aware_smith_waterman (human_seq, ortho_seq)
     else: # C implementation
         [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
-            = smith_waterman_context (human_seq, ortho_seq)
+            = smith_waterman_context (human_seq, ortho_seq, -5, -3)
 
     if (not aligned_seq['homo_sapiens'] or 
         not aligned_seq[ortho_species]):

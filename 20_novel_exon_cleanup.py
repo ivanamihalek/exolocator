@@ -425,7 +425,7 @@ def exon_cleanup(gene_list, db_info):
                                      dna_seq     = dna_seq[:-phase]
                                  else: 
                                      print "no match ..."
-                                     exit(0) # don't want to shut-off the pipeline here
+                                     continue # don't want to shut-off the pipeline here
                              
                              pepseq_transl_start = 0
                              pepseq_transl_end   = len(dna_seq)

@@ -242,9 +242,7 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
                     print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
                     exit(1)
 
-                    
                 map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
-                #print other_species, map.exon_id_2,  map.exon_known_2, map.similarity
 
                 if False  and not map.source == 'ensembl':
                     print
@@ -256,7 +254,12 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
 
                 if map.similarity < min_similarity: continue
 
-
+                print 'appending map'
+                print seq_human
+                print seq_other
+                print other_species, map.exon_id_2,  map.exon_known_2, map.similarity,  min_similarity
+                print
+                print
                 ciggy = cigar_line (seq['human'], seq['other'])
                 map.cigar_line = ciggy
                                                    
@@ -365,7 +368,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
             = exon_aware_smith_waterman (human_seq, ortho_seq)
     else: # C implementation
         [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
-            = smith_waterman_context (human_seq, ortho_seq)
+            = smith_waterman_context (human_seq, ortho_seq, -3, -5)
 
     if (not aligned_seq['homo_sapiens'] or 
         not aligned_seq[ortho_species]):
@@ -480,8 +483,8 @@ def maps_for_gene_list(gene_list, db_info):
         ##########
         for [ortho_gene_id, ortho_species] in orthologues:
 
-            #if not ortho_species=='ochotona_princeps': continue
-            #print ortho_species, ortho_gene_id, species2genome_db_id (cursor, ortho_species)
+            if not ortho_species=='ochotona_princeps': continue
+            print ortho_species, ortho_gene_id, species2genome_db_id (cursor, ortho_species)
 
             switch_to_db (cursor, ensembl_db_name[ortho_species])
 
@@ -494,7 +497,6 @@ def maps_for_gene_list(gene_list, db_info):
 
             ortho_exons +=  get_known_exons (cursor, ortho_gene_id, ortho_species)
             ortho_exons +=  get_predicted_exons (cursor, ortho_gene_id, ortho_species)
-
 
             maps = make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons) 
 

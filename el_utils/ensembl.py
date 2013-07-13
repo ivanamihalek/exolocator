@@ -701,7 +701,7 @@ def get_exon (cursor, exon_id, is_known=None, db_name=None):
 
 
 #########################################
-def gene2exon_list (cursor, gene_id, db_name=None):
+def gene2exon_list (cursor, gene_id, db_name=None, verbose=False):
 
     exons = []
 
@@ -711,10 +711,13 @@ def gene2exon_list (cursor, gene_id, db_name=None):
 
     qry  = "select * from gene2exon where gene_id = %d " % gene_id
     rows = search_db(cursor, qry)
+
     if (not rows):
         rows = search_db(cursor, 'select database()')
-        #print "database ", rows[0][0]
-        #rows = search_db(cursor, qry, verbose = True)
+        if verbose:
+            print "database ", rows[0][0]
+            rows = search_db(cursor, qry, verbose = True)
+            print rows
         return []
 
     for row in rows:

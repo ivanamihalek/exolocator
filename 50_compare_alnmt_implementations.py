@@ -19,7 +19,7 @@ def main():
     print "  python time: %8.3f\n" % ( time()-start);
 
     start = time()
-    [aligned_seq1, aligned_seq2] = smith_waterman_context(seq1, seq2)
+    [aligned_seq1, aligned_seq2] = smith_waterman_context(seq1, seq2, -5, -3)
     print "   C time: %8.3f\n" % ( time()-start);
 
     #print ">seq1"

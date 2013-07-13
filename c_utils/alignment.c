@@ -177,11 +177,12 @@ static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
     char retstr[100]   = {'\0'};
     int  len1, len2;
     int i, j;
+    int gap_opening, gap_extension;
     static int ** similarity = NULL;
     
 
     
-    PyArg_ParseTuple(args, "s#s#", &seq1, &len1, &seq2, &len2);
+    PyArg_ParseTuple(args, "s#s#i#i#", &seq1, &len1, &seq2, &len2, gap_opening, gap_extension);
 
     if (!seq1 || !seq2) {
 	sprintf (retstr, "no seq in py_smith_waterman_context");
@@ -204,8 +205,8 @@ static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
     //int gap_opening   =  -5; // used in 15_make_maps
     //int gap_extension =  -3;
     //char gap_character = '-'
-    int gap_opening    =  -3;  // used in 25_db_migration/06_make_alignments
-    int gap_extension  =   0;
+    //int gap_opening    =  -3;  // used in 25_db_migration/06_make_alignments
+    //int gap_extension  =   0;
     char gap_character = '#';
     int endgap         =   0;
     int use_endgap     =   0;

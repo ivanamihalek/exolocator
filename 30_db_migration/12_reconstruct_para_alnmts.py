@@ -839,7 +839,7 @@ def realign_slice (pep_slice, template_seq, seq_to_fix, pep_seq_pieces):
 
 
     [aligned_template, aligned_para] \
-        = smith_waterman_context (template_seq, pep_seq_to_fix)
+        = smith_waterman_context (template_seq, pep_seq_to_fix, -3, 0)
 
 
     aligned_para = check_Z_right(re.sub('[\dB\#]','-', aligned_para))

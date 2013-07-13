@@ -562,7 +562,7 @@ def realign_slice (pep_slice, seq_to_fix, pep_seq_pieces):
 
 
     [aligned_human, aligned_ortho] \
-        = smith_waterman_context (human_seq, pep_seq_to_fix)
+        = smith_waterman_context (human_seq, pep_seq_to_fix, -3, 0)
 
 
     aligned_ortho = check_Z_right(re.sub('[\dB\#]', '-', aligned_ortho))
@@ -1295,7 +1295,7 @@ def make_alignments ( gene_list, db_info):
         # notes to accompany the alignment:
         print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id, human_exon_map)
 
-        exit(1)
+        #exit(1)
 
        
     return 

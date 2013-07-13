@@ -26,7 +26,7 @@ def  map_cleanup (cursor, ensembl_db_name, human_exons):
 #########################################
 def main():
     
-    special    = 'one'
+    special    = None
     no_threads = 1
     local_db = False
     
@@ -41,23 +41,33 @@ def main():
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    print "using", special, "set"
-    gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special)
+    if special:
+        print "using", special, "set"
+        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special)
+    else:
+        print "using all protein coding genes"
+        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
+        gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
 
     # loop over all genes
+    sw_count = 0
+    tot_count = 0
+    outf = erropen ('genes_w_sw_exons.txt', "w")
     for human_gene_id in gene_list:
         
+        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
  	human_stable      = gene2stable    (cursor, human_gene_id)
         human_description = get_description(cursor, human_gene_id)
-	print human_gene_id, human_stable, human_description
+        tot_count += 1
+	#print human_gene_id, human_stable, human_description
    
-  	human_exons = [e for e in gene2exon_list(cursor, human_gene_id) 
+  	human_exons = [e for e in gene2exon_list(cursor, human_gene_id, verbose=True) 
                        if e.covering_exon < 0 and e.is_canonical and e.is_known]
         if not human_exons: 
             print "\t\t no exons found"
             continue
 
-        map_cleanup (cursor, ensembl_db_name, human_exons)
+        #map_cleanup (cursor, ensembl_db_name, human_exons)
 
 	human_exons.sort(key=lambda exon: exon.start_in_gene)
         # loop over all exons in this gene
@@ -70,10 +80,15 @@ def main():
             maps_for_exon[he] =  get_maps(cursor, ensembl_db_name, he.exon_id, he.is_known) # exon data
             if not maps_for_exon[he]: continue
 
-            maps_for_exon[he] = filter (lambda m: m.source == 'sw_sharp' or m.source == 'usearch', 
+            #maps_for_exon[he] = filter (lambda m: m.source == 'sw_sharp' or m.source == 'usearch', 
+            #                            maps_for_exon[he])
+            maps_for_exon[he] = filter (lambda m: m.source == 'sw_sharp', 
                                         maps_for_exon[he])
 
             if not maps_for_exon[he]: continue
+            sw_count += 1
+            print >>outf, human_stable
+            break
 
             print
             print "======================================"
@@ -94,6 +109,10 @@ def main():
                     print seq1
                     print seq2
 
+    print "tot count: ", tot_count
+    print "sw count: ", sw_count
+    
+    outf.close()
     cursor.close()
     db.close()
 

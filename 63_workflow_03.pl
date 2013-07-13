@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 
 
-@ARGV==3 || die "Usage: $0 <set name> <number of threads> <method>.\n";
+@ARGV>1 || die "Usage: $0 <set name> <number of threads>.\n";
 
 #($set, $no_thr, $method) = @ARGV;
 
@@ -13,7 +13,7 @@ foreach (  "20_novel_exon_cleanup.py",
 
     -e $_ || die "$_ not found.\n";
 }
-($set, $no_threads, $method) =  @ARGV;
+($set, $no_threads) =  @ARGV;
 
 =pod
 #40_scratch_novel_exons.py
@@ -41,5 +41,5 @@ $cmd = "17_ortho_exon_map_to_msa.py   $set  $no_threads ";
 
 
 #30/06     alignement reconstruction
-#$cmd = "30_db_migration/06_reconstruct_ortho_alnmts.py   $set  $no_threads ";
-#(system $cmd) && die "error running $cmd";
+$cmd = "30_db_migration/06_reconstruct_ortho_alnmts.py   $set  $no_threads ";
+(system $cmd) && die "error running $cmd";

@@ -319,7 +319,7 @@ def make_para_maps (cursor, ensembl_db_name, cfg, acg, template_exons, para_exon
     
     aligned_seq = {}
     [aligned_seq['template'], aligned_seq['paralogue']] \
-            = smith_waterman_context (template_seq, para_seq)
+            = smith_waterman_context (template_seq, para_seq, -5, -3)
 
     if (not aligned_seq['template'] or 
         not aligned_seq['paralogue']):
