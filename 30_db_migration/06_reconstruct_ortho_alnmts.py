@@ -1101,10 +1101,11 @@ def make_alignments ( gene_list, db_info):
         canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
         has_sw_exons = False
         for human_exon in canonical_human_exons:
-            has_sw_exons |= check_has_sw_exons (cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known,  min_similarity)
+            this_exon_has_sw = check_has_sw_exons (cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known,  min_similarity)
+            has_sw_exons |= this_exon_has_sw
         print 'has sw: ', has_sw_exons
         if not has_sw_exons: continue
-
+        
 
         # >>>>>>>>>>>>>>>>>>
         # reconstruct the per-exon alignment with orthologues
