@@ -5,16 +5,21 @@ import StringIO
 import MySQLdb, commands, re, sys
 from hashlib import sha1
 from random  import random
-from   el_utils.mysql   import  *
+from   el_utils.mysql   import  connect_to_mysql, connect_to_db
+from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
 from   el_utils.utils   import  *
 from   el_utils.threads import  parallelize
 from   el_utils.map     import  get_maps, Map
-from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
-from   el_utils.config_reader      import ConfigurationReader
-from   el_utils.alignment          import smith_waterman, exon_aware_smith_waterman
-from   el_utils.special_gene_sets  import *
+
+from   el_utils.special_gene_sets  import  get_theme_ids
+from   el_utils.almt_cmd_generator import  AlignmentCommandGenerator
+from   el_utils.config_reader      import  ConfigurationReader
+from   el_utils.alignment          import  smith_waterman, exon_aware_smith_waterman
 from   alignment import * # C implementation of smith waterman
+
+#########################################
+verbose = True
 
 
 #########################################
@@ -23,7 +28,7 @@ def decorate_and_concatenate (exons):
     count = 1
     for  exon in exons:
         pepseq = exon.pepseq
-        padded_count   = "{0:03d}".format(count)
+        padded_count = "{0:03d}".format(count)
         decorated_seq += 'B'+padded_count+pepseq+'Z'
         count += 1
 
@@ -84,16 +89,22 @@ def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
             padding += "-"
         seq_other += padding
 
-    if ( len(seq_other) >  len(seq_human)):
+    if ( len(seq_other) > len(seq_human)):
         padding = ""
         for i in range  (len(seq_other)-len(seq_human)):
             padding += "-"
         seq_human += padding
 
-
-    return [seq_human, seq_other] 
-
+    seq_human_no_common_gaps = ""
+    seq_other_no_common_gaps = ""
     
+    for i in range (len(seq_human)):
+        if seq_human[i] == '-' and seq_other[i] == '-': continue
+        seq_human_no_common_gaps += seq_human[i]
+        seq_other_no_common_gaps += seq_other[i]
+
+    return [seq_human_no_common_gaps, seq_other_no_common_gaps] 
+
 #########################################
 def alignment_line (seq_human, seq_other):
 
@@ -169,6 +180,43 @@ def cigar_line (seq_human, seq_other):
 
 
 #########################################
+def unfold_cigar_line (seq_A, seq_B, cigar_line):
+
+    seq_A_aligned = ""
+    seq_B_aligned = ""
+
+
+    char_pattern = re.compile("\D")
+    a_ct     = 0
+    b_ct     = 0
+    prev_end = 0
+
+    for match in char_pattern.finditer(cigar_line):
+        this_start       = match.start()
+        no_repeats = int(cigar_line[prev_end:this_start])
+        alignment_instruction = cigar_line[this_start]
+        prev_end = match.end()
+
+        if alignment_instruction == 'M':
+            seq_A_aligned += seq_A[a_ct:a_ct+no_repeats]
+            a_ct         += no_repeats
+            seq_B_aligned += seq_B[b_ct:b_ct+no_repeats]
+            b_ct  += no_repeats
+
+        elif alignment_instruction == 'A':
+            seq_A_aligned += '-'*no_repeats 
+            seq_B_aligned += seq_B[b_ct:b_ct+no_repeats]
+            b_ct  += no_repeats
+            
+        elif alignment_instruction == 'B':
+            seq_A_aligned += seq_A[a_ct:a_ct+no_repeats]
+            a_ct          += no_repeats
+            seq_B_aligned += '-'*no_repeats 
+
+    return [seq_A_aligned, seq_B_aligned]
+
+
+#########################################
 def overlap (start, end, other_start, other_end):
     if ( other_end < start): 
         return False
@@ -179,7 +227,7 @@ def overlap (start, end, other_start, other_end):
 
 
 #########################################
-def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions):
+def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
 
     maps = []
    
@@ -201,9 +249,6 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
             continue
         [human_start, human_end] = exon_positions['homo_sapiens'][padded_count_human]
 
-        human_exon = human_exons[human_exon_ct]
-        old_maps   = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
-
 
         for ortho_exon_ct in range(len(ortho_exons)):
 
@@ -224,17 +269,11 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
                 map.exon_known_1 = human_exons[human_exon_ct].is_known
                 map.exon_known_2 = ortho_exons[ortho_exon_ct].is_known
 
-                if ortho_exons[ortho_exon_ct].is_known == 2:
-                    map.source   = 'sw_sharp' 
-                elif ortho_exons[ortho_exon_ct].is_known == 3:
-                    map.source   = 'usearch' 
-                else:
-                    map.source   = 'ensembl'
-
                 exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end].replace('#','-')
                 exon_seq_other   = aligned_seq[other_species][other_start:other_end].replace('#','-')
                 [seq_human, seq_other] = pad_the_alnmt (exon_seq_human,human_start,
                                                         exon_seq_other, other_start)
+
                 seq = {'human':seq_human, 'other':seq_other}
                 seq = strip_gaps(seq)
                 if not seq:  
@@ -244,55 +283,38 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
 
                 map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
 
-                if False  and not map.source == 'ensembl':
-                    print
-                    print other_species, map.source
-                    print seq['human']
-                    print seq['other']
-                    print map.similarity
-                    print
-
                 if map.similarity < min_similarity: continue
 
                 ciggy = cigar_line (seq['human'], seq['other'])
                 map.cigar_line = ciggy
                                                    
-
-                maps.append(map)
+                maps.append(map)                
 
     return maps
 
-########################################
-def find_relevant_exons (cursor, all_exons, human):
+#########################################
+def find_relevant_exons (cursor, all_exons):
 
     relevant_exons = []
     protein_seq    = []
 
     # 1) choose exons that I need
     for exon in all_exons:
-        if (exon.covering_exon > 0):
+        if (not exon.is_coding or  exon.covering_exon > 0):
             continue
-        if human and not exon.is_coding:
-            continue
-        if exon.is_known>1 and not exon.exon_seq_id:
-            continue
-       
         relevant_exons.append(exon)
 
-        
     # 2) sort them by their start position in the gene
     to_remove = []
     relevant_exons.sort(key=lambda exon: exon.start_in_gene)
-
     for i in range(len(relevant_exons)):
         exon   = relevant_exons[i]
-        # local version of the function, to search possibly for sw_exon
         pepseq = get_exon_pepseq (cursor, exon)
         if not pepseq:
             to_remove.append(i)
             continue
         pepseq = pepseq.replace ('X', '')
-        if  len (pepseq) < 3:
+        if  not pepseq:
             to_remove.append(i)
         else:
             exon.pepseq = pepseq
@@ -303,6 +325,58 @@ def find_relevant_exons (cursor, all_exons, human):
 
     return relevant_exons
 
+#########################################
+def mafft_align (cfg, acg, seq1, seq2):
+
+    aligned_seqs = []
+
+    # generate rand string for the name
+    name = sha1(str(random())).hexdigest()[:15]
+    # output
+    fastafile = "{0}/{1}.fa".format  (cfg.dir_path['scratch'], name)
+    output_fasta (fastafile, ['seq1', 'seq2'], {'seq1':seq1, 'seq2':seq2}) 
+    # align
+    mafftcmd = acg.generate_mafft_command (fastafile)
+    almt     = commands.getoutput(mafftcmd)
+
+    seq = ""
+    for line in almt.split('\n'):
+        if '>' in line: 
+            if seq:
+                aligned_seqs.append(seq)
+                seq = ""
+        else:
+            seq += line
+    aligned_seqs.append(seq)
+    
+    commands.getoutput("rm "+fastafile)
+
+    return aligned_seqs
+
+
+#########################################
+def self_maps (cursor, ensembl_db_name, human_exons):
+
+    maps = []
+    switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+    # this should fill in the seqs for the coding exons
+    relevant_human_exons = find_relevant_exons (cursor, human_exons) 
+    for he in relevant_human_exons:
+        map = Map()
+        map.species_1    = 'homo_sapiens'
+        map.species_2    = 'homo_sapiens'                
+        map.exon_id_1    = he.exon_id
+        map.exon_id_2    = he.exon_id
+
+        map.exon_known_1 = he.is_known
+        map.exon_known_2 = he.is_known
+        map.similarity   = 1.0
+
+        pepseq = get_exon_pepseq (cursor, he, verbose=True)
+        map.cigar_line   = cigar_line (pepseq, pepseq)
+        map.source       = 'ensembl'
+        maps.append(map)  
+    return maps
 
 #########################################
 def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons):
@@ -311,22 +385,15 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
 
     #print "############################## human"
     switch_to_db(cursor,  ensembl_db_name['homo_sapiens'])
-    relevant_human_exons = find_relevant_exons (cursor, human_exons, human=True)
-
-
+    relevant_human_exons = find_relevant_exons (cursor, human_exons)
     #print "##############################", ortho_species
     switch_to_db(cursor,  ensembl_db_name[ortho_species])
-    relevant_ortho_exons = find_relevant_exons (cursor, ortho_exons, human=False)
-
-    if not relevant_ortho_exons:
-        print "bleep 2"
-        return maps
+    relevant_ortho_exons = find_relevant_exons (cursor, ortho_exons)
 
     human_seq = decorate_and_concatenate (relevant_human_exons)
     ortho_seq = decorate_and_concatenate (relevant_ortho_exons)
-   
+    
     if (not human_seq or not ortho_seq):
-        print "bleep 3"
         return maps
     
     aligned_seq = {}
@@ -334,16 +401,11 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
         [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
             = exon_aware_smith_waterman (human_seq, ortho_seq)
     else: # C implementation
-        ret = smith_waterman_context (human_seq, ortho_seq, -5, -3)
-        if len(ret) == 2:
-            [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] = ret
-        else:
-            print ret
-            return []
+        [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
+            = smith_waterman_context (human_seq, ortho_seq, -5, -3)
 
     if (not aligned_seq['homo_sapiens'] or 
         not aligned_seq[ortho_species]):
-        print "bleep 4"
         return []
 
     # find the positions of the exons in the alignment
@@ -355,15 +417,13 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
         exon_positions[species] = find_exon_positions(seq)
 
     # fill in the actual map values
-    maps = maps_evaluate (cursor, cfg, ensembl_db_name, relevant_human_exons, 
-                          relevant_ortho_exons, aligned_seq, exon_positions)
+    maps = maps_evaluate (cfg, relevant_human_exons, relevant_ortho_exons, aligned_seq, exon_positions)
 
     return maps
     
 #########################################
-def store (cursor, maps, ensembl_db_name, source = None):
+def store (cursor, maps, ensembl_db_name):
 
- 
     for map in maps:
         fixed_fields  = {}
         update_fields = {}
@@ -372,10 +432,10 @@ def store (cursor, maps, ensembl_db_name, source = None):
         fixed_fields ['cognate_genome_db_id'] = species2genome_db_id(cursor, map.species_2)
         fixed_fields ['cognate_exon_id']      = map.exon_id_2
         fixed_fields ['cognate_exon_known']   = map.exon_known_2
-        fixed_fields ['source']               = map.source 
         update_fields['cigar_line']           = map.cigar_line
         update_fields['similarity']           = map.similarity
-        ################################
+        update_fields['source']               = 'ensembl'
+        #####
         switch_to_db(cursor,ensembl_db_name['homo_sapiens']) 
         store_or_update (cursor, 'exon_map', fixed_fields, update_fields)
 
@@ -388,7 +448,6 @@ def  map_cleanup (cursor, ensembl_db_name, human_exons):
     for exon in human_exons:
         qry  = "delete from exon_map where exon_id = %d " % exon.exon_id
         qry += " and exon_known = %d " % exon.is_known
-        qry += " and cognate_exon_known > 1 " 
         rows = search_db (cursor, qry, verbose=False)
 
 
@@ -408,8 +467,9 @@ def gene_has_a_map (cursor, ensembl_db_name, human_exons):
 
     return has_a_map
 
+
 #########################################
-def maps_for_gene_list(gene_list, db_info):
+def orthos_for_gene_list(gene_list, db_info):
     
 
     [local_db, ensembl_db_name] = db_info
@@ -423,62 +483,12 @@ def maps_for_gene_list(gene_list, db_info):
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    missing_exon_info = 0
-    missing_seq_info  = 0
-    ct                = 0
-    no_maps           = 0
 
-    #######################################
     for gene_id in gene_list:
 
-        ct += 1
-        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        if not ct%10: print ct, "out of ", len(gene_list) 
-        
-        # get _all_ exons
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        print  gene_id,  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+        switch_to_db (cursor,  ensembl_db_name['mus_musculus'])
+        if verbose: print gene_id, gene2stable(cursor, gene_id), get_description(cursor, gene_id)
 
-        human_exons = gene2exon_list(cursor, gene_id)
-        if (not human_exons):
-            print 'no exons for ', gene_id
-            continue
-            #sys.exit(1)
-
-        # get rid of the old maps # can't do that here bcs this script is only updating sw exons
-        map_cleanup (cursor, ensembl_db_name, human_exons)
-
-        orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
-
-        ##########
-        for [ortho_gene_id, ortho_species] in orthologues:
-
-            #if not ortho_species=='ochotona_princeps': continue
-            #print ortho_species, ortho_gene_id, species2genome_db_id (cursor, ortho_species)
-
-            switch_to_db (cursor, ensembl_db_name[ortho_species])
-
-            ortho_exons   = []
-            
-            ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'sw_exon')
-            ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'usearch_exon')
-
-            if not ortho_exons: continue # nothing new here, move on
-
-            ortho_exons +=  get_known_exons (cursor, ortho_gene_id, ortho_species)
-            ortho_exons +=  get_predicted_exons (cursor, ortho_gene_id, ortho_species)
-
-            maps = make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons) 
-
-            if not maps:
-                print "\t", ortho_species, "no maps"
-                continue
-
-            switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-            store (cursor, maps, ensembl_db_name)
-                
     cursor.close()
     db.close()
 
@@ -489,11 +499,9 @@ def maps_for_gene_list(gene_list, db_info):
 def main():
     
     no_threads = 1
-    special    = 'one'
-
-
+ 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
-        print "usage: %s <set name> <number of threads> <method>"
+        print "usage: %s <set name> <number of threads> " % sys.argv[0]
         exit(1)
     elif len(sys.argv)==3:
 
@@ -503,7 +511,7 @@ def main():
 
         no_threads = int(sys.argv[2])
 
-    local_db   = False
+    local_db = False
 
     if local_db:
         db  = connect_to_mysql()
@@ -514,24 +522,18 @@ def main():
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
-
+    
     print '======================================='
-    print sys.argv[0]
-    if special:
-        print "using", special, "set"
-        if special == 'complement':
-            gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
-        else:
-            gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
-    else:
-        print "using all protein coding genes that have an sw# patch"
-        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        gene_list = human_genes_w_sw_sharp_annotation (cursor, ensembl_db_name)
+    print "using all protein coding genes"
+    switch_to_db (cursor,  ensembl_db_name['mus_musculus'])
+    gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        
+    print "number of genes in mouse:", len(gene_list)
 
     cursor.close()
     db.close()
 
-    parallelize (no_threads, maps_for_gene_list, gene_list[0:15000], [local_db, ensembl_db_name])
+    parallelize (no_threads, orthos_for_gene_list, gene_list, [local_db, ensembl_db_name])
     
     return True
 

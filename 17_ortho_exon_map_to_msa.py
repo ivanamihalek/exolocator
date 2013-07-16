@@ -67,17 +67,21 @@ def multiple_exon_alnmt(gene_list, db_info):
         print gene_ct, len(gene_ids),  gene_id,  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
         # find all human exons we are tracking in the database
-        human_exons = gene2exon_list(cursor, gene_id)
+        human_exons = filter (lambda e: e.is_known==1 and e.is_coding and e.covering_exon<0, gene2exon_list(cursor, gene_id))
 
         for human_exon in human_exons:
             
             tot += 1
-            if verbose: print "\texon no.", tot, " id", human_exon.exon_id
             # find all orthologous exons the human exon  maps to
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
+            if verbose: 
+                print "\texon no.", tot, " id", human_exon.exon_id,
+                if not maps: 
+                    print " no maps"
+                    print human_exon
+                print 
             if not maps: 
                 no_maps += 1
-                if verbose: print "\t  no maps"
                 continue
 
             # output to fasta:
@@ -154,11 +158,11 @@ def multiple_exon_alnmt(gene_list, db_info):
                 switch_to_db(cursor, ensembl_db_name['homo_sapiens']) # so move it back to homo sapiens
                 # Write the bitmap to the database
                 #if (cognate_species == 'homo_sapiens'):
-                if verbose:
+                if verbose and (source=='sw_sharp' or source=='usearch'):
                     print "storing"
                     print human_exon.exon_id, human_exon.is_known
                     print cognate_species, cognate_genome_db_id, cognate_exon_id, cognate_exon_known, source
-                    print MySQLdb.escape_string(msa_bitmap)
+                    #print MySQLdb.escape_string(msa_bitmap)
                     if not msa_bitmap:
                         print "no msa_bitmap"
                         exit(1)

@@ -179,10 +179,10 @@ static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
     int i, j;
     int gap_opening, gap_extension;
     static int ** similarity = NULL;
+      
     
+    PyArg_ParseTuple(args, "s#s#ii", &seq1, &len1, &seq2, &len2, &gap_opening, &gap_extension);
 
-    
-    PyArg_ParseTuple(args, "s#s#i#i#", &seq1, &len1, &seq2, &len2, gap_opening, gap_extension);
 
     if (!seq1 || !seq2) {
 	sprintf (retstr, "no seq in py_smith_waterman_context");

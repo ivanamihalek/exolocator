@@ -485,17 +485,15 @@ def get_exon_pepseq (cursor, exon, db_name=None, verbose=False):
         if not switch_to_db(cursor, db_name):
             return False
 
-    if  exon.analysis_id > 0:
-        exon_id  = exon.exon_id
-        is_known = exon.is_known
-        qry  = "select protein_seq  "
-        qry += " from exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
-    elif exon.exon_seq_id:
+    if exon.exon_seq_id:
         exon_seq_id = exon.exon_seq_id
         qry  = "select protein_seq "
         qry += " from exon_seq where exon_seq_id = %d" % exon_seq_id
     else:
-        return ""
+        exon_id  = exon.exon_id
+        is_known = exon.is_known
+        qry  = "select protein_seq  "
+        qry += " from exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
 
     rows = search_db(cursor, qry)
 

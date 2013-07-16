@@ -531,27 +531,27 @@ def exon_cleanup(gene_list, db_info):
 
                          if has_stop and not '*' in protein_seq: continue # abort, abort
 
+                         if False and table=='sw_exon':
+                             print "#############################################"
+                             print human_gene_id, stable_id, description
+                             print species, table
 
-                         print "#############################################"
-                         print human_gene_id, stable_id, description
-                         print species, table
+                             print "\t  template", template_exon_seq_id, template_species, template_db_id
+                             print "\t  template left flank", templ_left_flank, templ_dna_seq[0:3]
+                             print "\t           left flank", left_flank, dna_seq[0:3]
+                             print "\t          ",  left_flank_ok, correction, phase,
+                             if not first_exon:
+                                 print max_score
+                             else:
+                                 print
+                             print "\t  template right flank", templ_dna_seq[-3:],templ_right_flank
+                             print "\t           right flank", dna_seq[-3:], right_flank
+                             print "\t          ", right_flank_ok, end_correction, end_phase, end_max_score
 
-                         print "\t  template", template_exon_seq_id, template_species, template_db_id
-                         print "\t  template left flank", templ_left_flank, templ_dna_seq[0:3]
-                         print "\t           left flank", left_flank, dna_seq[0:3]
-                         print "\t          ",  left_flank_ok, correction, phase,
-                         if not first_exon:
-                             print max_score
-                         else:
-                             print
-                         print "\t  template right flank", templ_dna_seq[-3:],templ_right_flank
-                         print "\t           right flank", dna_seq[-3:], right_flank
-                         print "\t          ", right_flank_ok, end_correction, end_phase, end_max_score
-
-                         print "\t     human", human_protein_seq, human_exon.exon_id, human_exon_phase 
-                         print "\t  template", templ_protein_seq
-                         print "\t deposited", protein_seq
-                         if pepseq_corrected: print "\t corrected", pepseq_corrected
+                             print "\t     human", human_protein_seq, human_exon.exon_id, human_exon_phase 
+                             print "\t  template", templ_protein_seq
+                             print "\t deposited", protein_seq
+                             if pepseq_corrected: print "\t corrected", pepseq_corrected
                              
                          if new_dna_seq:
                              if (pepseq_transl_end-pepseq_transl_start)%3:
@@ -611,7 +611,7 @@ def exon_cleanup(gene_list, db_info):
                          
                          if set_fields:
                              search_db(cursor, qry)
-
+ 
                          # update exon sequence
                          if pepseq_corrected: 
                              # we might have changed our mind as to what is the cDNA seq, and what is flanking

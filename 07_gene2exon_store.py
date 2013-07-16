@@ -435,6 +435,7 @@ def find_exons (cursor, gene_id, species):
         exons += get_exons  (cursor, gene_id, species, 'prediction_exon')
         exons += get_exons  (cursor, gene_id, species, 'sw_exon')
         exons += get_exons  (cursor, gene_id, species, 'usearch_exon')
+
     # mark the exons belonging to canonical transcript
     mark_canonical          (cursor, gene_id, exons)
     # get annotation info
