@@ -20,17 +20,34 @@ verbose = True
 ignorance_indicators = ['novel', 'uncharacterized']
 
 ########################################
+def find_orthologue(gene_id, query_species, species):
+
+    ortho_gene_id = []
+
+    return ortho_gene_id
+    
+########################################
 def find_annotation (cursor, ensembl_db_name, species_list, gene_id):
 
     source_species = species_list[0]
     annotation     = 'none'
+    query_species  = species_list[0]
 
     for species in species_list:
         switch_to_db (cursor, ensembl_db_name[species])
-        description = get_description(cursor, gene_id)
+        if species==query_species:
+            orthologous_gene_id = gene_id
+        else:
+            ret = find_orthologue(gene_id, query_species, species)
+            if not ret: continue
+        description = get_description(cursor, orthologous_gene_id)
         if description and not filter (lambda x: x in description.lower(), ignorance_indicators):
             source_species = species
-            annotation     = description       
+            annotation     = description  
+            if not species == 'oryctolagus_cuniculus':
+                print 'annotation found in', species
+                print annotation
+                exit(1)
             break
 
     return [source_species, annotation]
@@ -38,7 +55,7 @@ def find_annotation (cursor, ensembl_db_name, species_list, gene_id):
 #########################################
 def annotate(gene_list, db_info):
     # 
-    [local_db, ensembl_db_name, species] = db_info
+    [local_db, all_species, ensembl_db_name, species] = db_info
     if local_db:
         db  = connect_to_mysql()
         cfg = ConfigurationReader()
@@ -51,7 +68,13 @@ def annotate(gene_list, db_info):
 
     if verbose: print "thread %s annotating %s "% (get_thread_name(), species)
 
-    species_list = [species] # replace with the lst of the nearest species
+    if not species == 'oryctolagus_cuniculus':
+        print 'The preferred list of species is hardcoded for the rabbit. Consider modifying.'
+        exit(1)
+    preferred_species = [species, 'mus_musculus', 'rattus_norvegicus', 'homo_sapiens']
+    nearest_species_list = species_sort(cursor, all_species, species)
+    species_list = preferred_species + filter (lambda x: x not in preferred_species, nearest_species_list)
+
     for gene_id in gene_list:
         switch_to_db (cursor, ensembl_db_name[species])
         # Get stable id and description of this gene
@@ -106,7 +129,7 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, annotate, gene_list, [local_db, ensembl_db_name, species])
+    parallelize (no_threads, annotate, gene_list, [local_db, all_species, ensembl_db_name, species])
     
     return True
 
