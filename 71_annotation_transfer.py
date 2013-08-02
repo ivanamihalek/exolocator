@@ -12,12 +12,29 @@ from el_utils.tree    import  species_sort
 from el_utils.special_gene_sets  import get_theme_ids, get_complement_ids
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from el_utils.config_reader      import ConfigurationReader
-from el_utils.threads import  parallelize
+from el_utils.threads import  *
 from subprocess import Popen, PIPE, STDOUT
 
 #########################################
 verbose = True
+ignorance_indicators = ['novel', 'uncharacterized']
 
+########################################
+def find_annotation (cursor, ensembl_db_name, species_list, gene_id):
+
+    source_species = species_list[0]
+    annotation     = 'none'
+
+    for species in species_list:
+        switch_to_db (cursor, ensembl_db_name[species])
+        description = get_description(cursor, gene_id)
+        if description and not filter (lambda x: x in description.lower(), ignorance_indicators):
+            source_species = species
+            annotation     = description       
+            break
+
+    return [source_species, annotation]
+  
 #########################################
 def annotate(gene_list, db_info):
     # 
@@ -32,11 +49,19 @@ def annotate(gene_list, db_info):
         acg = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    print "thread %s annotating %s "% (get_thread_name(), species)
+    if verbose: print "thread %s annotating %s "% (get_thread_name(), species)
 
-    # find annotation
-    # find splices
-    # output
+    species_list = [species] # replace with the lst of the nearest species
+    for gene_id in gene_list:
+        switch_to_db (cursor, ensembl_db_name[species])
+        # Get stable id and description of this gene
+        stable      = gene2stable    (cursor, gene_id)
+
+        ####################
+        [annot_source, annotation] = find_annotation (cursor, ensembl_db_name, species_list, gene_id)
+        
+        # find splices
+        # output
 
     cursor.close()
     db.close()
@@ -75,7 +100,7 @@ def main():
     print '======================================='
     print "running %s for %s " % (sys.argv[0], species)
 
-    switch_to_db (cursor,  ensembl_db_name['species'])
+    switch_to_db (cursor,  ensembl_db_name[species])
     gene_list = get_gene_ids (cursor, biotype='protein_coding')
 
     cursor.close()
