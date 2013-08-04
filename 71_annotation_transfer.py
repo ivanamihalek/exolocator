@@ -24,14 +24,14 @@ def find_orthologues(cursor, ensembl_db_name, gene_id, query_species, species):
 
     ortho_gene_ids = {}
 
-    switch_to_db (cursor, ensembl_db_name[species])
-    stable_id = gene2stable(cursor, gene_id=gene_id)
+    switch_to_db (cursor, ensembl_db_name[query_species])
+    query_stable_id = gene2stable(cursor, gene_id=gene_id)
     switch_to_db (cursor, ensembl_db_name['compara'])
-    member_id = stable2member(cursor, stable_id)
-    
+    query_member_id = stable2member(cursor, query_stable_id)
     
     for ortho_type in ['ortholog_one2one','ortholog_one2many','ortholog_many2many']:
-        ortho_gene_ids[ortho_type]  = get_orthologues_from_species(cursor, ortho_type, member_id, species)
+        ortho_gene_ids[ortho_type]  = get_orthologues_from_species(cursor, ensembl_db_name, 
+                                                                   ortho_type, query_member_id, species)
         
     return ortho_gene_ids
     
@@ -44,28 +44,32 @@ def find_annotation (cursor, ensembl_db_name, species_list, gene_id):
 
     for species in species_list:
 
+        print '\nlooking for orthologues in ', species
+
         if species==query_species:
+            # if the original annotation exists, we're done
+            # (in the function call, the query species is the first)
             orthologous_gene_ids = {'self':[gene_id]}
-            continue
         else:
+            # find orthologues in this species (unfortunately, there might be more then one)
             orthologous_gene_ids = find_orthologues(cursor, ensembl_db_name, gene_id, query_species, species)
             if not orthologous_gene_ids: continue
 
+
         switch_to_db (cursor, ensembl_db_name[species])
-        for ortho_type, gene_ids  in orthologous_gene_ids.iteritems():
+        for ortho_type, gene_ids in orthologous_gene_ids.iteritems():
+            print ortho_type, gene_ids
             for orthologous_gene_id in gene_ids:
                 # does the orthologue have the description?
                 description = get_description(cursor, orthologous_gene_id)
                 if description and not filter (lambda x: x in description.lower(), ignorance_indicators):
                     source_species = species
                     annotation     = description  
-                    if not species == 'oryctolagus_cuniculus':
+                    if 1 or not species == 'oryctolagus_cuniculus':
                         print 'annotation found in', species
                         print 'orthology type', ortho_type
                         print annotation
-        if not annotation == 'none': 
-            #break
-            exit(1)
+
     return [source_species, annotation]
   
 #########################################
@@ -91,11 +95,13 @@ def annotate(gene_list, db_info):
     nearest_species_list = species_sort(cursor, all_species, species)
     species_list = preferred_species + filter (lambda x: x not in preferred_species, nearest_species_list)
 
-    for gene_id in gene_list:
+    for gene_id in gene_list[:2]:
         switch_to_db (cursor, ensembl_db_name[species])
         # Get stable id and description of this gene
-        stable      = gene2stable    (cursor, gene_id)
-
+        stable_id      = gene2stable    (cursor, gene_id)
+        print
+        print "============================================="
+        print gene_id, stable_id
         ####################
         [annot_source, annotation] = find_annotation (cursor, ensembl_db_name, species_list, gene_id)
         
@@ -136,8 +142,9 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
     ensembl_db_name['compara']     = get_compara_name(cursor)
 
-    print '======================================='
+    print
     print "running %s for %s " % (sys.argv[0], species)
+    print 
 
     switch_to_db (cursor,  ensembl_db_name[species])
     gene_list = get_gene_ids (cursor, biotype='protein_coding')

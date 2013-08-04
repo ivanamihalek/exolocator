@@ -886,12 +886,11 @@ def get_orthologues(cursor, ortho_type, member_id):
     return orthos
         
 
-########
-def get_orthologues_from_species(cursor, ortho_type, member_id, species):
+########################
+def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, member_id, species):
 
     # the ortho_type is one of the following: 'ortholog_one2one', 
     # 'ortholog_one2many', 'ortholog_many2many'
-
     orthos = []
 
     # find genome db_id
@@ -910,30 +909,38 @@ def get_orthologues_from_species(cursor, ortho_type, member_id, species):
         return [] # no orthologs here
 
     # for each homology id find the other member id
+    # print ortho_type
     for row in rows:
         homology_id = row[0]
-
+        #print "\t homology id:", homology_id
         switch_to_db (cursor, get_compara_name (cursor))
         qry  = "select member_id from homology_member "
         qry += " where homology_id = %d"  % int(homology_id)
         qry += " and not  member_id = %d" % member_id
 
-        rows2  = search_db (cursor, qry, verbose = True)
+        rows2  = search_db (cursor, qry, verbose = False)
         if (not rows2):
-            rows2 = search_db (cursor, qry, verbose = True)
-            return []
-        ortho_id     = rows2[0][0]
-        
-        qry  = "select  stable_id  from member  "
-        qry += " where member_id = %d "  % ortho_id
-        qry += " and genome_db_id = %d " % genome_db_id
-        rows3 = search_db (cursor, qry, verbose = True)
-        if (not rows3):
-            rows3 = search_db (cursor, qry, verbose = True)
-            return []
-        ortho_stable  = rows3[0][0]
-        orthos.append(ortho_stable)
-        
+            #print "\t ",
+            #rows2 = search_db (cursor, qry, verbose = True)
+            continue
+        for row2 in rows2:
+            ortho_id     = row2[0]
+            #print "\t\t ortho id:", ortho_id
+            qry  = "select  stable_id  from member  "
+            qry += " where member_id = %d "  % ortho_id
+            qry += " and genome_db_id = %d " % genome_db_id
+            rows3 = search_db (cursor, qry, verbose = False)
+            if (not rows3):
+                #print "\t\t ",
+                #rows3 = search_db (cursor, qry, verbose = True)
+                continue
+            ortho_stable  = rows3[0][0]
+            #print "\t\t ortho stable:", ortho_stable
+            orthos.append(ortho_stable)
+    if orthos:    
+        switch_to_db (cursor, ensembl_db_name [species])
+        orthos = map  (lambda gene_id:  stable2gene(cursor, gene_id), orthos)
+   
     return orthos
         
 
