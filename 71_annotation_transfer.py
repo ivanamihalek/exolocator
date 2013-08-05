@@ -32,24 +32,25 @@ def find_orthologues(cursor, ensembl_db_name, gene_id, query_species, species):
     for ortho_type in ['ortholog_one2one','ortholog_one2many','ortholog_many2many']:
         ortho_gene_ids[ortho_type]  = get_orthologues_from_species(cursor, ensembl_db_name, 
                                                                    ortho_type, query_member_id, species)
-        
+        if ortho_gene_ids[ortho_type]: break # if we got one2one, we're happy an we move on
     return ortho_gene_ids
     
 ########################################
 def find_annotation (cursor, ensembl_db_name, species_list, gene_id):
 
-    source_species = species_list[0]
-    annotation     = 'none'
     query_species  = species_list[0]
 
     for species in species_list:
 
-        print '\nlooking for orthologues in ', species
+        source_species = 'none'
+        annotation     = 'none'
+        ortho_type     = 'none'
 
         if species==query_species:
             # if the original annotation exists, we're done
             # (in the function call, the query species is the first)
             orthologous_gene_ids = {'self':[gene_id]}
+            ortho_type = 'self'
         else:
             # find orthologues in this species (unfortunately, there might be more then one)
             orthologous_gene_ids = find_orthologues(cursor, ensembl_db_name, gene_id, query_species, species)
@@ -58,20 +59,30 @@ def find_annotation (cursor, ensembl_db_name, species_list, gene_id):
 
         switch_to_db (cursor, ensembl_db_name[species])
         for ortho_type, gene_ids in orthologous_gene_ids.iteritems():
-            print ortho_type, gene_ids
+            # can I have several orthology types for the same species? 
+            # it shouldn't be so ...
+            if not gene_ids: continue
+            source_species  = species
+            description = ''
+            #print species, ortho_type, gene_ids
             for orthologous_gene_id in gene_ids:
                 # does the orthologue have the description?
-                description = get_description(cursor, orthologous_gene_id)
-                if description and not filter (lambda x: x in description.lower(), ignorance_indicators):
-                    source_species = species
-                    annotation     = description  
-                    if 1 or not species == 'oryctolagus_cuniculus':
+                this_gene_description = get_description(cursor, orthologous_gene_id)
+                if this_gene_description and not filter (lambda x: x in this_gene_description.lower(), ignorance_indicators):
+                    if description: description += '; '
+                    description += this_gene_description  
+                    if 0 and verbose:
                         print 'annotation found in', species
                         print 'orthology type', ortho_type
                         print annotation
+            if description: 
+                annotation = description
+                break
+        if not annotation=='none': break
 
-    return [source_species, annotation]
+    return [source_species, ortho_type, annotation]
   
+
 #########################################
 def annotate(gene_list, db_info):
     # 
@@ -95,16 +106,17 @@ def annotate(gene_list, db_info):
     nearest_species_list = species_sort(cursor, all_species, species)
     species_list = preferred_species + filter (lambda x: x not in preferred_species, nearest_species_list)
 
-    for gene_id in gene_list[:2]:
+    for gene_id in gene_list:
         switch_to_db (cursor, ensembl_db_name[species])
         # Get stable id and description of this gene
         stable_id      = gene2stable    (cursor, gene_id)
-        print
+        #print
         print "============================================="
         print gene_id, stable_id
         ####################
-        [annot_source, annotation] = find_annotation (cursor, ensembl_db_name, species_list, gene_id)
-        
+        [annot_source, orthology_type, annotation] = find_annotation (cursor, ensembl_db_name, species_list, gene_id)
+        print annot_source, "**", orthology_type, '**', annotation
+
         # find splices
         # output
 
