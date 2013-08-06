@@ -890,7 +890,7 @@ def get_orthologues(cursor, ortho_type, member_id):
 def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, member_id, species):
 
     # the ortho_type is one of the following: 'ortholog_one2one', 
-    # 'ortholog_one2many', 'ortholog_many2many'
+    # 'ortholog_one2many', 'ortholog_many2many', 'possible_ortholog', 'apparent_ortholog_one2one'
     orthos = []
 
     # find genome db_id
@@ -909,10 +909,12 @@ def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, member_id,
         return [] # no orthologs here
 
     # for each homology id find the other member id
-    # print ortho_type
+    print qry
+    print member_id, ortho_type, species, genome_db_id
+    print rows
     for row in rows:
         homology_id = row[0]
-        #print "\t homology id:", homology_id
+        print "\t homology id:", homology_id
         switch_to_db (cursor, get_compara_name (cursor))
         qry  = "select member_id from homology_member "
         qry += " where homology_id = %d"  % int(homology_id)
@@ -925,22 +927,22 @@ def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, member_id,
             continue
         for row2 in rows2:
             ortho_id     = row2[0]
-            #print "\t\t ortho id:", ortho_id
+            print "\t\t ortho id:", ortho_id
             qry  = "select  stable_id  from member  "
             qry += " where member_id = %d "  % ortho_id
             qry += " and genome_db_id = %d " % genome_db_id
             rows3 = search_db (cursor, qry, verbose = False)
             if (not rows3):
-                #print "\t\t ",
-                #rows3 = search_db (cursor, qry, verbose = True)
+                print "\t\t ",
+                rows3 = search_db (cursor, qry, verbose = True)
                 continue
             ortho_stable  = rows3[0][0]
-            #print "\t\t ortho stable:", ortho_stable
+            print "\t\t ortho stable:", ortho_stable
             orthos.append(ortho_stable)
     if orthos:    
         switch_to_db (cursor, ensembl_db_name [species])
         orthos = map  (lambda gene_id:  stable2gene(cursor, gene_id), orthos)
-   
+    print 'orthos:', orthos
     return orthos
         
 

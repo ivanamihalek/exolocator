@@ -17,7 +17,7 @@ from subprocess import Popen, PIPE, STDOUT
 
 #########################################
 verbose = True
-ignorance_indicators = ['novel', 'uncharacterized']
+ignorance_indicators = ['novel', 'uncharacterized', 'cDNA']
 
 ########################################
 def find_orthologues(cursor, ensembl_db_name, gene_id, query_species, species):
@@ -29,7 +29,7 @@ def find_orthologues(cursor, ensembl_db_name, gene_id, query_species, species):
     switch_to_db (cursor, ensembl_db_name['compara'])
     query_member_id = stable2member(cursor, query_stable_id)
     
-    for ortho_type in ['ortholog_one2one','ortholog_one2many','ortholog_many2many']:
+    for ortho_type in ['ortholog_one2one','ortholog_one2many','ortholog_many2many','possible_ortholog', 'apparent_ortholog_one2one']:
         ortho_gene_ids[ortho_type]  = get_orthologues_from_species(cursor, ensembl_db_name, 
                                                                    ortho_type, query_member_id, species)
         if ortho_gene_ids[ortho_type]: break # if we got one2one, we're happy an we move on
@@ -61,10 +61,10 @@ def find_annotation (cursor, ensembl_db_name, species_list, gene_id):
         for ortho_type, gene_ids in orthologous_gene_ids.iteritems():
             # can I have several orthology types for the same species? 
             # it shouldn't be so ...
-            if not gene_ids: continue
+            # if not gene_ids: continue
             source_species  = species
             description = ''
-            #print species, ortho_type, gene_ids
+            print species, ortho_type, gene_ids
             for orthologous_gene_id in gene_ids:
                 # does the orthologue have the description?
                 this_gene_description = get_description(cursor, orthologous_gene_id)
@@ -75,7 +75,9 @@ def find_annotation (cursor, ensembl_db_name, species_list, gene_id):
                         print 'annotation found in', species
                         print 'orthology type', ortho_type
                         print annotation
+            print '*'+description+'*'
             if description: 
+                print 'blah'
                 annotation = description
                 break
         if not annotation=='none': break
@@ -106,7 +108,8 @@ def annotate(gene_list, db_info):
     nearest_species_list = species_sort(cursor, all_species, species)
     species_list = preferred_species + filter (lambda x: x not in preferred_species, nearest_species_list)
 
-    for gene_id in gene_list:
+    #for gene_id in gene_list:
+    for gene_id in [90020]:
         switch_to_db (cursor, ensembl_db_name[species])
         # Get stable id and description of this gene
         stable_id      = gene2stable    (cursor, gene_id)
