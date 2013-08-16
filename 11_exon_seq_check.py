@@ -3,13 +3,14 @@
 import MySQLdb
 import commands
 from random import choice
-from   el_utils.mysql   import  connect_to_mysql, search_db
-from   el_utils.ensembl import  *
-from   el_utils.exon    import  Exon
-from   el_utils.threads import  parallelize
-from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
-from   el_utils.special_gene_sets  import  get_theme_ids
-from   el_utils.config_reader      import ConfigurationReader
+from   el_utils.mysql       import  connect_to_mysql, search_db
+from   el_utils.ensembl     import  *
+from   el_utils.el_specific import  *
+from   el_utils.exon        import  Exon
+from   el_utils.threads     import  parallelize
+from   el_utils.almt_cmd_generator  import AlignmentCommandGenerator
+from   el_utils.special_gene_sets   import  get_theme_ids
+from   el_utils.config_reader       import ConfigurationReader
 
 # BioPython
 from Bio.Seq import Seq
@@ -107,35 +108,6 @@ def canonical_transl_info (cursor, gene_id):
 
     return rows[0]
 
-#########################################
-def get_canonical_transl (acg, cursor, gene_id, species):
-
-    canonical_translation = ""
-
-    canonical_transl_id = gene2stable_canon_transl(cursor, gene_id)
-    if ( not canonical_transl_id):
-        print "no canonical transl id found for ", gene_id
-        exit(1)
-
-    cmd = acg.generate_fastacmd_protein_command (canonical_transl_id, species, 
-                                                 "all", None)
-    fasta = commands.getoutput(cmd)
-    if (not fasta):
-        print gene2stable (cursor, gene_id = gene_id), 
-        print "fasta not found for ", canonical_transl_id
-        exit(1)
-
-    canonical_translation = ""
-    for line in fasta.split("\n"):
-        if ('>' in line):
-            continue
-        line.rstrip()
-        canonical_translation += line
-
-    while (len(canonical_translation) and canonical_translation[0] == 'X'):
-        canonical_translation = canonical_translation[1:]
-
-    return canonical_translation
 
 #########################################
 def get_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  seq_region_start, seq_region_end):
