@@ -360,7 +360,7 @@ def get_description (cursor, gene_id, db_name = None):
     if (db_name):
         if not switch_to_db(cursor, db_name):
             return False
-    qry  = "select description from gene where gene_id = %d " % gene_id
+    qry  = "select description from gene where gene_id = %d " % int(gene_id)
     rows = search_db(cursor, qry)
     if rows:
         return rows[0][0]
@@ -809,6 +809,142 @@ def gene2canon_transl(cursor, gene_id, db_name=None,):
 
     return  rows[0][0]
 
+
+
+
+########
+def stable2member (cursor, stable_id):
+    
+    # member_id refers to compara db
+    # of which we need to have one
+    qry = "select  member_id from member where stable_id = '%s'" % stable_id
+    rows = search_db (cursor, qry)
+    if (not rows or 'ERROR' in rows[0]):
+        rows = search_db (cursor, qry, verbose = True)
+        exit(1)
+        return ""
+    
+    return int(rows[0][0])
+
+########
+def member2stable (cursor, member_id):
+    
+    # member_id refers to compara db
+    # of which we need to have one
+    qry = "select  stable_id from member where member_id = %d" % member_id
+    rows = search_db (cursor, qry)
+    if (not rows):
+        rows = search_db (cursor, qry, verbose = True)
+        return ""
+
+    return rows[0][0]
+
+
+
+########
+def get_orthologues(cursor, ortho_type, member_id):
+
+    # cursor must be pointing to compara database
+    # the ortho pytpe i sone of the following: 'ortholog_one2one', 
+    # 'ortholog_one2many', 'ortholog_many2many'
+
+    orthos = []
+
+    qry  = "select homology.homology_id from homology_member, homology "
+    qry += " where homology_member.member_id =%d " % member_id
+    qry += " and homology.homology_id = homology_member.homology_id "
+    qry += " and  homology.description = '%s' " % ortho_type
+    rows = search_db (cursor, qry)
+
+    if (not rows):
+        return [] # no orthologs here
+
+    # for each homology id find the other member id
+    for row in rows:
+        homology_id = row[0]
+
+        qry  = "select member_id from homology_member "
+        qry += " where homology_id = %d"  % int(homology_id)
+        qry += " and not  member_id = %d" % member_id
+        rows2 = search_db (cursor, qry, verbose = True)
+        if (not rows2):
+            rows2 = search_db (cursor, qry, verbose = True)
+            return []
+        ortho_id     = rows2[0][0]
+        
+        qry  = "select  member.stable_id, genome_db.name, genome_db.genome_db_id "
+        qry += " from member, genome_db "
+        qry += " where member.member_id = %d " % ortho_id
+        qry += " and genome_db.genome_db_id = member.genome_db_id"
+        rows3 = search_db (cursor, qry, verbose = True)
+        if (not rows3):
+            rows3 = search_db (cursor, qry, verbose = True)
+            return []
+        [ortho_stable, species, genome_db_id]     = rows3[0]
+        orthos.append([ortho_stable, species,  int(genome_db_id)])
+        
+    return orthos
+        
+
+########################
+def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, member_id, species):
+
+    # the ortho_type is one of the following: 'ortholog_one2one', 
+    # 'ortholog_one2many', 'ortholog_many2many', 'possible_ortholog', 'apparent_ortholog_one2one'
+    orthos = []
+
+    # find genome db_id
+    genome_db_id = species2genome_db_id (cursor, species)
+
+    # make the cursor point to compara database - should be the responsibility of each function
+    switch_to_db (cursor, get_compara_name (cursor))
+
+    qry  = "select homology.homology_id from homology_member, homology "
+    qry += " where homology_member.member_id =%d " % member_id
+    qry += " and homology.homology_id = homology_member.homology_id "
+    qry += " and  homology.description = '%s' "    % ortho_type
+    rows = search_db (cursor, qry)
+
+    if (not rows):
+        return [] # no orthologs here
+
+    # for each homology id find the other member id
+    #print qry
+    #print member_id, ortho_type, species, genome_db_id
+    #print rows
+    for row in rows:
+        homology_id = row[0]
+        #print "\t homology id:", homology_id
+        switch_to_db (cursor, get_compara_name (cursor))
+        qry  = "select member_id from homology_member "
+        qry += " where homology_id = %d"  % int(homology_id)
+        qry += " and not  member_id = %d" % member_id
+
+        rows2  = search_db (cursor, qry, verbose = False)
+        if (not rows2):
+            #print "\t ",
+            #rows2 = search_db (cursor, qry, verbose = True)
+            continue
+        for row2 in rows2:
+            ortho_id     = row2[0]
+            #print "\t\t ortho id:", ortho_id
+            qry  = "select  stable_id  from member  "
+            qry += " where member_id = %d "  % ortho_id
+            qry += " and genome_db_id = %d " % genome_db_id
+            rows3 = search_db (cursor, qry, verbose = False)
+            if (not rows3):
+                #print "\t\t ",
+                #rows3 = search_db (cursor, qry, verbose = True)
+                continue
+            ortho_stable  = rows3[0][0]
+            #print "\t\t ortho stable:", ortho_stable
+            orthos.append(ortho_stable)
+    if orthos:    
+        switch_to_db (cursor, ensembl_db_name [species])
+        orthos = map  (lambda gene_id:  stable2gene(cursor, gene_id), orthos)
+    #print 'orthos:', orthos
+    return orthos
+        
 
 
 

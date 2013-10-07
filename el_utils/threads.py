@@ -1,9 +1,15 @@
 
 import threading
 
+########################################
+def get_thread_name():
+
+    return threading.currentThread().getName()
+
 # don't know how to do this if there are no other_args,
 # except by passing it an empty list in th place
 
+########################################
 def parallelize (no_threads, embarassingly_pllbl_fn, list, other_args):
 
 
