@@ -2,9 +2,14 @@
 
 use strict;
 use Net::FTP;
-
+my $release_num = 73;
+#my $local_repository = 
+#    "/mnt/ensembl-mirror/release-$release_num/fasta";
 my $local_repository = 
-    "/mnt/ensembl-mirror/release-69/fasta";
+    "/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/ensembl-$release_num/fasta";
+
+-e $local_repository ||
+    die "local repository:\n$local_repository\nnot found\n";
 
 my $ftp_address = "ftp.ensembl.org";
 
@@ -14,7 +19,7 @@ my $ftp = Net::FTP->new( $ftp_address , Debug => 0, Passive=> 1)
 $ftp->login("anonymous",'-anonymous@')
     or die "Cannot login ", $ftp->message;
 
-my $topdir = "/pub/release-69/fasta";
+my $topdir = "/pub/release-$release_num/fasta";
 $ftp->cwd($topdir)
     or die "Cannot cwd to $topdir: ", $ftp->message;
 $ftp->binary;
