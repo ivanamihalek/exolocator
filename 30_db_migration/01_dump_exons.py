@@ -111,7 +111,7 @@ def dump_exons (species_list, db_info):
 #########################################
 def main():
 
-    no_threads = 1
+    no_threads = 10
 
     local_db = False
 
