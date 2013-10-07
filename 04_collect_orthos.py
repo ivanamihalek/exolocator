@@ -4,81 +4,9 @@
 import MySQLdb
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db, search_db
 from   el_utils.mysql   import  store_or_update,  switch_to_db
-from   el_utils.ensembl import  get_species, get_gene_ids, gene2stable, stable2gene
-from   el_utils.ensembl import  get_compara_name
+from   el_utils.ensembl import  *
 from   el_utils.threads import  parallelize
 
-
-
-########
-def stable2member (cursor, stable_id):
-    
-    # member_id refers to compara db
-    # of which we need to have one
-    qry = "select  member_id from member where stable_id = '%s'" % stable_id
-    rows = search_db (cursor, qry)
-    if (not rows or 'ERROR' in rows[0]):
-        rows = search_db (cursor, qry, verbose = True)
-        exit(1)
-        return ""
-    
-    return int(rows[0][0])
-
-########
-def member2stable (cursor, member_id):
-    
-    # member_id refers to compara db
-    # of which we need to have one
-    qry = "select  stable_id from member where member_id = %d" % member_id
-    rows = search_db (cursor, qry)
-    if (not rows):
-        rows = search_db (cursor, qry, verbose = True)
-        return ""
-
-    return rows[0][0]
-
-
-
-########
-def get_orthologues(cursor, ortho_type, member_id):
-
-    orthos = []
-
-    qry  = "select homology.homology_id from homology_member, homology "
-    qry += " where homology_member.member_id =%d " % member_id
-    qry += " and homology.homology_id = homology_member.homology_id "
-    qry += " and  homology.description = '%s' " % ortho_type
-    rows = search_db (cursor, qry)
-
-    if (not rows):
-        return [] # no orthologs here
-
-    # for each homology id find the other member id
-    for row in rows:
-        homology_id = row[0]
-
-        qry  = "select member_id from homology_member "
-        qry += " where homology_id = %d"  % int(homology_id)
-        qry += " and not  member_id = %d" % member_id
-        rows = search_db (cursor, qry, verbose = True)
-        if (not rows):
-            rows = search_db (cursor, qry, verbose = True)
-            return []
-        ortho_id     = rows[0][0]
-        
-        qry  = "select  member.stable_id, genome_db.name, genome_db.genome_db_id "
-        qry += " from member, genome_db "
-        qry += " where member.member_id = %d " % ortho_id
-        qry += " and genome_db.genome_db_id = member.genome_db_id"
-        rows = search_db (cursor, qry, verbose = True)
-        if (not rows):
-            rows = search_db (cursor, qry, verbose = True)
-            return []
-        [ortho_stable, species, genome_db_id]     = rows[0]
-        orthos.append([ortho_stable, species,  int(genome_db_id)])
-        
-    return orthos
-        
 #########################################
 def store_orthologues (cursor_human, ortho_table, cursor, all_species, 
                        ensembl_db_name,  gene_id, orthos):
