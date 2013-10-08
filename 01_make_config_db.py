@@ -221,10 +221,18 @@ def  feed_trivial_names (cursor, all_species):
 #########################################
 def main():
 
+    parameter = {}
+    # in case I ever have to handle multiple versions of ensembl
+    # (but for now I don't have enough space)
+    # note though that there are functions in el_utils/mysql.py that assume
+    # that whatever ensembl stuff is available to the mysql server corresponds to the same release 
+    parameter['ensembl_release_number'] = 73
     
+    parameter['blastp_e_value'] = "1.e-10" # it will be used as a string  when fmting the blastp cmd
+    parameter['min_accptbl_exon_sim'] = 0.33333 #minimum acceptable exon similarity
 
     dir_path = {}
-    dir_path['ensembl_fasta'] = '/mnt/ensembl-mirror/release-69/fasta'
+    dir_path['ensembl_fasta'] = '/mnt/ensembl-mirror/release-73/fasta'
     # local juggling of data from one database base to the other
     dir_path['afs_dumps']     = '/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/'
     dir_path['afs_dumps']    += 'ExoLocator/results/dumpster'
@@ -243,11 +251,6 @@ def main():
     util_path['score3']   = dir_path['maxentscan'] + '/score3.pl'
     util_path['score5']   = dir_path['maxentscan'] + '/score5.pl'
 
-    parameter = {}
-    parameter['blastp_e_value'] = "1.e-10" # it will be used as a string  when fmting the blastp cmd
-    parameter['blosum_hacked']  = "blosum_hacked.txt" # filename, to be found in resources
-    parameter['min_accptbl_exon_sim'] = 0.33333 #minimum acceptable exon similarity
-
     # check if the paths are functioning (at this point at least)
     for util in util_path.values():
         if (not os.path.exists(util)):
@@ -262,8 +265,6 @@ def main():
             print dir, " is not a directory "
             sys.exit (1)
             
-    #db     = connect_to_mysql()
-    #db     = connect_to_mysql(user="marioot", passwd="tooiram")
     db      = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 

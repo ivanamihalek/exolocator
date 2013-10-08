@@ -3,10 +3,10 @@
 use strict;
 use Net::FTP;
 my $release_num = 73;
-#my $local_repository = 
-#    "/mnt/ensembl-mirror/release-$release_num/fasta";
 my $local_repository = 
-    "/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/ensembl-$release_num/fasta";
+    "/mnt/ensembl-mirror/release-$release_num/fasta";
+#my $local_repository = 
+#    "/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/ensembl-$release_num/fasta";
 
 -e $local_repository ||
     die "local repository:\n$local_repository\nnot found\n";
