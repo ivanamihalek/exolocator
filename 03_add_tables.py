@@ -157,7 +157,7 @@ def make_coding_region_table(cursor):
 def make_orthologue_table (cursor, table):
     
 
-    # if congamet_gene_id is 0, and source is 'rbh'
+    # if congate_gene_id is 0, and source is 'rbh'
     # means that the reciprocal-best-hit was attempted but nothing was found
 
     qry  = "CREATE TABLE " + table + "  (orth_pair_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"

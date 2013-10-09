@@ -538,8 +538,7 @@ def gene2exon(species_list, db_info):
     cursor = db.cursor()
 
     for species in species_list:
-        if (not species == 'dipodomys_ordii'):
-            continue
+
         print
         print "############################"
         print  species
@@ -558,7 +557,9 @@ def gene2exon(species_list, db_info):
         status_not_known = 0
         biotype_not_protein_coding = 0
         seen = {}
+        # check all genes (for one species, for example)
         for gene_id in gene_ids:
+        # check a random sample of genes
         #for tot in range(1000):
 
             if seen.has_key(gene_id):

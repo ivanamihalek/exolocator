@@ -39,7 +39,7 @@ my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 open (LOG, ">log") || die "error opening log: $!\n";
 
 my $ct = 0;
-foreach $animal ( @farm[0 ..1] ) {
+foreach $animal ( @farm ) {
 
     $ct += 1;
     print $ct, "  ", $animal, "\n";
