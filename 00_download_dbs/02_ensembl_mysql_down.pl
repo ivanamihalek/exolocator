@@ -2,7 +2,7 @@
 
 use strict;
 use Net::FTP;
-my $release_num = 69;
+my $release_num = 73;
 
 my $local_repository = 
     "/mnt/ensembl-mirror/release-".$release_num."/mysql";
