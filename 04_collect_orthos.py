@@ -66,10 +66,12 @@ def collect_orthologues(gene_list, db_info):
 
 
     ortho_table = {}
-    ortho_table ['ortholog_one2one']       = 'orthologue'
-    ortho_table ['ortholog_one2many']      = 'unresolved_ortho'
-    ortho_table ['ortholog_many2many']     = 'unresolved_ortho'
-    ortho_table ['within_species_paralog'] = 'paralogue'
+    ortho_table ['ortholog_one2one']          = 'orthologue'
+    ortho_table ['possible_ortholog']         = 'orthologue'
+    ortho_table ['apparent_ortholog_one2one'] = 'orthologue'
+    ortho_table ['ortholog_one2many']         = 'unresolved_ortho'
+    ortho_table ['ortholog_many2many']        = 'unresolved_ortho'
+    ortho_table ['within_species_paralog']    = 'paralogue'
     ct = 0
     for gene_id in gene_list:
         ct += 1
@@ -84,7 +86,8 @@ def collect_orthologues(gene_list, db_info):
         # in compara table, get everything that homology has to say about
         # the possible orthologues
         # find all orthologous pairs suggested for this gene
-        for ortho_type in ['ortholog_one2one','ortholog_one2many','ortholog_many2many','within_species_paralog']:
+        for ortho_type in ['ortholog_one2one','possible_ortholog', 'apparent_ortholog_one2one',
+                           'ortholog_one2many','ortholog_many2many','within_species_paralog']:
             orthos = get_orthologues(cursor_compara, ortho_type, member_id)
 
             if ( orthos):

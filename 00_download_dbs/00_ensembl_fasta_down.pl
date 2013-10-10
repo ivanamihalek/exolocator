@@ -2,9 +2,14 @@
 
 use strict;
 use Net::FTP;
-
+my $release_num = 73;
 my $local_repository = 
-    "/mnt/ensembl-mirror/release-69/fasta";
+    "/mnt/ensembl-mirror/release-$release_num/fasta";
+#my $local_repository = 
+#    "/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/ensembl-$release_num/fasta";
+
+-e $local_repository ||
+    die "local repository:\n$local_repository\nnot found\n";
 
 my $ftp_address = "ftp.ensembl.org";
 
@@ -14,7 +19,7 @@ my $ftp = Net::FTP->new( $ftp_address , Debug => 0, Passive=> 1)
 $ftp->login("anonymous",'-anonymous@')
     or die "Cannot login ", $ftp->message;
 
-my $topdir = "/pub/release-69/fasta";
+my $topdir = "/pub/release-$release_num/fasta";
 $ftp->cwd($topdir)
     or die "Cannot cwd to $topdir: ", $ftp->message;
 $ftp->binary;
@@ -34,7 +39,7 @@ my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 open (LOG, ">log") || die "error opening log: $!\n";
 
 my $ct = 0;
-foreach $animal ( @farm[0 ..1] ) {
+foreach $animal ( @farm ) {
 
     $ct += 1;
     print $ct, "  ", $animal, "\n";

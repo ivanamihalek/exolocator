@@ -157,7 +157,7 @@ def make_coding_region_table(cursor):
 def make_orthologue_table (cursor, table):
     
 
-    # if congamet_gene_id is 0, and source is 'rbh'
+    # if congate_gene_id is 0, and source is 'rbh'
     # means that the reciprocal-best-hit was attempted but nothing was found
 
     qry  = "CREATE TABLE " + table + "  (orth_pair_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
@@ -413,10 +413,8 @@ def main():
         qry = "optimize table gene2exon"
         print search_db(cursor, qry)
         create_index (cursor, db_name, 'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
-        #create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
-        #create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
-
-    exit(1)
+        create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
+        create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
 
     # add file_name column to seq_region table
     for species in all_species:
