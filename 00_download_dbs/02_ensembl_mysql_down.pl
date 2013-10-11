@@ -72,9 +72,13 @@ foreach $dir ( @dirs_I_need) {
 	next if ($item !~ /\.gz$/);
 	next if ($item eq 'assembly.txt.gz');
 	next if ($item eq 'dna.txt.gz');
-	#next if ($item eq 'dna_align_feature.txt.gz'); # might need it to find CCDS info ..
 	next if ($item eq 'protein_align_feature.txt.gz');
 	next if ($item eq 'repeat_feature.txt.gz');
+	# CCDS info, contained in dna_align_feature.txt.gz  covers confirmed alt splices,
+	# but only for human and mouse
+	if ($item eq 'dna_align_feature.txt.gz') {
+	    next if ($dir ne 'homo_sapiens' && $dir  ne 'mus_musculus');
+	}
 	print "\t$item\n";
 
 	$unzipped = $item;
