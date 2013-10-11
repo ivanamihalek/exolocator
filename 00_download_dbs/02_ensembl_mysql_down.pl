@@ -77,7 +77,7 @@ foreach $dir ( @dirs_I_need) {
 	# CCDS info, contained in dna_align_feature.txt.gz  covers confirmed alt splices,
 	# but only for human and mouse
 	if ($item eq 'dna_align_feature.txt.gz') {
-	    next if ($dir ne 'homo_sapiens' && $dir  ne 'mus_musculus');
+	    next if ($dir !~ 'homo_sapiens' && $dir !~ 'mus_musculus');
 	}
 	print "\t$item\n";
 
