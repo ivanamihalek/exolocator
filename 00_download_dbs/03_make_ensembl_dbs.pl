@@ -10,7 +10,7 @@
 
 $release_no = 73;
 
-$path_to_db  = "/mnt/ensembl/release-$release_no/mysql";
+$path_to_db  = "/mnt/ensembl-mirror/release-$release_no/mysql";
 $credentials = " -h jupiter.private.bii -P 3307 -u root -psqljupitersql  ";
 
 (-e $path_to_db) || die "$path_to_db not found\n";
