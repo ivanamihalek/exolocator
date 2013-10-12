@@ -8,8 +8,9 @@
 # the sql script needs to be hacked (or does it - just leave the tables empty)
 #--user=ensembl --psqljupitersql
 
-$path_to_db = "/mnt/ensembl/release-69/mysql";
+$release_no = 73;
 
+$path_to_db  = "/mnt/ensembl/release-$release_no/mysql";
 $credentials = " -h jupiter.private.bii -P 3307 -u root -psqljupitersql  ";
 
 (-e $path_to_db) || die "$path_to_db not found\n";
@@ -23,7 +24,7 @@ chdir $path_to_db;
 
 foreach $db (@dbs) {
 
-    next if ( $db =~ /core/); # <<<<< negate this to format compara database
+    #next if ( $db =~ /core/); # <<<<< negate this to format compara database
 
 
     print "************************\n";
