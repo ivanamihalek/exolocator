@@ -1,7 +1,9 @@
 #! /usr/bin/perl -w 
 
+$release_num = 73;
+
  $local_repository = 
-    "/mnt/ensembl-mirror/release-69/fasta";
+    "/mnt/ensembl-mirror/release-$release_num/fasta";
 
 chdir $local_repository;
 
