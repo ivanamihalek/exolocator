@@ -74,6 +74,8 @@ foreach $dir ( @dirs_I_need) {
 	next if ($item eq 'dna.txt.gz');
 	next if ($item eq 'protein_align_feature.txt.gz');
 	next if ($item eq 'repeat_feature.txt.gz');
+	next if ($item eq 'ditag_feature.txt.gz'); # see below for ditag definition
+	next if ($item eq 'ditag.txt.gz');
 	# CCDS info, contained in dna_align_feature.txt.gz  covers confirmed alt splices,
 	# but only for human and mouse
 	if ($item eq 'dna_align_feature.txt.gz') {
@@ -151,3 +153,9 @@ foreach $item ('homology.txt.gz', 'homology_member.txt.gz',
 
    
 close LOG;
+
+
+
+###################################
+# Paired-end tags (PET) (sometimes "Paired-End diTags", or simply "ditags") are the short sequences at the 5’ and 3’ ends of a DNA fragment which are unique enough that they (theoretically) exist together only once in a genome, therefore making the sequence of the DNA in between them available upon search
+#  - we are not using that feature (should or could we?)
