@@ -107,7 +107,7 @@ def collect_orthologues(gene_list, db_info):
 def main():
     
     no_threads = 1
-    local_db = True
+    local_db = False
 
     if local_db:
         db     = connect_to_mysql()
