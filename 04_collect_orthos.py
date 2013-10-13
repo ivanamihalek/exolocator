@@ -56,8 +56,7 @@ def collect_orthologues(gene_list, db_info):
 
     ensembl_compara_name = get_compara_name(cursor)
     print ensembl_compara_name
-    exit(1);
-
+ 
     if local_db:
         db_compara     = connect_to_mysql()
     else:
@@ -106,7 +105,7 @@ def collect_orthologues(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 5
     local_db = False
 
     if local_db:
