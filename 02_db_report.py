@@ -12,7 +12,7 @@ def check_genome_sizes (cursor, all_species, ensembl_db_name):
         print species
         gene_ids = get_gene_ids (cursor, ensembl_db_name[species], 'protein_coding')  
         print " protein coding genes:  %15d " %  len(gene_ids)
-        print "there are %d core dbs available " % len(all_species)
+    print "there are %d core dbs available " % len(all_species)
   
 
 #########################################
@@ -41,10 +41,10 @@ def main():
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    if 1:
+    if 0:
         check_genome_sizes (cursor, all_species, ensembl_db_name)
 
-    if 0:
+    if 1:
         check_table_sizes (cursor, all_species, ensembl_db_name)
       
 

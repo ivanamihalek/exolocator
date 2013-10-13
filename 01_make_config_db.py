@@ -253,19 +253,20 @@ def main():
     util_path['score3']   = dir_path['maxentscan'] + '/score3.pl'
     util_path['score5']   = dir_path['maxentscan'] + '/score5.pl'
 
-    # check if the paths are functioning (at this point at least)
-    for util in util_path.values():
-        if (not os.path.exists(util)):
-            print util, " not found "
-            sys.exit (1)
+    if 1:
+        # check if the paths are functioning (at this point at least)
+        for util in util_path.values():
+            if (not os.path.exists(util)):
+                print util, " not found "
+                sys.exit (1)
 
-    for dir in dir_path.values():
-        if (not os.path.exists(dir)):
-            print dir, " not found "
-            sys.exit (1)
-        if (not os.path.isdir (dir)):
-            print dir, " is not a directory "
-            sys.exit (1)
+        for dir in dir_path.values():
+            if (not os.path.exists(dir)):
+                print dir, " not found "
+                sys.exit (1)
+            if (not os.path.isdir (dir)):
+                print dir, " is not a directory "
+                sys.exit (1)
             
     db      = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
@@ -303,25 +304,27 @@ def main():
     for [name, path] in util_path.iteritems():
         fixed_fields['name']  = name
         update_fields['path'] = path
-        store_or_update (cursor, 'util_path', fixed_fields, update_fields)
+    store_or_update (cursor, 'util_path', fixed_fields, update_fields)
 
     fixed_fields  = {}
     update_fields = {}
     for [name, path] in dir_path.iteritems():
         fixed_fields['name'] = name
         update_fields['path'] = path
-        store_or_update (cursor, 'dir_path', fixed_fields, update_fields)
+    store_or_update (cursor, 'dir_path', fixed_fields, update_fields)
 
     fixed_fields  = {}
     update_fields = {}
     for [name, value] in parameter.iteritems():
         fixed_fields['name']  = name
         update_fields['value'] = value
-        store_or_update (cursor, 'parameter', fixed_fields, update_fields)
+    store_or_update (cursor, 'parameter', fixed_fields, update_fields)
 
     #######################################################
     # add trivial names to ncbi_taxonomy.names
     [all_species, ensembl_db_name] = get_species (cursor)
+    for species in all_species:
+        print species
     feed_trivial_names (cursor, all_species)
 
 
