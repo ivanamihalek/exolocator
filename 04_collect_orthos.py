@@ -54,15 +54,16 @@ def collect_orthologues(gene_list, db_info):
     cursor_human = db_human.cursor()
     switch_to_db (cursor_human,  ensembl_db_name['homo_sapiens'])
 
-    #db_compara    = connect_to_mysql()
     ensembl_compara_name = get_compara_name(cursor)
+    print ensembl_compara_name
+    exit(1);
+
     if local_db:
         db_compara     = connect_to_mysql()
     else:
         db_compara     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor_compara     = db_compara.cursor()
     switch_to_db (cursor_compara, ensembl_compara_name)
-    print ensembl_compara_name
 
 
     ortho_table = {}
@@ -105,7 +106,7 @@ def collect_orthologues(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 5
+    no_threads = 1
     local_db = True
 
     if local_db:
