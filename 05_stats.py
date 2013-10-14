@@ -160,6 +160,14 @@ def main():
                'sorex_araneus', 'sus_scrofa', 'tarsius_syrichta',  'tupaia_belangeri',  'tursiops_truncatus',  
                'vicugna_pacos']
 
+    for species in all_species:
+        print
+        print "** species: ", species
+        known_genes = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        print "\t known genes: ", len(known_genes)
+        predicted_genes = get_gene_ids (cursor, biotype='protein_coding', is_known=0)
+        print "\t predicted genes: ", len(predicted_genes)
+
     for special in  ['wnt_pathway']:
 
         species   = 'homo_sapiens'
@@ -179,13 +187,7 @@ def main():
 
         # how many  have orthologues reported?
         for species in all_species:
-            print
-            print "** species: ", species
-            known_genes = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-            print "\t known genes: ", len(known_genes)
-            predicted_genes = get_gene_ids (cursor, biotype='protein_coding', is_known=0)
-            print "\t predicted genes: ", len(predicted_genes)
-            #ortho_stats (cursor,  ensembl_db_name, species, human_gene_list)    
+            ortho_stats (cursor,  ensembl_db_name, species, human_gene_list)    
 
         # how many  have orthologues reported? (this becomes meaningful only later in the pypeline)
         #exon_stats (cursor, ensembl_db_name, mammals, human_gene_list)    

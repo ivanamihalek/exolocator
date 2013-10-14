@@ -1051,13 +1051,13 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None):
 
     qry = "select gene_id from gene"
 
-    if ( biotype or is_known):
+    if ( biotype or not is_known is None):
         qry +=  " where "
         if ( biotype):
            qry += "biotype='%s'" % biotype
-        if (biotype and is_known):
+        if (biotype and not is_known is None):
             qry += " and "
-        if (is_known):
+        if (not is_known is None):
            qry += "status='known'"
 
     rows = search_db (cursor, qry, verbose = False)
