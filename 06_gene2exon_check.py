@@ -561,15 +561,13 @@ def gene2exon(species_list, db_info):
         #for gene_id in gene_ids:
         # check a random sample of genes
         for tot in range(50):
+            gene_id = choice(gene_ids)
 
             if seen.has_key(gene_id):
                 continue
             seen[gene_id] = True
 
-            # pick a random gene id
-            gene_id = choice(gene_ids)
-            #if not tot%100: print tot
-            tot += 1
+            #tot += 1
             status  = get_status (cursor, gene_id)
             if not 'KNOWN' in status: 
                 status_not_known += 1
