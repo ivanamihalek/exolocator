@@ -12,8 +12,6 @@ def store_paralogues (cursor_species,  gene_id, orthos):
 
     for ortho in orthos:
         [ortho_stable, species, cognate_genome_db_id] = ortho
-        if (not species in all_species):
-            continue
         ortho_gene_id = stable2gene (cursor_species, ortho_stable)
         
         fixed_fields  = {}
