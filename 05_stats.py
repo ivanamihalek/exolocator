@@ -12,8 +12,6 @@ from el_utils.config_reader      import ConfigurationReader
 #########################################
 def ortho_stats (cursor, ensembl_db_name, species, gene_ids):
     
-    print
-    print "** species: ", species
     if species == 'homo_sapiens':
         tables = ['orthologue', 'unresolved_ortho', 'paralogue']
     else:
@@ -181,7 +179,13 @@ def main():
 
         # how many  have orthologues reported?
         for species in all_species:
-            ortho_stats (cursor,  ensembl_db_name, species, human_gene_list)    
+            print
+            print "** species: ", species
+            known_genes = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+            print "\t known genes: ", length(known_genes)
+            predicted_genes = get_gene_ids (cursor, biotype='protein_coding', is_known=0)
+            print "\t predicted genes: ", length(predicted_genes)
+            #ortho_stats (cursor,  ensembl_db_name, species, human_gene_list)    
 
         # how many  have orthologues reported? (this becomes meaningful only later in the pypeline)
         #exon_stats (cursor, ensembl_db_name, mammals, human_gene_list)    
@@ -198,7 +202,7 @@ def main():
     # how many of those cane be patched by brute force?
     # which sequences are more patchable?
 
-    # what are the leesons learen (1) about biology, (2) about tchnology/tools that 
+    # what are the lessons learned (1) about biology, (2) about tchnology/tools that 
     # we need to find the missing exons?
 
     #
