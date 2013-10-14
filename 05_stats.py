@@ -182,9 +182,9 @@ def main():
             print
             print "** species: ", species
             known_genes = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-            print "\t known genes: ", length(known_genes)
+            print "\t known genes: ", len(known_genes)
             predicted_genes = get_gene_ids (cursor, biotype='protein_coding', is_known=0)
-            print "\t predicted genes: ", length(predicted_genes)
+            print "\t predicted genes: ", len(predicted_genes)
             #ortho_stats (cursor,  ensembl_db_name, species, human_gene_list)    
 
         # how many  have orthologues reported? (this becomes meaningful only later in the pypeline)
