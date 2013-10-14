@@ -558,16 +558,16 @@ def gene2exon(species_list, db_info):
         biotype_not_protein_coding = 0
         seen = {}
         # check all genes (for one species, for example)
-        for gene_id in gene_ids:
+        #for gene_id in gene_ids:
         # check a random sample of genes
-        #for tot in range(1000):
+        for tot in range(50):
 
             if seen.has_key(gene_id):
                 continue
             seen[gene_id] = True
 
             # pick a random gene id
-            #gene_id = choice(gene_ids)
+            gene_id = choice(gene_ids)
             #if not tot%100: print tot
             tot += 1
             status  = get_status (cursor, gene_id)
@@ -590,11 +590,6 @@ def gene2exon(species_list, db_info):
                 no_exons_found +=1
                 #print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
                 
-            if not tot%1000:
-                print "total:", tot
-                print "status_not_known: ",  status_not_known
-                print "biotype_not_protein_coding: ", biotype_not_protein_coding
-                print "no_exons_found: ", no_exons_found
             continue
    
             length = 0
@@ -647,9 +642,10 @@ def gene2exon(species_list, db_info):
                 print "(", ct, " out of ", tot, ")"
             
 
-            #if (tot==1000):
-            #    break
-            #print fasta
+        print "total:", tot
+        print "status_not_known: ",  status_not_known
+        print "biotype_not_protein_coding: ", biotype_not_protein_coding
+        print "no_exons_found: ", no_exons_found
 
     cursor.close()
     db.close()
