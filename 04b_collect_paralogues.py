@@ -24,9 +24,7 @@ def store_paralogues (cursor_species,  ensembl_db_name,  gene_id, orthos):
         update_fields = {}
         update_fields['source']          = 'ensembl'
                     
-
         store_or_update (cursor_human, 'paralogue', fixed_fields, update_fields)
-
 
 
 #########################################
