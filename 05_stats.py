@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 import MySQLdb
 from random import choice
 from el_utils.mysql   import  *
@@ -9,42 +8,48 @@ from el_utils.map     import  Map, get_maps
 from el_utils.special_gene_sets  import  get_theme_ids
 from el_utils.config_reader      import ConfigurationReader
 
-#########################################
-
-
 
 #########################################
-def ortho_stats (cursor, species):
-
+def ortho_stats (cursor, ensembl_db_name, species, gene_ids):
+    
+    print
+    print "** species: ", species
+    if species == 'homo_sapiens':
+        tables = ['orthologue', 'unresolved_ortho', 'paralogue']
+    else:
+        tables = ['paralogue']
 
     # agjafgj 
-    for ortho_table in ['orthologue', 'unresolved_ortho', 'paralogue']:
+    for ortho_table in tables:
         # how many orthologue pairs, in principle
+        # orthologue tables are in homo_sapiens database
+        # each species has its own paralogue table
         qry = "select count(1) from %s.%s" % (ensembl_db_name[species], ortho_table)
-        rows = search_db (cursor, qry)
+        rows = search_db (cursor, qry, verbose=True)
         if (not rows):
             rows = search_db (cursor, qry, verbose=True)
         print ortho_table, " table size: ", rows[0][0]
 
     # how many per gene
-    for ortho_table in ['orthologue', 'unresolved_ortho', 'paralogue']:
+    if False:
+        for ortho_table in tables:
         
-        print "histogram for ", ortho_table
+            print "histogram for ", ortho_table
 
-        histogram = {}
-        for gene_id in gene_ids:
+            histogram = {}
+            for gene_id in gene_ids:
 
-            qry  = "select count(1) from %s.%s" % (ensembl_db_name[species], ortho_table)
-            qry += " where gene_id = %d " % gene_id
-            rows = search_db (cursor, qry)
-            if (not rows):
-                rows = search_db (cursor, qry, verbose=True)
-            if (not histogram.has_key(rows[0][0])):
-                histogram[rows[0][0]] = 0
-            histogram[rows[0][0]] += 1
+                qry  = "select count(1) from %s.%s" % (ensembl_db_name[species], ortho_table)
+                qry += " where gene_id = %d " % gene_id
+                rows = search_db (cursor, qry)
+                if (not rows):
+                    rows = search_db (cursor, qry, verbose=True)
+                if (not histogram.has_key(rows[0][0])):
+                    histogram[rows[0][0]] = 0
+                histogram[rows[0][0]] += 1
  
-        for number_of_orthos in sorted (histogram.keys()):
-            print " %4d  %4d " % (number_of_orthos, histogram[number_of_orthos])
+            for number_of_orthos in sorted (histogram.keys()):
+                 print " %4d  %4d " % (number_of_orthos, histogram[number_of_orthos])
 
 
 #########################################
@@ -170,11 +175,16 @@ def main():
             print "using all protein coding genes"
             switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
             human_gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-        print " protein coding genes in human:  %10d " %  len(human_gene_list)
-        print "(known, not predicited)"
+        print
+        print "protein coding genes in human:  %10d " %  len(human_gene_list),
+        print " (known, not predicited)"
 
         # how many  have orthologues reported?
-        exon_stats (cursor, ensembl_db_name, mammals, human_gene_list)    
+        for species in all_species:
+            ortho_stats (cursor,  ensembl_db_name, species, human_gene_list)    
+
+        # how many  have orthologues reported? (this becomes meaningful only later in the pypeline)
+        #exon_stats (cursor, ensembl_db_name, mammals, human_gene_list)    
 
 
     # how often does it happen that one  exon does not have
