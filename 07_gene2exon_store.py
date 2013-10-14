@@ -567,13 +567,12 @@ def main():
     no_threads = 1
     special    = 'one'
 
-    if len(sys.argv) > 1 and  len(sys.argv)<3:
-        print "usage: %s <set name> <number of threads> <method>"
+    if len(sys.argv) > 1 and  len(sys.argv)<2  or len(sys.argv) >= 1 and sys.argv[0]=="-h":
+        print "usage: %s <set name> <number of threads>"
         exit(1)
     elif len(sys.argv)==3:
 
-        special = sys.argv[1]
-        special = special.lower()
+        special = sys.argv[1].lower()
         if special == 'none': special = None
 
         no_threads = int(sys.argv[2])
@@ -598,7 +597,7 @@ def main():
         if special == 'complement':
             gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
         else:
-            gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+            gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special)
         
     cursor.close()
     db    .close()
