@@ -161,6 +161,7 @@ def main():
                'vicugna_pacos']
 
     for species in all_species:
+        switch_to_db (cursor,  ensembl_db_name[species])
         print
         print "** species: ", species
         known_genes = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
