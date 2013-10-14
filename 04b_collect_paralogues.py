@@ -51,7 +51,7 @@ def collect_paralogues(species_list, db_info):
 
     for species in species_list:
         switch_to_db (cursor_species,  ensembl_db_name[species])
-        gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        gene_list = get_gene_ids (cursor_species, biotype='protein_coding', is_known=1)
         ct = 0
         for gene_id in gene_list:
             ct += 1
