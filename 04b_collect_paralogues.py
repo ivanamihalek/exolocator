@@ -16,7 +16,7 @@ def store_paralogues (cursor_species,  gene_id, orthos):
         
         fixed_fields  = {}
         fixed_fields ['gene_id']              = gene_id
-        fixed_fields ['cognate_genome_db_id'] = genome_db_id
+        fixed_fields ['cognate_genome_db_id'] = cognate_genome_db_id
         fixed_fields ['cognate_gene_id']      = ortho_gene_id
 
         update_fields = {}
