@@ -61,7 +61,7 @@ def collect_paralogues(species_list, db_info):
             member_id = stable2member(cursor_compara, stable_id)
 
             #print gene_id, stable_id, member_id
-            if ( not ct%10):
+            if ( not ct%100):
                 print species, ct , "out of ", len(gene_list) 
             # find all paralogue pairs suggested for this gene
             ortho_type = 'within_species_paralog'
