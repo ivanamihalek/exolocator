@@ -170,7 +170,7 @@ def main():
         print "\t predicted genes: ", len(predicted_genes)
         # sanity check:
         all_genes = get_gene_ids (cursor, biotype='protein_coding')
-        print "\t predicted genes: ", len(all_genes)
+        print "\t all genes: ", len(all_genes)
 
     if 0:
         for special in  ['wnt_pathway']:

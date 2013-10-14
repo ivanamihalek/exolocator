@@ -50,8 +50,8 @@ def collect_paralogues(species_list, db_info):
     for species in species_list:
         switch_to_db (cursor_species,  ensembl_db_name[species])
         # it looks I cannot demand that the gene is known, because for many species
-        # most of the genes are still in the "predicted" table
-        gene_list = get_gene_ids (cursor_species, biotype='protein_coding', is_known=1)
+        # most of the genes still have 'predicted' status
+        gene_list = get_gene_ids (cursor_species, biotype='protein_coding')
         ct = 0
         for gene_id in gene_list:
             ct += 1
