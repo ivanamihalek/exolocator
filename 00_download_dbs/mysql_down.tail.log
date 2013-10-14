@@ -1,0 +1,50 @@
+		 object_xref.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 object_xref.txt.gz unzipped 
+	ontology_xref.txt.gz
+		 ontology_xref.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 ontology_xref.txt.gz unzipped 
+	splicing_transcript_pair.txt.gz
+		 splicing_transcript_pair.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 splicing_transcript_pair.txt.gz unzipped 
+	protein_feature.txt.gz
+		 protein_feature.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 protein_feature.txt.gz unzipped 
+	qtl.txt.gz
+		 qtl.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 qtl.txt.gz unzipped 
+	qtl_feature.txt.gz
+		 qtl_feature.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 qtl_feature.txt.gz unzipped 
+	qtl_synonym.txt.gz
+		 qtl_synonym.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 qtl_synonym.txt.gz unzipped 
+	stable_id_event.txt.gz
+		 stable_id_event.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 stable_id_event.txt.gz unzipped 
+	repeat_consensus.txt.gz
+		 repeat_consensus.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 repeat_consensus.txt.gz unzipped 
+	supporting_feature.txt.gz
+		 supporting_feature.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 supporting_feature.txt.gz unzipped 
+	transcript_supporting_feature.txt.gz
+		 transcript_supporting_feature.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 transcript_supporting_feature.txt.gz unzipped 
+	unconventional_transcript_association.txt.gz
+		 unconventional_transcript_association.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/myotis_lucifugus_core_73_2
+		 unconventional_transcript_association.txt.gz unzipped 
+	homology.txt.gz
+		 homology.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/ensembl_compara_73
+		 homology.txt.gz unzipped 
+	homology_member.txt.gz
+		 homology_member.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/ensembl_compara_73
+		 homology_member.txt.gz unzipped 
+	member.txt.gz
+		 member.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/ensembl_compara_73
+		 member.txt.gz unzipped 
+	genome_db.txt.gz
+		 genome_db.txt.gz moved to /mnt/ensembl-mirror/release-73/mysql/ensembl_compara_73
+		 genome_db.txt.gz unzipped 
+	ensembl_compara_73.sql.gz
+		 ensembl_compara_73.sql.gz moved to /mnt/ensembl-mirror/release-73/mysql/ensembl_compara_73
+		 ensembl_compara_73.sql.gz unzipped 

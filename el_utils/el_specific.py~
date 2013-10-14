@@ -1,0 +1,87 @@
+import MySQLdb, commands, re, os
+import inspect
+# BioPython
+from Bio.Seq      import Seq
+from Bio.Alphabet import generic_dna
+
+from  ensembl import  *
+from  utils   import  *
+
+#########################################
+def make_exon_alignment(cursor, ensembl_db_name, human_exon, mitochondrial, flank_length):
+
+    sequence_pep = {}
+    sequence_dna = {}
+    shortest_l = -1 # Uninitialized  leading padding length
+    shortest_r = -1 # Uninitialized trailing padding length
+
+    pep_aln_length = 0
+    dna_aln_length = 0
+    # find all other exons that map to the human exon
+    maps    = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
+    maps    = filter (lambda m: not m.exon_id_2 is None, maps)
+    maps_sw = filter (lambda m: m.source=='sw_sharp' or m.source=='usearch', maps)
+
+    for map in maps:
+        # get the raw (unaligned) sequence for the exon that maps onto human
+        exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
+        if (not exon_seqs):
+            print " exon_seqs for" , map.source
+            exit(1)
+            continue
+        [pepseq, pepseq_transl_start, 
+         pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs[1:]
+
+        if len(pepseq)<3: continue
+        pepseq_noX = pepseq.replace ('X','')
+        if len(pepseq_noX)<3: continue
+       
+
+        # check
+        dnaseq  = Seq (dna_seq[pepseq_transl_start:pepseq_transl_end], generic_dna)
+        if (mitochondrial):
+            pepseq2 = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
+        else:
+            pepseq2 = dnaseq.translate().tostring()
+        
+
+        if (not pepseq == pepseq2):
+            continue
+            
+        # inflate the compressed sequence
+        if not map.bitmap:
+            continue
+
+        bs = Bits(bytes=map.bitmap)
+        if (not bs.count(1) == len(pepseq)): continue # check bitmap has correct number of 1s
+        usi = iter(pepseq)
+        reconst_pepseq = "".join(('-' if c=='0' else next(usi) for c in bs.bin))
+  
+        # come up with a unique name for this sequence
+        species       = map.species_2
+        sequence_name = species + "_" + str(map.exon_id_2)+"_"+str(map.exon_known_2)
+
+        if reconst_pepseq: 
+            sequence_pep[sequence_name] = reconst_pepseq
+            pep_aln_length = len(reconst_pepseq)
+
+            reconst_ntseq = expand_pepseq (reconst_pepseq, exon_seqs[1:], flank_length)
+            if reconst_ntseq: 
+                sequence_dna[sequence_name] = reconst_ntseq
+                dna_aln_length = len(reconst_ntseq)
+
+    # strip common gaps
+    sequence_stripped_pep = strip_gaps (sequence_pep)
+    if not sequence_stripped_pep:  
+        c=inspect.currentframe()
+        print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
+        exit(1)
+    # strip common gaps
+    sequence_stripped_dna = strip_gaps (sequence_dna)
+    if not sequence_stripped_dna:  
+        c=inspect.currentframe()
+        print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
+        exit(1)
+
+    return [sequence_stripped_pep, sequence_stripped_dna]
+
