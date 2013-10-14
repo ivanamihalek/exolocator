@@ -8,13 +8,13 @@ from   el_utils.ensembl import  *
 from   el_utils.threads import  parallelize
 
 #########################################
-def store_paralogues (cursor_species,  ensembl_db_name,  gene_id, orthos):
+def store_paralogues (cursor_species,  gene_id, orthos):
 
     for ortho in orthos:
         [ortho_stable, species, cognate_genome_db_id] = ortho
         if (not species in all_species):
             continue
-        ortho_gene_id = stable2gene (cursor, ortho_stable, ensembl_db_name[species])
+        ortho_gene_id = stable2gene (cursor_species, ortho_stable)
         
         fixed_fields  = {}
         fixed_fields ['gene_id']              = gene_id
