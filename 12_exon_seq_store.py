@@ -2,11 +2,8 @@
 
 import MySQLdb
 import commands
-from   el_utils.mysql   import  connect_to_mysql, search_db, switch_to_db
-from   el_utils.mysql   import  store_or_update
-from   el_utils.ensembl import  get_species, get_gene_ids, gene2exon_list
-from   el_utils.ensembl import  gene2stable, gene2stable_canon_transl, is_mitochondrial
-from   el_utils.ensembl import  gene2canon_transl, get_canonical_exons, get_selenocysteines
+from   el_utils.mysql   import  *
+from   el_utils.ensembl import  *
 from   el_utils.exon    import  Exon
 from   el_utils.threads import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
