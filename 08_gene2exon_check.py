@@ -31,8 +31,7 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
     species_list = all_species
-    #species_list = ['callithrix_jacchus']
-    #species_list = ['dipodomys_ordii']
+ 
     for species in species_list:
         print
         print "############################"
@@ -91,8 +90,7 @@ def main():
                 continue
 
             # get canonical transcript from ensembl fasta database
-            cmd = acg.generate_fastacmd_protein_command (canonical_transl_id, species, 
-                                                         "all", None)
+            cmd = acg.generate_fastacmd_protein_command (canonical_transl_id, species,  "all", None)
             fasta = commands.getoutput(cmd)
             
             if (not fasta):

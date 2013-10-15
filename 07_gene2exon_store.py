@@ -568,7 +568,7 @@ def main():
     special    = 'one'
 
     if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
-        print "usage: %s <set name> <number of threads>", sys.argv[0]
+        print "usage: %s <set name> <number of threads>" % sys.argv[0]
         exit(1)
 
     elif len(sys.argv)==3:
