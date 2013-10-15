@@ -514,7 +514,7 @@ def gene2exon_all(species_list, db_info):
             for exon in exons:
                 store_exon (cursor, exon)
 
-            print "%50s:  %5.1f%% " %  (species, float( int(gene_list.index(gene_id)) +1 )/len(gene_list)*100)
+            print "%50s:  %5.1f%% " %  (species, float( int(gene_ids.index(gene_id)) +1 )/len(gene_ids)*100)
 
     cursor.close()
     db.close()
