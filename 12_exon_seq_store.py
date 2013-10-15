@@ -423,7 +423,7 @@ def store_exon_seqs(species_list, db_info):
 
     """
     
-    special    = 'missing_seq'
+    special    = ''
 
     [local_db, ensembl_db_name] = db_info
     if local_db:
