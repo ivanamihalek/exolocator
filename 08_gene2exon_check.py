@@ -108,7 +108,7 @@ def main():
                 ct +=1
                 print gene2stable (cursor, gene_id = gene_id),
                 print "exon length ", length/3, 
-                print " does not match reported canonical transl len ", translation_length,
+                print " does not match reported canonical transl len ", translation_length
             
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
 
