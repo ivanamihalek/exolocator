@@ -107,10 +107,10 @@ def main():
             if ( abs(length/3-translation_length) > 3):
                 ct +=1
                 print gene2stable (cursor, gene_id = gene_id),
-                print "exon length ", length/3, " transl len ", translation_length,
-                print "(", ct, " out of ", tot, ")"
+                print "exon length ", length/3, 
+                print " does not match reported canonical transl len ", translation_length,
             
-        print species, tot, ct
+        print species, "checked a sample of ", tot, "genes;  problematic:", ct
 
     cursor.close()
     db.close()
