@@ -74,12 +74,6 @@ def pep_exon_seqs(species_list, db_info):
 
         #for all protein coding genes in a species
         for gene_id in gene_ids:
-            gene_ct += 1
-            if (not  gene_ct%1000):
-                print species, "tot:", gene_ct
-
-        #for tot in range(500):
-        #    gene_id = choice(gene_ids)
 
             # for all exons in the gene
             exons = gene2exon_list(cursor, gene_id)
@@ -102,11 +96,6 @@ def pep_exon_seqs(species_list, db_info):
                 if len(dna_seq)<3:
                     short_dna += 1
                     continue
-                if 0:
-                    protein_seq = check_null (protein_seq)
-                    if ( protein_seq and len(protein_seq)>0):
-                        pepseq_ok += 1
-                        continue
 
                 #####################################                
                 mitochondrial        = is_mitochondrial(cursor, gene_id)
@@ -146,10 +135,7 @@ def pep_exon_seqs(species_list, db_info):
                     rows = search_db (cursor, qry, verbose = True)
                     continue
 
-                
-           
- 
-                
+                 
         print species
         print "total coding exons ", tot
         print "no exon seq info   ", no_exon_seq
@@ -159,7 +145,7 @@ def pep_exon_seqs(species_list, db_info):
 
 #########################################
 def main():
-    no_threads = 20
+    no_threads = 10
 
     local_db = False
 
