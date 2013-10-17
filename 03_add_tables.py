@@ -371,8 +371,7 @@ def main():
         switch_to_db (cursor, ensembl_db_name[species])
         
         for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region']:
-
-            if ( check_table_exists (cursor, db_name, table)):
+           if ( check_table_exists (cursor, db_name, table)):
                 print table, " found in ", db_name
             else:
                 print table, " not found in ", db_name
@@ -384,6 +383,10 @@ def main():
         create_index (cursor, db_name, 'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
         create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
         create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
+        create_index (cursor, db_name, 'seq_index', 'exon_seq', ['exon_seq_id'])
+        print "optimizing exon_seq"
+        qry = "optimize table exon_seq"
+        print search_db(cursor, qry)
 
     # add file_name column to seq_region table
     for species in all_species:
