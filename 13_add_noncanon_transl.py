@@ -161,7 +161,7 @@ def main():
     cursor.close()
     db    .close()
 
-    parallelize (no_threads, pep_exon_seqs, all_species[40:], [local_db, ensembl_db_name] )
+    parallelize (no_threads, pep_exon_seqs, all_species, [local_db, ensembl_db_name] )
 
 
 
