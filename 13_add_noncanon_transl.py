@@ -79,7 +79,7 @@ def pep_exon_seqs(species_list, db_info):
             exons = gene2exon_list(cursor, gene_id)
             if (not exons):
                 print 'no exons for gene', gene_id
-                sys.exit(1)
+                continue
 
             for exon in exons:
 
@@ -134,7 +134,10 @@ def pep_exon_seqs(species_list, db_info):
                 if (rows):
                     rows = search_db (cursor, qry, verbose = True)
                     continue
-
+            ####################################
+            if not gene_list.index(gene_id)%100:
+                print "%50s  %5.1f " %  (species, (float( gene_list.index(gene_id) +1 )/len(gene_list)) )
+        
                  
         print species
         print "total coding exons ", tot
