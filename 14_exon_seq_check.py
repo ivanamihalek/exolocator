@@ -58,9 +58,10 @@ def main():
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)    
-    all_species = ['homo_sapiens']
 
     for species in all_species:
+
+        if species=='homo_sapiens': continue
 
         print species
 
@@ -100,9 +101,9 @@ def main():
                 exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     no_exon_seq += 1
-                    print "no exon seqs for  ", gene_id, exon.exon_id
-                    print exon
-                    exit(1)
+                    #print "no exon seqs for  ", gene_id, exon.exon_id
+                    #print exon
+                    #exit(1)
                     continue                   
 
                 [exon_seq_id, pepseq, pepseq_transl_start, 
