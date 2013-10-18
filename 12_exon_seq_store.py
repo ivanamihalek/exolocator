@@ -52,7 +52,8 @@ def get_canonical_transl (acg, cursor, gene_id, species):
     canonical_transl_id = gene2stable_canon_transl(cursor, gene_id)
     if ( not canonical_transl_id):
         print "no canonical transl id found for ", gene_id
-        exit(1)
+        return ""
+        #exit(1)
 
     cmd = acg.generate_fastacmd_protein_command (canonical_transl_id, species, 
                                                  "all", None)
@@ -60,7 +61,8 @@ def get_canonical_transl (acg, cursor, gene_id, species):
     if (not fasta):
         print gene2stable (cursor, gene_id = gene_id), 
         print "fasta not found for ", canonical_transl_id
-        exit(1)
+        return ""
+        #exit(1)
 
     canonical_translation = ""
     for line in fasta.split("\n"):
@@ -80,7 +82,8 @@ def  get_canonical_exons (cursor, gene_id):
     exons = gene2exon_list (cursor, gene_id)
     if (not exons):
         print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
-        exit(1) # shouldn't happen at this point
+        return []
+        #exit(1) # shouldn't happen at this point
 
     # sorting exons in place by their start in gene:
     exons.sort(key=lambda exon: exon.start_in_gene)
@@ -135,14 +138,16 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
             if ( not exon.exon_id == can_transl_start_exon ):
                 print " error start cantransl:  gene_id ",  gene_id,
                 print  " exon_id ", exon.exon_id, " canon: ", can_transl_start_exon
-                exit (1)
+                return [{}, ""]
+                #exit (1)
             start +=  exon.canon_transl_start
 
         if ( exon is canonical_coding_exons[-1]):
             if ( not exon.exon_id == can_transl_end_exon ):
                 print " error end cantransl:  gene_id ",  gene_id,
                 print  " exon_id ", exon.exon_id, " canon: ", can_transl_end_exon
-                exit (1)
+                return [{}, ""]
+                #exit (1)
             end = exon.start_in_gene + exon.canon_transl_end
         else:
             end = exon.end_in_gene
@@ -307,6 +312,7 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     # region - ("PATCH" deposited as tte right sequence, but its missing most of the gene)
     # so first establish whether it is the case: find canonical translation.
     canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
+    if not canonical_translation: return null
     # find all canonical exons associated with the gene id
     canonical_coding_exons = get_canonical_exons (cursor, gene_id)
     # extract raw gene  region
@@ -456,13 +462,13 @@ def store_exon_seqs(species_list, db_info):
         tot = 0
         for gene_id in gene_ids:
             tot += 1
-            if (not  tot%100):
-                print species, "tot:", tot, " fail:", ct
+            if (not  tot%1000):
+                print species, "tot genes:", tot, " fail:", ct
                
             # extract raw gene  region - bonus return from checking whether the 
             # sequence is correct: translation of canonical exons
             [gene_seq, canonical_exon_pepseq] = get_gene_seq(acg, cursor, gene_id, species)
-            if (not gene_seq):
+            if (not gene_seq or not canonical_exon_pepseq):
                 ct += 1
                 print 'no sequence found for ', gene_id, "   ",   ct, "out of ", tot
                 seqs_not_found.append(gene_id)
@@ -472,7 +478,8 @@ def store_exon_seqs(species_list, db_info):
             exons = gene2exon_list(cursor, gene_id, ensembl_db_name[species])
             if (not exons):
                 print 'no exons for ', gene_id
-                exit(1)
+                #exit(1)
+                continue
 
             # get the sequence for each of the exons, as well as for the flanks
             # (the return are three dictionaries, with exon_ids as keys)
@@ -503,7 +510,7 @@ def main():
     """
 
 
-    no_threads = 1
+    no_threads = 10
 
     local_db = False
 
@@ -513,9 +520,20 @@ def main():
         db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
-    all_species = ['danio_rerio']
+    # temp hack: it looks like some process went belly up, leaving some species
+    # unprocessed; try to fiure out which ones are question, and redo
+    #redo_species = []
+    #for species in all_species:
+    #    switch_to_db (cursor, ensembl_db_name[species])
+    #    qry  = "select count(1) from exon_seq"
+    #    rows = search_db(cursor, qry)
+    #    if not rows or rows[0] <10000:
+    #        redo_species.add(species)
+    #all_species = redo_species
+
     cursor.close()
     db    .close()
+
 
     parallelize (no_threads, store_exon_seqs, all_species, [local_db, ensembl_db_name])
 
