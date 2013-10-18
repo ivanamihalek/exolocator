@@ -63,6 +63,7 @@ def main():
 
         if species=='homo_sapiens': continue
 
+        print
         print species
 
         switch_to_db (cursor,  ensembl_db_name[species])
@@ -129,8 +130,6 @@ def main():
                 else:
                     pepseq_ok += 1
 
-        print
-        print species
         print "total coding exons ", tot_exons
         print "no exon seq info   ", no_exon_seq
         print "short dna          ", short_dna

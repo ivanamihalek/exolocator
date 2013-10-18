@@ -646,9 +646,9 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
     rows = search_db(cursor, qry)
 
     if not rows or len(rows[0]) < 7:
-        rows = search_db(cursor, "select database()")
-        print "using db ", rows[0]
-        rows = search_db(cursor, qry, verbose = True)
+        #rows = search_db(cursor, "select database()")
+        #print "using db ", rows[0]
+        #rows = search_db(cursor, qry, verbose = True)
         return []
 
     [exon_seq_id, protein_seq, pepseq_transl_start, 
