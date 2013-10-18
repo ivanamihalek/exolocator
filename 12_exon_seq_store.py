@@ -503,7 +503,7 @@ def main():
     """
 
 
-    no_threads = 5
+    no_threads = 1
 
     local_db = False
 
@@ -513,6 +513,7 @@ def main():
         db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
+    all_species = ['danio_rerio']
     cursor.close()
     db    .close()
 
