@@ -78,7 +78,7 @@ def main():
         mismatch    = 0
         stored_incorrect = 0
         translation_fail = 0
-
+        #####################################
         for tot in range(1000):
  
             gene_id = choice(gene_ids)
@@ -93,15 +93,16 @@ def main():
 
                 #####################################                
                 if (not exon.is_coding or  exon.covering_exon > 0):
-                    continue 
+                     continue 
 
                 tot_exons += 1
                 # exons seqs are its aa translation, left_flank, right_flank, and dna_seq
                 exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     no_exon_seq += 1
-                    #print "no exon seqs for  ", gene_id, exon.exon_id
-                    #exit(1)
+                    print "no exon seqs for  ", gene_id, exon.exon_id
+                    print exon
+                    exit(1)
                     continue                   
 
                 [exon_seq_id, pepseq, pepseq_transl_start, 
