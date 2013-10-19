@@ -61,7 +61,7 @@ def main():
 
     for species in all_species:
 
-        if species=='homo_sapiens': continue
+        #if species=='homo_sapiens': continue
 
         print
         print species

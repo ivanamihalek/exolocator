@@ -136,9 +136,8 @@ def pep_exon_seqs(species_list, db_info):
                     continue
             ####################################
             if not gene_ids.index(gene_id)%100:
-                print "%50s:  %5.1f%% " %  (species, (float( gene_ids.index(gene_id) +1 )/len(gene_ids)) )
+                print "%50s:  %5.1f%% " %  (species, (float( gene_ids.index(gene_id) +1 )/len(gene_ids))*100 )
         
-                 
         print species
         print "total coding exons ", tot
         print "no exon seq info   ", no_exon_seq
