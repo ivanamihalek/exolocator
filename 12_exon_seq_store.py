@@ -361,7 +361,7 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     return null 
 
 #########################################
-def get_exon_seqs (gene_seq, exons):
+def reconstruct_exon_seqs (gene_seq, exons):
 
     """
     Return dna sequences belonging to each exon in the input list, according to Ensembl.
@@ -483,7 +483,7 @@ def store_exon_seqs(species_list, db_info):
 
             # get the sequence for each of the exons, as well as for the flanks
             # (the return are three dictionaries, with exon_ids as keys)
-            [exon_seq, left_flank, right_flank] = get_exon_seqs (gene_seq, exons)
+            [exon_seq, left_flank, right_flank] = reconstruct_exon_seqs (gene_seq, exons)
             # store (exons, dna, protein)
             store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
 
