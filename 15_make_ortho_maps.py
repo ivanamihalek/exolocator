@@ -525,7 +525,7 @@ def maps_for_gene_list(gene_list, db_info):
 def main():
     
     no_threads = 10
-    special    = 'one'
+    special    = None
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
         print "usage: %s <set name> <number of threads> " % sys.argv[0]
