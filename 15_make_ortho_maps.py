@@ -106,33 +106,6 @@ def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
     return [seq_human_no_common_gaps, seq_other_no_common_gaps] 
 
 #########################################
-def alignment_line (seq_human, seq_other):
-
-    alignment_line = []
-
-    if ( not len(seq_human) ==  len(seq_other) ):
-        print "alignment_line: the sequences must be aligned"
-        exit(1)
-    else:
-        length = len(seq_human)
-
-    for i in range(length):
-        if not seq_human[i] == "-" and  not seq_other[i] == "-":
-            alignment_line.append ("|")
-
-        elif seq_human[i] == "-" and  seq_other[i] == "-":
-            #pass
-            alignment_line.append ("-")
-
-        elif (seq_human[i]  == "-" ):
-            alignment_line.append ("A")
-
-        elif (seq_other[i]  == "-" ):
-            alignment_line.append ("B")
-    return  "".join(alignment_line)
-
-
-#########################################
 def cigar_line (seq_human, seq_other):
 
     cigar_line     = []
@@ -141,13 +114,13 @@ def cigar_line (seq_human, seq_other):
 
     if ( not len(seq_human) ==  len(seq_other) ):
         print "alignment_line:  the seqeunces must be aligned"
-        exit(1)
+        return ""
     else:
         length = len(seq_human)
 
     if not length:
         print "zero length sequence (?)"
-        exit (1)
+        return ""
 
     for i in range(length):
         if not seq_human[i] == "-" and  not seq_other[i] == "-":
@@ -185,6 +158,8 @@ def unfold_cigar_line (seq_A, seq_B, cigar_line):
     seq_A_aligned = ""
     seq_B_aligned = ""
 
+    if not cigar_line: 
+        return [seq_A_aligned, seq_B_aligned]
 
     char_pattern = re.compile("\D")
     a_ct     = 0
@@ -233,7 +208,7 @@ def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
    
     if len(aligned_seq.keys()) > 2:
         print "right now the mapping implemented for two species only"
-        exit (1)
+        return maps
 
     for species in aligned_seq.keys():
         if species == 'homo_sapiens': continue
@@ -279,7 +254,7 @@ def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
                 if not seq:  
                     c=inspect.currentframe()
                     print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
-                    exit(1)
+                    continue
 
                 map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
 
@@ -535,7 +510,7 @@ def maps_for_gene_list(gene_list, db_info):
             no_maps += len(maps)
             store (cursor, maps, ensembl_db_name)
 
-        if  not ct%10:
+        if  not ct%100:
             datastring = StringIO.StringIO()
             print >> datastring, "processed ", ct, "genes,  out of ", len(gene_list), "  ",
             print >> datastring, no_maps, " maps;  no_exon_info: ", missing_exon_info, "no_seq_info:", missing_seq_info 
@@ -549,7 +524,7 @@ def maps_for_gene_list(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 10
     special    = 'one'
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
@@ -597,6 +572,11 @@ def main():
 if __name__ == '__main__':
     main()
 
+#########################################
+#########################################
+#########################################
+
+
 '''
 
     for gene_id in [412667]: #  wls
@@ -607,6 +587,37 @@ if __name__ == '__main__':
         # COMMENT THIS OUT PERHAPS?
         # get rid of the old maps
         # map_cleanup (cursor, ensembl_db_name, human_exons)
+
+
+
+#########################################
+def alignment_line (seq_human, seq_other):
+
+    alignment_line = []
+
+    if ( not len(seq_human) ==  len(seq_other) ):
+        print "alignment_line: the sequences must be aligned"
+        return ""
+    else:
+        length = len(seq_human)
+
+    for i in range(length):
+        if not seq_human[i] == "-" and  not seq_other[i] == "-":
+            alignment_line.append ("|")
+
+        elif seq_human[i] == "-" and  seq_other[i] == "-":
+            #pass
+            alignment_line.append ("-")
+
+        elif (seq_human[i]  == "-" ):
+            alignment_line.append ("A")
+
+        elif (seq_other[i]  == "-" ):
+            alignment_line.append ("B")
+    return  "".join(alignment_line)
+
+
+
         
 
 '''
