@@ -423,6 +423,9 @@ def store_exon_seqs(species_list, db_info):
     The reason why only the canonical exons get the translation at this point is that the canonical translation available in
     Ensembl is used to make sure we are looking at the right genome region. Namely, some sequences have a "patch"
     with a corrected or completed sequence. The info about that can be found in the assembly_exception table.
+    Once we have the translation we can just as well store it.
+
+    Note that the information about the translation start and end positions are added in the following script in the pipeline.
 
     """
     

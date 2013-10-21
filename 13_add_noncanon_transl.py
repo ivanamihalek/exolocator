@@ -169,34 +169,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-
-'''
-               if seq_start: print "start ", seq_start, 
-                    if seq_end:   print "end ", seq_end 
-                    print "exon_id ", exon_id
-                    print "phase ", phase 
-                    print "orig dna ", dna_seq_orig
-                    print "orig", pepseq_orig
-                    print "    ", pepseq
-                    exit(1)
-                    continue
-
-
-                dnaseq  = Seq (dna_cropped[start:end], generic_dna)
-                pepseq2 = dnaseq.translate().tostring()
-                if ( not pepseq2== pepseq):
-                    print gene_ct, exon.exon_id
-                    print seq_start, seq_end
-                    print offset
-                    print pepseq
-                    print pepseq2
-                    dnaseq  = Seq (dna_cropped[start+1:end], generic_dna)
-                    pepseq2 = dnaseq.translate().tostring()
-                    print pepseq2
-                    dnaseq  = Seq (dna_cropped[start-1:end], generic_dna)
-                    pepseq2 = dnaseq.translate().tostring()
-                    print pepseq2
-                    print 
-                    exit(1)
-
-'''

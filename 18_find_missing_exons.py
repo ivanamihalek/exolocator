@@ -833,11 +833,11 @@ def find_missing_exons(human_gene_list, db_info):
     found   = 0
     sought  = 0
     #human_gene_list.reverse()
-    for human_gene_id in human_gene_list[6365:]:
+    for human_gene_id in human_gene_list:
 
 
         # I have no clue what's with this guy:
-        if human_gene_id==400190: continue
+        #if human_gene_id==400190: continue
 	switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
 
 	# Get stable id and description of this gene -- DEBUG
