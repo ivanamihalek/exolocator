@@ -414,6 +414,7 @@ def main():
             make_table (cursor, db_name, table)
         if table == 'exon_map':
             create_index (cursor, db_name,'gene_index', table, ['exon_id'])
+            create_index (cursor, db_name,'exon_index', table, ['exon_id', 'exon_known'])
         else:
             create_index (cursor, db_name,'gene_index', table, ['gene_id'])
 

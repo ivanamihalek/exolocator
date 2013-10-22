@@ -842,8 +842,9 @@ def find_missing_exons(human_gene_list, db_info):
 
 	# Get stable id and description of this gene -- DEBUG
 	human_stable      = gene2stable    (cursor, human_gene_id)
-        human_description = get_description(cursor, human_gene_id)
-	if verbose:  print human_gene_id, human_stable, human_description
+	if verbose: 
+            human_description = get_description(cursor, human_gene_id)
+            print human_gene_id, human_stable, human_description
 
 	# progress counter 
 	gene_ct += 1
@@ -917,8 +918,6 @@ def find_missing_exons(human_gene_list, db_info):
                 bad_he.append(he)
         human_exons = filter (lambda he: not he in bad_he, human_exons)
 
- 
-  
         # keep track of nearest neighbors for each human exon
         previous = {}
         next     = {}

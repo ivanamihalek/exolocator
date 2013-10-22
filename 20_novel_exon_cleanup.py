@@ -518,7 +518,7 @@ def exon_cleanup(gene_list, db_info):
                                  print correction, end_correction
                                  print map (len, [left_flank, dna_seq, right_flank])
                                  print map (len, [new_left_flank, new_dna_seq, new_right_flank])
-                                 exit(1)
+                                 continue
                              cds = new_dna_seq[pepseq_transl_start:pepseq_transl_end]
                              if mitochondrial:
                                  pepseq_corrected = Seq(cds).translate(table="Vertebrate Mitochondrial").tostring()
@@ -560,7 +560,7 @@ def exon_cleanup(gene_list, db_info):
                                  print phase, end_phase
                                  print len(new_dna_seq)
                                  print "%%%%% "
-                                 exit(1)
+                                 continue
                          else:
                              new_dna_seq = dna_seq 
 
