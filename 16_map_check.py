@@ -98,7 +98,7 @@ def main():
                         print
         if has_a_map: with_map +=1
         tot += 1
-        print gene_id, tot, with_map
+        print "geene id:", gene_id, "   total exons: ", tot, "   with map: ", with_map
 
     cursor.close()
     db.close()
