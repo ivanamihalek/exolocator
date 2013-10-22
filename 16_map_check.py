@@ -78,8 +78,10 @@ def main():
             #print "\t", get_exon_pepseq(cursor, human_exon, ensembl_db_name['homo_sapiens'])
             print "\t checking maps ...",
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
+            tot += 1
             if maps:
                 has_a_map = True
+                with_map += 1
                 print "ok"
             else:
                 print"no maps"
@@ -96,9 +98,8 @@ def main():
                         if not map.bitmap:
                             print "\t bitmap not assigned"
                         print
-        if has_a_map: with_map +=1
-        tot += 1
-        print "geene id:", gene_id, "   total exons: ", tot, "   with map: ", with_map
+        print "####  gene id: %d   total exons: %d     with map:  %d   ( = %d%%) " % \
+            gene_id,  tot,  with_map, int(float(with_map)/tot*100)
 
     cursor.close()
     db.close()
