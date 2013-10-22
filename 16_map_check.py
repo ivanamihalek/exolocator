@@ -76,13 +76,14 @@ def main():
             print  
             print "\t human",   human_exon.exon_id,  human_exon.is_known
             print "\t", get_exon_pepseq(cursor, human_exon, ensembl_db_name['homo_sapiens'])
-            print "checking maps ..."
+            print "checking maps ...",
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
             if maps:
                 has_a_map = True
+                print "ok"
             else:
                 print"no maps"
-            if 1:
+            if 0:
                 for map in maps:
                     species            = map.species_2
                     exon               = map2exon(cursor, ensembl_db_name, map)
