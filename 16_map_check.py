@@ -65,7 +65,7 @@ def main():
     #for gene_id in gene_list: 
     for tot in range(1000):
  
-        gene_id = choice(gene_ids)
+        gene_id = choice(gene_list)
        
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         print  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
