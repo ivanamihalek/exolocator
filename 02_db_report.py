@@ -9,11 +9,12 @@ from   el_utils.ensembl import  get_species, get_gene_ids
 #########################################
 def check_genome_sizes (cursor, all_species, ensembl_db_name):
     for species in all_species:
+        print '-------------------------------'
         print species
         gene_ids = get_gene_ids (cursor, ensembl_db_name[species], 'protein_coding')  
         print " protein coding genes:  %15d " %  len(gene_ids), 
         gene_ids = get_gene_ids (cursor, ensembl_db_name[species], 'protein_coding', is_known = 1)  
-        print "   known:  %15d " %  len(gene_ids), 
+        print "   known:  %15d " %  len(gene_ids)
     print "there are %d core dbs available " % len(all_species)
   
 
