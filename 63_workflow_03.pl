@@ -19,7 +19,6 @@ foreach (  "20_novel_exon_cleanup.py",
 #40_scratch_novel_exons.py
 #$cmd = "40_scratch_novel_exons.py  $set  $no_threads ";
 #(system $cmd) && die "error running $cmd";
-=cut
 
 
 #20_novel_exon_cleanup
@@ -29,6 +28,7 @@ $cmd = "20_novel_exon_cleanup.py   $set  $no_threads ";
 #07_gene2exon_store 
 $cmd = "07_gene2exon_store.py   $set  $no_threads ";
 (system $cmd) && die "error running $cmd";
+=cut
 
 
 #21_make_novel_exon_maps
