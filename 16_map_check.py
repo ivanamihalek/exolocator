@@ -99,7 +99,7 @@ def main():
                             print "\t bitmap not assigned"
                         print
         print "####  gene id: %d   total exons: %d     with map:  %d   ( = %d%%) " % \
-            gene_id,  tot,  with_map, int(float(with_map)/tot*100)
+            (gene_id,  tot,  with_map, int(float(with_map)/tot*100) )
 
     cursor.close()
     db.close()
