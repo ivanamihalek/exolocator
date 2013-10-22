@@ -3,6 +3,7 @@
 # we currently have at hand
 
 import sys, MySQLdb, commands, re
+from   random           import  choice
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
