@@ -148,7 +148,8 @@ def check_notes_directory (cfg):
             os.makedirs(directory) 
         except:
             print "error making", directory
-            exit(1) # exit after an  error making the 'notes' directory
+            exit(1) # exit after an 
+ error making the 'notes' directory
 
     return directory
 
