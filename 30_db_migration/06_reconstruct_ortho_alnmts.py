@@ -148,7 +148,7 @@ def check_notes_directory (cfg):
             os.makedirs(directory) 
         except:
             print "error making", directory
-            exit(1)
+            exit(1) # exit after an  error making the 'notes' directory
 
     return directory
 
@@ -538,18 +538,6 @@ def decorate_and_concatenate (pepseqs):
         count += 1
 
     return decorated_seq
-
-########################################
-def realign_slice_clustal_omega (pep_slice, seq_to_fix, pep_seq_pieces):
-
-    new_pep_slice = pep_slice
-
-    #afa_fnm  = 'slice.afa'
-    #output_fasta (afa_fnm, pep_slice.keys(), pep_slice)
-    #print afa_fnm
-    # exit(1)
-
-    return new_pep_slice
     
 
 ########################################
@@ -888,7 +876,7 @@ def remove_ghosts (output_pep, names_of_exons):
     if not output_pep:  
         c=inspect.currentframe()
         print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-        exit(1)
+        return [None, None]
             
 
     return [output_pep, names_of_exons]
@@ -1188,12 +1176,15 @@ def make_alignments ( gene_list, db_info):
         headers     = []
         output_pep  = {}
         output_dna  = {}
+        output_pep_ok = True
         for concat_seq_name in names_of_exons.keys():
+
+            if not output_pep_ok: break
 
             if not human_exon_map.has_key(concat_seq_name):  continue # this shouldn't happen but oh well
 
             output_pep[concat_seq_name] = ""
-
+            output_pep_ok = True
             # single out one ortho to mult human cases
 
             flagged_human_exons = []
@@ -1225,13 +1216,17 @@ def make_alignments ( gene_list, db_info):
                 output_pep[concat_seq_name] += pep
                 if not output_pep:  
                     c=inspect.currentframe()
-                    print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-                    exit(1)
+                    print " in %s:%d output peptide empty" % (c. f_code.co_filename, c.f_lineno)
+                    output_pep_ok = False
+                    # Oct 13: I am not sure of the full implication of this, so I'll just abort
 
                 if verbose and not pep:
                     print ">> ", human_exon.exon_id
-             
-            headers.append(concat_seq_name)
+            
+            if output_pep_ok:  headers.append(concat_seq_name)
+        #########################################################
+
+        if not output_pep_ok: continue
 
         #########################################################
         # >>>>>>>>>>>>>>>>>>
@@ -1291,13 +1286,8 @@ def make_alignments ( gene_list, db_info):
  
         if verbose: print afa_fnm
             
-
-
         # notes to accompany the alignment:
         print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id, human_exon_map)
-
-        #exit(1)
-
        
     return 
 
@@ -1310,7 +1300,7 @@ def main():
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
         print "usage: %s <set name> <number of threads> <method>" % sys.argv[0]
-        exit(1)
+        exit(1) # exit after the usage statement
     elif len(sys.argv)==3:
 
         special = sys.argv[1]
