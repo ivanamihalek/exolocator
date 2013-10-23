@@ -101,7 +101,7 @@ def alignment_line (seq_human, seq_other):
 
     if ( not len(seq_human) ==  len(seq_other) ):
         print "alignment_line: the sequences must be aligned"
-        exit(1)
+        return ""
     else:
         length = len(seq_human)
 
@@ -130,13 +130,13 @@ def cigar_line (seq_human, seq_other):
 
     if ( not len(seq_human) ==  len(seq_other) ):
         print "alignment_line:  the seqeunces must be aligned"
-        exit(1)
+        return ""
     else:
         length = len(seq_human)
 
     if not length:
         print "zero length sequence (?)"
-        exit (1)
+        return ""
 
     for i in range(length):
         if not seq_human[i] == "-" and  not seq_other[i] == "-":
@@ -185,7 +185,7 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
    
     if len(aligned_seq.keys()) > 2:
         print "right now the mapping implemented for two species only"
-        exit (1)
+        return []
 
     for species in aligned_seq.keys():
         if species == 'homo_sapiens': continue
@@ -240,7 +240,7 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
                 if not seq:  
                     c=inspect.currentframe()
                     print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
-                    exit(1)
+                    return []
 
                 map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
 
@@ -491,7 +491,6 @@ def main():
     no_threads = 1
     special    = 'one'
 
-
     if len(sys.argv) > 1 and  len(sys.argv)<3:
         print "usage: %s <set name> <number of threads> <method>"
         exit(1)
@@ -524,9 +523,9 @@ def main():
         else:
             gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
     else:
-        print "using all protein coding genes that have an sw# patch"
+        print "using all protein coding genes that have an sw# or usearch patch"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        gene_list = human_genes_w_sw_sharp_annotation (cursor, ensembl_db_name)
+        gene_list = human_genes_w_novel_exon_orthologues (cursor, ensembl_db_name)
 
     cursor.close()
     db.close()

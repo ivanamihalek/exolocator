@@ -28,12 +28,12 @@ $cmd = "20_novel_exon_cleanup.py   $set  $no_threads ";
 #07_gene2exon_store 
 $cmd = "07_gene2exon_store.py   $set  $no_threads ";
 (system $cmd) && die "error running $cmd";
-=cut
-
 
 #21_make_novel_exon_maps
 $cmd = "21_make_novel_exon_maps.py   $set  $no_threads ";
 (system $cmd) && die "error running $cmd";
+=cut
+
 
 #17_ortho_exon_map_to_msa
 $cmd = "17_ortho_exon_map_to_msa.py   $set  $no_threads ";

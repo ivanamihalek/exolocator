@@ -380,10 +380,10 @@ def main():
         print "optimizing gene2exon"
         qry = "optimize table gene2exon"
         print search_db(cursor, qry)
-        create_index (cursor, db_name, 'eg_index', 'gene2exon', ['exon_id', 'gene_id'])
+        create_index (cursor, db_name, 'eg_index',    'gene2exon', ['exon_id', 'gene_id'])
         create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
-        create_index (cursor, db_name, 'ek_index', 'exon_seq', ['exon_id', 'is_known'])
-        create_index (cursor, db_name, 'seq_index', 'exon_seq', ['exon_seq_id'])
+        create_index (cursor, db_name, 'ek_index',    'exon_seq',  ['exon_id', 'is_known'])
+        create_index (cursor, db_name, 'seq_index',   'exon_seq',  ['exon_seq_id'])
         print "optimizing exon_seq"
         qry = "optimize table exon_seq"
         print search_db(cursor, qry)
