@@ -99,19 +99,20 @@ def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
     return gene_ids
 
 #########################################
-def  human_genes_w_sw_sharp_annotation (cursor, ensembl_db_name):
+def  human_genes_w_novel_exon_orthologues (cursor, ensembl_db_name):
 
     genes_with_patch = 0
 
     human_exons = []
-    for db in ensembl_db_name.values():
-        switch_to_db (cursor, db)
-        qry  = "select distinct(maps_to_human_exon_id) from sw_exon"
-        rows = search_db (cursor, qry)
-        if not rows: continue
-        for row in rows:
-            if not row[0] in human_exons:
-                human_exons.append(row[0])
+    for table in ['sw_exon', 'usearch_exon']:
+        for db in ensembl_db_name.values():
+            switch_to_db (cursor, db)
+            qry  = "select distinct(maps_to_human_exon_id) from %s" % table
+            rows = search_db (cursor, qry)
+            if not rows: continue
+            for row in rows:
+                if not row[0] in human_exons:
+                    human_exons.append(row[0])
  
     human_genes = []
     switch_to_db (cursor,ensembl_db_name['homo_sapiens'])
