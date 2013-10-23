@@ -1087,12 +1087,15 @@ def make_alignments ( gene_list, db_info):
 
         # the exons are not guaranteed to be in order
         canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
-        has_sw_exons = False
-        for human_exon in canonical_human_exons:
-            this_exon_has_sw = check_has_sw_exons (cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known,  min_similarity)
-            has_sw_exons |= this_exon_has_sw
-        print 'has sw: ', has_sw_exons
-        if not has_sw_exons: continue
+
+        # later, if we want to save time rebuilding the alignemnets without patches:
+        # note also that we should check for usearch exons, not sure if this is being done
+        # has_sw_exons = False
+        # for human_exon in canonical_human_exons:
+        #     this_exon_has_sw = check_has_sw_exons (cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known,  min_similarity)
+        #     has_sw_exons |= this_exon_has_sw
+        # print 'has sw: ', has_sw_exons
+        # if not has_sw_exons: continue
         
 
         # >>>>>>>>>>>>>>>>>>
@@ -1110,11 +1113,12 @@ def make_alignments ( gene_list, db_info):
                bad_exons.append(human_exon)
 
         canonical_human_exons = filter (lambda x: not x in bad_exons, canonical_human_exons)
-        has_sw_exons = False
-        for human_exon in canonical_human_exons:
-            has_sw_exons |= check_has_sw_exons (cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known,  min_similarity)
-        print 'has sw redux: ', has_sw_exons
-        if not has_sw_exons: continue
+
+        #has_sw_exons = False
+        #for human_exon in canonical_human_exons:
+        #    has_sw_exons |= check_has_sw_exons (cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known,  min_similarity)
+        #print 'has sw redux: ', has_sw_exons
+        #if not has_sw_exons: continue
        
         # >>>>>>>>>>>>>>>>>>
         # bail out if there is a problem
