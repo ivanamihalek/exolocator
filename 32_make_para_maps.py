@@ -284,7 +284,7 @@ def find_relevant_exons (cursor, all_exons):
     relevant_exons.sort(key=lambda exon: exon.start_in_gene)
     for i in range(len(relevant_exons)):
         exon   = relevant_exons[i]
-        pepseq = get_exon_pepseq (cursor, exon.exon_id, exon.is_known, verbose=True)
+        pepseq = get_exon_pepseq (cursor, exon, verbose=True)
         if not pepseq:
             to_remove.append(i)
             continue
@@ -308,11 +308,10 @@ def make_para_maps (cursor, ensembl_db_name, cfg, acg, template_exons, para_exon
     print " >>>  1"
     relevant_template_exons = find_relevant_exons (cursor, template_exons)
     #print "relevant template: ", map(lambda exon: exon.exon_id, relevant_template_exons)
-    print " >>>  2"
+    exit(1)
     relevant_para_exons     = find_relevant_exons (cursor, para_exons)
     #print "relevant para:     ", map(lambda exon: exon.exon_id, relevant_para_exons)
 
-    exit(1)
 
     template_seq = decorate_and_concatenate (relevant_template_exons)
     para_seq     = decorate_and_concatenate (relevant_para_exons)
