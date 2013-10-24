@@ -311,6 +311,8 @@ def make_para_maps (cursor, ensembl_db_name, cfg, acg, template_exons, para_exon
     relevant_para_exons     = find_relevant_exons (cursor, para_exons)
     #print "relevant para:     ", map(lambda exon: exon.exon_id, relevant_para_exons)
 
+    exit(1)
+
     template_seq = decorate_and_concatenate (relevant_template_exons)
     para_seq     = decorate_and_concatenate (relevant_para_exons)
     
@@ -440,23 +442,8 @@ def make_para_exon_maps(species_list, db_info):
             if (not template_exons):
                 if verbose: print 'no exons for ', gene_id
                 continue
-            if verbose:
-                print
-                print "template_exons"
-                for ex in template_exons:
-                    print ex.exon_id
-                print
-
-            # check maps
-            # if gene_has_a_para_map (cursor, species, ensembl_db_name, template_exons):
-            #     if verbose: print "\t has a map"
-            #     continue
 
             if verbose: print "\t no map found - making new one"
-
-            # COMMENT THIS OUT PERHAPS? yeah, unless you know exactly what you're doing
-            # get rid of the old maps
-            # map_cleanup (cursor, ensembl_db_name, human_exons)
 
 
             # 
