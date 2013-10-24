@@ -306,9 +306,9 @@ def make_para_maps (cursor, ensembl_db_name, cfg, acg, template_exons, para_exon
 
     maps = []
 
-    relevant_template_exons = find_relevant_exons (cursor, template_exons)
+    relevant_template_exons = find_relevant_exons (cursor, template_exons, verbose=True)
     #print "relevant template: ", map(lambda exon: exon.exon_id, relevant_template_exons)
-    relevant_para_exons     = find_relevant_exons (cursor, para_exons)
+    relevant_para_exons     = find_relevant_exons (cursor, para_exons, verbose=True)
     #print "relevant para:     ", map(lambda exon: exon.exon_id, relevant_para_exons)
 
     exit(1)
@@ -445,8 +445,6 @@ def make_para_exon_maps(species_list, db_info):
 
             if verbose: print "\t no map found - making new one"
 
-
-            # 
             for para_gene_id  in paralogues:
                 description =  get_description (cursor, para_gene_id)
                 para_exons = gene2exon_list(cursor, para_gene_id)
