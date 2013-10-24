@@ -387,7 +387,7 @@ def gene_has_a_para_map (cursor, species, ensembl_db_name, template_exons):
 #########################################
 def make_para_exon_maps(species_list, db_info):
     
-    verbose = False
+    verbose = True
 
     [local_db, ensembl_db_name] = db_info
     if local_db:
@@ -407,8 +407,6 @@ def make_para_exon_maps(species_list, db_info):
     
 
     for species in species_list:
-    #for species in ['homo_sapiens']:
-
         print
         print "############################"
         print  species
@@ -423,10 +421,6 @@ def make_para_exon_maps(species_list, db_info):
         
         
         for gene_id in gene_ids:
-        #for gene_id in [638]: # caspase 8 in panda
-        #for sampl_ct in range(10):
-        #    gene_id = choice(gene_ids)
-        #for gene_id in [378128, 398993]:
             ct += 1
             if not ct%100: print "\t", species, ct, " out of ", len(gene_ids)
             if verbose: 
@@ -496,7 +490,7 @@ def make_para_exon_maps(species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 10
+    no_threads = 1
 
     local_db = False
 
