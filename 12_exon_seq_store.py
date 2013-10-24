@@ -44,6 +44,7 @@ def canonical_transl_info (cursor, gene_id):
          return []
  
     return rows[0]
+
 #########################################
 def get_canonical_transl (acg, cursor, gene_id, species):
 

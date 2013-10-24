@@ -114,7 +114,7 @@ def main():
                     short_dna += 1
                     continue
 
-                if (pepseq_transl_start == -10):
+                if (pepseq_transl_start == -10): # ??? what is this shit? adn what happens downstream if the pepseq_transl_start is None?
                     translation_fail += 1
                     continue
 

@@ -104,13 +104,13 @@ def cigar_line (seq_human, seq_other):
 
     if ( not len(seq_human) ==  len(seq_other) ):
         print "alignment_line:  the seqeunces must be aligned"
-        exit(1)
+        return ""
     else:
         length = len(seq_human)
 
     if not length:
         print "zero length sequence (?)"
-        exit (1)
+        return ""
 
     for i in range(length):
         if not seq_human[i] == "-" and  not seq_other[i] == "-":
@@ -221,7 +221,7 @@ def maps_evaluate (template_exons, para_exons, aligned_seq, exon_positions):
    
     if len(aligned_seq.keys()) > 2:
         print "right now the mapping implemented for two species only"
-        exit (1)
+        return []
 
 
     for template_exon_ct in range(len(template_exons)):
