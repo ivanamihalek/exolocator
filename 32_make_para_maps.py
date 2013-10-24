@@ -387,7 +387,7 @@ def gene_has_a_para_map (cursor, species, ensembl_db_name, template_exons):
 #########################################
 def make_para_exon_maps(species_list, db_info):
     
-    verbose = True
+    verbose = False
 
     [local_db, ensembl_db_name] = db_info
     if local_db:
@@ -462,7 +462,6 @@ def make_para_exon_maps(species_list, db_info):
  
 
                 store (cursor, maps)
-                exit(1)
 
 
     cursor.close()
@@ -473,7 +472,7 @@ def make_para_exon_maps(species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 10
 
     local_db = False
 
