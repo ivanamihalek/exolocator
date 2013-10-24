@@ -60,6 +60,8 @@ def expand_pepseq (aligned_pep_sequence, exon_seqs, flank_length):
 
     [pepseq, pepseq_transl_start, 
      pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs
+    if not pepseq or pepseq_transl_start is None or pepseq_transl_end is None:
+        return ""
     # coding dna sequence:
     cds = dna_seq[pepseq_transl_start:pepseq_transl_end]
     if not cds: 
@@ -71,7 +73,6 @@ def expand_pepseq (aligned_pep_sequence, exon_seqs, flank_length):
         print Seq(cds).translate().tostring()
         print cds
         print pepseq_transl_start, pepseq_transl_end," reconstruction failed"
-        exit (1)
         return ""
 
     effective_left_flank  = ""
@@ -143,7 +144,6 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
         exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
         if (not exon_seqs):
             print " exon_seqs for" , map.source
-            exit(1)
             continue
         [pepseq, pepseq_transl_start, 
          pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs[1:]
@@ -214,7 +214,7 @@ def get_canonical_transl (acg, cursor, gene_id, species):
     canonical_transl_id = gene2stable_canon_transl(cursor, gene_id)
     if ( not canonical_transl_id):
         print "no canonical transl id found for ", gene_id
-        exit(1)
+        return ""
 
     cmd = acg.generate_fastacmd_protein_command (canonical_transl_id, species, 
                                                  "all", None)
@@ -222,7 +222,7 @@ def get_canonical_transl (acg, cursor, gene_id, species):
     if (not fasta):
         print gene2stable (cursor, gene_id = gene_id), 
         print "fasta not found for ", canonical_transl_id
-        exit(1)
+        return ""
 
     canonical_translation = ""
     for line in fasta.split("\n"):
