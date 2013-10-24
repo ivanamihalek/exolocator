@@ -305,9 +305,10 @@ def find_relevant_exons (cursor, all_exons):
 def make_para_maps (cursor, ensembl_db_name, cfg, acg, template_exons, para_exons):
 
     maps = []
-
+    print " >>>  1"
     relevant_template_exons = find_relevant_exons (cursor, template_exons)
     #print "relevant template: ", map(lambda exon: exon.exon_id, relevant_template_exons)
+    print " >>>  2"
     relevant_para_exons     = find_relevant_exons (cursor, para_exons)
     #print "relevant para:     ", map(lambda exon: exon.exon_id, relevant_para_exons)
 
