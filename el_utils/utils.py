@@ -384,6 +384,9 @@ def mkdir_p (path):
 
 #########################################
 def output_fasta (filename, headers, sequence):
+
+    if not type sequence is dict: return False
+
     outf = erropen (filename, "w")
     if not outf: return False
 
