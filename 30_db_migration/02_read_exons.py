@@ -44,18 +44,23 @@ def make_exon_table (cursor, table):
 
 
 #########################################
-def check_exon_table(cursor, db_name, species, verbose = False):
-    table =  'exon_' + species
+def check_exon_table(cursor, table, verbose = False):
     
     if ( check_table_exists (cursor, db_name, table)):
         if verbose: print table, " found in ", db_name
         qry = "drop table "+table
         rows = search_db(cursor, qry)
         make_exon_table (cursor, table)
+
         if rows:
             return rows[0][0]
         else:
            return 0
+        qry = "create index key_id on  " + table + "(exon_key)";
+        rows = search_db(cursor, qry)
+        if rows:
+            print rows
+            return 0
     else:
         if verbose: print table, " not found in ", db_name
         make_exon_table (cursor, table)
@@ -78,16 +83,11 @@ def check_exon_table_size(cursor, db_name, species):
 #########################################
 def store(cursor, in_path, infile, species):
 
-    table =  'exon_' + species
     inf   = erropen (in_path+"/"+infile, "r")
+    if not inf: exit(1) 
+
 
     print "storing contents of ", in_path, " file ", infile
-    if 0:
-        qry = "create index key_id on  " + table + "(exon_key)";
-        rows = search_db(cursor, qry)
-        if rows:
-            print rows
-            exit(1)
     
     ct = 0
     start = time()
@@ -171,12 +171,15 @@ def load_from_infiles (infiles, in_path):
         print infile
         start = time()
         print "reading ", infile
-        fields = infile.split ("_")
+        fields  = infile.split ("_")
         species = fields[0] + "_" + fields[1] 
         if ('mustela') in fields[0]:
             species += "_" + fields[2]
             
-        
+        table =  'exon_' + species
+        check_exon_table (cursor, table, verbose = True)
+        exit(1)
+
         store  (cursor, in_path, infile, species)
         #print "\t done in  %8.3f sec" % (time()-start) 
         
