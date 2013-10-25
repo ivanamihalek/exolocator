@@ -7,7 +7,7 @@ from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
 from   el_utils.utils   import  erropen, output_fasta
-from   el_utils.map     import  get_maps, Map
+from   el_utils.map     import  get_maps, Map, map2exon
 from   el_utils.tree    import  species_sort
 from   el_utils.ncbi    import  taxid2trivial
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
