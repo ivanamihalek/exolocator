@@ -122,7 +122,7 @@ def multiple_exon_alnmt(species_list, db_info):
                     headers.append(seqname)
                     sequences[seqname] = pepseq
 
-                fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], template_exon.exon_id)
+                fasta_fnm = "{0}/{1}_{2}_{3}.fa".format( cfg.dir_path['scratch'], species, template_exon.exon_id, template_exon.is_known)
                 output_fasta (fasta_fnm, headers, sequences)
 
  
