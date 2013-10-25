@@ -42,7 +42,7 @@ def multiple_exon_alnmt(species_list, db_info):
 
 
     for species in species_list:
-        #if not species == 'homo_sapiens': continue
+
         print
         print "############################"
         print  species
@@ -62,9 +62,6 @@ def multiple_exon_alnmt(species_list, db_info):
         no_pepseq     = 0
         no_paralogues = 0
         for gene_id in gene_ids:
-        #for gene_id in [378128]: #   
-        #for sample_ct in range(10):
-            #gene_id = choice(gene_ids)
 
             if verbose: start = time()
             gene_ct += 1

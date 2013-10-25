@@ -419,7 +419,7 @@ def make_para_exon_maps(species_list, db_info):
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         
-        
+        ct = 0
         for gene_id in gene_ids:
             ct += 1
             if not ct%100: print "\t", species, ct, " out of ", len(gene_ids)
@@ -460,7 +460,6 @@ def make_para_exon_maps(species_list, db_info):
                 if verbose: print "\t", description, "maps ok"
                 no_maps += len(maps)
  
-
                 store (cursor, maps)
 
 
