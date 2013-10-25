@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import MySQLdb
-import sys, commands
+import sys, commands, os
 from   el_utils.mysql         import  connect_to_mysql, search_db, switch_to_db
 from   el_utils.ensembl       import  *
 from   el_utils.exon          import  Exon
