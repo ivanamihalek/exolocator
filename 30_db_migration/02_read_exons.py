@@ -178,11 +178,11 @@ def load_from_infiles (infiles, in_path):
             
         table =  'exon_' + species
         check_exon_table (cursor, db_name, table, verbose = True)
-        exit(1)
 
-        #store  (cursor, in_path, infile, species)
-        #print "\t done in  %8.3f sec" % (time()-start) 
-        
+        store  (cursor, in_path, infile, species)
+        print "\t done in  %8.3f sec" % (time()-start) 
+        sys.exit(1)
+       
     
 #########################################
 def main():
