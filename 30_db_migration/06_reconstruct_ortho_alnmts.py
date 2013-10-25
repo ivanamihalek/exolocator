@@ -885,9 +885,14 @@ def remove_ghosts (output_pep, names_of_exons):
 #########################################
 def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
                       mitochondrial, names_of_exons, alnmt_pep, output_pep, flank_length):
-    #########
+
     
+    ##########
     output_pep_new  = {}
+
+    ##########
+    if not 'human' in output_pep.keys(): # this shouldn't really happen ...
+        return output_pep_new
 
     # which exons correspond to which name?
     [name_ct2exon_ct, exon_ct2name_ct] = name2count (output_pep, names_of_exons)
