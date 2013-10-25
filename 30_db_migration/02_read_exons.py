@@ -44,7 +44,7 @@ def make_exon_table (cursor, table):
 
 
 #########################################
-def check_exon_table(cursor, table, verbose = False):
+def check_exon_table(cursor, db_name, table, verbose = False):
     
     if ( check_table_exists (cursor, db_name, table)):
         if verbose: print table, " found in ", db_name
@@ -177,7 +177,7 @@ def load_from_infiles (infiles, in_path):
             species += "_" + fields[2]
             
         table =  'exon_' + species
-        check_exon_table (cursor, table, verbose = True)
+        check_exon_table (cursor, db_name, table, verbose = True)
         exit(1)
 
         store  (cursor, in_path, infile, species)
