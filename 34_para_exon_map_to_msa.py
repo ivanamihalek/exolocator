@@ -125,14 +125,13 @@ def multiple_exon_alnmt(species_list, db_info):
                 fasta_fnm = "{0}/{1}_{2}_{3}.fa".format( cfg.dir_path['scratch'], species, template_exon.exon_id, template_exon.is_known)
                 output_fasta (fasta_fnm, headers, sequences)
 
- 
                 if (len(headers) <=1 ):
                     print "single species in the alignment (?)"
                     no_paralogues += 1
                     continue
 
                 # align
-                afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], template_exon.exon_id)
+                afa_fnm  = "{0}/{1}_{2}_{3}.afa".format( cfg.dir_path['scratch'], species, template_exon.exon_id, template_exon.is_known)
                 mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
                 ret      = commands.getoutput(mafftcmd)
 
