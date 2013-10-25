@@ -196,7 +196,7 @@ def main():
     switch_to_db (cursor, db_name)
 
     cfg      = ConfigurationReader(user="marioot", passwd="tooiram", check=False)
-    in_path = cfg.get_path('afs_dumps/exons')
+    in_path = "{0}/exons".format(cfg.get_path('afs_dumps'))
     if (not os.path.exists(in_path)):
         print in_path, "not found"
 
