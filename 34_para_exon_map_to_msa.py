@@ -114,7 +114,8 @@ def multiple_exon_alnmt(species_list, db_info):
                 sequences = {seqname:pepseq}
                 headers   = [seqname]
                 for map in maps:
-                    pepseq  = get_exon_pepseq (cursor, map.exon_id_2, map.exon_known_2)
+                    exon    = map2exon(cursor, ensembl_db_name, map, paralogue=True)
+                    pepseq  = get_exon_pepseq (cursor,exon)
                     if (not pepseq):
                         continue
                     seqname = "{0}:{1}:{2}".format('para', map.exon_id_2, map.exon_known_2)

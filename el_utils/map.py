@@ -84,7 +84,7 @@ def get_maps(cursor, ensembl_db_name, exon_id, is_known, species = 'homo_sapiens
     return maps
 
 #########################################
-def map2exon(cursor, ensembl_db_name, map):
+def map2exon(cursor, ensembl_db_name, map, paralogue=False):
 
     # this is fake exon info! to be passe to get_exon_pepseq
     exon = Exon ()
@@ -92,11 +92,28 @@ def map2exon(cursor, ensembl_db_name, map):
     exon.is_known    = map.exon_known_2
     if map.source == 'sw_sharp':
         exon.analysis_id = -1 
-        rows = switch_to_db (cursor, ensembl_db_name[map.species_2])
-        if  not rows:
-            exon.exon_seq_id = -1
+        if not paralogue:  # move to the other species
+            rows = switch_to_db (cursor, ensembl_db_name[map.species_2])
+            if  not rows:
+                exon.exon_seq_id = -1
+                return exon
         else:
             qry  = "select exon_seq_id from sw_exon where exon_id = %d " % exon.exon_id 
+            rows = search_db (cursor, qry)
+            if not rows or not rows[0][0]:
+                exon.exon_seq_id = -1
+            else:
+                exon.exon_seq_id = int(rows[0][0])
+
+    elif map.source == 'usearch':
+        exon.analysis_id = -2
+        if not paralogue: 
+            rows = switch_to_db (cursor, ensembl_db_name[map.species_2])
+            if  not rows:
+                exon.exon_seq_id = -1
+                return exon
+        else:
+            qry  = "select exon_seq_id from usearch_exon where exon_id = %d " % exon.exon_id 
             rows = search_db (cursor, qry)
             if not rows or not rows[0][0]:
                 exon.exon_seq_id = -1
