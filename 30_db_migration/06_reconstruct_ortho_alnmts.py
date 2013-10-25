@@ -1359,31 +1359,3 @@ if __name__ == '__main__':
     main()
 
 
-
-
-
-'''
-    #for random_check in range(100):
-    #    gene_id = choice(gene_list)
-    #for gene_id in [412667]: #  wls   
-    #for gene_id in [416066]:  #  BRCA1   
-    #for gene_id in [378768]:  #  p53
-    #for gene_id in [389337]: #inositol polyphosphate-4-phosphatase
-    #for gene_id in [418590]: # titin
-    #for gene_id in [412362]: # complement component 1,s subcomponent
-
-
-                if verbose:
-                    print
-                    print "============================================================"
-                    print species
-                    print human_seq
-                    print pep_seq
-                    print " phase ", phase, " trsl_from ", trsl_from, " offset ", offset
-                    print " prev right flank ", prev_right_flank
-                    print " curr  left flank ", tmp_patch
-                    print cary, flanking_nucleotides, codon, res
-                    print prev_local_pos, " ---> ",  insert [name][prev_local_pos]
-
-
-'''
