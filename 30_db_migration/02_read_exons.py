@@ -167,7 +167,7 @@ def load_from_infiles (infiles, in_path):
     ###############
     #infiles.reverse()
     for infile in infiles:
-        if 'pong_abelii' in infile: continue
+        #if 'pong_abelii' in infile: continue
         print infile
         start = time()
         print "reading ", infile
