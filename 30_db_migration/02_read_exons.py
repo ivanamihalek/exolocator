@@ -181,7 +181,6 @@ def load_from_infiles (infiles, in_path):
 
         store  (cursor, table, in_path, infile, species)
         print "\t done in  %8.3f sec" % (time()-start) 
-        sys.exit(1)
        
     
 #########################################
