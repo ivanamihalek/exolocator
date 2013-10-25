@@ -176,9 +176,9 @@ def load_from_infiles (infiles, in_path):
         if ('mustela') in fields[0]:
             species += "_" + fields[2]
             
-        #table =  'exon_' + species
-        #check_exon_table (cursor, db_name, table, verbose = True)
-        #exit(1)
+        table =  'exon_' + species
+        check_exon_table (cursor, db_name, table, verbose = True)
+        exit(1)
 
         #store  (cursor, in_path, infile, species)
         #print "\t done in  %8.3f sec" % (time()-start) 
