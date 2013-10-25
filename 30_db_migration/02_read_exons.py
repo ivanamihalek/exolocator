@@ -167,7 +167,7 @@ def load_from_infiles (infiles, in_path):
     ###############
     #infiles.reverse()
     for infile in infiles:
-        #if 'homo_sapiens' in infile: continue
+        if 'pong_abelii' in infile: continue
         print infile
         start = time()
         print "reading ", infile
@@ -176,6 +176,7 @@ def load_from_infiles (infiles, in_path):
         if ('mustela') in fields[0]:
             species += "_" + fields[2]
             
+
         table =  'exon_' + species
         check_exon_table (cursor, db_name, table, verbose = True)
 
@@ -187,7 +188,7 @@ def load_from_infiles (infiles, in_path):
 def main():
 
     
-    no_threads = 1
+    no_threads = 4
     
     db_name =  "exolocator_db"
     db      = connect_to_mysql(user="marioot", passwd="tooiram")
