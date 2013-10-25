@@ -46,12 +46,17 @@ def dump_exons (species_list, db_info):
         cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor   = db.cursor()
 
-    out_path = cfg.get_path('afs_dumps/exons')
+    out_path = "{0}/exons".format(cfg.get_path('afs_dumps'))
+    if not os.path.exists(out_path):
+        print out_path, "not found"
+        exit (1) # exit on failed output dir check
+
     for species in species_list:
         #if (not species=='homo_sapiens'):
         #    continue
         outfile  = "{0}/{1}_exon_dump.txt".format(out_path, species)
         of       = erropen (outfile,"w")
+        if not of:  continue
         switch_to_db (cursor,  ensembl_db_name[species])
 
         if (species=='homo_sapiens'):
@@ -61,12 +66,11 @@ def dump_exons (species_list, db_info):
 
         source = get_analysis_dict(cursor)
 
-        tot    = 0
         ct     = 0
         for gene_id in gene_ids:
-            tot += 1
-            if (not  tot%1000):
-                print species, ct, tot
+            ct += 1
+            if (not  ct%1000):
+                print species, ct, len(gene_ids)
 
             # get _all_ exons
             exons = gene2exon_list(cursor, gene_id)
@@ -80,7 +84,6 @@ def dump_exons (species_list, db_info):
                 # exons seqs are its aa translation, left_flank, right_flank, and dna_seq
                 exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
-                    ct += 1
                     continue
                 # human readable string describing the source of annotation for this exon
                 if exon.is_known==2:
