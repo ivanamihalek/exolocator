@@ -171,7 +171,7 @@ def multiple_exon_alnmt(species_list, db_info):
 
 #########################################
 def main():
-    no_threads = 15
+    no_threads = 10
 
     local_db = False
 
