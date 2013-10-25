@@ -64,7 +64,6 @@ def check_seq_length(sequence, msg):
             afa_fnm = msg+'.afa'
             output_fasta (afa_fnm, sequence.keys(), sequence)
             print afa_fnm
-            #exit(1)
             return False
     return True
 
@@ -181,7 +180,6 @@ def expand_pepseq (aligned_pep_sequence, exon_seqs, flank_length):
         print aligned_pep_sequence
         print cds
         print pepseq_transl_start, pepseq_transl_end," reconstruction failed"
-        exit (1)
         return ""
 
     effective_left_flank  = ""
@@ -277,7 +275,7 @@ def make_exon_alignment(cursor, species, ensembl_db_name, template_exon, mitocho
         exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2)
         if (not exon_seqs):
             print map
-            exit (1)
+            continue
         [pepseq, pepseq_transl_start, 
          pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs[1:]
 
@@ -294,7 +292,6 @@ def make_exon_alignment(cursor, species, ensembl_db_name, template_exon, mitocho
         if (not pepseq == pepseq2):
             #print " ! ", pepseq
             #print " ! ", pepseq2
-            #exit (1)
             continue
             
         # inflate the compressed sequence
@@ -326,11 +323,6 @@ def make_exon_alignment(cursor, species, ensembl_db_name, template_exon, mitocho
     sequence_stripped_pep = strip_gaps (sequence_pep)
     # strip common gaps
     sequence_stripped_dna = strip_gaps (sequence_dna)
-
-    # TODO
-    #if not sequence_stripped_pep:
-    #    print "blah"
-    #    exit(1)
 
     return [sequence_stripped_pep, sequence_stripped_dna]
 
@@ -816,18 +808,6 @@ def decorate_and_concatenate (pepseqs):
 
     return decorated_seq
 
-########################################
-def realign_slice_clustal_omega (pep_slice, seq_to_fix, pep_seq_pieces):
-
-    new_pep_slice  = pep_slice
-
-    #afa_fnm  = 'slice.afa'
-    #output_fasta (afa_fnm, pep_slice.keys(), pep_slice)
-    #print afa_fnm
-    # exit(1)
-
-    return new_pep_slice
-    
 
 ########################################
 def realign_slice (pep_slice, template_seq, seq_to_fix, pep_seq_pieces):
@@ -1184,7 +1164,7 @@ def check_directory (cfg, species, pep_or_dna):
             os.makedirs(directory) 
         except:
             print "error making", directory
-            exit(1)
+            exit(1) # on error making the output directory
 
     return directory
 

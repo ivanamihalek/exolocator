@@ -15,8 +15,8 @@ def exon_tabstring(exon, gene_stable_id, exon_stable_id, species, analysis, exon
     
     ret  = ""
     ret += str(exon.exon_id) +"\t"
-    ret += gene_stable_id +"\t"
-    ret += exon_stable_id +"\t"
+    ret += gene_stable_id    +"\t"
+    ret += exon_stable_id    +"\t"
     ret += str(exon.start_in_gene)   +"\t"
     ret += str(exon.end_in_gene)     +"\t"
     ret += str(exon.strand)          +"\t"
@@ -72,7 +72,7 @@ def dump_exons (species_list, db_info):
             exons = gene2exon_list(cursor, gene_id)
             if (not exons):
                 print 'no exons for ', gene_id
-                sys.exit(1)
+                continue
 
             for exon in exons:
 

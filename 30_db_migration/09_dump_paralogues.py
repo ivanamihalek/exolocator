@@ -2,42 +2,12 @@
 
 
 import MySQLdb, os
-from   el_utils.mysql         import  connect_to_mysql, connect_to_db, search_db
-from   el_utils.mysql         import  store_or_update,  switch_to_db
-from   el_utils.ensembl       import  get_species, get_gene_ids, gene2stable, stable2gene
-from   el_utils.ensembl       import  get_compara_name
+from   el_utils.mysql         import  *
+from   el_utils.ensembl       import  *
 from   el_utils.threads       import  parallelize
 from   el_utils.config_reader import  ConfigurationReader
 from   el_utils.utils         import  erropen
 
-
-
-########
-def stable2member (cursor, stable_id):
-    
-    # member_id refers to compara db
-    # of which we need to have one
-    qry = "select  member_id from member where stable_id = '%s'" % stable_id
-    rows = search_db (cursor, qry)
-    if (not rows or 'ERROR' in rows[0]):
-        rows = search_db (cursor, qry, verbose = True)
-        exit(1)
-        return ""
-    
-    return int(rows[0][0])
-
-########
-def member2stable (cursor, member_id):
-    
-    # member_id refers to compara db
-    # of which we need to have one
-    qry = "select  stable_id from member where member_id = %d" % member_id
-    rows = search_db (cursor, qry)
-    if (not rows):
-        rows = search_db (cursor, qry, verbose = True)
-        return ""
-
-    return rows[0][0]
 
 ########
 def read_paralogues(cursor, gene_id):
@@ -70,8 +40,8 @@ def dump_paralogues(species_list, db_info):
         cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    #for species in species_list:
-    for species in ['homo_sapiens']:
+    for species in species_list:
+
         print
         print "############################"
         print  species
@@ -93,9 +63,9 @@ def dump_paralogues(species_list, db_info):
 
         ct   =  0
         seen = []
-        for gene_id in [378128, 398993] + gene_ids:
+        for gene_id in gene_ids:
             ct += 1
-            if not ct%10: print "\t", ct, "out of", len(gene_ids)
+            if not ct%100: print "\t", species, "   ", ct, "out of", len(gene_ids)
 
             if gene_id in seen: continue
 
@@ -108,7 +78,7 @@ def dump_paralogues(species_list, db_info):
                 for para in paralogues:
                     print >> of,  stable_id, para
                 seen += paralogues
-                exit(1)
+                
         of.close()
  
     cursor.close()

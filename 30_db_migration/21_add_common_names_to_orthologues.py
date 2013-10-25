@@ -13,7 +13,8 @@ from   el_utils.threads       import  parallelize
 def  trivial_names ():
     trivial = {}
 
-    trivial['ailuropoda_melanoleuca']='panda' 
+    trivial['ailuropoda_melanoleuca']= 'panda' 
+    trivial['anas_platyrhynchos']    = 'duck'
     trivial['anolis_carolinensis']='anole_lizard' 
     trivial['bos_taurus']='cow' 
     trivial['callithrix_jacchus']='marmoset' 
@@ -25,8 +26,9 @@ def  trivial_names ():
     trivial['dipodomys_ordii']='kangaroo_rat' 
     trivial['echinops_telfairi']='madagascar_hedgehog' 
     trivial['equus_caballus']='horse' 
-    trivial['erinaceus_europaeus']='european_hedgehog' 
-    trivial['felis_catus']='cat' 
+    trivial['erinaceus_europaeus'] = 'european_hedgehog' 
+    trivial['felis_catus'] = 'cat' 
+    trivial['ficedula_albicollis'] ='flycatcher'
     trivial['gadus_morhua']='cod' 
     trivial['gallus_gallus']='chicken' 
     trivial['gasterosteus_aculeatus']='stickleback' 
@@ -116,7 +118,7 @@ def main():
     switch_to_db (cursor, db_name)
     ###############
     trivial = trivial_names()
-    add_common_name_column (cursor)   
+    #add_common_name_column (cursor)   
     add_common_names (cursor, trivial)
 
     ###############

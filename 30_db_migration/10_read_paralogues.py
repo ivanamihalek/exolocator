@@ -50,14 +50,14 @@ def main():
 
     
     ###############
-    #qry = "drop table paralog"
-    #search_db (cursor, qry)
-    #qry = "create table paralog (id int(10) primary key auto_increment) "
-    #search_db (cursor, qry)
-    #qry = "alter table paralog  ADD gene_id1 varchar(30) " 
-    #search_db (cursor, qry)
-    #qry = "alter table paralog  ADD gene_id2 varchar(30) " 
-    #search_db (cursor, qry)
+    qry = "drop table paralog"
+    search_db (cursor, qry)
+    qry = "create table paralog (id int(10) primary key auto_increment) "
+    search_db (cursor, qry)
+    qry = "alter table paralog  ADD gene_id1 varchar(30) " 
+    search_db (cursor, qry)
+    qry = "alter table paralog  ADD gene_id2 varchar(30) " 
+    search_db (cursor, qry)
 
     ###############
     os.chdir(in_path)

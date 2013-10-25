@@ -9,72 +9,6 @@ from   el_utils.utils         import erropen
 from   el_utils.threads       import  parallelize
 
 
-########################################
-def make_exon_table (cursor, table):
-
-    qry  = "CREATE TABLE " + table + "  (id INT(10) PRIMARY KEY AUTO_INCREMENT)"
-    rows = search_db (cursor, qry)
-    if (rows):
-        return False
-
-    for column_name in ['exon_key', 'ensembl_gene_id', 'ensembl_exon_id']:
-        qry = "ALTER TABLE %s  ADD %s VARCHAR(50)" % (table, column_name)
-        rows = search_db (cursor, qry)
-        if (rows):
-            return False
-        
-
-    for column_name in ['start_in_gene',  'end_in_gene']:
-        qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
-        rows = search_db (cursor, qry)
-        if (rows):
-            return False
-
-    for column_name in ['strand', 'is_known', 'is_coding', 'is_canonical', 'is_constitutive']:
-        qry = "ALTER TABLE %s  ADD %s tinyint" %  (table, column_name)
-        rows = search_db (cursor, qry)
-        if (rows):
-            return False
-
-    for column_name in ['species', 'source', 'protein_seq', 'left_flank', 'right_flank', 'dna_seq' ]:
-        qry = "ALTER TABLE %s  ADD %s blob" %  (table, column_name)
-        rows = search_db (cursor, qry)
-        if (rows):
-            return False
-
-
-#########################################
-def check_exon_table(cursor, db_name, species, verbose = False):
-    table =  'exon_' + species
-    
-    if ( check_table_exists (cursor, db_name, table)):
-        if verbose: print table, " found in ", db_name
-        #qry = "drop table "+table
-        #rows = search_db(cursor, qry)
-        #make_exon_table (cursor, table)
-        #if rows:
-        #    return rows[0][0]
-        #else:
-        #   return 0
-    else:
-        if verbose: print table, " not found in ", db_name
-        make_exon_table (cursor, table)
-
-
-
-#########################################
-def check_exon_table_size(cursor, db_name, species):
-    table =  'exon_' + species
-
-    qry  = "select count(1) from " + table
-    rows = search_db(cursor, qry)
-
-    if rows:
-        return rows[0][0]
-    else:
-        return 0
-
-
 #########################################
 def store(cursor, in_path, infile):
 
@@ -140,7 +74,7 @@ def main():
     in_path = cfg.get_path('afs_dumps')
     if (not os.path.exists(in_path)):
         print in_path, "not found"
-
+        exit(1)
 
     
     cursor.close()

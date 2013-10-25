@@ -165,9 +165,9 @@ def load_from_infiles (infiles, in_path):
     switch_to_db (cursor, db_name)
     
     ###############
-    infiles.reverse()
+    #infiles.reverse()
     for infile in infiles:
-        if 'homo_sapiens' in infile: continue
+        #if 'homo_sapiens' in infile: continue
         print infile
         start = time()
         print "reading ", infile
