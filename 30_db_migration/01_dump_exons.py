@@ -46,7 +46,7 @@ def dump_exons (species_list, db_info):
         cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor   = db.cursor()
 
-    out_path = cfg.get_path('afs_dumps')
+    out_path = cfg.get_path('afs_dumps/exons')
     for species in species_list:
         #if (not species=='homo_sapiens'):
         #    continue
