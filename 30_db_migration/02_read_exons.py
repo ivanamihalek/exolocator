@@ -55,31 +55,25 @@ def check_exon_table(cursor, db_name, table, verbose = False):
         mth = create_date.month
 
         if yr==2012 or yr==2013 and mth<10:
-            print 'old_table'
-        else:
-            print 'new table'
-
-    if 0:
-        if ( check_table_exists (cursor, db_name, table)):
-            if verbose: print table, " found in ", db_name
-            #qry = "drop table "+table
+            if verbose: print 'old table', table, " found in ", db_name, '(will drop)'
+            qry = "drop table "+table
             rows = search_db(cursor, qry)
-            make_exon_table (cursor, table)
-
-            if rows:
-                return rows[0][0]
-            else:
-                return 0
-            qry = "create index key_id on  " + table + "(exon_key)";
-            rows = search_db(cursor, qry)
-            if rows:
-                print rows
-                return 0
+           
         else:
-            if verbose: print table, " not found in ", db_name
-            make_exon_table (cursor, table)
+            if verbose: print 'new table', table, " found in ", db_name, ' -- moving on'
+            return 0 # skip this one
 
-    return
+    if verbose: print 'making new table', table
+    make_exon_table (cursor, table)
+    if not rows:   return 0
+
+    qry = "create index key_id on  " + table + "(exon_key)";
+    rows = search_db(cursor, qry)
+    if rows:
+        print rows
+        return 0
+
+    return 1
 
 #########################################
 def check_exon_table_size(cursor, db_name, species):
@@ -191,10 +185,13 @@ def load_from_infiles (infiles, in_path):
             
 
         table =  'exon_' + species
-        check_exon_table (cursor, db_name, table, verbose = True)
-
-        #store  (cursor, table, in_path, infile, species)
-        #print "\t %s  done in  %8.3f sec" % (species, time()-start) 
+        # note the table is also 'not ok' it it si new and we are nto willing to drop it
+        exon_table_ok =  check_exon_table (cursor, db_name, table, verbose = True)
+        if not exon_table_ok: continue
+        
+        print "\t storing %s " % species
+        store  (cursor, table, in_path, infile, species)
+        print "\t %s  done in  %8.3f sec" % (species, time()-start) 
        
     
 #########################################
