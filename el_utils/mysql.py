@@ -167,6 +167,20 @@ def check_table_exists (cursor, db_name, table_name):
     else: 
         return False
 
+#########################################
+def table_create_time (cursor, db_name, table_name):
+    
+    qry  = "select create_time from information_schema.tables where "
+    qry += "table_schema   = '%s' " % db_name
+    qry += "and table_name = '%s' " % table_name
+
+    rows = search_db (cursor, qry, verbose=False)
+    if (not rows or  'Error' in rows[0]):
+        search_db (cursor, qry, verbose=True)
+        return ""
+    else: 
+        return rows[0][0]
+
 #######
 def search_db (cursor, qry, verbose=False):
 
