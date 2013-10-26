@@ -46,31 +46,34 @@ def make_exon_table (cursor, table):
 #########################################
 def check_exon_table(cursor, db_name, table, verbose = False):
     
-    if ( not check_table_exists (cursor, db_name, table)):
-        print 'table does not exist'
-    else:
-        create_date = table_create_time (cursor, db_name, table)
-        print create_date # already magically turned into datetime object by python (?)
-        yr  = create_date.year
-        mth = create_date.month
-
-        if yr==2012 or yr==2013 and mth<10:
-            if verbose: print 'old table', table, " found in ", db_name, '(will drop)'
-            qry = "drop table "+table
-            rows = search_db(cursor, qry)
-           
+    if 0:
+        if ( not check_table_exists (cursor, db_name, table)):
+            if verbose:  print 'table', table, 'in', db_name, 'does not exist'
         else:
-            if verbose: print 'new table', table, " found in ", db_name, ' -- moving on'
-            return 0 # skip this one
+            create_date = table_create_time (cursor, db_name, table)
+            if verbose: print create_date # already magically turned into datetime object by python (?)
+            yr  = create_date.year
+            mth = create_date.month
+
+            if yr==2012 or yr==2013 and mth<10:
+                if verbose: print 'old table', table, " found in ", db_name, '(will drop)'
+                qry = "drop table "+table
+                rows = search_db(cursor, qry)
+
+            else:
+                if verbose: print 'new table', table, " found in ", db_name, ' -- moving on'
+                return 0 # skip this one
+
+    qry = "drop table "+table
+    rows = search_db(cursor, qry)
 
     if verbose: print 'making new table', table
     make_exon_table (cursor, table)
 
+    if verbose: print 'making index on', table
+
     qry = "create index key_id on  " + table + " (exon_key)";
     rows = search_db(cursor, qry)
-    if rows:
-        print rows
-        return 0
 
     return 1
 
@@ -100,7 +103,7 @@ def store(cursor, table,  in_path, infile, species):
     start = time()
     for line in inf:
         ct += 1
-        if (not ct%1000):
+        if (not ct%10000):
             print "   %s   %5d    %8.3f" % (species, ct,  time()-start)
             sys.stdout.flush()
             start = time()
@@ -201,7 +204,7 @@ def load_from_infiles (infiles, in_path):
 def main():
 
     
-    no_threads = 4
+    no_threads = 1
     
     db_name =  "exolocator_db"
     db      = connect_to_mysql(user="marioot", passwd="tooiram")
