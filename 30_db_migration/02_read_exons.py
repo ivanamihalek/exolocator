@@ -47,7 +47,7 @@ def make_exon_table (cursor, table):
 def check_exon_table(cursor, db_name, table, verbose = False):
     
     date = table_create_time (cursor, db_name, table)
-    print date
+    print table, date
     exit(1)
 
     if 0:
