@@ -4,7 +4,7 @@ import MySQLdb, glob
 import os, commands, sys
 from   time import clock, time 
 from   el_utils.mysql         import connect_to_mysql, search_db, switch_to_db
-from   el_utils.mysql         import store_or_update, check_table_exists
+from   el_utils.mysql         import store_or_update, check_table_exists, create_index
 from   el_utils.config_reader import ConfigurationReader
 from   el_utils.utils         import erropen
 
