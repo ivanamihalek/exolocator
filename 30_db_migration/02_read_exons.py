@@ -49,7 +49,7 @@ def check_exon_table(cursor, db_name, table, verbose = False):
     create_date = table_create_time (cursor, db_name, table)
     print create_date # already magically turned into datetime object by python (?)
     yr  = create_date.year
-    mth = create_date.mth
+    mth = create_date.month
     if yr==2012 or yr==2013 and mth<10:
         print 'old_table'
     sys.exit(1)
