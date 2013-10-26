@@ -46,9 +46,9 @@ def make_exon_table (cursor, table):
 #########################################
 def check_exon_table(cursor, db_name, table, verbose = False):
     
-    date = table_create_time (cursor, db_name, table)
-    print date
-    [yr, mth, day] = date.split('-')
+    create_date = table_create_time (cursor, db_name, table)
+    print create_date 
+    [yr, mth, day] = create_date.split('-')
     if yr==2012 or yr==2012 and mth<10:
         print 'old_table'
     sys.exit(1)
