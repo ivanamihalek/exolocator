@@ -19,6 +19,7 @@ def store(cursor, infile):
     for line in inf:
         line.rstrip()
         total += 1
+        if not total%100: print "\t", total
         if ( len(line.split()) !=  2 or not 'ENS' in line):
             continue
         [stable_id1, stable_id2] = line.split()
