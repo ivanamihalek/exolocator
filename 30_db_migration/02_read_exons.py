@@ -47,8 +47,11 @@ def make_exon_table (cursor, table):
 def check_exon_table(cursor, db_name, table, verbose = False):
     
     date = table_create_time (cursor, db_name, table)
-    print table, date
-    exit(1)
+    print date
+    [yr, mth, day] = date.split('-')
+    if yr==2012 or yr==2012 and mth:10:
+        print 'old_table'
+    sys.exit(1)
 
     if 0:
         if ( check_table_exists (cursor, db_name, table)):
