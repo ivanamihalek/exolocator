@@ -46,7 +46,7 @@ def make_exon_table (cursor, table):
 #########################################
 def check_exon_table(cursor, db_name, table, verbose = False):
     
-    if ( check_table_exists (cursor, db_name, table)):
+    if ( not check_table_exists (cursor, db_name, table)):
         print 'table does not exist'
     else:
         create_date = table_create_time (cursor, db_name, table)
