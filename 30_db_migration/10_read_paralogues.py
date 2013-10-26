@@ -31,7 +31,7 @@ def store(cursor, infile):
 
         store_or_update (cursor, 'paralog', fixed_fields, update_fields)
 
-    print infile, "total ",  total
+    print "done with ", infile, "total ",  total
 
     inf.close ()
 
