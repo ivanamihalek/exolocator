@@ -102,7 +102,8 @@ def store(cursor, table,  in_path, infile, species):
     for line in inf:
         ct += 1
         if (not ct%1000):
-            print "   %s   %5d    %8.3f" % (species, ct,  time()-start);
+            print "   %s   %5d    %8.3f" % (species, ct,  time()-start)
+            sys.stdout.flush()
             start = time()
 
         fixed_fields    = {}
@@ -187,18 +188,21 @@ def load_from_infiles (infiles, in_path):
         table =  'exon_' + species
         # note the table is also 'not ok' it it si new and we are nto willing to drop it
         exon_table_ok =  check_exon_table (cursor, db_name, table, verbose = True)
+        sys.stdout.flush()
         if not exon_table_ok: continue
         
         print "\t storing %s " % species
+        sys.stdout.flush()
         store  (cursor, table, in_path, infile, species)
         print "\t %s  done in  %8.3f sec" % (species, time()-start) 
+        sys.stdout.flush()
        
     
 #########################################
 def main():
 
     
-    no_threads = 1
+    no_threads = 4
     
     db_name =  "exolocator_db"
     db      = connect_to_mysql(user="marioot", passwd="tooiram")
