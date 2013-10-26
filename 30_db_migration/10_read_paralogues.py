@@ -19,7 +19,7 @@ def store(cursor, infile):
     for line in inf:
         line.rstrip()
         total += 1
-        if not total%100: print "\t", total
+        if not total%1000: print "\t", total
         if ( len(line.split()) !=  2 or not 'ENS' in line):
             continue
         [stable_id1, stable_id2] = line.split()
@@ -59,6 +59,7 @@ def main():
     search_db (cursor, qry)
     qry = "alter table paralog  ADD gene_id2 varchar(30) " 
     search_db (cursor, qry)
+    create_index (cursor, db_name,'gene_id_index', 'paralog', ['gene_id1', 'gene_id2'])
 
     ###############
     os.chdir(in_path)
