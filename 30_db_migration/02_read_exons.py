@@ -46,18 +46,18 @@ def make_exon_table (cursor, table):
 #########################################
 def check_exon_table(cursor, db_name, table, verbose = False):
     
-     if ( check_table_exists (cursor, db_name, table)):
+    if ( check_table_exists (cursor, db_name, table)):
         print 'table does not exist'
-     else:
-         create_date = table_create_time (cursor, db_name, table)
-         print create_date # already magically turned into datetime object by python (?)
-         yr  = create_date.year
-         mth = create_date.month
+    else:
+        create_date = table_create_time (cursor, db_name, table)
+        print create_date # already magically turned into datetime object by python (?)
+        yr  = create_date.year
+        mth = create_date.month
 
-         if yr==2012 or yr==2013 and mth<10:
-             print 'old_table'
-         else:
-             print 'new table'
+        if yr==2012 or yr==2013 and mth<10:
+            print 'old_table'
+        else:
+            print 'new table'
 
     if 0:
         if ( check_table_exists (cursor, db_name, table)):
@@ -69,7 +69,7 @@ def check_exon_table(cursor, db_name, table, verbose = False):
             if rows:
                 return rows[0][0]
             else:
-               return 0
+                return 0
             qry = "create index key_id on  " + table + "(exon_key)";
             rows = search_db(cursor, qry)
             if rows:
