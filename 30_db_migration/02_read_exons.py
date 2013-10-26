@@ -52,7 +52,8 @@ def check_exon_table(cursor, db_name, table, verbose = False):
     mth = create_date.month
     if yr==2012 or yr==2013 and mth<10:
         print 'old_table'
-    sys.exit(1)
+    else:
+        print 'new table'
 
     if 0:
         if ( check_table_exists (cursor, db_name, table)):
