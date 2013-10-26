@@ -114,11 +114,16 @@ class Exon:
         self.has_stop            = table_row[12]
         self.has_3p_ss           = table_row[13]
         self.has_5p_ss           = table_row[14]
-        self.is_known            = 2 if table=='sw_exon' else 3
+        if table=='sw_exon':
+            self.is_known     =  2 
+            self.analysis_id  = -1 
+        else:
+            self.is_known     =  3
+            self.analysis_id  = -2
+           
         self.is_coding           = 1
         self.is_canonical        = 0
         self.is_constitutive     = 0
-        self.analysis_id         = -1 if table=='sw_exon' else -2
         return True
 
     #################################################
