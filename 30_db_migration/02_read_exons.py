@@ -181,7 +181,7 @@ def load_from_infiles (infiles, in_path):
         check_exon_table (cursor, db_name, table, verbose = True)
 
         store  (cursor, table, in_path, infile, species)
-        print "\t done in  %8.3f sec" % (time()-start) 
+        print "\t %s  done in  %8.3f sec" % (species, time()-start) 
        
     
 #########################################
@@ -196,6 +196,7 @@ def main():
     switch_to_db (cursor, db_name)
 
     cfg      = ConfigurationReader(user="marioot", passwd="tooiram", check=False)
+    # afs is killing me here ...
     in_path  = cfg.get_path('afs_dumps')+"/exons"
     if (not os.path.exists(in_path)):
         print in_path, "not found"

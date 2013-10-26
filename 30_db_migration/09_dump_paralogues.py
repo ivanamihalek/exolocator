@@ -97,7 +97,6 @@ def main():
 
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
-    all_species = ['bos_taurus', 'callithrix_jacchus']
 
     cursor.close()
     db    .close()
