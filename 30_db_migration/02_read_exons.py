@@ -65,7 +65,6 @@ def check_exon_table(cursor, db_name, table, verbose = False):
 
     if verbose: print 'making new table', table
     make_exon_table (cursor, table)
-    if not rows:   return 0
 
     qry = "create index key_id on  " + table + " (exon_key)";
     rows = search_db(cursor, qry)
