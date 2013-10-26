@@ -114,7 +114,9 @@ def store(cursor, table,  in_path, infile, species):
 
         line   = line.rstrip()
         field  = line.split("\t")
-        if len(field) < 18: continue
+        if len(field) < 18: 
+            print "number of fields smaller than expected"
+            continue
 
         exon_id         = int(field[0])
         ensembl_gene_id =     field[1]
