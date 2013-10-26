@@ -46,26 +46,31 @@ def make_exon_table (cursor, table):
 #########################################
 def check_exon_table(cursor, db_name, table, verbose = False):
     
-    if ( check_table_exists (cursor, db_name, table)):
-        if verbose: print table, " found in ", db_name
-        qry = "drop table "+table
-        rows = search_db(cursor, qry)
-        make_exon_table (cursor, table)
+    date = table_create_time (cursor, db_name, table)
+    print date
+    exit(1)
 
-        if rows:
-            return rows[0][0]
+    if 0:
+        if ( check_table_exists (cursor, db_name, table)):
+            if verbose: print table, " found in ", db_name
+            #qry = "drop table "+table
+            rows = search_db(cursor, qry)
+            make_exon_table (cursor, table)
+
+            if rows:
+                return rows[0][0]
+            else:
+               return 0
+            qry = "create index key_id on  " + table + "(exon_key)";
+            rows = search_db(cursor, qry)
+            if rows:
+                print rows
+                return 0
         else:
-           return 0
-        qry = "create index key_id on  " + table + "(exon_key)";
-        rows = search_db(cursor, qry)
-        if rows:
-            print rows
-            return 0
-    else:
-        if verbose: print table, " not found in ", db_name
-        make_exon_table (cursor, table)
+            if verbose: print table, " not found in ", db_name
+            make_exon_table (cursor, table)
 
-
+    return
 
 #########################################
 def check_exon_table_size(cursor, db_name, species):
@@ -165,10 +170,9 @@ def load_from_infiles (infiles, in_path):
     switch_to_db (cursor, db_name)
     
     ###############
-    #infiles.reverse()
+    infiles.reverse()
     for infile in infiles:
         #if 'pong_abelii' in infile: continue
-        print infile
         start = time()
         print "reading ", infile
         fields  = infile.split ("_")
@@ -180,15 +184,15 @@ def load_from_infiles (infiles, in_path):
         table =  'exon_' + species
         check_exon_table (cursor, db_name, table, verbose = True)
 
-        store  (cursor, table, in_path, infile, species)
-        print "\t %s  done in  %8.3f sec" % (species, time()-start) 
+        #store  (cursor, table, in_path, infile, species)
+        #print "\t %s  done in  %8.3f sec" % (species, time()-start) 
        
     
 #########################################
 def main():
 
     
-    no_threads = 4
+    no_threads = 1
     
     db_name =  "exolocator_db"
     db      = connect_to_mysql(user="marioot", passwd="tooiram")
