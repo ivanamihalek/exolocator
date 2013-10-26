@@ -13,18 +13,12 @@ from   el_utils.threads       import  parallelize
 def main ():
 
     
-    local_db = False
+    db_name = "exolocator_db"
+    db      = connect_to_mysql(user="marioot", passwd="tooiram")
+    cursor  = db.cursor()
+    switch_to_db (cursor, db_name)
 
-    if local_db:
-        db     = connect_to_mysql()
-        cfg      = ConfigurationReader()
-    else:
-        db     = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg    = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-    cursor   = db.cursor()
-    [all_species, ensembl_db_name] = get_species (cursor)
-    cursor.close()
-    db    .close()
+    cfg     = ConfigurationReader (user="marioot", passwd="tooiram", check=False)
 
     inpath = cfg.get_path('afs_dumps')
     indir   = "%s/exon_map"     % inpath
