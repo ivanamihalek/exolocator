@@ -47,7 +47,7 @@ def dump_paralogues(species_list, db_info):
         
         outfile  = "{0}/{1}_para_dump.txt".format(outdir, species)
         print outfile
-        continue
+        #continue
         of       = erropen (outfile,"w")
         if not of: continue
         

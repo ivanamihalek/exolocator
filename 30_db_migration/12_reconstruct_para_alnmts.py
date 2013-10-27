@@ -5,7 +5,7 @@
 import pdb
 #pdb.set_trace()
 
-import MySQLdb, commands, re, os
+import MySQLdb, commands, re, os, sys
 
 from el_utils.mysql   import  connect_to_mysql, connect_to_db
 from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
@@ -1194,7 +1194,8 @@ def make_alignments (species_list, db_info):
 
         
     for species in species_list:
-        if species == 'homo_sapiens': continue
+        #if species == 'homo_sapiens': continue
+
 
         pep_produced = 0
         dna_produced = 0
@@ -1203,23 +1204,27 @@ def make_alignments (species_list, db_info):
         gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         #gene_ids = get_theme_ids(cursor, cfg, 'wnt_pathway')
         if not gene_ids:
-            print "no gene_ids"
+            print species, "no gene_ids"
             continue
+
+        print species, "number of genes: ", len(gene_ids)
+        sys.stdout.flush()
 
 
         # for each human gene
         gene_ct = 0
         #gene_list.reverse()
         for gene_id in gene_ids:
-        #for gene_id in [387298]:
-        #for gene_id in [378128]:
+
         #for sample_count in range(1000):
             #gene_id = choice(gene_ids)
 
             stable_id = gene2stable(cursor, gene_id)
 
             gene_ct += 1
-            if not gene_ct%100: print species, gene_ct, "genes out of", len(gene_ids)
+            if not gene_ct%1000: 
+                print species, gene_ct, "genes out of", len(gene_ids)
+                sys.stdout.flush()
             if verbose: 
                 print
                 print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
@@ -1367,9 +1372,9 @@ def make_alignments (species_list, db_info):
             sorted_seq_names = [stable_id]+ filter (lambda name: not name==stable_id, output_pep.keys())
             boundary_cleanup(output_pep, sorted_seq_names)
             output_pep = strip_gaps(output_pep)
-            afa_fnm   = 'tmp.afa'
-            output_fasta (afa_fnm, sorted_seq_names, output_pep)
-            print afa_fnm
+            #afa_fnm   = 'tmp.afa'
+            #output_fasta (afa_fnm, sorted_seq_names, output_pep)
+            #print afa_fnm
 
             for seq_to_fix in overlapping_maps.keys():
                 if not overlapping_maps[seq_to_fix]: continue
@@ -1398,7 +1403,7 @@ def make_alignments (species_list, db_info):
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_pep)
             pep_produced += 1
-            print afa_fnm
+            #print afa_fnm
 
             # >>>>>>>>>>>>>>>>>>
             output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
@@ -1413,7 +1418,7 @@ def make_alignments (species_list, db_info):
             directory = check_directory ( cfg, species, "dna")
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_dna)
-            print afa_fnm
+            #print afa_fnm
             dna_produced += 1
 
             continue
@@ -1427,7 +1432,7 @@ def make_alignments (species_list, db_info):
         print species, " has_paralogues = ", has_paralogues
         print species, " pep produced   = ", pep_produced
         print species, " dna produced   = ", dna_produced
-
+        sys.stdout.flush()
 
 
 #########################################
