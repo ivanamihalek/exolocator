@@ -100,7 +100,7 @@ def main():
 
     outdir  = "{0}/para_dump".format(cfg.dir_path['afs_dumps'])
     print outdir
-    if not os.path.exists(outfile):
+    if not os.path.exists(outdir):
         print outdir, "not found"
         exit(1) # exit after dir existence check
     cursor.close()
