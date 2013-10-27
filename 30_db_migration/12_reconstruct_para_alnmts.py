@@ -1194,8 +1194,6 @@ def make_alignments (species_list, db_info):
 
         
     for species in species_list:
-        #if species == 'homo_sapiens': continue
-
 
         pep_produced = 0
         dna_produced = 0
