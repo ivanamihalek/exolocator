@@ -1176,7 +1176,7 @@ def make_alignments (species_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
 
-    verbose      = False
+    verbose      = True
     flank_length = 10
 
     if local_db:
@@ -1438,7 +1438,7 @@ def make_alignments (species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 10
+    no_threads = 1
 
     local_db = False
 
@@ -1461,17 +1461,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-
-
-
-
-'''
-    #for random_check in range(100):
-    #    gene_id = choice(gene_list)
-    #for gene_id in [412667]: #  wls   
-    #for gene_id in [416066]:  #  BRCA1   
-    #for gene_id in [378768]:  #  p53
-    #for gene_id in [389337]: #inositol polyphosphate-4-phosphatase
-    #for gene_id in [418590]: # titin
-    #for gene_id in [412362]: # complement component 1,s subcomponent
-'''
