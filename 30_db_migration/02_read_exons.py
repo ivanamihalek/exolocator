@@ -64,16 +64,16 @@ def check_exon_table(cursor, db_name, table, verbose = False):
                 if verbose: print 'new table', table, " found in ", db_name, ' -- moving on'
                 return 0 # skip this one
 
-    qry = "drop table "+table
-    rows = search_db(cursor, qry)
+        qry = "drop table "+table
+        rows = search_db(cursor, qry)
 
-    if verbose: print 'making new table', table
-    make_exon_table (cursor, table)
+        if verbose: print 'making new table', table
+        make_exon_table (cursor, table)
 
-    if verbose: print 'making index on', table
+        if verbose: print 'making index on', table
 
-    qry = "create index key_id on  " + table + " (exon_key)";
-    rows = search_db(cursor, qry)
+        qry = "create index key_id on  " + table + " (exon_key)";
+        rows = search_db(cursor, qry)
 
     return 1
 

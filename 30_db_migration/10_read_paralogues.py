@@ -44,22 +44,25 @@ def main():
     cursor  = db.cursor()
     switch_to_db (cursor, db_name)
 
-    cfg     = ConfigurationReader (user="marioot", passwd="tooiram", check=False)
-    in_path = cfg.get_path('afs_dumps')
+    cfg      = ConfigurationReader (user="marioot", passwd="tooiram", check=False)
+    in_path  = cfg.get_path('afs_dumps')
+    in+path += "/para_dump"
     if (not os.path.exists(in_path)):
         print in_path, "not found"
+        sys.exit(1) # exit on non-existent outdir
 
     
     ###############
-    qry = "drop table paralog"
-    search_db (cursor, qry)
-    qry = "create table paralog (id int(10) primary key auto_increment) "
-    search_db (cursor, qry)
-    qry = "alter table paralog  ADD gene_id1 varchar(30) " 
-    search_db (cursor, qry)
-    qry = "alter table paralog  ADD gene_id2 varchar(30) " 
-    search_db (cursor, qry)
-    create_index (cursor, db_name,'gene_id_index', 'paralog', ['gene_id1', 'gene_id2'])
+    if 0:
+        qry = "drop table paralog"
+        search_db (cursor, qry)
+        qry = "create table paralog (id int(10) primary key auto_increment) "
+        search_db (cursor, qry)
+        qry = "alter table paralog  ADD gene_id1 varchar(30) " 
+        search_db (cursor, qry)
+        qry = "alter table paralog  ADD gene_id2 varchar(30) " 
+        search_db (cursor, qry)
+        create_index (cursor, db_name,'gene_id_index', 'paralog', ['gene_id1', 'gene_id2'])
 
     ###############
     os.chdir(in_path)

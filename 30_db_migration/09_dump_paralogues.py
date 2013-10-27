@@ -30,29 +30,26 @@ def read_paralogues(cursor, gene_id):
 #########################################
 def dump_paralogues(species_list, db_info):
     
-    [local_db, ensembl_db_name] = db_info
-
+    [local_db, ensembl_db_name, outdir] = db_info
     if local_db:
-        db  = connect_to_mysql()
-        cfg = ConfigurationReader()
+        db     = connect_to_mysql()
     else:
-        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    for species in species_list:
 
+    for species in species_list:
         print
         print "############################"
         print  species
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
         
-        outfile  = "{0}/{1}_para_dump.txt".format(cfg.dir_path['afs_dumps'], species)
+        outfile  = "{0}/{1}_para_dump.txt".format(outdir, species)
         print outfile
-        #if (os.path.exists(outfile) and os.path.getsize(outfile) > 0):
-        #    continue
+        continue
         of       = erropen (outfile,"w")
+        if not of: continue
         
         if (species=='homo_sapiens'):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
@@ -91,17 +88,25 @@ def main():
     local_db = False
 
     if local_db:
-        db     = connect_to_mysql()
+        db  = connect_to_mysql()
+        cfg = ConfigurationReader()
     else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
 
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
+
+    outdir  = "{0}/para_dump".format(cfg.dir_path['afs_dumps'])
+    print outdir
+    if not os.path.exists(outfile):
+        print outdir, "not found"
+        exit(1) # exit after dir existence check
     cursor.close()
     db    .close()
 
-    parallelize (no_threads, dump_paralogues, all_species, [local_db, ensembl_db_name])
+    parallelize (no_threads, dump_paralogues, all_species, [local_db, ensembl_db_name, outdir])
 
     
     return True
