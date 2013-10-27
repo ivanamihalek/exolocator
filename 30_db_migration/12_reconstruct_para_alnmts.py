@@ -1176,7 +1176,7 @@ def make_alignments (species_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
 
-    verbose      = True
+    verbose      = False
     flank_length = 10
 
     if local_db:
@@ -1436,7 +1436,7 @@ def make_alignments (species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 10
 
     local_db = False
 
