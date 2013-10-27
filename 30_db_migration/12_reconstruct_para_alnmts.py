@@ -1401,7 +1401,7 @@ def make_alignments (species_list, db_info):
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_pep)
             pep_produced += 1
-            #print afa_fnm
+            print afa_fnm
 
             # >>>>>>>>>>>>>>>>>>
             output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
@@ -1416,7 +1416,7 @@ def make_alignments (species_list, db_info):
             directory = check_directory ( cfg, species, "dna")
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_dna)
-            #print afa_fnm
+            print afa_fnm
             dna_produced += 1
 
             continue
