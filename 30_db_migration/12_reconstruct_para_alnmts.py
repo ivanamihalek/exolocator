@@ -1205,9 +1205,11 @@ def make_alignments (species_list, db_info):
             print species, "no gene_ids"
             continue
 
-        print species, "number of genes: ", len(gene_ids)
+        directory = check_directory (cfg, species, "pep")
+        print species, "number of genes: ", len(gene_ids),  directory
+        
         sys.stdout.flush()
-
+        continue
 
         # for each human gene
         gene_ct = 0
@@ -1397,7 +1399,6 @@ def make_alignments (species_list, db_info):
             # get rid of the ghost exons that do not correpond to anything in any other species
             #[output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
 
-            directory = check_directory (cfg, species, "pep")
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_pep)
             pep_produced += 1
@@ -1436,7 +1437,7 @@ def make_alignments (species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 10
+    no_threads = 1
 
     local_db = False
 
