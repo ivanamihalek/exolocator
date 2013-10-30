@@ -1,38 +1,48 @@
 #! /usr/bin/perl -w
 
-@ARGV ||
-    die "Usage:  $0  <file name> \n";
+# I have to be on reindeer and klogged for this to work
 
-$from_dir = "/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/ExoLocator/results/dumpster";
-$to_dir   = "/home/ivanam/exolocator/Exolocator/Best_MSA";
+use Time::localtime;
+use File::stat;
 
-
-$filename = $ARGV[0];
-open (IF, "<$filename" ) 
-    || die "Cno $filename: $!.\n";
+$| = 1; # force stdout flush
 
 
-while ( <IF> ) {
-    chomp;
-    @aux = split;
-    $ensembl_id = $aux[0];
-    print  $ensembl_id, "\n";
+$from_dir = "/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/ExoLocator/results/dumpster/para";
+$to_dir   = "/home/ivanam/exolocator/Exolocator/Best_MSA/para";
 
-    $cmd = "cp $from_dir/pep/$ensembl_id.afa $to_dir/pep/$ensembl_id.afa";
-    print $cmd, "\n";
-    (system $cmd) && print "error ...\n";
-	
-    $cmd = "cp $from_dir/dna/$ensembl_id.afa $to_dir/dna/$ensembl_id.afa";
-    print $cmd, "\n";
-    (system $cmd) && print "error ...\n";
-	
-    $cmd = "cp $from_dir/notes/$ensembl_id.txt $to_dir/notes/$ensembl_id.txt";
-    print $cmd, "\n";
-    (system $cmd) && print "error ...\n";
 
-    print `grep SW  $to_dir/notes/$ensembl_id.txt | wc -l`;
-    print "\n";
-	
+@species_dirs = split "\n", `ls $from_dir`;
+
+for $spec_dir( @species_dirs ) {
+
+    print  $spec_dir, "\n";
+
+    for $seq_type ( 'pep', 'dna') {
+
+	for $donkey_full_path ( split "\n", `ls $from_dir/$spec_dir/$seq_type/*.afa`) {
+	    @aux = split "/", $donkey_full_path;
+	    $afa = pop @aux;
+	    $afa || next; # move onif it is an empty string
+	    $reindeer_full_path = "$to_dir/$spec_dir/$seq_type/$afa"; 
+	    $afa_exists = (  -e  $reindeer_full_path ) ? 1 : 0 ;
+
+	    if ( $afa_exists ) {
+		# mtime =   last modify time in seconds since the epoch
+		$last_modify_time_on_donkey   = stat($donkey_full_path)->mtime;
+		$last_modify_time_on_reindeer = stat($reindeer_full_path)->mtime;
+
+		$but_is_old = ($last_modify_time_on_donkey > $last_modify_time_on_reindeer);
+	    }
+
+	    if ( !$afa_exists || $but_is_old) {
+		$cmd = "cp $donkey_full_path $reindeer_full_path";
+		(system $cmd) && print "error ...\n";
+	    
+	    }
+	}
+	print "\t $seq_type done\n";
+    }
+
 }
 
-close IF;
