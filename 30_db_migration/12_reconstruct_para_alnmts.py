@@ -1192,8 +1192,8 @@ def make_alignments (species_list, db_info):
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
 
-        
-    for species in species_list:
+    #for species in species_list:
+    for species in ['bos_taurus']:
 
         pep_produced = 0
         dna_produced = 0
@@ -1208,16 +1208,10 @@ def make_alignments (species_list, db_info):
         directory = check_directory (cfg, species, "pep")
         print species, "number of genes: ", len(gene_ids),  directory
         
-        sys.stdout.flush()
-        continue
-
         # for each human gene
         gene_ct = 0
         #gene_list.reverse()
         for gene_id in gene_ids:
-
-        #for sample_count in range(1000):
-            #gene_id = choice(gene_ids)
 
             stable_id = gene2stable(cursor, gene_id)
 
