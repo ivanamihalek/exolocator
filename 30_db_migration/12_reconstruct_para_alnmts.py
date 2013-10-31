@@ -1192,8 +1192,7 @@ def make_alignments (species_list, db_info):
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    #for species in species_list:
-    for species in ['bos_taurus']:
+    for species in species_list:
 
         pep_produced = 0
         dna_produced = 0
