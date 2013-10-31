@@ -37,7 +37,7 @@ for $spec_dir( @species_dirs ) {
 
 	    if ( !$afa_exists || $but_is_old) {
 		$cmd = "cp $donkey_full_path $reindeer_full_path";
-		(system $cmd) && print "error ...\n";
+		(system $cmd) && die  "error running $cmd\n";
 	    
 	    }
 	}
