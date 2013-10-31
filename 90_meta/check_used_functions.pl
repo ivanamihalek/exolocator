@@ -1,4 +1,6 @@
 #! /usr/bin/perl -w
+# change only the scripts that are going to be used immediately
+
 
 @ARGV ||
     die "Usage:  $0  <file name> \n";

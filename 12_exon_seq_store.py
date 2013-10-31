@@ -52,7 +52,7 @@ def get_canonical_transl (acg, cursor, gene_id, species):
 
     canonical_transl_id = gene2stable_canon_transl(cursor, gene_id)
     if ( not canonical_transl_id):
-        print "no canonical transl id found for ", gene_id
+        print species, "no canonical transl id found for ", gene_id
         return ""
         #exit(1)
 
@@ -60,8 +60,7 @@ def get_canonical_transl (acg, cursor, gene_id, species):
                                                  "all", None)
     fasta = commands.getoutput(cmd)
     if (not fasta):
-        print gene2stable (cursor, gene_id = gene_id), 
-        print "fasta not found for ", canonical_transl_id
+        print species, gene2stable (cursor, gene_id = gene_id),  "fasta not found for ", canonical_transl_id
         return ""
         #exit(1)
 
@@ -82,7 +81,7 @@ def  get_canonical_exons (cursor, gene_id):
 
     exons = gene2exon_list (cursor, gene_id)
     if (not exons):
-        print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
+        #print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
         return []
         #exit(1) # shouldn't happen at this point
 

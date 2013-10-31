@@ -303,7 +303,10 @@ def  get_analysis_dict(cursor):
 def  exon_id2gene_id (cursor, ensembl_db_name, exon_id, is_known):
 
     switch_to_db(cursor, ensembl_db_name)
-    if is_known==2: # sw_sharp exon
+    if is_known==3: # sw_sharp exon
+        qry  = "select gene_id from usearch_exon where "
+        qry += "exon_id = %d " % exon_id
+    elif is_known==2: # sw_sharp exon
         qry  = "select gene_id from sw_exon where "
         qry += "exon_id = %d " % exon_id
     else:
@@ -313,7 +316,7 @@ def  exon_id2gene_id (cursor, ensembl_db_name, exon_id, is_known):
     rows = search_db (cursor, qry)
     if (not rows or 'ERROR' in rows[0]):
         rows = search_db (cursor, qry, verbose = True)
-        return 0
+        return ""
 
     return rows[0][0]
     
@@ -646,7 +649,7 @@ def get_exon_seqs (cursor, exon_id, is_known, db_name=None):
 
     rows = search_db(cursor, qry)
 
-    if not rows or len(rows[0]) < 7:
+    if not rows or not len(rows[0]) == 7:
         #rows = search_db(cursor, "select database()")
         #print "using db ", rows[0]
         #rows = search_db(cursor, qry, verbose = True)
