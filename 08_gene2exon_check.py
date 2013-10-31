@@ -2,11 +2,12 @@
 
 import MySQLdb
 import commands
-from   random import choice
-from   el_utils.mysql   import  connect_to_mysql, search_db
-from   el_utils.ensembl import  *
-from   el_utils.exon    import  Exon
-from   el_utils.threads import  parallelize
+from   random               import choice
+from   el_utils.mysql       import  connect_to_mysql, search_db
+from   el_utils.ensembl     import  *
+from   el_utils.el_specific import  *
+from   el_utils.exon        import  Exon
+from   el_utils.threads     import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
 
