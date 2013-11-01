@@ -11,7 +11,7 @@ class Exon:
     # obtained by select * from exon
     def load_from_ensembl_exon(self, gene_start, gene_end, ensembl_row):
  
-        self.exon_id           = ensembl_row[0]
+        self.exon_id          = ensembl_row[0]
         strand =  ensembl_row[4]
         start_on_seq_region  = ensembl_row[2]
         end_on_seq_region    = ensembl_row[3]

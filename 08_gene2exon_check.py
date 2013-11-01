@@ -16,7 +16,7 @@ def inspect (exons):
 
     for exon in exons:
         print "*****"
-        print "exon id: ", exon.id 
+        print "exon id: ", exon.exon_id 
         
         print "canonical:", exon.is_canonical
         print "coding:",    exon.is_coding
