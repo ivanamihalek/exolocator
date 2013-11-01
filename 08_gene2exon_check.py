@@ -67,7 +67,7 @@ def main():
             for exon in exons:
                 if not exon.is_canonical:  continue
                 
-                if not exon.is_coding: :
+                if not exon.is_coding:
                     length -= exon.canon_transl_start
             
             if (not length):
