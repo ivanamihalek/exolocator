@@ -194,7 +194,7 @@ def main():
 
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
-        print "usage: %s <set name> <number of threads> <method>"
+        print "usage: %s <set name> <number of threads> <method>" % sys.argv[0]
         exit(1)
     elif len(sys.argv)==3:
 

@@ -27,7 +27,10 @@ def main():
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    species_list = all_species
+    if  len(sys.argv) > 1:
+        species_list = sys.argv[1:]
+    else:
+        species_list = all_species
  
     ############################
     for species in species_list:
