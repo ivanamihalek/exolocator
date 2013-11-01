@@ -14,17 +14,29 @@ from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 #########################################
 def inspect (exons):
 
+
+    total_len = 0
+
     for exon in exons:
+
+        exon_len = 0
+        if  exon.canon_transl_end is None:
+            exon_len = exon.end_in_gene - exon.start_in_gene + 1
+        else:
+            exon_len = exon.canon_transl_end + 1
+        if not exon.canon_transl_start is None:
+            exon_len -= exon.canon_transl_start
+        total_len += exon_len
+
         print "*****"
-        print "exon id: ", exon.exon_id 
-        
+        print "exon id: ",  exon.exon_id         
         print "canonical:", exon.is_canonical
         print "coding:",    exon.is_coding
         print "start in gene: ", exon.start_in_gene 
         print "end in gene: ",   exon.end_in_gene 
-        print "canon transl start: ",   exon.canon_transl_start
+        print "canon transl start: ", exon.canon_transl_start
         print "canon transl end: ",   exon.canon_transl_end
- 
+        print "exon len %5d   total %d " % (exon_len, total_len)
 
 
 #########################################
