@@ -21,7 +21,7 @@ for $spec_dir( @species_dirs ) {
     for $seq_type ( 'pep', 'dna') {
 
 	$target_dir = "$to_dir/$spec_dir/$seq_type";
-	(-e $target_dir) || `mkdir $target_dir`;
+	(-e $target_dir) || `mkdir -p $target_dir`;
 
 	for $donkey_full_path ( split "\n", `ls $from_dir/$spec_dir/$seq_type/*.afa`) {
 	    @aux = split "/", $donkey_full_path;
