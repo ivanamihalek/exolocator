@@ -54,6 +54,7 @@ def main():
             if (not exons):
                 ct +=1
                 print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
+                continue
                 
             if not tot%100:
                 print species, tot, ct
