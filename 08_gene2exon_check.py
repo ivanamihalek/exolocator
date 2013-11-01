@@ -57,7 +57,6 @@ def main():
             if (not exons):
                 ct +=1
                 print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
-                continue
                 
             if not tot%100:
                 print species, tot, ct
@@ -67,7 +66,14 @@ def main():
             for exon in exons:
                 if not exon.is_canonical:  continue
                 
-                if not exon.is_coding:
+                if not exon.is_coding: continue
+
+                if  exon.canon_transl_end is None:
+                    length += exon.end_in_gene - exon.start_in_gene + 1
+                else:
+                    length += exon.canon_transl_end + 1
+
+                if not exon.canon_transl_start is None:
                     length -= exon.canon_transl_start
             
             if (not length):
