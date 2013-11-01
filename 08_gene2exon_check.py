@@ -29,13 +29,12 @@ def main():
 
     species_list = all_species
  
+    ############################
     for species in species_list:
         print
         print "############################"
         print  species
-        #if (species in ['ailuropoda_melanoleuca', 'anolis_carolinensis', 
-        #                'bos_taurus','danio_rerio']):
-        #    continue
+
         switch_to_db (cursor, ensembl_db_name[species])
 
         if (species=='homo_sapiens'):
@@ -59,27 +58,18 @@ def main():
             if not tot%100:
                 print species, tot, ct
 
+            # add up the coding length of the canonical exons
             length = 0
             for exon in exons:
-                if (not exon.is_canonical): 
-                    continue
+                if not exon.is_canonical:  continue
                 
-                if (not exon.is_coding): 
-                    continue
-
-                if (exon.canon_transl_end is None):
-                    length += exon.end_in_gene - exon.start_in_gene + 1
-                else:
-                    length += exon.canon_transl_end + 1
-
-                if (not exon.canon_transl_start is None):
+                if not exon.is_coding: :
                     length -= exon.canon_transl_start
             
             if (not length):
                 print gene2stable (cursor, gene_id = gene_id), " no exons marked as canonical"
                 continue
 
-            ##########################################################
             # what is the length of the canonical transcript according to Ensembl
             canonical_translation = get_canonical_transl (acg, cursor, gene_id, species)
             if ( not canonical_translation):
