@@ -36,7 +36,9 @@ for $spec_dir( @species_dirs ) {
 	    }
 
 	    if ( !$afa_exists || $but_is_old) {
-		$cmd = "cp $donkey_full_path  $to_dir/$spec_dir/$seq_type";
+		$target_dir = "$to_dir/$spec_dir/$seq_type";
+		(-e $target_dir) || `mkdir $target_dir`;
+		$cmd = "cp $donkey_full_path  $target_dir";
 		(system $cmd) && die  "error running $cmd\n";
 	    
 	    }
