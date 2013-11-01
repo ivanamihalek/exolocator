@@ -12,7 +12,7 @@ from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
 
 #########################################
-def inspect (exons):
+def inspect (exons, canonical_translation):
 
 
     total_len = 0
@@ -37,8 +37,10 @@ def inspect (exons):
         print "canon transl start: ", exon.canon_transl_start
         print "canon transl end: ",   exon.canon_transl_end
         print "exon len %5d   total %d " % (exon_len, total_len)
-        # where did the information about translation start and end come at this point?
+        # print canonical sequence with the newline stuck in every 50 positions
+        print re.sub("(.{50})", "\\1\n", canonical_translation, 0, re.DOTALL)       
 
+        # where did the information about translation start and end come at this point?
 
 #########################################
 def main():
@@ -117,7 +119,7 @@ def main():
                 print gene2stable (cursor, gene_id = gene_id),
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
-                inspect (exons)
+                inspect (exons, canonical_translation)
                 exit(1)
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
