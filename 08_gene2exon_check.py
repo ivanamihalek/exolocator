@@ -37,6 +37,7 @@ def inspect (exons):
         print "canon transl start: ", exon.canon_transl_start
         print "canon transl end: ",   exon.canon_transl_end
         print "exon len %5d   total %d " % (exon_len, total_len)
+        # where did the information about translation start and end come at this point?
 
 
 #########################################
