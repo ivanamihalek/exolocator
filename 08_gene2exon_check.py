@@ -11,6 +11,21 @@ from   el_utils.threads     import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
 
+#########################################
+def inspect (exons):
+
+    for exon in exons:
+        print "*****"
+        print "exon id: ", exon.id 
+        
+        print "canonical:", exon.is_canonical
+        print "coding:",    exon.is_coding
+        print "start in gene: ", exon.start_in_gene 
+        print "end in gene: ",   exon.end_in_gene 
+        print "canon transl start: ",   exon.canon_transl_start
+        print "canon transl end: ",   exon.canon_transl_end
+ 
+
 
 #########################################
 def main():
@@ -92,7 +107,9 @@ def main():
                 print gene2stable (cursor, gene_id = gene_id),
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
-            
+                inspect (exons)
+                exit(1)
+
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
 
     cursor.close()
