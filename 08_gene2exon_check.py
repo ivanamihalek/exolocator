@@ -68,7 +68,7 @@ def main():
 
             tot += 1
             # find all exons associated with the gene id
-            exons = gene2exon_list (cursor, gene_id)
+            exons = filter (lambda x: x.is_coding and x.is_canonical, gene2exon_list (cursor, gene_id))
             if (not exons):
                 ct +=1
                 print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
@@ -79,9 +79,6 @@ def main():
             # add up the coding length of the canonical exons
             length = 0
             for exon in exons:
-                if not exon.is_canonical:  continue
-                
-                if not exon.is_coding: continue
 
                 if  exon.canon_transl_end is None:
                     length += exon.end_in_gene - exon.start_in_gene + 1
