@@ -33,7 +33,7 @@ def get_translated_region_talkative(cursor, gene_id, species):
     print "transl region start:", transl_region_start
     print "transl region end:", transl_region_end
 
-    for transcript_id in transcript_ids:
+    for[ transcript_id, transcript_stable] in transcript_ids:
    
         qry  = "SELECT seq_start, start_exon_id, seq_end, end_exon_id " 
         qry += " FROM translation WHERE transcript_id=%d"  %  transcript_id
