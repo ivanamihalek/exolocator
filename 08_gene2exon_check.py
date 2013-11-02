@@ -10,6 +10,73 @@ from   el_utils.exon        import  Exon
 from   el_utils.threads     import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
+#########################################
+def get_translated_region_talkative(cursor, gene_id, species):
+
+    # get the region on the gene
+    is_known = (species == 'homo_sapiens')
+    ret = get_gene_region (cursor, gene_id, is_known)
+    if  ret:
+        [gene_seq_id,gene_region_start, gene_region_end, 
+         gene_region_strand] = ret
+    else:
+        print "region not retrived for ", species, gene_id, species
+        return []
+
+
+    transcript_ids = get_transcript_ids(cursor, gene_id, species)
+
+
+    transl_region_start = gene_region_end
+    transl_region_end   = gene_region_start
+
+    print "transl region start:", transl_region_start
+    print "transl region end:", transl_region_end
+
+    for transcript_id in transcript_ids:
+   
+        qry  = "SELECT seq_start, start_exon_id, seq_end, end_exon_id " 
+        qry += " FROM translation WHERE transcript_id=%d"  %  transcript_id
+        rows = search_db (cursor, qry)
+        if (not rows):
+            continue
+        exon_seq_start = rows[0][0]
+        start_exon_id  = rows[0][1]
+        exon_seq_end   = rows[0][2]
+        end_exon_id    = rows[0][3]
+        
+        print
+        print "transcript id: ", transcript_id
+        print "start exon id:", start_exon_id,  "transl start (in the exon) ", exon_seq_start
+        print "end exon id:", end_xon_id, "transl end (in the exon)", exon_seq_end
+        
+
+        if (gene_region_strand > 0):
+            start = {}
+ 
+            start[start_exon_id] = get_exon_start(cursor, start_exon_id)
+            start[end_exon_id]   = get_exon_start(cursor, end_exon_id)
+
+            this_translation_region_start = start[start_exon_id] + exon_seq_start - 1
+            this_translation_region_end   = start[end_exon_id]   + exon_seq_end   - 1
+
+        else: 
+            end   = {}  
+
+            end[start_exon_id] = get_exon_end (cursor, start_exon_id)
+            end[end_exon_id]   = get_exon_end (cursor, end_exon_id)
+
+            this_translation_region_start = end[end_exon_id]   - exon_seq_end   + 1
+            this_translation_region_end   = end[start_exon_id] - exon_seq_start + 1
+
+        if (this_translation_region_start <= transl_region_start):
+            transl_region_start = this_translation_region_start
+        
+        if (this_translation_region_end >= transl_region_end):
+            transl_region_end = this_translation_region_end
+        
+    return [transl_region_start, transl_region_end, gene_region_strand]
+
 
 #########################################
 def inspect (exons, canonical_translation):
@@ -121,6 +188,7 @@ def main():
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
                 inspect (exons, canonical_translation)
+                get_translated_region_talkative (cursor, gene_id, species)
                 exit(1)
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
