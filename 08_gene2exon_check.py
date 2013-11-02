@@ -119,8 +119,8 @@ def main():
                 print gene2stable (cursor, gene_id = gene_id),
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
-                inspect (exons, canonical_translation)
-                exit(1)
+                #inspect (exons, canonical_translation)
+                #exit(1)
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
 
