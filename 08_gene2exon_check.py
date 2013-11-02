@@ -38,7 +38,7 @@ def inspect (exons, canonical_translation):
         print "canon transl end: ",   exon.canon_transl_end
         print "exon len %5d   total %d " % (exon_len, total_len)
         # print canonical sequence with the newline stuck in every 50 positions
-        print re.sub("(.{50})", "\\1\n", canonical_translation, 0, re.DOTALL)       
+        print re.sub("(.{50})", "\\1\n", canonical_translation)       
 
         # where did the information about translation start and end come at this point?
 
