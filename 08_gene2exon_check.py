@@ -48,7 +48,7 @@ def get_translated_region_talkative(cursor, gene_id, species):
         print
         print "transcript id: ", transcript_id
         print "start exon id:", start_exon_id,  "transl start (in the exon) ", exon_seq_start
-        print "end exon id:", end_xon_id, "transl end (in the exon)", exon_seq_end
+        print "end exon id:", end_exon_id, "transl end (in the exon)", exon_seq_end
         
 
         if (gene_region_strand > 0):
