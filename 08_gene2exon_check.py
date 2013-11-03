@@ -11,6 +11,19 @@ from   el_utils.threads     import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
 #########################################
+def get_exon_end(cursor, exon_id):
+
+ 
+    qry  = "select seq_region_end from exon "
+    qry += "where exon_id = %d " % exon_id
+    rows = search_db (cursor, qry)
+    if (not rows or 'Error' in rows[0]):
+        print "start not found for ", exon_id
+        return None
+
+    return rows[0][0]
+
+#########################################
 def get_translated_region_talkative(cursor, gene_id, species):
 
     # get the region on the gene
