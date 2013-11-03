@@ -121,6 +121,7 @@ def get_translated_region_talkative(cursor, gene_id, species):
 
     [canonical_start_in_exon, canonical_start_exon_id,
      canonical_end_in_exon, canonical_end_exon_id] = get_canonical_coordinates (cursor, canonical_transcript_id)
+    print [canonical_start_in_exon, canonical_start_exon_id, canonical_end_in_exon, canonical_end_exon_id]
         
     return
 
