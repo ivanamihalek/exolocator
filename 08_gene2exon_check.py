@@ -74,8 +74,11 @@ def get_translated_region_talkative(cursor, gene_id, species):
         
         if (this_translation_region_end >= transl_region_end):
             transl_region_end = this_translation_region_end
+
+    [canonical_start_in_exon, canonical_start_exon_id,
+     canonical_end_in_exon, canonical_end_exon_id] = get_canonical_coordinates (cursor, canonical_transcript_id)
         
-    return [transl_region_start, transl_region_end, gene_region_strand]
+    return
 
 
 #########################################

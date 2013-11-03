@@ -111,7 +111,8 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
     Given tha dna sequence, gene information an the list of its canonical exons, reconstruct canonical translation.
 
     Pay attention to whether the gene is mitochondrial.
-    Here in particular we can catch the 'false stop codons' corresponding to selenocysteines. (Because they are stored by their position
+    Here in particular we can catch the 'false stop codons' corresponding to selenocysteines.
+    (Because they are stored by their position
     in the translation.)
 
     """
