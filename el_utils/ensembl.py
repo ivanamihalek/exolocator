@@ -6,7 +6,10 @@ from   exon  import Exon
 import commands
 
 #########################################
-def get_canonical_transcript_id (cursor, gene_id):
+def get_canonical_transcript_id (cursor, gene_id, db_name=None):
+
+    if db_name and not switch_to_db(cursor, db_name):
+        return []
 
     qry     = "select canonical_transcript_id"
     qry    += " from  gene where gene_id=%d"  %  gene_id
