@@ -6,6 +6,24 @@ from   exon  import Exon
 import commands
 
 #########################################
+def get_canonical_transcript_id (cursor, gene_id):
+
+    qry     = "select canonical_transcript_id"
+    qry    += " from  gene where gene_id=%d"  %  gene_id
+    rows    = search_db (cursor, qry, verbose=False)
+
+    if (not rows):
+        rows    = search_db (cursor, qry, verbose=True)
+        return ""
+    elif ( 'Error' in rows[0]):
+        print  rows[0]
+        return ""
+
+    return rows[0][0]
+
+
+
+#########################################
 def get_gene_region (cursor, gene_id, is_known=None):
 
     qry     = "select seq_region_id, seq_region_start, seq_region_end, "

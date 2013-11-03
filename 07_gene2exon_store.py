@@ -12,21 +12,6 @@ from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 
 
-#########################################
-def get_canonical_transcript_id (cursor, gene_id):
-
-    qry     = "select canonical_transcript_id"
-    qry    += " from  gene where gene_id=%d"  %  gene_id
-    rows    = search_db (cursor, qry, verbose=False)
-
-    if (not rows):
-        rows    = search_db (cursor, qry, verbose=True)
-        return ""
-    elif ( 'Error' in rows[0]):
-        print  rows[0]
-        return ""
-
-    return rows[0][0]
 
 
 #########################################

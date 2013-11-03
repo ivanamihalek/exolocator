@@ -9,6 +9,19 @@ from   el_utils.el_specific import  *
 from   el_utils.exon        import  Exon
 from   el_utils.threads     import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
+
+#########################################
+def get_canonical_coordinates (cursor, canonical_transcript_id):
+    qry = "select seq_start, start_exon_id,  seq_end, end_exon_id "
+    qry += " from translation where transcript_id = %d " % canonical_transcript_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+    return rows[0]
+
+
+
 #########################################
 def get_exon_start(cursor, exon_id):
 
@@ -98,6 +111,13 @@ def get_translated_region_talkative(cursor, gene_id, species):
         
         if (this_translation_region_end >= transl_region_end):
             transl_region_end = this_translation_region_end
+
+
+    canonical_transcript_id = get_canonical_transcript_id(cursor, gene_id)
+    if not canonical_transcript_id:
+        print "canonical_transcript_id  not retrived for ",  gene_id
+        return False
+
 
     [canonical_start_in_exon, canonical_start_exon_id,
      canonical_end_in_exon, canonical_end_exon_id] = get_canonical_coordinates (cursor, canonical_transcript_id)
