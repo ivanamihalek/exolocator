@@ -9,6 +9,17 @@ from   el_utils.el_specific import  *
 from   el_utils.exon        import  Exon
 from   el_utils.threads     import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
+#########################################
+def get_exon_start(cursor, exon_id):
+
+    qry  = "select seq_region_start from exon "
+    qry += "where exon_id = %d " % exon_id
+    rows = search_db (cursor, qry)
+    if (not rows or 'Error' in rows[0]):
+        print "start not found gor ", exon_id
+        return None
+
+    return rows[0][0]
 
 #########################################
 def get_exon_end(cursor, exon_id):
