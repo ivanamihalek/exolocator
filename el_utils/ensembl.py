@@ -112,6 +112,7 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
     canonical_exons = []
     reading = 0
     for exon in exons:
+        print " **** ", canonical_start_exon_id, exon.exon_id 
         if exon.exon_id == canonical_start_exon_id:  reading = 1
         if reading: canonical_exons.append(exon)
         if exon.exon_id == canonical_end_exon_id:   break
