@@ -109,7 +109,8 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
             canonical_exons.append(exon)
         elif reading:
             canonical_exons.append(exon)
-
+       print canonical_start_exon_id,  canonical_end_exon_id, "----", exon.exon_id, reading
+ 
         
     return canonical_exons
 
