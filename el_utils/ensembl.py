@@ -73,6 +73,7 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
 
     all_exons =  gene2exon_list (cursor, gene_id)
     if not all_exons:  return []
+    print "## ", len(all_exons)
 
     exons = filter (lambda x: x.is_coding and x.is_canonical, all_exons)
     if not exons:  
@@ -112,7 +113,7 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
     canonical_exons = []
     reading = 0
     for exon in exons:
-        print " **** ", canonical_start_exon_id, exon.exon_id 
+        print " **** ", canonical_start_exon_id, canonical_end_exon_id, exon.exon_id 
         if exon.exon_id == canonical_start_exon_id:  reading = 1
         if reading: canonical_exons.append(exon)
         if exon.exon_id == canonical_end_exon_id:   break
