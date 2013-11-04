@@ -30,8 +30,8 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
     if db_name and not switch_to_db(cursor, db_name):
         return []
 
-    exons_all =  gene2exon_list (cursor, gene_id)
-    if not exons_all:  return []
+    all_exons =  gene2exon_list (cursor, gene_id)
+    if not all_exons:  return []
 
     exons = filter (lambda x: x.is_coding and x.is_canonical, all_exons)
     # now, the problem is that an exon can be coding, 
