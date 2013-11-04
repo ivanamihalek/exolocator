@@ -33,16 +33,10 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
     all_exons =  gene2exon_list (cursor, gene_id)
     if not all_exons:  return []
 
-    exons = filter (lambda x: x.is_coding and x.is_canonical, all_exons)
+    exons = filter(lambda x: x.is_coding and x.is_canonical, all_exons).sort(key=lambda exon: exon.start_in_gene)
     if not exons:  
         print " after filter"
         return []
-    # now, the problem is that an exon can be coding, 
-    # but not in the canonical version of the transcript
-    exons = exons.sort(key=lambda exon: exon.start_in_gene)
-    if not exons:  
-       print " after sort"
-       return []
     # is this gene on the forward or on the reverse strand?
     ret  = get_gene_region (cursor, gene_id)
     if not ret:   return []
