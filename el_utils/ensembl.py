@@ -91,6 +91,7 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
         print "no return for gene region"
         return []
     [seq_region_id, seq_region_start, seq_region_end, strand] = ret
+    print "strand: ", strand
     if strand < 0: 
         exons.reverse()
     # is there info about the beginning and the end of canonical translation?
