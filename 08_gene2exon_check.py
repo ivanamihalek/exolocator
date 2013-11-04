@@ -118,7 +118,7 @@ def get_translated_region_talkative(cursor, gene_id, species):
 
 
 #########################################
-def inspect (exons, canonical_translation):
+def inspect (exons):
 
 
     total_len = 0
@@ -143,32 +143,6 @@ def inspect (exons, canonical_translation):
         print "canon transl end: ",   exon.canon_transl_end
         print "exon len %5d   total %d " % (exon_len, total_len)
 
-    # print canonical sequence with the newline stuck in every 50 positions
-    print re.sub("(.{50})", "\\1\n", canonical_translation)       
-    print
-    print
-    canonical_coding_exons = get_canonical_coding_exons (cursor, gene_id)
-    total_len = 0
-    for exon in canonical_coding_exons:
-
-        exon_len = 0
-        if  exon.canon_transl_end is None:
-            exon_len = exon.end_in_gene - exon.start_in_gene + 1
-        else:
-            exon_len = exon.canon_transl_end + 1
-        if not exon.canon_transl_start is None:
-            exon_len -= exon.canon_transl_start
-        total_len += exon_len
-
-        print "########"
-        print "exon id: ",  exon.exon_id         
-        print "canonical:", exon.is_canonical
-        print "coding:",    exon.is_coding
-        print "start in gene: ", exon.start_in_gene 
-        print "end in gene: ",   exon.end_in_gene 
-        print "canon transl start: ", exon.canon_transl_start
-        print "canon transl end: ",   exon.canon_transl_end
-        print "exon len %5d   total %d " % (exon_len, total_len)
 
 
 #########################################
@@ -250,7 +224,14 @@ def main():
                 print gene_id, gene2stable (cursor, gene_id = gene_id),
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
-                inspect (exons, canonical_translation)
+                # print out all exons
+                inspect (exons)
+                print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
+                print
+                # print out exons more carefully filtered to belong to the canonical version of the translation
+                canonical_coding_exons = get_canonical_coding_exons (cursor, gene_id)
+                inspect (canonical_coding_exons)
+                print
                 get_translated_region_talkative (cursor, gene_id, species)
                 exit(1)
 
