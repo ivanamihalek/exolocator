@@ -5,6 +5,47 @@ from   mysql import search_db, switch_to_db
 from   exon  import Exon
 import commands
 
+
+#########################################
+def get_exons (cursor, gene_id, species, table):
+
+    if (table == 'exon'):
+        return get_known_exons (cursor, gene_id, species) 
+    elif (table == 'prediction_exon'):
+        return get_predicted_exons (cursor, gene_id, species)
+    elif (table == 'sw_exon'):
+        return get_novel_exons (cursor, gene_id, table)
+    elif (table == 'usearch_exon'):
+        return get_novel_exons (cursor, gene_id, table)
+
+    return []
+
+
+#########################################
+def get_canonical_exon_ids (cursor, canonical_transcript_id):
+
+    canonical_exon_ids = []
+    qry = "select exon_id from exon_transcript "
+    qry += " where transcript_id = %d " % canonical_transcript_id
+    rows   = search_db (cursor, qry)
+    if (not rows):
+        return []
+    for row in rows:
+        canonical_exon_ids.append(row[0])
+
+    return canonical_exon_ids
+
+
+#########################################
+def get_canonical_coordinates (cursor, canonical_transcript_id):
+    qry = "select seq_start, start_exon_id,  seq_end, end_exon_id "
+    qry += " from translation where transcript_id = %d " % canonical_transcript_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+    return rows[0]
+
 #########################################
 def get_canonical_transcript_id (cursor, gene_id, db_name=None):
 

@@ -10,17 +10,6 @@ from   el_utils.exon        import  Exon
 from   el_utils.threads     import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
-#########################################
-def get_canonical_coordinates (cursor, canonical_transcript_id):
-    qry = "select seq_start, start_exon_id,  seq_end, end_exon_id "
-    qry += " from translation where transcript_id = %d " % canonical_transcript_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         return []
-    return rows[0]
-
-
 
 #########################################
 def get_exon_start(cursor, exon_id):
