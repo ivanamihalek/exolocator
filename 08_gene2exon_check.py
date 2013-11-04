@@ -113,15 +113,6 @@ def get_translated_region_talkative(cursor, gene_id, species):
             transl_region_end = this_translation_region_end
 
 
-    canonical_transcript_id = get_canonical_transcript_id(cursor, gene_id)
-    if not canonical_transcript_id:
-        print "canonical_transcript_id  not retrived for ",  gene_id
-        return False
-
-
-    [canonical_start_in_exon, canonical_start_exon_id,
-     canonical_end_in_exon, canonical_end_exon_id] = get_canonical_coordinates (cursor, canonical_transcript_id)
-    print [canonical_start_in_exon, canonical_start_exon_id, canonical_end_in_exon, canonical_end_exon_id]
         
     return
 
@@ -131,7 +122,6 @@ def inspect (exons, canonical_translation):
 
 
     total_len = 0
-
     for exon in exons:
 
         exon_len = 0
@@ -155,8 +145,31 @@ def inspect (exons, canonical_translation):
 
     # print canonical sequence with the newline stuck in every 50 positions
     print re.sub("(.{50})", "\\1\n", canonical_translation)       
+    print
+    print
+    canonical_coding_exons = get_canonical_coding_exons (cursor, gene_id)
+    total_len = 0
+    for exon in canonical_coding_exons:
 
-    # where did the information about translation start and end come at this point?
+        exon_len = 0
+        if  exon.canon_transl_end is None:
+            exon_len = exon.end_in_gene - exon.start_in_gene + 1
+        else:
+            exon_len = exon.canon_transl_end + 1
+        if not exon.canon_transl_start is None:
+            exon_len -= exon.canon_transl_start
+        total_len += exon_len
+
+        print "########"
+        print "exon id: ",  exon.exon_id         
+        print "canonical:", exon.is_canonical
+        print "coding:",    exon.is_coding
+        print "start in gene: ", exon.start_in_gene 
+        print "end in gene: ",   exon.end_in_gene 
+        print "canon transl start: ", exon.canon_transl_start
+        print "canon transl end: ",   exon.canon_transl_end
+        print "exon len %5d   total %d " % (exon_len, total_len)
+
 
 #########################################
 def main():
@@ -194,9 +207,9 @@ def main():
         ct = 0
         tot = 0
 
-        #for gene_id in []:
-        for tot in range(1000):
-            gene_id = choice(gene_ids)
+        for gene_id in [35445]:
+        #for tot in range(1000):
+            #gene_id = choice(gene_ids)
 
 
             tot += 1
