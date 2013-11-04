@@ -85,15 +85,6 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
     if not exons:  
        print " after sort"
        return []
-    # is this gene on the forward or on the reverse strand?
-    ret  = get_gene_region (cursor, gene_id)
-    if not ret:   
-        print "no return for gene region"
-        return []
-    [seq_region_id, seq_region_start, seq_region_end, strand] = ret
-    print "strand: ", strand
-    if strand < 0: 
-        exons.reverse()
     # is there info about the beginning and the end of canonical translation?
     canonical_transcript_id  = get_canonical_transcript_id (cursor, gene_id, db_name=None)
     if not canonical_transcript_id: 
@@ -103,7 +94,6 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
     if not ret or not len(ret) == 4: 
         print "no return for canonical coordinates"
         return []
-
     [canonical_start_in_exon, canonical_start_exon_id,
      canonical_end_in_exon, canonical_end_exon_id] = ret
     if canonical_start_exon_id is None or  canonical_end_exon_id is None: 
@@ -114,13 +104,13 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
     canonical_exons = []
     reading = 0
     for exon in exons:
-        print " **** ", canonical_start_exon_id, canonical_end_exon_id, exon.exon_id 
-        if exon.exon_id == canonical_start_exon_id:  reading = 1
-        if reading: canonical_exons.append(exon)
-        if exon.exon_id == canonical_end_exon_id:   break
+        if exon.exon_id == canonical_start_exon_id or  exon.exon_id == canonical_end_exon_id:
+            reading = 1 - reading
+            canonical_exons.append(exon)
+        elif reading:
+            canonical_exons.append(exon)
 
-    if strand < 0: canonical_exons.reverse()
-
+        
     return canonical_exons
 
 
