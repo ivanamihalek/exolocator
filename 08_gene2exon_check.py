@@ -216,7 +216,7 @@ def main():
                 # print out exons more carefully filtered to belong to the canonical version of the translation
                 #print
                 #get_translated_region_talkative (cursor, gene_id, species)
-                exit(1)
+                #exit(1)
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
 
