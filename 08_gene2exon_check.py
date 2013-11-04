@@ -175,8 +175,8 @@ def main():
 
 
             tot += 1
-            # find all exons associated with the gene id
-            exons = filter (lambda x: x.is_coding and x.is_canonical, gene2exon_list (cursor, gene_id))
+            # find all canonical coding exons associated with the gene id
+            exons = get_canonical_coding_exons (cursor, gene_id)
             if (not exons):
                 ct +=1
                 print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
@@ -215,12 +215,10 @@ def main():
                 # print out all exons
                 #inspect (exons)
                 #print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
-                print
+                #print
                 # print out exons more carefully filtered to belong to the canonical version of the translation
-                canonical_coding_exons = get_canonical_coding_exons (cursor, gene_id)
-                inspect (canonical_coding_exons)
-                print
-                get_translated_region_talkative (cursor, gene_id, species)
+                #print
+                #get_translated_region_talkative (cursor, gene_id, species)
                 exit(1)
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
