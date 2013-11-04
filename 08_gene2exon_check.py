@@ -169,11 +169,8 @@ def main():
         ct = 0
         tot = 0
 
-        for gene_id in [35445]:
-        #for tot in range(1000):
-            #gene_id = choice(gene_ids)
-
-
+        for tot in range(1000):
+            gene_id = choice(gene_ids)
             tot += 1
             # find all canonical coding exons associated with the gene id
             exons = get_canonical_coding_exons (cursor, gene_id)

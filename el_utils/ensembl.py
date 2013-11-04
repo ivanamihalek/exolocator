@@ -73,32 +73,21 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
 
     all_exons =  gene2exon_list (cursor, gene_id)
     if not all_exons:  return []
-    print "## ", len(all_exons)
 
     exons = filter (lambda x: x.is_coding and x.is_canonical, all_exons)
-    if not exons:  
-        print " after filter"
-        return []
+    if not exons:   return []
     # now, the problem is that an exon can be coding, 
     # but not in the canonical version of the transcript
     exons.sort(key=lambda exon: exon.start_in_gene)
-    if not exons:  
-       print " after sort"
-       return []
+    if not exons:   return []
     # is there info about the beginning and the end of canonical translation?
     canonical_transcript_id  = get_canonical_transcript_id (cursor, gene_id, db_name=None)
-    if not canonical_transcript_id: 
-        print "no can transcr id"
-        return []
+    if not canonical_transcript_id:   return []
     ret = get_canonical_coordinates (cursor, canonical_transcript_id)
-    if not ret or not len(ret) == 4: 
-        print "no return for canonical coordinates"
-        return []
+    if not ret or not len(ret) == 4:  return []
     [canonical_start_in_exon, canonical_start_exon_id,
      canonical_end_in_exon, canonical_end_exon_id] = ret
-    if canonical_start_exon_id is None or  canonical_end_exon_id is None: 
-        print "no can. start ro no can. end given"
-        return []
+    if canonical_start_exon_id is None or  canonical_end_exon_id is None:  return []
     
     # filter the exons that are within the start and end bracket
     canonical_exons = []
@@ -109,8 +98,6 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
             canonical_exons.append(exon)
         elif reading:
             canonical_exons.append(exon)
-        print canonical_start_exon_id,  canonical_end_exon_id, "----", exon.exon_id, reading
- 
         
     return canonical_exons
 
