@@ -25,7 +25,6 @@ def get_exon_start(cursor, exon_id):
 
 #########################################
 def get_exon_end(cursor, exon_id):
-
  
     qry  = "select seq_region_end from exon "
     qry += "where exon_id = %d " % exon_id
@@ -73,8 +72,8 @@ def get_translated_region_talkative(cursor, gene_id, species):
         
         print
         print "transcript id: ", transcript_id
-        print "start exon id:", start_exon_id,  "transl start (in the exon) ", exon_seq_start
-        print "end exon id:", end_exon_id, "transl end (in the exon)", exon_seq_end
+        print "start exon id:",  start_exon_id, "transl start (in the exon) ", exon_seq_start
+        print "end exon id:",    end_exon_id,   "transl end (in the exon)", exon_seq_end
         
 
         if (gene_region_strand > 0):
@@ -101,8 +100,6 @@ def get_translated_region_talkative(cursor, gene_id, species):
         if (this_translation_region_end >= transl_region_end):
             transl_region_end = this_translation_region_end
 
-
-        
     return
 
 
@@ -117,9 +114,11 @@ def inspect (exons):
         if  exon.canon_transl_end is None:
             exon_len = exon.end_in_gene - exon.start_in_gene + 1
         else:
-            exon_len = exon.canon_transl_end + 1
+            exon_len = exon.canon_transl_end
+
         if not exon.canon_transl_start is None:
-            exon_len -= exon.canon_transl_start
+            exon_len -= exon.canon_transl_start - 1
+
         total_len += exon_len
 
         print "*****"
@@ -192,10 +191,10 @@ def main():
                 if  exon.canon_transl_end is None:
                     length += exon.end_in_gene - exon.start_in_gene + 1
                 else:
-                    length += exon.canon_transl_end + 1
+                    length += exon.canon_transl_end 
 
                 if not exon.canon_transl_start is None:
-                    length -= exon.canon_transl_start
+                    length -= exon.canon_transl_start - 1
             
             if (not length):
                 print gene2stable (cursor, gene_id = gene_id), " no exons marked as canonical"
@@ -214,8 +213,8 @@ def main():
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
                 # print out all exons
-                inspect (exons)
-                print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
+                #inspect (exons)
+                #print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
                 print
                 # print out exons more carefully filtered to belong to the canonical version of the translation
                 canonical_coding_exons = get_canonical_coding_exons (cursor, gene_id)
