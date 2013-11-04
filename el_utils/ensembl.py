@@ -86,19 +86,27 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
        return []
     # is this gene on the forward or on the reverse strand?
     ret  = get_gene_region (cursor, gene_id)
-    if not ret:    return []
+    if not ret:   
+        print "no return for gene region"
+        return []
     [seq_region_id, seq_region_start, seq_region_end, strand] = ret
     if strand < 0: 
         exons.reverse()
     # is there info about the beginning and the end of canonical translation?
     canonical_transcript_id  = get_canonical_transcript_id (cursor, gene_id, db_name=None)
-    if not canonical_transcript_id: return []
+    if not canonical_transcript_id: 
+        print "no can transcr id"
+        return []
     ret = get_canonical_coordinates (cursor, canonical_transcript_id)
-    if not ret or not len(ret) == 4: return []
+    if not ret or not len(ret) == 4: 
+        print "no return for canonical coordinates"
+        return []
 
     [canonical_start_in_exon, canonical_start_exon_id,
      canonical_end_in_exon, canonical_end_exon_id] = ret
-    if canonical_start_exon_id is None or  canonical_end_exon_id is None: return []
+    if canonical_start_exon_id is None or  canonical_end_exon_id is None: 
+        print "no can. start ro no can. end given"
+        return []
     
     # filter the exons that are within the start and end bracket
     canonical_exons = []
