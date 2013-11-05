@@ -5,6 +5,47 @@ from   mysql import search_db, switch_to_db
 from   exon  import Exon
 import commands
 
+
+#########################################
+def get_exons (cursor, gene_id, species, table):
+
+    if (table == 'exon'):
+        return get_known_exons (cursor, gene_id, species) 
+    elif (table == 'prediction_exon'):
+        return get_predicted_exons (cursor, gene_id, species)
+    elif (table == 'sw_exon'):
+        return get_novel_exons (cursor, gene_id, table)
+    elif (table == 'usearch_exon'):
+        return get_novel_exons (cursor, gene_id, table)
+
+    return []
+
+
+#########################################
+def get_canonical_exon_ids (cursor, canonical_transcript_id):
+
+    canonical_exon_ids = []
+    qry = "select exon_id from exon_transcript "
+    qry += " where transcript_id = %d " % canonical_transcript_id
+    rows   = search_db (cursor, qry)
+    if (not rows):
+        return []
+    for row in rows:
+        canonical_exon_ids.append(row[0])
+
+    return canonical_exon_ids
+
+
+#########################################
+def get_canonical_coordinates (cursor, canonical_transcript_id):
+    qry = "select seq_start, start_exon_id,  seq_end, end_exon_id "
+    qry += " from translation where transcript_id = %d " % canonical_transcript_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+    return rows[0]
+
 #########################################
 def get_canonical_transcript_id (cursor, gene_id, db_name=None):
 
@@ -30,38 +71,34 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
     if db_name and not switch_to_db(cursor, db_name):
         return []
 
-    exons_all =  gene2exon_list (cursor, gene_id)
-    if not exons_all:  return []
+    all_exons =  gene2exon_list (cursor, gene_id)
+    if not all_exons:  return []
 
     exons = filter (lambda x: x.is_coding and x.is_canonical, all_exons)
+    if not exons:   return []
     # now, the problem is that an exon can be coding, 
     # but not in the canonical version of the transcript
-    exons = exons.sort(key=lambda exon: exon.start_in_gene)
-    # is this gene on the forward or on the reverse strand?
-    ret  = get_gene_region (cursor, gene_id)
-    if not ret:  return []
-    [seq_region_id, seq_region_start, seq_region_end, strand] = ret
-    if strand < 0: exons.reverse()
+    exons.sort(key=lambda exon: exon.start_in_gene)
+    if not exons:   return []
     # is there info about the beginning and the end of canonical translation?
     canonical_transcript_id  = get_canonical_transcript_id (cursor, gene_id, db_name=None)
-    if not canonical_transcript_id: return []
+    if not canonical_transcript_id:   return []
     ret = get_canonical_coordinates (cursor, canonical_transcript_id)
-    if not ret or not len(ret) == 4: return []
-
+    if not ret or not len(ret) == 4:  return []
     [canonical_start_in_exon, canonical_start_exon_id,
      canonical_end_in_exon, canonical_end_exon_id] = ret
-    if canonical_start_exon_id is None or  canonical_end_exon_id is None: return []
+    if canonical_start_exon_id is None or  canonical_end_exon_id is None:  return []
     
     # filter the exons that are within the start and end bracket
     canonical_exons = []
     reading = 0
     for exon in exons:
-        if exon.exon_id == canonical_start_exon_id:  reading = 1
-        if reading: canonical_exons.append(exon)
-        if exon.exon_id == canonical_end_exon_id:   break
-
-    if strand < 0: canonical_exons.reverse()
-
+        if exon.exon_id == canonical_start_exon_id or  exon.exon_id == canonical_end_exon_id:
+            reading = 1 - reading
+            canonical_exons.append(exon)
+        elif reading:
+            canonical_exons.append(exon)
+        
     return canonical_exons
 
 

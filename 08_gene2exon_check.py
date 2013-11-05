@@ -10,17 +10,6 @@ from   el_utils.exon        import  Exon
 from   el_utils.threads     import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
-#########################################
-def get_canonical_coordinates (cursor, canonical_transcript_id):
-    qry = "select seq_start, start_exon_id,  seq_end, end_exon_id "
-    qry += " from translation where transcript_id = %d " % canonical_transcript_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         return []
-    return rows[0]
-
-
 
 #########################################
 def get_exon_start(cursor, exon_id):
@@ -36,7 +25,6 @@ def get_exon_start(cursor, exon_id):
 
 #########################################
 def get_exon_end(cursor, exon_id):
-
  
     qry  = "select seq_region_end from exon "
     qry += "where exon_id = %d " % exon_id
@@ -84,8 +72,8 @@ def get_translated_region_talkative(cursor, gene_id, species):
         
         print
         print "transcript id: ", transcript_id
-        print "start exon id:", start_exon_id,  "transl start (in the exon) ", exon_seq_start
-        print "end exon id:", end_exon_id, "transl end (in the exon)", exon_seq_end
+        print "start exon id:",  start_exon_id, "transl start (in the exon) ", exon_seq_start
+        print "end exon id:",    end_exon_id,   "transl end (in the exon)", exon_seq_end
         
 
         if (gene_region_strand > 0):
@@ -112,13 +100,11 @@ def get_translated_region_talkative(cursor, gene_id, species):
         if (this_translation_region_end >= transl_region_end):
             transl_region_end = this_translation_region_end
 
-
-        
     return
 
 
 #########################################
-def inspect (exons, canonical_translation):
+def inspect (exons):
 
 
     total_len = 0
@@ -128,9 +114,11 @@ def inspect (exons, canonical_translation):
         if  exon.canon_transl_end is None:
             exon_len = exon.end_in_gene - exon.start_in_gene + 1
         else:
-            exon_len = exon.canon_transl_end + 1
+            exon_len = exon.canon_transl_end
+
         if not exon.canon_transl_start is None:
-            exon_len -= exon.canon_transl_start
+            exon_len -= exon.canon_transl_start - 1
+
         total_len += exon_len
 
         print "*****"
@@ -143,32 +131,6 @@ def inspect (exons, canonical_translation):
         print "canon transl end: ",   exon.canon_transl_end
         print "exon len %5d   total %d " % (exon_len, total_len)
 
-    # print canonical sequence with the newline stuck in every 50 positions
-    print re.sub("(.{50})", "\\1\n", canonical_translation)       
-    print
-    print
-    canonical_coding_exons = get_canonical_coding_exons (cursor, gene_id)
-    total_len = 0
-    for exon in canonical_coding_exons:
-
-        exon_len = 0
-        if  exon.canon_transl_end is None:
-            exon_len = exon.end_in_gene - exon.start_in_gene + 1
-        else:
-            exon_len = exon.canon_transl_end + 1
-        if not exon.canon_transl_start is None:
-            exon_len -= exon.canon_transl_start
-        total_len += exon_len
-
-        print "########"
-        print "exon id: ",  exon.exon_id         
-        print "canonical:", exon.is_canonical
-        print "coding:",    exon.is_coding
-        print "start in gene: ", exon.start_in_gene 
-        print "end in gene: ",   exon.end_in_gene 
-        print "canon transl start: ", exon.canon_transl_start
-        print "canon transl end: ",   exon.canon_transl_end
-        print "exon len %5d   total %d " % (exon_len, total_len)
 
 
 #########################################
@@ -207,14 +169,11 @@ def main():
         ct = 0
         tot = 0
 
-        for gene_id in [35445]:
-        #for tot in range(1000):
-            #gene_id = choice(gene_ids)
-
-
+        for tot in range(1000):
+            gene_id = choice(gene_ids)
             tot += 1
-            # find all exons associated with the gene id
-            exons = filter (lambda x: x.is_coding and x.is_canonical, gene2exon_list (cursor, gene_id))
+            # find all canonical coding exons associated with the gene id
+            exons = get_canonical_coding_exons (cursor, gene_id)
             if (not exons):
                 ct +=1
                 print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
@@ -229,10 +188,10 @@ def main():
                 if  exon.canon_transl_end is None:
                     length += exon.end_in_gene - exon.start_in_gene + 1
                 else:
-                    length += exon.canon_transl_end + 1
+                    length += exon.canon_transl_end 
 
                 if not exon.canon_transl_start is None:
-                    length -= exon.canon_transl_start
+                    length -= exon.canon_transl_start - 1
             
             if (not length):
                 print gene2stable (cursor, gene_id = gene_id), " no exons marked as canonical"
@@ -250,9 +209,14 @@ def main():
                 print gene_id, gene2stable (cursor, gene_id = gene_id),
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
-                inspect (exons, canonical_translation)
-                get_translated_region_talkative (cursor, gene_id, species)
-                exit(1)
+                # print out all exons
+                #inspect (exons)
+                #print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
+                #print
+                # print out exons more carefully filtered to belong to the canonical version of the translation
+                #print
+                #get_translated_region_talkative (cursor, gene_id, species)
+                #exit(1)
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
 
