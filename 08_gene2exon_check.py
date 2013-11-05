@@ -1,4 +1,4 @@
- #!/usr/bin/python
+#!/usr/bin/python
 
 import MySQLdb
 import commands
@@ -9,7 +9,6 @@ from   el_utils.el_specific import  *
 from   el_utils.exon        import  Exon
 from   el_utils.threads     import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
-
 
 #########################################
 def get_exon_start(cursor, exon_id):
