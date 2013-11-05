@@ -1207,7 +1207,7 @@ def make_alignments (species_list, db_info):
         fields = species.split("_")
         species_id = fields[0][0]+fields[1][0:2]
         species_id = species_id.upper()
-        directory = "{0}/para/{1}/{2}".format(cfg.dir_path['afs_dumps'], species_id)
+        directory = "{0}/para/{1}".format(cfg.dir_path['afs_dumps'], species_id)
         if os.path.exists(directory):
             continue
 
