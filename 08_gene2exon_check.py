@@ -167,15 +167,15 @@ def main():
         
         ct = 0
         tot = 0
-
-        for tot in range(1000):
-            gene_id = choice(gene_ids)
+        for gene_id in [695872]:
+        #for tot in range(1000):
+            #gene_id = choice(gene_ids)
             tot += 1
             # find all canonical coding exons associated with the gene id
             exons = get_canonical_coding_exons (cursor, gene_id)
             if (not exons):
                 ct +=1
-                print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
+                print gene_id, gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
                 
             if not tot%100:
                 print species, tot, ct
