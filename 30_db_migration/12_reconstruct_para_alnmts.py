@@ -1208,10 +1208,7 @@ def make_alignments (species_list, db_info):
         species_id = fields[0][0]+fields[1][0:2]
         species_id = species_id.upper()
         directory = "{0}/para/{1}".format(cfg.dir_path['afs_dumps'], species_id)
-        if os.path.exists(directory):
-            continue
-
-        
+       
 
         directory = check_directory (cfg, species, "pep")
         print species, "number of genes: ", len(gene_ids),  directory
@@ -1232,9 +1229,8 @@ def make_alignments (species_list, db_info):
                 print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
             # see if perhaps already resolved this one
-            if (0):
-                directory = check_directory ( cfg, species, "dna")
-                afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
+            if (1):
+                afa_fnm   = "{0}/pep/{1}.afa".format(directory, stable_id)
                 if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0):
                     continue
 
@@ -1440,7 +1436,7 @@ def make_alignments (species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 10
 
     local_db = False
 
