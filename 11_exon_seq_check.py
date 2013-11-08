@@ -52,7 +52,8 @@ def  get_alt_seq_info (cursor, gene_id, species):
          exit(1)
     seq_region_id = rows[0][0]
     
-    # check whether we have "assembly exception"
+    # Check whether we have "assembly exception."
+    # The region in question should not be 'PAR' - that's something else:
     '''
     The pseudo-autosomal regions are homologous DNA sequences on the (human) X and Y chromosomes. 
     They allow the pairing and crossing-over of these sex chromosomes the same way the autosomal 
@@ -63,8 +64,8 @@ def  get_alt_seq_info (cursor, gene_id, species):
     qry  = "select seq_region.name,  assembly_exception.exc_seq_region_start, assembly_exception.exc_seq_region_end "
     qry += "from seq_region, assembly_exception "
     qry += "where seq_region.seq_region_id = assembly_exception.exc_seq_region_id "
-    qry += "and assembly_exception.seq_region_id = %d" % seq_region_id
-    qry += " and not assembly_exception.exc_type = 'PAR'"
+    qry += "and assembly_exception.seq_region_id = %d " % seq_region_id
+    qry += "and not assembly_exception.exc_type = 'PAR'"
 
     rows = search_db (cursor, qry)
     if (rows):
