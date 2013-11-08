@@ -31,8 +31,16 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
     switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-    qry  = "select gene_id, stable_id, seq_region_id, seq_region_start, seq_region_end from gene where stable_id"
+    qry  = "select gene_id, stable_id, seq_region_id, seq_region_start, seq_region_end, description "
+    qry += "from gene where stable_id"
     qry += " = 'ENSG00000182809' or stable_id = 'ENSG00000270931'"
+    rows  = search_db (cursor, qry)
+    for row in rows:
+        print row
+
+    qry  = "select seq_region.name,  assembly_exception.exc_seq_region_start, assembly_exception.exc_seq_region_end "
+    qry += "from seq_region, assembly_exception  where seq_region.seq_region_id = assembly_exception.exc_seq_region_id "
+    qry += "and assembly_exception.seq_region_id = 1001061114 and not assembly_exception.exc_type = 'PAR'"
     rows  = search_db (cursor, qry)
     for row in rows:
         print row
