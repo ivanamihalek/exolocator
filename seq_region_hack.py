@@ -30,7 +30,7 @@ def main():
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    swtich_to_db (cursor, ensemb_db['homo_sapiens'])
+    switch_to_db (cursor, ensemb_db['homo_sapiens'])
     qry  = "select gene_id, stable_id, seq_region_id, seq_region_start, seq_region_end from gene where stable_id"
     qry += " = 'ENSG00000182809' or stable_id = 'ENSG00000270931'"
     rows  = search_db (cursor, qry)
