@@ -3,7 +3,7 @@
 import MySQLdb
 import commands
 from random import choice
-from   el_utils.mysql       import  connect_to_mysql, search_db
+from   el_utils.mysql       import  *
 from   el_utils.ensembl     import  *
 from   el_utils.el_specific import  *
 from   el_utils.exon        import  Exon
