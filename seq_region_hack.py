@@ -5,7 +5,6 @@ import commands
 from random import choice
 from   el_utils.mysql       import  *
 from   el_utils.ensembl     import  *
-from   el_utils.el_specific import  *
 from   el_utils.exon        import  Exon
 from   el_utils.threads     import  parallelize
 from   el_utils.almt_cmd_generator  import AlignmentCommandGenerator
@@ -45,6 +44,33 @@ def main():
     for row in rows:
         print row
 
+    qry  = "select gene_id, alt_allele_group_id from alt_allele "
+    qry += "where gene_id = %d " % 672092
+    qry += "or  gene_id = %d "   % 695872
+    rows  = search_db (cursor, qry)
+    for row in rows:
+        print row
+
+    # how many human genes have multiple "alleles"
+    group = {}
+    qry = "select  alt_allele_group_id, group_concat(alt_allele_id)  from alt_allele group by alt_allele_group_id"
+    rows  = search_db (cursor, qry)
+    for row in rows:
+        group[row[0]] = row[1]
+
+    print "there are ", len(group), " alt_allele_groups"
+    for alt_allele_group_id, group in group.iteritems():
+        al_ids = map (lambda ai:  int(ai), group.split(","))
+        print alt_allele_group_id, len(al_ids)
+        for al_id in al_ids:
+            qry = "select attrib from alt_allele_attrib "
+            qry += "where alt_allele_id = %d " % al_id
+            rows  = search_db (cursor, qry)
+            if rows and rows[0]:
+                attrib = rows[0][0]
+            else:
+                attrib = ""
+            print "\t", al_id,  attrib
 
     cursor.close()
     db    .close()
@@ -58,10 +84,3 @@ if __name__ == '__main__':
     main()
 
 
-
-
-
-
-#########################################
-        #for gene_id in gene_ids[6000:8000]:
-        #for gene_id in [314408,  314604,  314656,  314728,  314736,  314756,  314794,  314805,  314845,  314954,  314978,  314990,  315225,  315324,  315616,  315722,  315802,  315982,  316001,  316194,  319848,  320075,  320236,  320285,  320404,  320891,  368524,  368526,  368549,  368639,  368646,  368651,  368669,  368684,  368687,  368698,  368707,  368743,  368762,  368766,  368767,   368985,  369163,  369184,  369185,  369189,  369191,  369194,  369197,  369266,  369306,  369333,  369359,  369385,  369413,  369474,  369524]:

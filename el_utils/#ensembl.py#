@@ -22,12 +22,10 @@ def check_ccds (cursor, transcript_stable_id = "", transcript_id = ""):
     else:
         return ccds
         
-
     rows = search_db(cursor, qry)
 
     if not rows:
         return ccds
-
 
     for row in rows:
         if 'CCDS' in row[0]:

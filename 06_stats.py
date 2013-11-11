@@ -142,10 +142,10 @@ def main():
 
     if local_db:
         db  = connect_to_mysql()
-        cfg = ConfigurationReader()
+        #cfg = ConfigurationReader()
     else:
         db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        #cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
@@ -171,7 +171,11 @@ def main():
         # sanity check:
         all_genes = get_gene_ids (cursor, biotype='protein_coding')
         print "\t all genes: ", len(all_genes)
-
+        # alternative alelles crap (it is crap bcs these are nto
+        # always alleles, but may be different version of a gene on a 'patch'
+        qry = "select count(distinct alt_allele_group_id) from alt_allele"
+        rows  = search_db (cursor, qry)
+        print "\t number of allele groups: ", rows[0][0]
     if 0:
         for special in  ['wnt_pathway']:
 

@@ -22,30 +22,6 @@ from Bio.Alphabet import generic_dna
 verbose = True
 
 #########################################
-def check_ccds (cursor, transcript_stable_id):
-
-    ccds = ""
-
-    qry  = "select dna_align_feature.hit_name "
-    qry += "from dna_align_feature, transcript, transcript_supporting_feature "
-    qry += "   where dna_align_feature.dna_align_feature_id =  transcript_supporting_feature.feature_id "
-    qry += "   and transcript_supporting_feature.feature_type ='dna_align_feature' "
-    qry += "   and transcript_supporting_feature.transcript_id =transcript.transcript_id "
-    qry += "   and transcript.stable_id = '%s' " % transcript_stable_id
-
-    rows = search_db(cursor, qry)
-
-    if not rows:
-        return ccds
-
-
-    for row in rows:
-        if 'CCDS' in row[0]:
-            ccds = row[0]
-
-    return  ccds
-
-#########################################
 def transcript_id2exon_ids (cursor, transcript_id):
 
     exon_ids = []
