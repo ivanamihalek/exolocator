@@ -413,7 +413,7 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
                 # compare the two sequences and cry foul if they are not the same:
                 comparison_ok = compare_seqs (canonical_translation, translated_seq, verbose = verbose)
                 if (comparison_ok):
-                    print "translation ok"
+                    #print "translation ok"
                     continue
             ###################### if ok, we are done here ######################
 
@@ -453,7 +453,7 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
                 print translated_seq
 
  
-        print species, ct, tot
+        print "\t translation fail: ", ct, "out of ", tot
        
     cursor.close()
     db    .close()
