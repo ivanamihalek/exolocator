@@ -383,10 +383,8 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
             if seen.has_key(gene_id):
                 continue
             seen[gene_id] = True
-
-            print 
-            print gene_id, gene2stable (cursor, gene_id), get_description (cursor, gene_id)
-
+            #print 
+            #print gene_id, gene2stable (cursor, gene_id), get_description (cursor, gene_id)
             # find canonical translation
             canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
 
@@ -411,14 +409,6 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
             # reconstruct the translation from the raw gene_seq and exon boundaries
             translated_seq = transl_reconstruct (cursor, gene_id, gene_seq, 
                                                  canonical_coding_exons, verbose = verbose)
-
-            print 
-            print "==========================================="
-            print "can transl id: ", gene2stable_canon_transl (cursor, gene_id)
-            print canonical_translation
-            print "========"
-            print translated_seq
-
             if (translated_seq):
                 # compare the two sequences and cry foul if they are not the same:
                 comparison_ok = compare_seqs (canonical_translation, translated_seq, verbose = verbose)
@@ -501,5 +491,15 @@ if __name__ == '__main__':
 
 
 #########################################
+'''
         #for gene_id in gene_ids[6000:8000]:
         #for gene_id in [314408,  314604,  314656,  314728,  314736,  314756,  314794,  314805,  314845,  314954,  314978,  314990,  315225,  315324,  315616,  315722,  315802,  315982,  316001,  316194,  319848,  320075,  320236,  320285,  320404,  320891,  368524,  368526,  368549,  368639,  368646,  368651,  368669,  368684,  368687,  368698,  368707,  368743,  368762,  368766,  368767,   368985,  369163,  369184,  369185,  369189,  369191,  369194,  369197,  369266,  369306,  369333,  369359,  369385,  369413,  369474,  369524]:
+
+            print 
+            print "==========================================="
+            print "can transl id: ", gene2stable_canon_transl (cursor, gene_id)
+            print canonical_translation
+            print "========"
+            print translated_seq
+
+'''
