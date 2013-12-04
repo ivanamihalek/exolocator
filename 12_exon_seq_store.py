@@ -448,7 +448,7 @@ def store_exon_seqs(species_list, db_info):
         print
         print "############################"
         print  species
-
+        #continue
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False      
  
@@ -481,14 +481,13 @@ def store_exon_seqs(species_list, db_info):
             # get _all_ exons
             exons = gene2exon_list(cursor, gene_id, ensembl_db_name[species])
             if (not exons):
-                print 'no exons for ', gene_id
+                #print 'no exons for ', gene_id
                 #exit(1)
                 continue
 
             # get the sequence for each of the exons, as well as for the flanks
             # (the return are three dictionaries, with exon_ids as keys)
             [exon_seq, left_flank, right_flank] = reconstruct_exon_seqs (gene_seq, exons)
-            # store (exons, dna, protein)
             store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
 
 
@@ -497,8 +496,7 @@ def store_exon_seqs(species_list, db_info):
             outf = open(species+".seqs_not_found", "w")
             for not_found in seqs_not_found:
                 print >> outf, str(not_found)+", ",
-            print
-            print
+            print >> outf, "\n"
             outf.close
     cursor.close()
     db    .close()

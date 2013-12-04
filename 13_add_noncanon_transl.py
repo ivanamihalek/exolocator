@@ -135,8 +135,8 @@ def pep_exon_seqs(species_list, db_info):
                     rows = search_db (cursor, qry, verbose = True)
                     continue
             ####################################
-            if not gene_ids.index(gene_id)%100:
-                print "%50s:  %5.1f%% " %  (species, (float( gene_ids.index(gene_id) +1 )/len(gene_ids))*100 )
+            if not gene_ids.index(gene_id)%1000:
+                print "%50s:  %5.1f%% " %  (species, 100*(float( gene_ids.index(gene_id) +1 )/len(gene_ids))  )
         
                  
         print species
