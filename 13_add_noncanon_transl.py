@@ -55,6 +55,7 @@ def pep_exon_seqs(species_list, db_info):
         print
         print "############################"
         print  species
+        sys.stdout.flush()
 
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False
@@ -137,7 +138,8 @@ def pep_exon_seqs(species_list, db_info):
             ####################################
             if not gene_ids.index(gene_id)%1000:
                 print "%50s:  %5.1f%% " %  (species, 100*(float( gene_ids.index(gene_id) +1 )/len(gene_ids))  )
-        
+                sys.stdout.flush()
+       
                  
         print species
         print "total coding exons ", tot
@@ -145,6 +147,7 @@ def pep_exon_seqs(species_list, db_info):
         print "short dna          ", short_dna
         print "transl failure     ", translation_fail
         print "pepseq ok          ", pepseq_ok
+        sys.stdout.flush()
 
 #########################################
 def main():
