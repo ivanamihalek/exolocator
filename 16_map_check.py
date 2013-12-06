@@ -74,8 +74,8 @@ def main():
         has_a_map = False
         for human_exon in human_exons:
             if ( not human_exon.is_canonical or  not human_exon.is_coding): continue
-            print  
-            print "\t human",   human_exon.exon_id,  human_exon.is_known
+            #print  
+            #print "\t human",   human_exon.exon_id,  human_exon.is_known
             #print "\t", get_exon_pepseq(cursor, human_exon, ensembl_db_name['homo_sapiens'])
             print "\t checking maps ...",
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
@@ -83,9 +83,10 @@ def main():
             if maps:
                 has_a_map = True
                 with_map += 1
-                print "ok"
+                #print "ok"
             else:
-                print"no maps"
+                #print"no maps"
+                pass
             if 0:
                 for map in maps:
                     species            = map.species_2
