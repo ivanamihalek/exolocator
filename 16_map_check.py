@@ -21,7 +21,7 @@ def main():
 
 
     no_threads = 1
-    special    = 'one'
+    special    = 'none'
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
         print "usage: %s <set name> <number of threads> " % sys.argv[0]
