@@ -189,8 +189,8 @@ def multiple_exon_alnmt(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
-    special    = 'test'
+    no_threads = 12
+    special    = None
 
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
@@ -210,7 +210,7 @@ def main():
         db  = connect_to_mysql()
         cfg = ConfigurationReader()
     else:
-        db  = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
