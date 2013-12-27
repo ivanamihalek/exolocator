@@ -367,7 +367,7 @@ def exon_cleanup(gene_list, db_info):
 
             first_exon = (human_exons.index(human_exon) == 0)
 
-            for species in ['ochotona_princeps']: # maxentscan does not work for fish 
+            for species in ['ornithorhynchus_anatinus']: # maxentscan does not work for fish 
                  
                  for table in ['sw_exon','usearch_exon']:
                      switch_to_db(cursor, ensembl_db_name[species])
