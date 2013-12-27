@@ -86,7 +86,7 @@ def main():
                                         maps_for_exon[he])
 
             if not maps_for_exon[he]: 
-                print "\t\t", human_stable. "no maps found"
+                print "\t\t", human_stable,  "no maps found"
                 continue
 
             sw_count += 1
