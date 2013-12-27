@@ -253,7 +253,7 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
     phase      = correction%3
     if phase < 0: phase = (3-abs(phase))%3
 
-    if True:
+    if False:
         print "scores:", scores
         print "max score ind: ", index_of_max_score, " score:", scores[index_of_max_score]
         print "max shift: ", max_score_shift
@@ -374,7 +374,7 @@ def exon_cleanup(gene_list, db_info):
 
             first_exon = (human_exons.index(human_exon) == 0)
 
-            for species in ['ornithorhynchus_anatinus']: # maxentscan does not work for fish 
+            for species in mammals: # maxentscan does not work for fish 
                  
                  for table in ['sw_exon','usearch_exon']:
                      switch_to_db(cursor, ensembl_db_name[species])
