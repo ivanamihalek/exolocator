@@ -228,8 +228,6 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
 
     tmp_in_file.close()
 
-    print "scores:", scores
-
     if not scores:
         return [right_flank_ok, correction, phase, max_score]
 
@@ -240,6 +238,9 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
         if max_score < sc: 
             max_score =sc
             index_of_max_score = i
+
+    print "scores:", scores
+    print "max score ind: ", index_of_max_score
 
     if not index_of_max_score or index_of_max_score > len(shifts):
         # allscores are negative
