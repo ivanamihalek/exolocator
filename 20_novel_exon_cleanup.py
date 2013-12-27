@@ -259,7 +259,7 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
     if phase < 0: phase = (3-abs(phase))%3
 
 
-    right_flank_ok = (max_score >= 6.0)
+    right_flank_ok = (max_score >= 3.0)
 
     return [right_flank_ok, correction, phase, max_score]
 
