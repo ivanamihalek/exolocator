@@ -367,7 +367,7 @@ def exon_cleanup(gene_list, db_info):
 
             first_exon = (human_exons.index(human_exon) == 0)
 
-            for species in mammals: # maxentscan does not work for fish 
+            for species in ['ochotona_princeps']: # maxentscan does not work for fish 
                  
                  for table in ['sw_exon','usearch_exon']:
                      switch_to_db(cursor, ensembl_db_name[species])
@@ -471,7 +471,7 @@ def exon_cleanup(gene_list, db_info):
                                      new_left_flank  = left_flank + dna_seq[:correction]
                                  else:
                                      # correction is negative, therefore left_flank[correction:] is the tail of left_flank
-                                     new_dna_seq     = left_flank[correction:]+ dna_seq
+                                     new_dna_seq     = left_flank[correction:] + dna_seq
                                      new_left_flank  = left_flank[:correction]
                              else:
                                  new_left_flank = left_flank
@@ -533,7 +533,7 @@ def exon_cleanup(gene_list, db_info):
 
                          if True:
                              print "#############################################"
-                             print human_gene_id, stable_id, description
+                             print human_gene_id, stable_id, "exo no:", human_exons.index(human_exon), "      ", description
                              print species, table
 
                              print "\t  template", template_exon_seq_id, template_species, template_db_id
