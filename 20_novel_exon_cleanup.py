@@ -250,13 +250,13 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
    
 
     correction = max_score_shift
+    phase      = correction%3
+    if phase < 0: phase = (3-abs(phase))%3
+
     print "scores:", scores
     print "max score ind: ", index_of_max_score
     print "max shift:: ", max_score_shift
-
-
-    phase      = correction%3
-    if phase < 0: phase = (3-abs(phase))%3
+    print "phase: ", phase
 
 
     right_flank_ok = (max_score >= 3.0)
