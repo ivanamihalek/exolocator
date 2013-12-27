@@ -422,7 +422,7 @@ def exon_cleanup(gene_list, db_info):
 
                                  if pepseq_corrected == protein_seq:
                                      right_flank += dna_seq[-phase:] + right_flank
-                                     dna_seq     = dna_seq[:-phase]
+                                     dna_seq      = dna_seq[:-phase]
                                  else: 
                                      print "no match ..."
                                      continue # don't want to shut-off the pipeline here
@@ -456,6 +456,7 @@ def exon_cleanup(gene_list, db_info):
                          # see if the right splice site is ok
                          [right_flank_ok, end_correction, end_phase, end_max_score] = \
                              check_right_flank(acg, right_flank, dna_seq, templ_dna_seq)
+                         print "** ", left_flank_ok, correction, right_flank_ok, end_correction
 
                          #if not left_flank_ok and not right_flank_ok: continue
 
@@ -552,7 +553,8 @@ def exon_cleanup(gene_list, db_info):
                              print "\t  template", templ_protein_seq
                              print "\t deposited", protein_seq
                              if pepseq_corrected: print "\t corrected", pepseq_corrected
-                             
+                             exit(2)
+
                          if new_dna_seq:
                              if (pepseq_transl_end-pepseq_transl_start)%3:
                                  print "length not divisible by 3 "
