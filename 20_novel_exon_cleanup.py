@@ -210,7 +210,7 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
     if not list_of_shifted_seqs:
        return [right_flank_ok, correction, phase, max_score]
 
-    tmp_in_file = NamedTemporaryFile(delete=False)
+    tmp_in_file = NamedTemporaryFile(delete=True)
     tmp_in_file.write(list_of_shifted_seqs)
     tmp_in_file.flush()
 
@@ -227,6 +227,8 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
 
 
     tmp_in_file.close()
+
+    print "scores:", scores
 
     if not scores:
         return [right_flank_ok, correction, phase, max_score]
