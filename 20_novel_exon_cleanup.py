@@ -253,10 +253,11 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
     phase      = correction%3
     if phase < 0: phase = (3-abs(phase))%3
 
-    print "scores:", scores
-    print "max score ind: ", index_of_max_score
-    print "max shift:: ", max_score_shift
-    print "phase: ", phase
+    if False:
+        print "scores:", scores
+        print "max score ind: ", index_of_max_score
+        print "max shift:: ", max_score_shift
+        print "phase: ", phase
 
 
     right_flank_ok = (max_score >= 3.0)
@@ -559,8 +560,7 @@ def exon_cleanup(gene_list, db_info):
                              print "\t  template", templ_protein_seq
                              print "\t deposited", protein_seq
                              if pepseq_corrected: print "\t corrected", pepseq_corrected
-                             exit(2)
-
+ 
                          if new_dna_seq:
                              if (pepseq_transl_end-pepseq_transl_start)%3:
                                  print "length not divisible by 3 "
