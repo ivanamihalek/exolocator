@@ -255,7 +255,7 @@ def check_right_flank(acg, right_flank, dna_seq, template_dna_seq):
 
     if True:
         print "scores:", scores
-        print "max score ind: ", index_of_max_score, " score:", score[index_of_max_score]
+        print "max score ind: ", index_of_max_score, " score:", scores[index_of_max_score]
         print "max shift: ", max_score_shift
         print "phase: ", phase
 
