@@ -531,7 +531,7 @@ def exon_cleanup(gene_list, db_info):
 
                          if has_stop and not '*' in protein_seq: continue # abort, abort
 
-                         if False and table=='sw_exon':
+                         if True:
                              print "#############################################"
                              print human_gene_id, stable_id, description
                              print species, table
@@ -569,7 +569,9 @@ def exon_cleanup(gene_list, db_info):
                          # I do not know why
                          ret = check_coordinates_in_the_gene (cursor, cfg, acg, ensembl_db_name, 
                                                               species, sw_exon, new_dna_seq)
-                         if not ret: continue
+                         if not ret: 
+                             print "\t coordinate check failed"
+                             continue
                          [start_in_gene_corrected, end_in_gene_corrected] = ret
                              
 
