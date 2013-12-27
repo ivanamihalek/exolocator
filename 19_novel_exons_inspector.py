@@ -52,7 +52,7 @@ def main():
     # loop over all genes
     sw_count = 0
     tot_count = 0
-    outf = erropen ('genes_w_sw_exons.txt', "w")
+    outf = erropen ('genes_w_usearch_exons.txt', "w")
     for human_gene_id in gene_list:
         
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -82,10 +82,11 @@ def main():
 
             #maps_for_exon[he] = filter (lambda m: m.source == 'sw_sharp' or m.source == 'usearch', 
             #                            maps_for_exon[he])
-            maps_for_exon[he] = filter (lambda m: m.source == 'sw_sharp', 
+            maps_for_exon[he] = filter (lambda m: m.source == 'usearch', 
                                         maps_for_exon[he])
 
             if not maps_for_exon[he]: continue
+
             sw_count += 1
             print >>outf, human_stable
             break
