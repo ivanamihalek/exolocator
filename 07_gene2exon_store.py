@@ -497,7 +497,7 @@ def gene2exon_orthologues(gene_list, db_info):
             for exon in exons:
                 store_exon (cursor, exon)
  
-        print "progress:  %8.3f " %  (float( int(gene_list.index(gene_id)) +1 )/len(gene_list))
+        print "progress (%s):  %8.3f " %  (get_thread_name(), float( int(gene_list.index(gene_id)) +1 )/len(gene_list))
 
     cursor.close()
     db.close()
