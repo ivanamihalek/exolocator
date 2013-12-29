@@ -446,7 +446,7 @@ def maps_for_gene_list(gene_list, db_info):
             #sys.exit(1)
 
         # get rid of the old maps # can't do that here bcs this script is only updating sw exons
-        map_cleanup (cursor, ensembl_db_name, human_exons)
+        # map_cleanup (cursor, ensembl_db_name, human_exons)
 
         orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
