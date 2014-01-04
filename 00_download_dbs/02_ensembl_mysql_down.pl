@@ -2,7 +2,7 @@
 
 use strict;
 use Net::FTP;
-my $release_num = 73;
+my $release_num = 74;
 
 my $local_repository = 
     "/mnt/ensembl-mirror/release-".$release_num."/mysql";
@@ -29,10 +29,9 @@ my $animal;
 my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 
 
-my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
-	    "ciona_intestinalis",  
-	    "ciona_savignyi", "drosophila_melanogaster",
-	    "saccharomyces_cerevisiae");
+my @skip = ("ancestral_alleles", "caenorhabditis_elegans", "ciona_intestinalis",  
+	    "ciona_savignyi", "drosophila_melanogaster", "saccharomyces_cerevisiae");
+
 my @dirs_I_need = ();
 my $compara_dir = "ensembl_compara_".$release_num; # take care of it separately
 
