@@ -3,6 +3,8 @@ import os
 from ensembl import genome_db_id2species
 from mysql   import switch_to_db, search_db
 from exon    import Exon
+from   py_alignment          import  smith_waterman, exon_aware_smith_waterman
+from   alignment import * # C implementation of smith waterman
 
 #########################################################
 class Map:    # this particular map is between exons
@@ -123,6 +125,9 @@ def map2exon(cursor, ensembl_db_name, map, paralogue=False):
         exon.analysis_id = 1
  
     return exon
+
+
+
 #########################################
 def self_maps (cursor, ensembl_db_name, human_exons):
 
@@ -150,6 +155,76 @@ def self_maps (cursor, ensembl_db_name, human_exons):
 
 ###################################################################################################
 ###################################################################################################
+
+#########################################
+def moveB (seq):
+    seqlist = list(seq)
+    begin_pattern = re.compile("B\d{3}\-+")
+
+    for begin_label in begin_pattern.finditer(seq):
+        start =  begin_label.start()
+        end   =  begin_label.end()
+        label =  seq[start:end]
+        for i in range(4):
+            seqlist[start+i] = '-'
+        for i in range(4):
+            seqlist[end-4+i] = label[i]
+
+    return "".join(seqlist)
+
+
+#########################################
+def overlap (start, end, other_start, other_end):
+    if ( other_end < start): 
+        return False
+    elif ( end < other_start):
+        return False
+    else:
+        return True
+
+
+
+#########################################
+def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
+    
+    seq_human = ""
+    seq_other = ""
+
+    padding = ""
+    if ( human_start > other_start):
+        for i in range (human_start-other_start):
+            padding += "-"
+    seq_human = padding + exon_seq_human
+
+
+    padding = ""
+    if ( other_start > human_start):
+        for i in range (other_start-human_start):
+            padding += "-"
+    seq_other = padding + exon_seq_other
+
+    if ( len(seq_human) > len(seq_other)):
+        padding = ""
+        for i in range  (len(seq_human)-len(seq_other)):
+            padding += "-"
+        seq_other += padding
+
+    if ( len(seq_other) > len(seq_human)):
+        padding = ""
+        for i in range  (len(seq_other)-len(seq_human)):
+            padding += "-"
+        seq_human += padding
+
+    seq_human_no_common_gaps = ""
+    seq_other_no_common_gaps = ""
+    
+    for i in range (len(seq_human)):
+        if seq_human[i] == '-' and seq_other[i] == '-': continue
+        seq_human_no_common_gaps += seq_human[i]
+        seq_other_no_common_gaps += seq_other[i]
+
+    return [seq_human_no_common_gaps, seq_other_no_common_gaps] 
+
 
 #########################################
 def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
@@ -218,6 +293,68 @@ def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
                 maps.append(map)                
 
     return maps
+
+#########################################
+def decorate_and_concatenate (exons):
+    decorated_seq = ""
+    count = 1
+    for  exon in exons:
+        pepseq = exon.pepseq
+        padded_count = "{0:03d}".format(count)
+        decorated_seq += 'B'+padded_count+pepseq+'Z'
+        count += 1
+
+    return decorated_seq
+
+
+
+
+#########################################
+def find_relevant_exons (cursor, all_exons):
+
+    relevant_exons = []
+    protein_seq    = []
+
+    # 1) choose exons that I need
+    for exon in all_exons:
+        if (not exon.is_coding or  exon.covering_exon > 0):
+            continue
+        relevant_exons.append(exon)
+
+    # 2) sort them by their start position in the gene
+    to_remove = []
+    relevant_exons.sort(key=lambda exon: exon.start_in_gene)
+    for i in range(len(relevant_exons)):
+        exon   = relevant_exons[i]
+        pepseq = get_exon_pepseq (cursor, exon)
+        if not pepseq:
+            to_remove.append(i)
+            continue
+        pepseq = pepseq.replace ('X', '')
+        if  not pepseq:
+            to_remove.append(i)
+        else:
+            exon.pepseq = pepseq
+
+    for i in range (len(to_remove)-1, -1, -1):
+        del relevant_exons[to_remove[i]]
+ 
+
+    return relevant_exons
+
+#########################################
+def find_exon_positions(seq):
+
+    exon_position = {}
+    
+    exon_pattern = re.compile("B.*?Z")
+    for match in exon_pattern.finditer(seq):
+        start       = match.start()
+        end         = match.end()
+        exon_seq_no = seq[start+1:start+4]
+        exon_position[exon_seq_no] = [start+4, end-1]  #B+3 digits on one end,  Z on the other
+
+    return exon_position
 
 
 #########################################
