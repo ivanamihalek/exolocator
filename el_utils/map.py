@@ -1,8 +1,9 @@
 
 import os
-from ensembl import *
-from mysql   import *
-from exon    import Exon
+from ensembl     import *
+from mysql       import *
+from el_specific import *
+from exon        import Exon
 from   py_alignment          import  smith_waterman, exon_aware_smith_waterman
 from   alignment import * # C implementation of smith waterman
 
