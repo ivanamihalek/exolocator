@@ -496,6 +496,13 @@ def maps_for_gene_list(gene_list, db_info):
         for [ortho_gene_id, ortho_species] in orthologues:
             #if not ortho_species == 'dipodomys_ordii': continue
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
+            # in the first round of building the database there will be no 'novel' exons
+            # but we put this here just in case we want to rerun the script anyway
+            # (the script 21_make_novel_exon_maps.py rebuilds the maps only for the species for which
+            # there are some novel exons - this one builds the maps from scratch)
+            ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'sw_exon')
+            ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'usearch_exon')
+
             if not ortho_exons:
                 missing_exon_info += 1
                 print "\t", ortho_species, "no exon info"

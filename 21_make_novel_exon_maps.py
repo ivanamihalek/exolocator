@@ -443,7 +443,6 @@ def maps_for_gene_list(gene_list, db_info):
         if (not human_exons):
             print 'no exons for ', gene_id
             continue
-            #sys.exit(1)
 
         # get rid of the old maps # can't do that here bcs this script is only updating sw exons
         # map_cleanup (cursor, ensembl_db_name, human_exons)
