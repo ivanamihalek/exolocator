@@ -9,7 +9,7 @@ from   el_utils.mysql   import  *
 from   el_utils.ensembl import  *
 from   el_utils.utils   import  *
 from   el_utils.threads import  parallelize
-from   el_utils.map     import  get_maps, Map
+from   el_utils.map     import  *
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.alignment          import smith_waterman, exon_aware_smith_waterman
@@ -179,88 +179,6 @@ def overlap (start, end, other_start, other_end):
 
 
 #########################################
-def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions):
-
-    maps = []
-   
-    if len(aligned_seq.keys()) > 2:
-        print "right now the mapping implemented for two species only"
-        return []
-
-    for species in aligned_seq.keys():
-        if species == 'homo_sapiens': continue
-        other_species = species
-        break
-
-    min_similarity = cfg.get_value('min_accptbl_exon_sim')
-
-    for human_exon_ct in range(len(human_exons)):
-
-        padded_count_human = "{0:03d}".format(human_exon_ct+1)
-        if ( not  exon_positions['homo_sapiens'].has_key(padded_count_human) ):
-            continue
-        [human_start, human_end] = exon_positions['homo_sapiens'][padded_count_human]
-
-        human_exon = human_exons[human_exon_ct]
-        old_maps   = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
-
-
-        for ortho_exon_ct in range(len(ortho_exons)):
-
-            padded_count_ortho = "{0:03d}".format(ortho_exon_ct+1)
-            if ( not  exon_positions[other_species].has_key(padded_count_ortho) ):
-                continue
-            [other_start, other_end] = exon_positions[other_species][padded_count_ortho]
-
-            if ( overlap (human_start, human_end, other_start, other_end) ):
-                
-                map = Map()
-                map.species_1    = 'homo_sapiens'
-                map.species_2    = other_species
-                
-                map.exon_id_1    = human_exons[human_exon_ct].exon_id
-                map.exon_id_2    = ortho_exons[ortho_exon_ct].exon_id
-
-                map.exon_known_1 = human_exons[human_exon_ct].is_known
-                map.exon_known_2 = ortho_exons[ortho_exon_ct].is_known
-
-                if ortho_exons[ortho_exon_ct].is_known == 2:
-                    map.source   = 'sw_sharp' 
-                elif ortho_exons[ortho_exon_ct].is_known == 3:
-                    map.source   = 'usearch' 
-                else:
-                    map.source   = 'ensembl'
-
-                exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end].replace('#','-')
-                exon_seq_other   = aligned_seq[other_species][other_start:other_end].replace('#','-')
-                [seq_human, seq_other] = pad_the_alnmt (exon_seq_human,human_start,
-                                                        exon_seq_other, other_start)
-                seq = {'human':seq_human, 'other':seq_other}
-                seq = strip_gaps(seq)
-                if not seq:  
-                    c=inspect.currentframe()
-                    print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
-                    return []
-
-                map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
-
-                if False  and not map.source == 'ensembl':
-                    print
-                    print other_species, map.source
-                    print seq['human']
-                    print seq['other']
-                    print map.similarity
-                    print
-
-                if map.similarity < min_similarity: continue
-
-                ciggy = cigar_line (seq['human'], seq['other'])
-                map.cigar_line = ciggy
-                                                   
-
-                maps.append(map)
-
-    return maps
 
 ########################################
 def find_relevant_exons (cursor, all_exons, human):

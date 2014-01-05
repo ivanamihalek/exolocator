@@ -31,7 +31,7 @@ def store (cursor, maps, ensembl_db_name):
         fixed_fields ['cognate_exon_known']   = map.exon_known_2
         update_fields['cigar_line']           = map.cigar_line
         update_fields['similarity']           = map.similarity
-        update_fields['source']               = 'ensembl'
+        update_fields['source']               = map.source
         #####
         switch_to_db(cursor,ensembl_db_name['homo_sapiens']) 
         store_or_update (cursor, 'exon_map', fixed_fields, update_fields)
@@ -47,9 +47,7 @@ def  map_cleanup (cursor, ensembl_db_name, human_exons):
         qry += " and exon_known = %d " % exon.is_known
         rows = search_db (cursor, qry, verbose=False)
 
-
     return True
-
 
 #########################################
 def gene_has_a_map (cursor, ensembl_db_name, human_exons):

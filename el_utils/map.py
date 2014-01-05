@@ -228,13 +228,13 @@ def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
 
 
 #########################################
-def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
+def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions):
 
     maps = []
    
     if len(aligned_seq.keys()) > 2:
         print "right now the mapping implemented for two species only"
-        return maps
+        return []
 
     for species in aligned_seq.keys():
         if species == 'homo_sapiens': continue
@@ -249,6 +249,9 @@ def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
         if ( not  exon_positions['homo_sapiens'].has_key(padded_count_human) ):
             continue
         [human_start, human_end] = exon_positions['homo_sapiens'][padded_count_human]
+
+        human_exon = human_exons[human_exon_ct]
+        old_maps   = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
 
 
         for ortho_exon_ct in range(len(ortho_exons)):
@@ -270,28 +273,41 @@ def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
                 map.exon_known_1 = human_exons[human_exon_ct].is_known
                 map.exon_known_2 = ortho_exons[ortho_exon_ct].is_known
 
+                if ortho_exons[ortho_exon_ct].is_known == 2:
+                    map.source   = 'sw_sharp' 
+                elif ortho_exons[ortho_exon_ct].is_known == 3:
+                    map.source   = 'usearch' 
+                else:
+                    map.source   = 'ensembl'
+
                 exon_seq_human   = aligned_seq['homo_sapiens'][human_start:human_end].replace('#','-')
                 exon_seq_other   = aligned_seq[other_species][other_start:other_end].replace('#','-')
                 [seq_human, seq_other] = pad_the_alnmt (exon_seq_human,human_start,
                                                         exon_seq_other, other_start)
-
                 seq = {'human':seq_human, 'other':seq_other}
                 seq = strip_gaps(seq)
                 if not seq:  
                     c=inspect.currentframe()
                     print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
-                    continue
+                    return []
 
                 map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
-                if map.source == 'usearch':
-                    print "\t", other_species,  map.similarity, min_similarity
+
+                if False  and not map.source == 'ensembl':
+                    print
+                    print other_species, map.source
+                    print seq['human']
+                    print seq['other']
+                    print map.similarity
+                    print
 
                 if map.similarity < min_similarity: continue
 
                 ciggy = cigar_line (seq['human'], seq['other'])
                 map.cigar_line = ciggy
                                                    
-                maps.append(map)                
+
+                maps.append(map)
 
     return maps
 
@@ -397,6 +413,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
         exon_positions[species] = find_exon_positions(seq)
 
     # fill in the actual map values
-    maps = maps_evaluate (cfg, relevant_human_exons, relevant_ortho_exons, aligned_seq, exon_positions)
+    maps = maps_evaluate (cursor, cfg, ensembl_db_name, relevant_human_exons, 
+                          relevant_ortho_exons, aligned_seq, exon_positions)
 
     return maps
