@@ -577,11 +577,6 @@ def  pairwise_tanimoto (seq1, seq2):
     
     tanimoto = 0.0
 
-    l1 = len(seq1)
-    l2 = len(seq2)
-    if not l1 or not l2:
-        return tanimoto
-
     is_similar_to = {}
 
     # this is rather crude ...
@@ -608,12 +603,18 @@ def  pairwise_tanimoto (seq1, seq2):
         return tanimoto
 
     similar_length = 0.0
-    common_length = 0.0
+    common_length  = 0.0
+    l1 = 0.0
+    l2 = 0.0
     for i in range(len(seq1)):
+        if not seq1[i] == '-': l1 += 1
+        if not seq2[i] == '-': l2 += 1
         if (seq1[i] == '-' or seq2[i] == '-'): continue
         if is_similar_to[seq1[i]] == is_similar_to[seq2[i]]: similar_length += 1.0
         common_length += 1.0
 
+    if not l1 or not l2:
+        return tanimoto
     if not common_length: return tanimoto
 
     print " ** ", l1, l2, similar_length, common_length
