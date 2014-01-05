@@ -685,8 +685,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         ####################################
         # if the slice size becomes comparable to the alignment size, drop the sequence
-        if  number_of_human_exons > 3 and \
-                float(pep_slice_end-pep_slice_start)/len(output_pep['human']) > 0.3 or 'elephant' in seq_to_fix:
+        if  number_of_human_exons > 5 and 
+                ( float(pep_slice_end-pep_slice_start)/len(output_pep['human']) > 0.3 or 'elephant' in seq_to_fix):
             #print "deleting", seq_to_fix
             print "abort 2: map apparently spread over too many human exons:"
             print seq_to_fix, " pep slice", pep_slice_start, pep_slice_end, "  len: ", len(output_pep['human'])
