@@ -325,7 +325,7 @@ def decorate_and_concatenate (exons):
 
 
 #########################################
-def find_relevant_exons (cursor, all_exons):
+def find_relevant_exons (cursor, all_exons, human):
 
     relevant_exons = []
     protein_seq    = []
@@ -384,10 +384,10 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
 
     #print "############################## human"
     switch_to_db(cursor,  ensembl_db_name['homo_sapiens'])
-    relevant_human_exons = find_relevant_exons (cursor, human_exons)
+    relevant_human_exons = find_relevant_exons (cursor, human_exons, human=True)
     #print "##############################", ortho_species
     switch_to_db(cursor,  ensembl_db_name[ortho_species])
-    relevant_ortho_exons = find_relevant_exons (cursor, ortho_exons)
+    relevant_ortho_exons = find_relevant_exons (cursor, ortho_exons, human=False)
 
     human_seq = decorate_and_concatenate (relevant_human_exons)
     ortho_seq = decorate_and_concatenate (relevant_ortho_exons)
