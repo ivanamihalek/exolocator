@@ -332,8 +332,13 @@ def find_relevant_exons (cursor, all_exons):
 
     # 1) choose exons that I need
     for exon in all_exons:
-        if (not exon.is_coding or  exon.covering_exon > 0):
+        if (exon.covering_exon > 0):
             continue
+        if human and not exon.is_coding:
+            continue
+        if exon.is_known>1 and not exon.exon_seq_id:
+            continue
+       
         relevant_exons.append(exon)
 
     # 2) sort them by their start position in the gene
