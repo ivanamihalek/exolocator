@@ -228,7 +228,7 @@ def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
 
 
 #########################################
-def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions):
+def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions):
 
     maps = []
    
@@ -251,8 +251,6 @@ def maps_evaluate (cursor, cfg, ensembl_db_name, human_exons, ortho_exons, align
         [human_start, human_end] = exon_positions['homo_sapiens'][padded_count_human]
 
         human_exon = human_exons[human_exon_ct]
-        old_maps   = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
-
 
         for ortho_exon_ct in range(len(ortho_exons)):
 
@@ -413,7 +411,7 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
         exon_positions[species] = find_exon_positions(seq)
 
     # fill in the actual map values
-    maps = maps_evaluate (cursor, cfg, ensembl_db_name, relevant_human_exons, 
+    maps = maps_evaluate (cfg, ensembl_db_name, relevant_human_exons, 
                           relevant_ortho_exons, aligned_seq, exon_positions)
 
     return maps
