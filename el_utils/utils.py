@@ -621,7 +621,7 @@ def  pairwise_tanimoto (seq1, seq2):
         tanimoto = similar_length/l1
     elif (similar_length > 0.9*l2 ):
         tanimoto = similar_length/l2
-    elif (common_length > 0.9*similar_length > 3):
+    elif (common_length > 0.9*similar_length > 5):
         tanimoto = common_length/similar_length
     else:
         tanimoto = sqrt(float(similar_length*similar_length)/(l1*l2))
