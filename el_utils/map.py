@@ -135,7 +135,7 @@ def self_maps (cursor, ensembl_db_name, human_exons):
     maps = []
     switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
     # this should fill in the seqs for the coding exons
-    relevant_human_exons = find_relevant_exons (cursor, human_exons) 
+    relevant_human_exons = find_relevant_exons (cursor, human_exons, human=True) 
     for he in relevant_human_exons:
         map = Map()
         map.species_1    = 'homo_sapiens'
