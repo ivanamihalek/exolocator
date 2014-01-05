@@ -257,6 +257,8 @@ def maps_evaluate (cfg, human_exons, ortho_exons, aligned_seq, exon_positions):
                     continue
 
                 map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
+                if map.source == 'usearch':
+                    print "\t", other_species,  map.similarity, min_similarity
 
                 if map.similarity < min_similarity: continue
 
