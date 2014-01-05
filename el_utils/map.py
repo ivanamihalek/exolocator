@@ -1,7 +1,7 @@
 
 import os
-from ensembl import genome_db_id2species
-from mysql   import switch_to_db, search_db
+from ensembl import *
+from mysql   import *
 from exon    import Exon
 from   py_alignment          import  smith_waterman, exon_aware_smith_waterman
 from   alignment import * # C implementation of smith waterman
