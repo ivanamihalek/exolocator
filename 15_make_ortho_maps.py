@@ -103,17 +103,11 @@ def maps_for_gene_list(gene_list, db_info):
         # human as its own orthologue - let's be systematic
         maps = self_maps (cursor, ensembl_db_name, human_exons)
         store (cursor, maps, ensembl_db_name)
+        
+        # get_reliable_orthos will return unresolved orthologues only if no unequivocal 1-to-1 ortho is found
+        orthologues = get_reliable_orthos(cursor, ensembl_db_name, gene_id)
 
-        # one2one   orthologues
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        known_orthologues      = get_orthos (cursor, gene_id, 'orthologue')
-
-        # not-clear orthologues
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        unresolved_orthologues = get_orthos (cursor, gene_id, 'unresolved_ortho')
-
-        orthologues =  known_orthologues+unresolved_orthologues
-        for [ortho_gene_id, ortho_species] in orthologues:
+        for [ortho_gene_id, ortho_species] in  orthologues:
             #if not ortho_species == 'dipodomys_ordii': continue
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
             # in the first round of building the database there will be no 'novel' exons

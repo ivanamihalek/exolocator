@@ -12,6 +12,29 @@ from  map     import  *
 
 
 #########################################
+def get_reliable_orthos(cursor, ensembl_db_name, gene_id):
+
+    all_orthologues = []
+
+    switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+    # one2one   orthologues
+    known_orthologues      = get_orthos (cursor, gene_id, 'orthologue')
+    # not-clear orthologues
+    unresolved_orthologues = get_orthos (cursor, gene_id, 'unresolved_ortho')
+
+    # get rid of the unresolved orthologues if a resolved orthologue for the species already exists
+    species_with_known_orthologues = []
+    for  [ortho_gene_id, ortho_species] in known_orthologues:
+        species_with_known_orthologues.append(ortho_species)
+    all_orthologues = known_orthologues
+    for  [ortho_gene_id, ortho_species] in unresolved_orthologues:
+        if ortho_species in pecies_with_known_orthologues: continue
+        all_orthologues.append( [ortho_gene_id, ortho_species] )
+
+    return all_orthologues
+
+
+#########################################
 def cigar_line (seq_human, seq_other):
 
     cigar_line     = []

@@ -103,9 +103,8 @@ def maps_for_gene_list(gene_list, db_info):
         # get rid of the old maps # can't do that here bcs this script is only updating sw exons
         # map_cleanup (cursor, ensembl_db_name, human_exons)
 
-        orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
+        # get_reliable_orthos will return unresolved orthologues only if no unequivocal 1-to-1 ortho is found
+        orthologues = get_reliable_orthos(cursor, ensembl_db_name, gene_id)
 
         ##########
         for [ortho_gene_id, ortho_species] in orthologues:
