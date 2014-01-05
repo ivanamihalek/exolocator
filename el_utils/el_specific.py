@@ -29,7 +29,7 @@ def get_reliable_orthos(cursor, ensembl_db_name, gene_id):
         species_with_known_orthologues.append(ortho_species)
     all_orthologues = known_orthologues
     for  [ortho_gene_id, ortho_species] in unresolved_orthologues:
-        if ortho_species in pecies_with_known_orthologues: continue
+        if ortho_species in species_with_known_orthologues: continue
         all_orthologues.append( [ortho_gene_id, ortho_species] )
 
     return all_orthologues
