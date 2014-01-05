@@ -10,7 +10,7 @@ from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
 from   el_utils.utils   import  *
 from   el_utils.threads import  parallelize
-from   el_utils.map     import  get_maps, Map
+from   el_utils.map     import  *
 
 from   el_utils.special_gene_sets  import  get_theme_ids
 from   el_utils.almt_cmd_generator import  AlignmentCommandGenerator
