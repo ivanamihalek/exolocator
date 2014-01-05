@@ -616,6 +616,8 @@ def  pairwise_tanimoto (seq1, seq2):
 
     if not common_length: return tanimoto
 
+    print " ** ", l1, l1, similar_length, common_length
+
     if (similar_length > 0.9*l1 ):
         tanimoto = similar_length/l1
     elif (similar_length > 0.9*l2 ):
