@@ -4,12 +4,62 @@ from subprocess import Popen, PIPE, STDOUT
 from tempfile   import NamedTemporaryFile
 from math       import sqrt
 
+#########################################
+def cigar_line (seq_human, seq_other):
+
+    cigar_line     = []
+
+    alignment_line = []
+
+    if ( not len(seq_human) ==  len(seq_other) ):
+        print "alignment_line:  the seqeunces must be aligned"
+        return ""
+    else:
+        length = len(seq_human)
+
+    if not length:
+        print "zero length sequence (?)"
+        return ""
+
+    for i in range(length):
+        if not seq_human[i] == "-" and  not seq_other[i] == "-":
+            alignment_line.append ("M")
+
+        elif seq_human[i] == "-" and  seq_other[i] == "-":
+            pass
+            #alignment_line.append ("-")
+
+        elif (seq_human[i]  == "-" ):
+            alignment_line.append ("A")
+
+        elif (seq_other[i]  == "-" ):
+            alignment_line.append ("B")
+
+            
+    prev_char = alignment_line[0]
+    count     = 1
+    for i in range(1,len(alignment_line)):
+        if ( alignment_line[i] == prev_char):
+            count += 1
+        else:
+            cigar_line.append( "{0}{1}".format(count, prev_char))
+            prev_char = alignment_line[i]
+            count     = 1
+                               
+    cigar_line.append("{0}{1}".format(count, prev_char))
+
+    return  "".join(cigar_line)
+
 
 #########################################
 def unfold_cigar_line (seq_A, seq_B, cigar_line):
 
     seq_A_aligned = ""
     seq_B_aligned = ""
+
+    if not cigar_line: 
+        return [seq_A_aligned, seq_B_aligned]
+
 
     char_pattern = re.compile("\D")
     a_ct     = 0
@@ -525,6 +575,13 @@ def  pairwise_fract_similarity (seq1, seq2):
 #########################################
 def  pairwise_tanimoto (seq1, seq2):
     
+    tanimoto = 0.0
+
+    l1 = len(seq1)
+    l2 = len(seq2)
+    if not l1 or not l2:
+        return tanimoto
+
     is_similar_to = {}
 
     # this is rather crude ...
@@ -557,8 +614,14 @@ def  pairwise_tanimoto (seq1, seq2):
         if is_similar_to[seq1[i]] == is_similar_to[seq2[i]]: similar_length += 1.0
         common_length += 1.0
 
-    if not common_length: return 0.0
+    if not common_length: return tanimoto
 
-    tanimoto = sqrt(float(similar_length*similar_length)/(len(seq1)*len(seq2)))
+    if (similar_length > 0.9*l1 ):
+        tanimoto = similar_length/l1
+    elif (similar_length > 0.9*l2 ):
+        tanimoto = similar_length/l2
+    else:
+        tanimoto = sqrt(float(similar_length*similar_length)/(l1*l2))
+
     return tanimoto
 
