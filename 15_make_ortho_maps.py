@@ -133,9 +133,7 @@ def maps_for_gene_list(gene_list, db_info):
 
             no_maps += len(maps)
             store (cursor, maps, ensembl_db_name)
-            for map in maps:
-                print map
-
+ 
         if  not ct%100:
             datastring = StringIO.StringIO()
             print >> datastring, "processed ", ct, "genes,  out of ", len(gene_list), "  ",
