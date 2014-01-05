@@ -16,10 +16,11 @@ def get_reliable_orthos(cursor, ensembl_db_name, gene_id):
 
     all_orthologues = []
 
-    switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
     # one2one   orthologues
+    switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
     known_orthologues      = get_orthos (cursor, gene_id, 'orthologue')
     # not-clear orthologues
+    switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
     unresolved_orthologues = get_orthos (cursor, gene_id, 'unresolved_ortho')
 
     # get rid of the unresolved orthologues if a resolved orthologue for the species already exists
