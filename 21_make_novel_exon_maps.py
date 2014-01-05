@@ -15,103 +15,6 @@ from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.special_gene_sets  import *
 
 
-########################################
-def find_relevant_exons (cursor, all_exons, human):
-
-    relevant_exons = []
-    protein_seq    = []
-
-    # 1) choose exons that I need
-    for exon in all_exons:
-        if (exon.covering_exon > 0):
-            continue
-        if human and not exon.is_coding:
-            continue
-        if exon.is_known>1 and not exon.exon_seq_id:
-            continue
-       
-        relevant_exons.append(exon)
-
-        
-    # 2) sort them by their start position in the gene
-    to_remove = []
-    relevant_exons.sort(key=lambda exon: exon.start_in_gene)
-
-    for i in range(len(relevant_exons)):
-        exon   = relevant_exons[i]
-        # local version of the function, to search possibly for sw_exon
-        pepseq = get_exon_pepseq (cursor, exon)
-        if not pepseq:
-            to_remove.append(i)
-            continue
-        pepseq = pepseq.replace ('X', '')
-        if  len (pepseq) < 3:
-            to_remove.append(i)
-        else:
-            exon.pepseq = pepseq
-
-    for i in range (len(to_remove)-1, -1, -1):
-        del relevant_exons[to_remove[i]]
- 
-
-    return relevant_exons
-
-
-#########################################
-def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons):
-
-    maps = []
-
-    #print "############################## human"
-    switch_to_db(cursor,  ensembl_db_name['homo_sapiens'])
-    relevant_human_exons = find_relevant_exons (cursor, human_exons, human=True)
-
-
-    #print "##############################", ortho_species
-    switch_to_db(cursor,  ensembl_db_name[ortho_species])
-    relevant_ortho_exons = find_relevant_exons (cursor, ortho_exons, human=False)
-
-    if not relevant_ortho_exons:
-        print "bleep 2"
-        return maps
-
-    human_seq = decorate_and_concatenate (relevant_human_exons)
-    ortho_seq = decorate_and_concatenate (relevant_ortho_exons)
-   
-    if (not human_seq or not ortho_seq):
-        print "bleep 3"
-        return maps
-    
-    aligned_seq = {}
-    if 0:# python implementation
-        [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
-            = exon_aware_smith_waterman (human_seq, ortho_seq)
-    else: # C implementation
-        ret = smith_waterman_context (human_seq, ortho_seq, -5, -3)
-        if len(ret) == 2:
-            [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] = ret
-        else:
-            print ret
-            return []
-
-    if (not aligned_seq['homo_sapiens'] or 
-        not aligned_seq[ortho_species]):
-        print "bleep 4"
-        return []
-
-    # find the positions of the exons in the alignment
-    exon_positions = {}
-    for species, seq in aligned_seq.iteritems():
-        # move B to beginning of each exon sequence
-        seq = moveB(seq)
-        #beginning and end of each exon in the alignment
-        exon_positions[species] = find_exon_positions(seq)
-
-    # fill in the actual map values
-    maps = maps_evaluate (cursor, cfg, ensembl_db_name, relevant_human_exons, 
-                          relevant_ortho_exons, aligned_seq, exon_positions)
-
-    return maps
     
 #########################################
 def store (cursor, maps, ensembl_db_name, source = None):
@@ -244,7 +147,7 @@ def main():
     special    = 'one'
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
-        print "usage: %s <set name> <number of threads> <method>"
+        print "usage: %s <set name> <number of threads>"
         exit(1)
     elif len(sys.argv)==3:
 
