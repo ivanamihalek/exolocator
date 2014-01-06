@@ -599,7 +599,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     # not sure how this could happen
     if not output_pep.has_key('human'): return [output_pep, names_of_exons]
 
-    # 
     new_alignment_pep  = {}
     new_names_of_exons = []
     for human_exon in canonical_human_exons:
@@ -623,7 +622,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     # for each unresolved "map"  cut out the slice and re-align
     for  [human_exons, ortho_exons] in overlapping_maps:
 
-        exon_numbers = sorted(map (lambda ex: seqid[ex], human_exons))
+        exon_numbers = sorted(map(lambda ex: seqid[ex], human_exons))
         
         smallest_id  = exon_numbers[0]
         largest_id   = exon_numbers[-1]
@@ -689,7 +688,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 ( float(pep_slice_end-pep_slice_start)/len(output_pep['human']) > 0.3 or 'elephant' in seq_to_fix):
             #print "deleting", seq_to_fix
             print "abort 2: map apparently spread over too many human exons:"
-            print seq_to_fix, " pep slice", pep_slice_start, pep_slice_end, "  len: ", len(output_pep['human']), "no human exons:", number_of_human_exons
+            print seq_to_fix, " pep slice", pep_slice_start, pep_slice_end, 
+            print "  len: ", len(output_pep['human']), "no human exons:", number_of_human_exons
             del output_pep[seq_to_fix]
             return [output_pep, names_of_exons]
 
@@ -1137,7 +1137,6 @@ def make_alignments ( gene_list, db_info):
         ortho_exon_to_human_exon = {}
         for human_exon in canonical_human_exons:
             for exon_seq_name in alnmt_pep[human_exon].keys():
-                if exon_seq_name[-1]=='3': print exon_seq_name
                 if not ortho_exon_to_human_exon.has_key(exon_seq_name):
                     ortho_exon_to_human_exon[exon_seq_name] = [human_exon]
                 else:

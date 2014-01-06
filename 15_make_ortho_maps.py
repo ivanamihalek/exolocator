@@ -118,9 +118,6 @@ def maps_for_gene_list(gene_list, db_info):
             ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'sw_exon')
             ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'usearch_exon')
 
-            usearch_ct =  len(get_novel_exons (cursor, ortho_gene_id, 'usearch_exon'))
-            if usearch_ct: print ortho_species+", usearch: ", usearch_ct
-
             if not ortho_exons:
                 missing_exon_info += 1
                 print "\t", ortho_species, "no exon info"

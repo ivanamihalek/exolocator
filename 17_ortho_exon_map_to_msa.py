@@ -114,7 +114,6 @@ def multiple_exon_alnmt(gene_list, db_info):
                 elif  map.source == 'usearch':
                     exon_known_code = 3
                     hassw = True
-                    print map.species_2, "has usearch exon"
                 else:
                     exon_known_code = map.exon_known_2
                 seqname = "{0}:{1}:{2}".format(map.species_2, map.exon_id_2, exon_known_code)
