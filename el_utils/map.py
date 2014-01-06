@@ -289,15 +289,9 @@ def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, 
                     print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
                     return []
 
-                map.similarity = pairwise_tanimoto(seq['human'], seq['other'])
-
-                if False  and not map.source == 'ensembl':
-                    print
-                    print other_species, map.source
-                    print seq['human']
-                    print seq['other']
-                    print map.similarity
-                    print
+                map.similarity = pairwise_tanimoto(seq['human'], seq['other'])        
+                
+                print map
 
                 if map.similarity < min_similarity: continue
 
