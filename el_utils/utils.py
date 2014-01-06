@@ -623,7 +623,7 @@ def  pairwise_tanimoto (seq1, seq2):
         tanimoto = similar_length/l1
     elif (similar_length > 0.9*l2 ):
         tanimoto = similar_length/l2
-    elif ( similar_length >= 0.8*common_length > 4):
+    elif ( similar_length >= 0.66*common_length > 4):
         tanimoto = common_length/similar_length
     else:
         tanimoto = sqrt(float(similar_length*similar_length)/(l1*l2))
@@ -632,6 +632,6 @@ def  pairwise_tanimoto (seq1, seq2):
         print l1, l2, "   com", common_length, "   sim", similar_length,  "   eq", equal_length,  "   tani", tanimoto
         print  " (similar_length > 0.9*l1 ) ", (similar_length > 0.9*l1 )
         print  " (similar_length > 0.9*l2 ) ", (similar_length > 0.9*l2 )
-        print  "  ( similar_length >= 0.8*common_length > 4) ",  ( similar_length >= 0.9*common_length > 4)
+        print  "  ( similar_length >= 0.66*common_length > 4) ",  ( similar_length >= 0.9*common_length > 4)
     return tanimoto
 
