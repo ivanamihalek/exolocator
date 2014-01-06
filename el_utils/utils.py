@@ -628,7 +628,7 @@ def  pairwise_tanimoto (seq1, seq2):
     else:
         tanimoto = sqrt(float(similar_length*similar_length)/(l1*l2))
 
-    if True:
+    if False:
         print l1, l2, "   com", common_length, "   sim", similar_length,  "   eq", equal_length,  "   tani", tanimoto
         print  " (similar_length > 0.9*l1 ) ", (similar_length > 0.9*l1 )
         print  " (similar_length > 0.9*l2 ) ", (similar_length > 0.9*l2 )
