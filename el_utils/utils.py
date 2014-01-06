@@ -602,26 +602,28 @@ def  pairwise_tanimoto (seq1, seq2):
     if ( not len(seq1) or  not len(seq1)):
         return tanimoto
 
-    similar_length = 0.0
-    common_length  = 0.0
+    common_length  = 0.0 # number of positions that are non-gap in both sequences
+    similar_length = 0.0 # number of positions that are non-gap and similar
+    equal_length   = 0.0 # number of positions that are non-gap and equal
     l1 = 0.0
     l2 = 0.0
     for i in range(len(seq1)):
         if not seq1[i] == '-': l1 += 1
         if not seq2[i] == '-': l2 += 1
         if (seq1[i] == '-' or seq2[i] == '-'): continue
-        if is_similar_to[seq1[i]] == is_similar_to[seq2[i]]: similar_length += 1.0
         common_length += 1.0
-
+        if is_similar_to[seq1[i]] == is_similar_to[seq2[i]]: similar_length += 1.0
+        if seq1[i] == seq2[i]: equal_length += 1.0
+  
     if not l1 or not l2:
         return tanimoto
     if not common_length: return tanimoto
 
-    if (common_length > 0.9*l1 ):
-        tanimoto = common_length/l1
-    elif (common_length > 0.9*l2 ):
-        tanimoto = common_length/l2
-    elif (common_length > 0.9*similar_length > 3):
+    if (similar_length > 0.9*l1 ):
+        tanimoto = similar_length/l1
+    elif (similar_length > 0.9*l2 ):
+        tanimoto = similar_length/l2
+    elif ( similar_length >= 0.9*common_length > 4):
         tanimoto = common_length/similar_length
     else:
         tanimoto = sqrt(float(similar_length*similar_length)/(l1*l2))
