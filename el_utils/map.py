@@ -291,6 +291,8 @@ def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, 
 
                 map.similarity = pairwise_tanimoto(seq['human'], seq['other'])        
                 
+                print map
+
                 if map.similarity < min_similarity: continue
 
                 ciggy = cigar_line (seq['human'], seq['other'])
