@@ -83,7 +83,8 @@ def maps_for_gene_list(gene_list, db_info):
     ct                = 0
     no_maps           = 0
 
-
+    #######################################################
+    #
     for gene_id in gene_list:
 
         ct += 1
@@ -125,6 +126,10 @@ def maps_for_gene_list(gene_list, db_info):
                 print "\t", ortho_species, "no exon info"
                 continue
 
+            # maps are based on pairwise alignements of human to other species
+            # multiple seqence alignements on exon-by-exon basis are produced in 17_ortho_exon_map_to_msa.py
+            # reconstruction of full length multiple seqence alignments is  done only in 
+            # 30_db_migration/06_reconstruct_ortho_alnmts.py
             maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons)   
             if not maps:
                 missing_seq_info += 1
