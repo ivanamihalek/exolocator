@@ -84,7 +84,6 @@ foreach $dir ( @dirs_I_need) {
 
 	$unzipped = $item;
 	$unzipped =~ s/\.gz$//;
-
 	if ( -e "$local_dir/$unzipped" ) {
 	    print "\t\t $unzipped found in $local_dir\n";
 	    next;
@@ -130,6 +129,12 @@ foreach $item ('homology.txt.gz', 'homology_member.txt.gz',
     (grep {/$item/} @contents) || die "$item not found in $foreign_dir\n";
     
     print "\t$item\n";
+    $unzipped = $item;
+    $unzipped =~ s/\.gz$//;
+    if ( -e "$local_dir/$unzipped" ) {
+	print "\t\t $unzipped found in $local_dir\n";
+	next;
+    }
 
     if ( ! $ftp->get($item) ) {
 	print LOG   "getting $item  failed ", $ftp->message;

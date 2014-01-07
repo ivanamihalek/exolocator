@@ -4,6 +4,19 @@ from subprocess import Popen, PIPE, STDOUT
 from tempfile   import NamedTemporaryFile
 from math       import sqrt
 
+###########
+def isinteger(x):
+    try:
+        int(x)
+    except:
+        return False
+    try:
+        int(x) == x
+    except:
+        return False
+    return True
+
+
 #########################################
 def cigar_line (seq_human, seq_other):
 

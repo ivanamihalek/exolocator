@@ -10,19 +10,6 @@ from   config_reader   import ConfigurationReader
 
 
 ###########
-def isinteger(x):
-    try:
-        int(x)
-    except:
-        return False
-    try:
-        int(x) == x
-    except:
-        return False
-    return True
-
-
-###########
 class AlignmentCommandGenerator(object):
     '''
     Generates commands for utilities that are used (blast, sw, genewise, fastacmd, formatdb)
