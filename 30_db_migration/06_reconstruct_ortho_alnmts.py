@@ -1067,7 +1067,6 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
     
     for animal in mulitple_orthos:
         paralogues = filter (lambda seq_name: animal in seq_name,  output_pep.keys())
-        print animal
         # for all pairs of paralogues
         for [para1, para2] in find_pairs (paralogues):
 
@@ -1113,8 +1112,19 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             # if we got so far, join the two seqs under the lower denominator name
             [name_to_keep, name_to_drop] = find_lower_denom_name(para1, para2)
             print "keep:", name_to_keep, "  drop:", name_to_drop
+            new_seq = ""
+            for pos in range(len(output_pep)):
+                if ( output_pep[para1][pos] == '-'):
+                    new_seq += output_pep[para2][pos] 
+                else:
+                    new_seq += output_pep[para1][pos] 
 
-            # remove the other seqence
+            print output_pep[para1][:150]
+            print output_pep[para2][:150]
+            print new_seq[:150]
+     
+            # remove the other sequence
+            # make sure we have all exons listed correctly under the new name - we'll need them to expand dna
 
     exit(1)
 
@@ -1171,7 +1181,6 @@ def make_alignments ( gene_list, db_info):
             print gene_id, stable_id, get_description (cursor, gene_id)
         elif (not gene_ct%100): 
             print gene_ct, "out of ", len(gene_list)
-
 
         afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
         #afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
@@ -1275,9 +1284,6 @@ def make_alignments ( gene_list, db_info):
         for concat_seq_name, concat_exons in names_of_exons.iteritems():
             overlapping_maps[concat_seq_name] = find_overlapping_maps (ortho_exon_to_human_exon, concat_exons, alnmt_pep)
 
-
-   
-
         # >>>>>>>>>>>>>>>>>>
         # concatenate the aligned exons for each species, taking into account that the alignment
         # doesn't have to be one to one
@@ -1354,6 +1360,8 @@ def make_alignments ( gene_list, db_info):
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
         fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon)
+        # we may have chosen to delete some sequences
+        sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
             print "length check failure"
