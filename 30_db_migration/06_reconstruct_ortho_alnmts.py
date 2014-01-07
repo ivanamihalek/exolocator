@@ -1046,8 +1046,18 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
         # for all pairs of paralogues
         for [para1, para2] in find_pairs (paralogues):
             # do they map to disjoint set of human exons?
-            human_exons_1 = set(names_of_exons[para1])
-            human_exons_2= set(names_of_exons[para2])
+            human_exons_1 = set([])
+            for exon_name in names_of_exons[para1]:
+                human_counterparts = ortho_exon_to_human_exon[exon_name]
+                if human_counterparts: 
+                    human_exons_1.update(set(human_counterparts))
+            
+            human_exons_2 = set([])
+            for exon_name in names_of_exons[para2]:
+                human_counterparts = ortho_exon_to_human_exon[exon_name]
+                if human_counterparts: 
+                    human_exons_2.update(set(human_counterparts))
+            
             print human_exons_1
             print
             print human_exons_2
