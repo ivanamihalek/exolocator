@@ -1091,7 +1091,7 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             else:
                 interspersed = True
                
-            if interseprsed: continue
+            if interspersed: continue
             print "\t", para1, para2, " exons are not interspersed"
             print "====================="
            
