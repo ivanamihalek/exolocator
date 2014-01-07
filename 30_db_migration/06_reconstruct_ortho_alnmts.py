@@ -1024,7 +1024,7 @@ def fuse_sqs_split_on_scaffolds(output_pep, names_of_exons):
 
     # find species that have multiple orthologues
     
-    mulitple_orthos []
+    mulitple_orthos = []
     for seq_name in output_pep.keys():
         name_pieces = split(seq_name, "_")
         if not isinteger(name_pieces[-1]): continue
