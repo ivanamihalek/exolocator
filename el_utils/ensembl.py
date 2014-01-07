@@ -1239,6 +1239,7 @@ def get_species (cursor):
 
     for row in rows:
         db_name    = row[0]
+        print "using db_name"
         name_token = db_name.split ('_')
         species = name_token[0]
         i = 1
