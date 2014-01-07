@@ -1045,6 +1045,7 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
         print animal
         # for all pairs of paralogues
         for [para1, para2] in find_pairs (paralogues):
+
             # do they map to disjoint set of human exons?
             human_exons_1 = set([])
             for exon_name in names_of_exons[para1]:
@@ -1057,17 +1058,45 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
                 human_counterparts = ortho_exon_to_human_exon[exon_name]
                 if human_counterparts: 
                     human_exons_2.update(set(human_counterparts))
-            
+
+            if  human_exons_1 & human_exons_2:continue # there is intersection - we move on
+
             print human_exons_1
             print
             print human_exons_2
             print
             print human_exons_1 & human_exons_2
-            
-            #continue # there is intersection - we move on
-            if not human_exons_1 & human_exons_2: print "\t", para1, para2, " map to disjoint set of human exons"
+            print "\t", para1, para2, " map to disjoint set of human exons"
             print "====================="
+
             # are these two sets consecutive on human genome?
+            # if one is on the left from an exon on the other group, then they should be all
+            he1 = human_exons_1[0]
+            he2 = human_exons_2[0]
+            interspersed = False
+            if he1.end_in_gene < he2.start_in_gene:
+                for other_he1 in human_exons_1[1:]:
+                    if intersepsed: break
+                    for he2 in human_exons_2:
+                        if not other_he1.end_in_gene < he2.start_in_gene: 
+                            interspersed = True
+                            break
+            elif  he1.start_in_gene > he2.end_in_gene:
+                 for other_he1 in human_exons_1[1:]:
+                    if intersepsed: break
+                    for he2 in human_exons_2:
+                        if not other_he1.start_in_gene > he2.end_in_gene: 
+                            interspersed = True
+                            break
+            else:
+                interspersed = True
+               
+            if interseprsed: continue
+            print "\t", para1, para2, " exons are not interspersed"
+            print "====================="
+           
+            
+                
             # do these seqs belong to different pieces of sequence?
             # if we got so far, join the two seqs under the lower denominator name
         print
