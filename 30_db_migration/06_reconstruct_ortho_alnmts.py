@@ -1029,7 +1029,7 @@ def find_pairs (some_list):
     return pairs
 
 #########################################
-def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons):
+def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon):
 
     # find species that have multiple orthologues
     
@@ -1040,13 +1040,19 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons):
         animal = "_".join(name_pieces[:-1])
         if animal not in mulitple_orthos: mulitple_orthos.append(animal)
     
-    paralogues = {}
     for animal in mulitple_orthos:
-        paralogues[animal] = filter (lambda seq_name: animal in seq_name,  output_pep.keys())
+        paralogues = filter (lambda seq_name: animal in seq_name,  output_pep.keys())
         print animal
-        # for all pairs fo paralogues
-        for pair in find_pairs (paralogues[animal]):
-            print "\t", pair
+        # for all pairs of paralogues
+        for [para1, para2] in find_pairs (paralogues):
+            # do they map to disjoint set of human exons?
+            for exon_name in names_of_exons[para1]:
+                print exon_name, ortho_exon_to_human_exon[exon_name]
+            #if human_exons_1 & human_exons_2: continue # there is intersection - we move on
+            #print "\t", pair, " maps to disjoint set of human exons"
+            # are these two sets consecutive on human genome?
+            # do these seqs belong to different pieces of sequence?
+            # if we got so far, join the two seqs under the lower denominator name
         print
 
     exit(1)
@@ -1286,7 +1292,7 @@ def make_alignments ( gene_list, db_info):
             # we may have chosen to delete some sequences
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
-        fuse_seqs_split_on_scaffolds(output_pep, names_of_exons)
+        fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
             print "length check failure"
