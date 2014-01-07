@@ -1048,14 +1048,13 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             # do they map to disjoint set of human exons?
             human_exons_1 = set(names_of_exons[para1])
             human_exons_2= set(names_of_exons[para2])
-            if human_exons_1 & human_exons_2: 
-                print human_exons_1
-                print
-                print human_exons_2
-                print
-                print human_exons_1 & human_exons_2
-                exit(1)
-                continue # there is intersection - we move on
+            print human_exons_1
+            print
+            print human_exons_2
+            print
+            print human_exons_1 & human_exons_2
+            exit(1)
+            continue # there is intersection - we move on
             print "\t", para1, para2, " map to disjoint set of human exons"
             # are these two sets consecutive on human genome?
             # do these seqs belong to different pieces of sequence?
