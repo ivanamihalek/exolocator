@@ -1222,13 +1222,20 @@ def get_species (cursor):
     ensembl_db_name = {}
     all_species     = []
 
-    qry = "show databases like '%core%'"
-    cursor.execute(qry)
+    # find the release number
+    qry  = "select value from exolocator_config.parameter where name = 'ensembl_release_number'"
+    rows = search_db(cursor, qry)
+    if not rows or 'error' in rows[0][0].lower():
+        print 'ensembl_release_number not set in exolocator_config'
+        exit(1)
+    release_number = rows[0][0]
 
-    rows = cursor.fetchall()
+    
+    qry  = "show databases like '%core_{0}%'".format(release_number)
+    rows = search_db(cursor, qry)
     if (not rows):
-        print "No databases with 'core' in the name found"
-        return 1
+        print "No databases with 'core_{0}' in the name found".format(release_number)
+        exit(1)
 
     for row in rows:
         db_name    = row[0]
