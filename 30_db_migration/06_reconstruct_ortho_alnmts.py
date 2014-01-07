@@ -1126,15 +1126,14 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             new_exon_set = []
             for human_exon in canonical_human_exons:
                 if human_exon in human_exon_map[para1].keys():
-                    print human_exon
-                    print  human_exon_map[para1][human_exon]
-            if False:
-                for ex1 in  names_of_exons[para1]:
-                    if ex1 in human_exon_map[para1][human_exon]:
-                        new_exon_set.append(ex1)
-                for ex2  in  names_of_exons[para2]:
-                    if ex2 in human_exon_map[para2][human_exon]:
-                        new_exon_set.append(ex2)
+                    for ex1 in  names_of_exons[para1]:
+                        if ex1 in human_exon_map[para1][human_exon]:
+                            new_exon_set.append(ex1)
+                
+                if human_exon in human_exon_map[para2].keys():
+                    for ex2  in  names_of_exons[para2]:
+                        if ex2 in human_exon_map[para2][human_exon]:
+                            new_exon_set.append(ex2)
             names_of_exons[name_to_keep] = new_exon_set
             del names_of_exons[name_to_drop]
 
