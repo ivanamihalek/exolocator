@@ -1113,7 +1113,7 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             [name_to_keep, name_to_drop] = find_lower_denom_name(para1, para2)
             print "keep:", name_to_keep, "  drop:", name_to_drop
             new_seq = ""
-            for pos in range(len(output_pep)):
+            for pos in range(len(output_pep[para1])):
                 if ( output_pep[para1][pos] == '-'):
                     new_seq += output_pep[para2][pos] 
                 else:
