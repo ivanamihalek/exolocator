@@ -1029,6 +1029,31 @@ def find_pairs (some_list):
     return pairs
 
 #########################################
+def find_lower_denom_name(para1, para2):
+    [name_to_keep, name_to_drop] = []
+
+    name_pieces = para1.split("_")
+    if not isinteger(name_pieces[-1]): 
+        name_to_keep = para1
+        name_to_drop = para2
+    else:
+        id1 = int(name_pieces[-1])
+        name_pieces = para2.split("_")
+        if not isinteger(name_pieces[-1]): 
+            name_to_keep = para2
+            name_to_drop = para1
+        else:
+           id2 = int(name_pieces[-1]) 
+           if (id1 < id2):
+               name_to_keep = para1
+               name_to_drop = para2
+           else:
+               name_to_keep = para2
+               name_to_drop = para1
+
+    return [name_to_keep, name_to_drop]
+
+#########################################
 def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon):
 
     # find species that have multiple orthologues
@@ -1061,15 +1086,7 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
 
             if  human_exons_1 & human_exons_2:continue # there is intersection - we move on
 
-            print human_exons_1
-            print
-            print human_exons_2
-            print
-            print human_exons_1 & human_exons_2
-            print "\t", para1, para2, " map to disjoint set of human exons"
-            print "====================="
-
-            # are these two sets consecutive on human genome?
+            # do these seqs belong to different pieces of sequence?
             # if one is on the left from an exon on the other group, then they should be all
             he1 = iter(human_exons_1).next()
             he2 = iter(human_exons_2).next()
@@ -1091,15 +1108,13 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             else:
                 interspersed = True
                
-            if interspersed: continue
-            print "\t", para1, para2, " exons are not interspersed"
-            print "====================="
-           
-            
+            if interspersed: continue            
                 
-            # do these seqs belong to different pieces of sequence?
             # if we got so far, join the two seqs under the lower denominator name
-        print
+            [name_to_keep, name_to_drop] = find_lower_denom_name(para1, para2)
+            print "keep:", name_to_keep, "  drop:", name_to_drop
+
+            # remove the other seqence
 
     exit(1)
 
