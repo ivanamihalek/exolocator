@@ -1254,9 +1254,10 @@ def make_alignments ( gene_list, db_info):
             # we may have chosen to delete some sequences
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
-        print output_pep
-        print
-        print names_of_exons
+        for seq_name in output_pep.keys():
+            print seq_name
+            print "\t", 
+            print "\n\t".join(names_of_exons[seq_name])
         exit(1)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
