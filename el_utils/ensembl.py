@@ -1253,7 +1253,15 @@ def get_species (cursor):
 ########
 def get_compara_name (cursor):
 
-    qry = "show databases like '%compara%'"
+    # find the release number
+    qry  = "select value from exolocator_config.parameter where name = 'ensembl_release_number'"
+    rows = search_db(cursor, qry)
+    if not rows or 'error' in rows[0][0].lower():
+        print 'ensembl_release_number not set in exolocator_config'
+        exit(1)
+    release_number = rows[0][0]
+
+    qry = "show databases like '%compara_{0}%'".format(release_number)
     rows = search_db (cursor, qry)
     if (not rows):
         rows = search_db (cursor, qry, verbose = True)
