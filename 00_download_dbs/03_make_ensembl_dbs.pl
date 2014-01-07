@@ -30,8 +30,6 @@ foreach $db (@dbs) {
     print "************************\n";
     print $db, "\n";
     chdir "$path_to_db/$db";
-    print "unzipppig ... \n";
-    `nice +20 gunzip *.gz`;
 
     print "making db  ... \n";
     $cmd = "mysqladmin $credentials  create $db";
