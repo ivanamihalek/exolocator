@@ -1125,6 +1125,9 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             # make sure we have all exons listed correctly under the new name - we'll need them to expand dna
             new_exon_set = []
             for human_exon in canonical_human_exons:
+                print human_exon
+                print  human_exon_map[para1][human_exon]
+            if False:
                 for ex1 in  names_of_exons[para1]:
                     if ex1 in human_exon_map[para1][human_exon]:
                         new_exon_set.append(ex1)
