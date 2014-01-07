@@ -1026,7 +1026,7 @@ def fuse_sqs_split_on_scaffolds(output_pep, names_of_exons):
     
     mulitple_orthos = []
     for seq_name in output_pep.keys():
-        name_pieces = split(seq_name, "_")
+        name_pieces = seq_name.split("_")
         if not isinteger(name_pieces[-1]): continue
         animal = "_".join(name_pieces[:-1])
         if animal not in mulitple_orthos: mulitple_orthos.append(animal)
