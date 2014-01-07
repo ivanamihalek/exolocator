@@ -303,22 +303,21 @@ def main():
     for [name, path] in util_path.iteritems():
         fixed_fields['name']  = name
         update_fields['path'] = path
-    store_or_update (cursor, 'util_path', fixed_fields, update_fields)
+        store_or_update (cursor, 'util_path', fixed_fields, update_fields)
 
     fixed_fields  = {}
     update_fields = {}
     for [name, path] in dir_path.iteritems():
         fixed_fields['name'] = name
         update_fields['path'] = path
-    store_or_update (cursor, 'dir_path', fixed_fields, update_fields)
+        store_or_update (cursor, 'dir_path', fixed_fields, update_fields)
 
     fixed_fields  = {}
     update_fields = {}
     for [name, value] in parameter.iteritems():
-        print name, value
         fixed_fields['name']  = name
         update_fields['value'] = value
-    store_or_update (cursor, 'parameter', fixed_fields, update_fields)
+        store_or_update (cursor, 'parameter', fixed_fields, update_fields)
 
     #######################################################
     # add trivial names to ncbi_taxonomy.names
