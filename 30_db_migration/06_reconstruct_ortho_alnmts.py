@@ -1071,19 +1071,19 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
 
             # are these two sets consecutive on human genome?
             # if one is on the left from an exon on the other group, then they should be all
-            he1 = human_exons_1[0]
-            he2 = human_exons_2[0]
+            he1 = iter(human_exons_1).next()
+            he2 = iter(human_exons_2).next()
             interspersed = False
             if he1.end_in_gene < he2.start_in_gene:
-                for other_he1 in human_exons_1[1:]:
-                    if intersepsed: break
+                for other_he1 in human_exons_1:
+                    if interspersed: break
                     for he2 in human_exons_2:
                         if not other_he1.end_in_gene < he2.start_in_gene: 
                             interspersed = True
                             break
             elif  he1.start_in_gene > he2.end_in_gene:
-                 for other_he1 in human_exons_1[1:]:
-                    if intersepsed: break
+                 for other_he1 in human_exons_1:
+                    if interspersed: break
                     for he2 in human_exons_2:
                         if not other_he1.start_in_gene > he2.end_in_gene: 
                             interspersed = True
