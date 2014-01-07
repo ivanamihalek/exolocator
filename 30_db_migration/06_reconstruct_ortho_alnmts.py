@@ -1046,14 +1046,12 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
         # for all pairs of paralogues
         for [para1, para2] in find_pairs (paralogues):
             # do they map to disjoint set of human exons?
-            print para1
             for exon_name in names_of_exons[para1]:
-                print exon_name, ortho_exon_to_human_exon[exon_name]
-            print para2
+                human_exons1 = set(ortho_exon_to_human_exon[exon_name])
             for exon_name in names_of_exons[para2]:
-                print exon_name, ortho_exon_to_human_exon[exon_name]
-            #if human_exons_1 & human_exons_2: continue # there is intersection - we move on
-            #print "\t", pair, " maps to disjoint set of human exons"
+                human_exons1 = set(ortho_exon_to_human_exon[exon_name])
+            if human_exons_1 & human_exons_2: continue # there is intersection - we move on
+            print "\t", pair, " maps to disjoint set of human exons"
             # are these two sets consecutive on human genome?
             # do these seqs belong to different pieces of sequence?
             # if we got so far, join the two seqs under the lower denominator name
