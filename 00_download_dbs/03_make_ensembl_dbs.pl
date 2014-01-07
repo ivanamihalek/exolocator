@@ -8,7 +8,7 @@
 # the sql script needs to be hacked (or does it - just leave the tables empty)
 #--user=ensembl --psqljupitersql
 
-$release_no = 73;
+$release_no = 74;
 
 $path_to_db  = "/mnt/ensembl-mirror/release-$release_no/mysql";
 $credentials = " -h jupiter.private.bii -P 3307 -u root -psqljupitersql  ";
