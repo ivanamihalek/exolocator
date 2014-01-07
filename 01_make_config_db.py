@@ -229,9 +229,8 @@ def main():
     # note though that there are functions in el_utils/mysql.py that assume
     # that whatever ensembl stuff is available to the mysql server corresponds to the same release 
     parameter['ensembl_release_number'] = 73
-    
-    parameter['blastp_e_value'] = "1.e-10" # it will be used as a string  when fmting the blastp cmd
-    parameter['min_accptbl_exon_sim'] = 0.33333 #minimum acceptable exon similarity
+    parameter['blastp_e_value']         = "1.e-10" # it will be used as a string  when fmting the blastp cmd
+    parameter['min_accptbl_exon_sim']  = 0.33333 #minimum acceptable exon similarity
 
     dir_path = {}
     dir_path['ensembl_fasta'] = '/mnt/ensembl-mirror/release-73/fasta'
@@ -316,6 +315,7 @@ def main():
     fixed_fields  = {}
     update_fields = {}
     for [name, value] in parameter.iteritems():
+        print name, value
         fixed_fields['name']  = name
         update_fields['value'] = value
     store_or_update (cursor, 'parameter', fixed_fields, update_fields)
