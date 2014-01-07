@@ -1020,7 +1020,16 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
 
 
 #########################################
-def fuse_sqs_split_on_scaffolds(output_pep, names_of_exons):
+def find_pairs (some_list):
+    list_length = len(some_list)
+    pairs = []
+    for i in range(list_length):
+        for j in range(i+1,list_length):
+            pairs.append([some_list[i], some_list[j]])
+    return pairs
+
+#########################################
+def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons):
 
     # find species that have multiple orthologues
     
@@ -1035,10 +1044,11 @@ def fuse_sqs_split_on_scaffolds(output_pep, names_of_exons):
     for animal in mulitple_orthos:
         paralogues[animal] = filter (lambda seq_name: animal in seq_name,  output_pep.keys())
         print animal
-        print paralogues[animal] 
+        # for all pairs fo paralogues
+        for pair in find_pairs (paralogues[animal]):
+            print "\t", pair
         print
-        #print "\t", 
-        #print "\n\t".join(names_of_exons[seq_name])
+
     exit(1)
 
 
@@ -1276,7 +1286,7 @@ def make_alignments ( gene_list, db_info):
             # we may have chosen to delete some sequences
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
-        fuse_sqs_split_on_scaffolds(output_pep, names_of_exons)
+        fuse_seqs_split_on_scaffolds(output_pep, names_of_exons)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
             print "length check failure"
