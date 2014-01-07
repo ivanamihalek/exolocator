@@ -48,7 +48,7 @@ def  make_parameter_table (cursor):
 
     # make the columns
     for column  in  ['name', 'value']:
-        qry = "alter table  %s  add  %s  varchar (20)" % (table, column)
+        qry = "alter table  %s  add  %s  varchar (50)" % (table, column)
         rows = search_db (cursor, qry, verbose=True)
         if (rows):
             return False
