@@ -1054,7 +1054,7 @@ def find_lower_denom_name(para1, para2):
     return [name_to_keep, name_to_drop]
 
 #########################################
-def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon):
+def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon, canonical_human_exons, human_exon_map):
 
     # find species that have multiple orthologues
     
@@ -1122,10 +1122,17 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             # remove the other sequence
             del output_pep[name_to_drop]
             # make sure we have all exons listed correctly under the new name - we'll need them to expand dna
-            print names_of_exons[para1]
-            print names_of_exons[para2]
+            new_exon_set = []
+            for human_exon in canonical_human_exons:
+                for ex1 in  names_of_exons[para1]:
+                    if ex1 in human_exon_map[concat_seq_name][human_exon]:
+                        new_exon_set.append(ex1)
+                for ex2  in  names_of_exons[para2]:
+                    if ex2 in human_exon_map[concat_seq_name][human_exon]:
+                        new_exon_set.append(ex2)
+            names_of_exons[name_to_keep] = new_exon_set
+            del names_of_exons[name_to_drop]
 
-    exit(1)
 
 
 #########################################
@@ -1358,7 +1365,7 @@ def make_alignments ( gene_list, db_info):
             # we may have chosen to delete some sequences
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
-        fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon)
+        fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon, canonical_human_exons, human_exon_map)
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
