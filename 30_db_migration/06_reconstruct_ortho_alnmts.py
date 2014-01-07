@@ -1030,7 +1030,7 @@ def find_pairs (some_list):
 
 #########################################
 def find_lower_denom_name(para1, para2):
-    [name_to_keep, name_to_drop] = []
+    [name_to_keep, name_to_drop] = ["",""]
 
     name_pieces = para1.split("_")
     if not isinteger(name_pieces[-1]): 
