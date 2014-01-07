@@ -1118,13 +1118,12 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
                     new_seq += output_pep[para2][pos] 
                 else:
                     new_seq += output_pep[para1][pos] 
-
-            print output_pep[para1][:150]
-            print output_pep[para2][:150]
-            print new_seq[:150]
-     
+            output_pep[name_to_keep] = new_seq
             # remove the other sequence
+            del output_pep[name_to_drop]
             # make sure we have all exons listed correctly under the new name - we'll need them to expand dna
+            print names_of_exons[para1]
+            print names_of_exons[para2]
 
     exit(1)
 
