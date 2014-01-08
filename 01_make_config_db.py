@@ -326,8 +326,6 @@ def main():
     #######################################################
     # add trivial names to ncbi_taxonomy.names
     [all_species, ensembl_db_name] = get_species (cursor)
-    for species in all_species:
-        print species
     feed_trivial_names (cursor, all_species)
 
 

@@ -176,30 +176,6 @@ def main():
         qry = "select count(distinct alt_allele_group_id) from alt_allele"
         rows  = search_db (cursor, qry)
         print "\t number of allele groups: ", rows[0][0]
-    if 0:
-        for special in  ['wnt_pathway']:
-
-            species   = 'homo_sapiens'
-            switch_to_db (cursor,  ensembl_db_name[species])
-
-            # how many genes are we talking about, in the first place?
-            if special:
-                print "using", special, "set"
-                human_gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
-            else:
-                print "using all protein coding genes"
-                switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-                human_gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-            print
-            print "protein coding genes in human:  %10d " %  len(human_gene_list),
-            print " (known, not predicited)"
-
-            # how many  have orthologues reported?
-            for species in all_species:
-                ortho_stats (cursor,  ensembl_db_name, species, human_gene_list)    
-
-            # how many  have exons reported? (this becomes meaningful only later in the pypeline)
-            #exon_stats (cursor, ensembl_db_name, mammals, human_gene_list)    
 
 
     # how often does it happen that one  exon does not have

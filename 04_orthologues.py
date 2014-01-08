@@ -84,8 +84,7 @@ def collect_orthologues(gene_list, db_info):
         member_id = stable2member(cursor_compara, stable_id)
 
         #print gene_id, stable_id, member_id
-        if ( not ct%10):
-            print ct , "out of ", len(gene_list)
+        if ( not ct%100): print ct , "out of ", len(gene_list)
         # in compara table, get everything that homology has to say about
         # the possible orthologues
         # find all orthologous pairs suggested for this gene

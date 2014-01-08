@@ -388,7 +388,7 @@ def main():
         qry = "optimize table exon_seq"
         print search_db(cursor, qry)
 
-    # add file_name column to seq_region table
+    # add file_name column to seq_region table (seq_region table  already exists in ensembl schema)
     for species in all_species:
         print species
         db_name = ensembl_db_name[species]
@@ -397,7 +397,7 @@ def main():
             print "file_name found in seq_region, ", db_name
             #modify_filename_column (cursor, db_name)
         else:
-            print "file_name  not found in seq_region, ", db_name
+            print "file_name  not found in seq_region, ", db_name, "(making the column)"
             add_filename_column (cursor, db_name)
 
 
