@@ -141,7 +141,7 @@ def pep_exon_seqs(species_list, db_info):
                 sys.stdout.flush()
        
                  
-        print species
+        print species, "done"
         print "total coding exons ", tot
         print "no exon seq info   ", no_exon_seq
         print "short dna          ", short_dna

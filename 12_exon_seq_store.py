@@ -491,7 +491,7 @@ def store_exon_seqs(species_list, db_info):
             store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
 
 
-        print species, "tot:", tot, " fail:", ct
+        print species, "done; tot:", tot, " fail:", ct
         if (seqs_not_found):
             outf = open(species+".seqs_not_found", "w")
             for not_found in seqs_not_found:
