@@ -208,13 +208,13 @@ def main():
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
                 # print out all exons
-                inspect (exons)
+                # inspect (exons)
                 #print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
                 #print
                 # print out exons more carefully filtered to belong to the canonical version of the translation
                 #print
                 #get_translated_region_talkative (cursor, gene_id, species)
-                exit(1)
+                # exit(1)
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
 
