@@ -197,7 +197,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
 
     # write to string
     out_string  = "% Notes to accompany the alignment of (tentative) orthologues\n"
-    out_string += "%% for the canonical transcript of the human gene %s, \n" % stable_id
+    out_string += "%% for the canonical transcript of the human gene %s, \n" % human_stable_id
     out_string += "%% %s\n"  % descr
     out_string += "%%\n"
     out_string += "% The alignment shows the exons from the following genes: \n" 
