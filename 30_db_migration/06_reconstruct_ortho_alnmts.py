@@ -182,17 +182,18 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
         for exon_name in names_of_exons[name]:
             [species, exon_id, exon_known] = parse_aln_name(exon_name)
             ortho_gene_id                  = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
-            if gene_id.has_key(name):
-                if not ortho_gene_id == gene_id[name]:
-                    print "error concatenating exons:", name, "gene_id[name]", gene_id[name]
-                    print "exon name:", exon_name, "exon_id2gene_id", ortho_gene_id
-                    exit(1)
-            else:
-                gene_id[name]        = ortho_gene_id
-                stable_gene_id[name] = gene2stable(cursor, ortho_gene_id, ensembl_db_name[species])
+            # sequence can contain pieces from "different" genes - if they are from different scaffold pieces
+            # or from not-so-distant pieces on a chromosome
+            if not gene_id.has_key(name):  
+                gene_id[name]        = []
+                stable_gene_id[name] = []
+
+            if not ortho_gene_id in gene_id[name]:
+                gene_id[name].append(ortho_gene_id)
+                stable_gene_id[name].append(gene2stable(cursor, ortho_gene_id, ensembl_db_name[species]))
                 sci_name[name]       = species
 
-    descr = get_description (cursor, gene_id['human'], ensembl_db_name['homo_sapiens'])
+    descr = get_description (cursor, gene_id['human'][0], ensembl_db_name['homo_sapiens'])
 
     # write to string
     out_string  = "% Notes to accompany the alignment of (tentative) orthologues\n"
@@ -205,7 +206,10 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
     sorted_seq_names = filter (lambda name: name in output_pep.keys(), sorted_seq_names)
     for name in sorted_seq_names:
         if not sci_name.has_key(name) or not stable_gene_id.has_key(name): continue
-        out_string += " %-30s  %-30s  %-30s \n" % ( name, sci_name[name],  stable_gene_id[name])
+        out_string += " %-30s  %-30s  %-30s" % ( name, sci_name[name],  stable_gene_id[name][0])
+        for stable_id in stable_gene_id[name][1:]:
+            out_string += ", %-30s" % stable_id
+        out_string += "\n"
 
     out_string += "\n" 
     out_string += "% The following exons appear in the alignment\n" 
@@ -215,10 +219,14 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
  
     for name in sorted_seq_names:
         if not stable_gene_id.has_key(name): 
-            print name, "bleep"
+            #print name, "bleep"
             continue
         out_string += "\n" 
-        out_string += "%% sequence name: %s   corresponding to the gene: %s \n" % (name, stable_gene_id[name])
+        out_string += "%% sequence name: %s   corresponding to the gene: %s" % (name, stable_gene_id[name][0])
+        for stable_id in stable_gene_id[name][1:]:
+            out_string += ", %-30s" % stable_id
+        out_string += "\n"
+
         out_string += "%% %50s  %10s  %10s  %6s  %6s    %-s  %-s\n" % \
            ('exon_id', 'gene_from', 'gene_to', 'coding', 'canon', 'source', 'maps_to_human_exon')
 
@@ -296,7 +304,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
         for exon_name in novel:
             out_string += " %50s  %10s  %15s  %30s   %-10s  %-10s   %-s  %-s\n" %  tuple(novel_annot[exon_name])
     else:
-        print 'no novel'
+        print 'no novel exons ound by the exolocator pipeline'
 
     directory = check_notes_directory (cfg)
     notes_fnm = directory + '/'+stable_id+'.txt'
