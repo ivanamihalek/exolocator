@@ -113,8 +113,8 @@ def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_names_of
         seq_names_to_remove.append(pep_seq_names[i])
         
     new_names_of_exons = filter (lambda exon: exon not in seq_names_to_remove, new_names_of_exons)
-
     remaining_names    = filter (lambda exon: exon not in seq_names_to_remove, pep_seq_names)
+
     # what is the order in which these sequences map to human?
     if len(remaining_names) > 1:
         # sort the names of the remaininig pieces by their initial position in the map to human exon(s)
@@ -184,7 +184,9 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
             ortho_gene_id                  = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
             if gene_id.has_key(name):
                 if not ortho_gene_id == gene_id[name]:
-                    print "error concatenating exons: ", name, gene_id.has_key(name), ortho_gene_id
+                    print "error concatenating exons:", name, "gene_id[name]", gene_id[name]
+                    print "exon name:", exon_name, "exon_id2gene_id", ortho_gene_id
+                    exit(1)
             else:
                 gene_id[name]        = ortho_gene_id
                 stable_gene_id[name] = gene2stable(cursor, ortho_gene_id, ensembl_db_name[species])
