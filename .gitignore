@@ -35,6 +35,7 @@ pdbchains
 sys_tfm
 *.aln
 *to_*.pdb
+*seqs_not_found
 
 # OS generated files #
 ######################
