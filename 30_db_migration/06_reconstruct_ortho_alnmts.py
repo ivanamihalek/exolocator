@@ -213,6 +213,9 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
 
     out_string += "\n" 
     out_string += "% The following exons appear in the alignment\n" 
+    out_string += "% Note: the exons assigned to the same peptide sequence might belong to several \"genes\"\n"
+    out_string += "% If the yare found split across several scaffolds\n"
+    out_string += "% (in which case Ensembl assigned two different identifiers to the two exons sets).\n"
 
     novel       = []
     novel_annot = {}
@@ -1134,18 +1137,28 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
 
             # make sure we have all exons listed correctly under the new name - we'll need them to expand dna
             new_exon_set = []
+            new_map      = []
             for human_exon in canonical_human_exons:
                 if human_exon in human_exon_map[para1].keys():
                     for ex1 in  names_of_exons[para1]:
                         if ex1 in human_exon_map[para1][human_exon]:
                             new_exon_set.append(ex1)
+                            if not new_map.has_key(human_exon):  new_map[human_exon] = []
+                            new_map[human_exon].append(ex1)
                 
                 if human_exon in human_exon_map[para2].keys():
                     for ex2  in  names_of_exons[para2]:
                         if ex2 in human_exon_map[para2][human_exon]:
                             new_exon_set.append(ex2)
+                            if not new_map.has_key(human_exon):  new_map[human_exon] = []
+                            new_map[human_exon].append(ex2)
+
             names_of_exons[name_to_keep] = new_exon_set
             del names_of_exons[name_to_drop]
+
+            human_exon_map[name_to_keep] = new_map
+            del human_exon_map[name_to_drop]
+            
 
 
 
@@ -1358,8 +1371,8 @@ def make_alignments ( gene_list, db_info):
                     print ">> ", human_exon.exon_id
             
             if output_pep_ok:  headers.append(concat_seq_name)
-        #########################################################
 
+        #########################################################
         if not output_pep_ok: continue
 
         #########################################################
