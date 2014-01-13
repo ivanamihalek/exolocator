@@ -173,7 +173,7 @@ def find_maps_to (cursor, ensembl_db_name,  human_exon_map, concat_seq_name, exo
 
 
 #########################################
-def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sorted_seq_names, stable_id, human_exon_map):
+def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sorted_seq_names, human_stable_id, human_exon_map):
 
     gene_id        = {}
     stable_gene_id = {}
@@ -206,9 +206,9 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
     sorted_seq_names = filter (lambda name: name in output_pep.keys(), sorted_seq_names)
     for name in sorted_seq_names:
         if not sci_name.has_key(name) or not stable_gene_id.has_key(name): continue
-        out_string += " %-30s  %-30s  %-30s" % ( name, sci_name[name],  stable_gene_id[name][0])
+        out_string += " %-30s  %-30s  %s" % ( name, sci_name[name],  stable_gene_id[name][0])
         for stable_id in stable_gene_id[name][1:]:
-            out_string += ", %-30s" % stable_id
+            out_string += ", %s" % stable_id
         out_string += "\n"
 
     out_string += "\n" 
@@ -227,7 +227,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
         out_string += "\n" 
         out_string += "%% sequence name: %s   corresponding to the gene: %s" % (name, stable_gene_id[name][0])
         for stable_id in stable_gene_id[name][1:]:
-            out_string += ", %-30s" % stable_id
+            out_string += ", %s" % stable_id
         out_string += "\n"
 
         out_string += "%% %50s  %10s  %10s  %6s  %6s    %-s  %-s\n" % \
@@ -310,7 +310,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
         print 'no novel exons ound by the exolocator pipeline'
 
     directory = check_notes_directory (cfg)
-    notes_fnm = directory + '/'+stable_id+'.txt'
+    notes_fnm = directory + '/'+human_stable_id+'.txt'
     print notes_fnm
     of = erropen (notes_fnm, "w")
     print >> of, out_string
