@@ -9,6 +9,119 @@ from  ensembl import  *
 from  utils   import  *
 from  map     import  *
 
+#########################################
+def compare_seqs (canonical_translation, translated_seq, verbose=False):
+
+    """
+    Return true if the two input sequences differ in no more than two positions.
+    """
+    comparison_ok = True
+
+    while (len(translated_seq) and translated_seq[0] == 'X'):
+        translated_seq = translated_seq[1:]
+
+    difference = len(translated_seq) - len(canonical_translation)
+    if ( abs(difference) > 3):
+        comparison_ok = False
+        if verbose:
+            print
+            print ">canon"
+            print canonical_translation
+            print ">exons"
+            print translated_seq
+            print
+    else:
+        diff  =  0
+        start = -1
+        for i in range(len(translated_seq)):
+            if ( i >= len(canonical_translation)):
+                break
+            if (not translated_seq[i] ==  canonical_translation[i]):
+                diff += 1
+                if start < 0:
+                    start = i
+        if (diff > 2):
+            comparison_ok = False
+            if verbose:
+                print
+                print ">canon"
+                print canonical_translation
+                print ">exons"
+                print translated_seq
+                print translated_seq[start], canonical_translation[start]
+                print "nuber of  diff sites: ", diff, " starting from ", start
+                print
+
+    return comparison_ok
+
+
+
+#########################################
+def  get_gene_seq (acg, cursor, gene_id, species):
+
+    """
+    Given gene_id, return dna region which reproduces the correct canonical translation.
+    """
+    null = ["",{}]
+
+    #########################################
+    # which file should we be looking in, which sequence, from where to where
+    ret = get_primary_seq_info (cursor, gene_id, species)
+    if (not ret):
+        return null
+    [seq_name, file_names, seq_region_start, seq_region_end, 
+     seq_region_strand, is_mitochondrial] = ret
+    # i'm not quite clear why Ensembl is doing this, but sometimes we need the alternative
+    # region - ("PATCH" deposited as tte right sequence, but its missing most of the gene)
+    # so first establish whether it is the case: find canonical translation.
+    canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
+    if not canonical_translation: return null
+    # find all canonical exons associated with the gene id
+    canonical_coding_exons = get_canonical_exons (cursor, gene_id)
+    # extract raw gene  region
+    gene_seq = extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,  
+                                seq_region_start, seq_region_end)
+    # reconstruct the translation from the raw gene_seq and exon boundaries
+    [canonical_exon_pepseq,translated_seq] = transl_reconstruct (cursor, gene_id, gene_seq, canonical_coding_exons, 
+                                                 is_mitochondrial)
+    if (translated_seq):
+        # compare the two sequences and cry foul if they are not the same:
+        comparison_ok = compare_seqs (canonical_translation, translated_seq)
+    else:
+        comparison_ok = False
+    # if we succefully translated the exons, and came up with the same answer 
+    # as the canonical translation, we are done here
+    if (comparison_ok):
+        return [gene_seq, canonical_exon_pepseq]
+ 
+    #########################################
+    # otherwise repeat the procedure with the alternative seq info:
+    ret = get_alt_seq_info (cursor, gene_id, species)
+    if (not ret):
+        return null
+    [seq_name, file_names, seq_region_start, seq_region_end, 
+     seq_region_strand, is_mitochondrial] = ret
+    # check  canonical translation
+    canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
+    # find all canonical exons associated with the gene id
+    canonical_coding_exons = get_canonical_exons (cursor, gene_id)
+    # extract raw gene  region
+    gene_seq = extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,  
+                                seq_region_start, seq_region_end)
+    # reconstruct the translation from the raw gene_seq and exon boundaries
+    [canonical_exon_pepseq,translated_seq] = transl_reconstruct (cursor, gene_id, gene_seq, canonical_coding_exons, 
+                                                                  is_mitochondrial)
+    if (translated_seq):
+        # compare the two sequences and cry foul if they are not the same:
+        comparison_ok = compare_seqs (canonical_translation, translated_seq)
+    else:
+        comparison_ok = False
+    # if we succefully translated the exons, and came up with the same answer 
+    # as the canonical translation, we are done here
+    if (comparison_ok):
+        return [gene_seq, canonical_exon_pepseq, file_names]
+ 
+    return null 
 
 
 #########################################
