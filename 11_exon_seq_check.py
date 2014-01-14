@@ -353,8 +353,8 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         cfg    = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
-    #species_list = ['homo_sapiens']
-    for species in species_list:
+    species_list = ['homo_sapiens']
+    #for species in species_list:
         print
         print "############################"
         print  species
