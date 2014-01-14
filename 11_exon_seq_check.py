@@ -81,34 +81,6 @@ def  get_alt_seq_info (cursor, gene_id, species):
     else:
         return []
 
-#########################################
-def strip_stop(pepseq):
-    if (not pepseq or len(pepseq)==0):
-        return pepseq
-    if ( pepseq[-1] == '*'):
-        pepseq = pepseq[:-1]
-    return pepseq
-
-#########################################
-def canonical_transl_info (cursor, gene_id):
-    
-    qry  = "select canonical_transcript_id from gene  where gene_id = %d " % gene_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         return []
-    
-    canonical_transcript_id = int(rows[0][0])
-    qry = "select start_exon_id, seq_start, end_exon_id,  seq_end "
-    qry += " from translation where transcript_id = %d " % canonical_transcript_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         return []
- 
-
-    return rows[0]
-
 
 #########################################
 def get_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  seq_region_start, seq_region_end):
