@@ -75,138 +75,6 @@ def get_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  seq_re
             
  
 #########################################
-def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons, verbose = False):
-
-    translated_seq = "" 
-
-    [can_transl_start_exon, can_transl_start_position,
-     can_transl_end_exon, can_transl_end_position] = canonical_transl_info (cursor, gene_id)
-
-    is_MT = is_mitochondrial (cursor, gene_id)
-
-    # do we have any selenocysteines by any chance
-    selenoC_pos = get_selenocysteines (cursor,  gene_id)
-
-    carry = ""
-    ok_so_far = True
-    # sanity checking
-    for exon in canonical_coding_exons:
-
-        #print
-        #print "exon", exon.exon_id
-        #find exon sequence within the gene
-        start = exon.start_in_gene
-        if (exon is canonical_coding_exons[0]):
-            if ( not exon.exon_id == can_transl_start_exon ):
-                print " error start cantransl:  gene_id ",  gene_id,
-                print  " exon_id ", exon.exon_id, " canon: ", can_transl_start_exon
-                exit (1)
-            start +=  exon.canon_transl_start
-
-        if ( exon is canonical_coding_exons[-1]):
-            if ( not exon.exon_id == can_transl_end_exon ):
-                print " error end cantransl:  gene_id ",  gene_id,
-                print  " exon_id ", exon.exon_id, " canon: ", can_transl_end_exon
-                exit (1)
-            end = exon.start_in_gene + exon.canon_transl_end
-        else:
-            end = exon.end_in_gene
-
-        if (not exon.phase == -1 and not exon.phase == len(carry)):
-            #print "Houston we have a problem: exon phase =", exon.phase,
-            #print " the length of carry =", len(carry), 
-            #print " (gene_id %d, exon_id %d) " % (gene_id, exon.exon_id)
-            if (  exon.phase ):
-                start += 3-exon.phase
-            carry = ""
-
-
-        exon_seq     =  gene_seq[ start: end+1]
-        exon_seq_for_transl_purposes = carry + exon_seq
-
-        remainder    = len(exon_seq_for_transl_purposes)%3
-        if ( remainder == 0 ):
-            carry = ""
-        elif (remainder == 1 ):
-            carry    = exon_seq_for_transl_purposes[-1:]
-            exon_seq_for_transl_purposes  = exon_seq_for_transl_purposes[:-1]
-        else:
-            carry    = exon_seq_for_transl_purposes[-2:]
-            exon_seq_for_transl_purposes = exon_seq_for_transl_purposes[:-2]
-
-        dnaseq = Seq (exon_seq_for_transl_purposes, generic_dna)
-        pepseq = dnaseq.translate()
-
-        # turn to the corresponding BioPython object
-        if ( is_MT ):
-            pepseq = dnaseq.translate(table="Vertebrate Mitochondrial")
-        else:
-            pepseq = dnaseq.translate()
-            
-        # replace stop codons from selenoC positions, if there are such
-        if (selenoC_pos):
-            for pos_in_full_length_translation in selenoC_pos:
-                pos_in_exon_translation = pos_in_full_length_translation-len(translated_seq)
-                if pos_in_exon_translation<0 or pos_in_exon_translation>len(pepseq):
-                    continue
-                tempseq = pepseq.tomutable()
-                tempseq[pos_in_exon_translation] = 'U'
-                pepseq  = tempseq.toseq()
- 
-        # strip the last stop codon only
-        if ( exon is canonical_coding_exons[-1]):
-            pepseq = strip_stop(pepseq)  
-
-        pepseq0 =  pepseq
-        if verbose:
-            print "phase 0", pepseq0
-
-        # if there are stil stop codons we'll give another shot 
-        # to the possibility that it is mitochondrial, (and we ddin't know it)
-        # after that we cry foul
-        if ( '*' in pepseq):
-            pepseq = dnaseq.translate(table="Vertebrate Mitochondrial")
-
-        # strip the last stop codon only
-        if ( exon is canonical_coding_exons[-1]):
-            pepseq = strip_stop(pepseq)  
-
-        # some further  desperate measures 
-        ok_so_far = True
-        if ( '*' in pepseq):
-            ok_so_far = False
-            dnaseq = Seq (exon_seq_for_transl_purposes[1:], generic_dna)
-            pepseq = dnaseq.translate()
-            pepseq = strip_stop(pepseq)
-            pepseq1 =  pepseq
-            if verbose:
-                print "phase 1", pepseq1
-        else:
-            ok_so_far = True
-
-        if (not ok_so_far and '*' in pepseq):
-            dnaseq = Seq (exon_seq_for_transl_purposes[2:], generic_dna)
-            pepseq = dnaseq.translate()
-            pepseq = strip_stop(pepseq)
-            pepseq2 =  pepseq
-            if verbose:
-                print "phase 2", pepseq2
-        else:
-            ok_so_far = True
-
-        if (not ok_so_far and  '*' in pepseq):
-            if verbose:
-                print "Error: stop codon "
-        else:
-            ok_so_far = True
-
-        if ( not ok_so_far):
-            return ""
-        translated_seq += pepseq
-
-    return translated_seq
-
-#########################################
 def compare_seqs (canonical_translation, translated_seq, verbose=False):
 
     comparison_ok = True
@@ -317,7 +185,7 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
 
             # reconstruct the translation from the raw gene_seq and exon boundaries
             translated_seq = transl_reconstruct (cursor, gene_id, gene_seq, 
-                                                 canonical_coding_exons, verbose = verbose)
+                                                 canonical_coding_exons, mitochondrial, verbose = verbose)
             if (translated_seq):
                 # compare the two sequences and cry foul if they are not the same:
                 comparison_ok = compare_seqs (canonical_translation, translated_seq, verbose = verbose)
