@@ -42,47 +42,6 @@ def  get_seq_info (cursor, gene_id, species):
     return [seq_name, file_names, seq_region_start, seq_region_end, seq_region_strand]
 
 #########################################
-def  get_alt_seq_info (cursor, gene_id, species):
-
-    # seq identifier from gene table
-    qry  = "select seq_region_id from gene where gene_id = %d" % gene_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         exit(1)
-    seq_region_id = rows[0][0]
-    
-    # Check whether we have "assembly exception."
-    # The region in question should not be 'PAR' - that's something else:
-    '''
-    The pseudo-autosomal regions are homologous DNA sequences on the (human) X and Y chromosomes. 
-    They allow the pairing and crossing-over of these sex chromosomes the same way the autosomal 
-    chromosomes do during meiosis. 
-    As these genomic regions are identical between X and Y, they are oftentimes only stored once.
-    '''
-
-    qry  = "select seq_region.name,  assembly_exception.exc_seq_region_start, assembly_exception.exc_seq_region_end "
-    qry += "from seq_region, assembly_exception "
-    qry += "where seq_region.seq_region_id = assembly_exception.exc_seq_region_id "
-    qry += "and assembly_exception.seq_region_id = %d " % seq_region_id
-    qry += "and not assembly_exception.exc_type = 'PAR'"
-
-    rows = search_db (cursor, qry)
-    if (rows):
-        [seq_name, seq_region_start, seq_region_end] = rows[0]
-        qry = " select distinct file_name from seq_region where seq_region.name = '%s' " % seq_name
-        rows = search_db (cursor, qry)
-        file_names = ""
-        for row in rows:
-            if file_names:
-                file_names += " "
-            file_names += row[0]
-        return [seq_name, file_names, seq_region_start, seq_region_end]
-    else:
-        return []
-
-
-#########################################
 def get_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  seq_region_start, seq_region_end):
 
     # now the question is, which file do I use if there are several options?
