@@ -96,7 +96,7 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
         for gene_id in gene_ids[:10]:
         #for gene_id in [412667]:
         #for tot in range(1000):
-            gene_id = choice(gene_ids)
+            #gene_id = choice(gene_ids)
             tot +=1 
  
             # get _all_ exons
