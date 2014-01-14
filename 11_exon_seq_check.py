@@ -18,28 +18,6 @@ from Bio.Alphabet import generic_dna
 
 
 
-#########################################
-def  get_seq_info (cursor, gene_id, species):
-
-    # seq identifier from gene table
-    qry  = "select seq_region_id, seq_region_start, seq_region_end, seq_region_strand"
-    qry += " from gene where gene_id = %d" % gene_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         exit(1)
-    [seq_region_id, seq_region_start, seq_region_end, seq_region_strand] = rows[0]
-    
-
-    qry  = "select name, file_name from seq_region "
-    qry += " where seq_region_id= %d" %  seq_region_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         return []
-    [seq_name, file_names] = rows[0]
-
-    return [seq_name, file_names, seq_region_start, seq_region_end, seq_region_strand]
 
 #########################################
 def get_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  seq_region_start, seq_region_end):
