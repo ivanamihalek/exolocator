@@ -8,6 +8,17 @@ from bitstring import Bits
 from  ensembl import  *
 from  utils   import  *
 from  map     import  *
+
+
+
+#########################################
+def strip_stop(pepseq):
+    if (not pepseq or len(pepseq)==0):
+        return pepseq
+    if ( pepseq[-1] == '*'):
+        pepseq = pepseq[:-1]
+    return pepseq
+
 #########################################
 def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons, 
                          is_mitochondrial, verbose = False):
