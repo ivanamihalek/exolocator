@@ -304,7 +304,7 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
             ret = get_primary_seq_info (cursor, gene_id, species)
             if ret:
                 [seq_name, file_names,  seq_region_start, 
-                 seq_region_end, seq_region_strand] = ret
+                 seq_region_end, seq_region_strand, mitochondrial] = ret
             else:
                 print "no seq info "
                 ct += 1 
