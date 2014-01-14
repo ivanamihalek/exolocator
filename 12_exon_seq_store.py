@@ -161,8 +161,8 @@ def store_exon_seqs(species_list, db_info):
         cfg    = ConfigurationReader       (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    for species in ['homo_sapiens']:
-    #for species in species_list:
+    #for species in ['homo_sapiens']:
+    for species in species_list:
         print
         print "############################"
         print  species
@@ -231,7 +231,7 @@ def main():
     """
 
 
-    no_threads = 1
+    no_threads = 10
 
     local_db = False
 

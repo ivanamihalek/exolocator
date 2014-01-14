@@ -1128,8 +1128,9 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             # are these two 'genes'  on different scaffolds?
             # or perhaps we might still take them to actually represent a single gene
             # if they are on the same chromosome, not too far apart
-            # we defeintely do not want them to be on different chromosomes
-        
+            # we definitely do not want them to be on different chromosomes
+            # use get_gene_seq function; note that file_names might be several names separated by space
+            # [gene_seq, canonical_exon_pepseq, file_names] = get_gene_seq(acg, cursor, gene_id, species)
    
                 
             # if we got so far, join the two seqs under the lower denominator name
