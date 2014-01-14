@@ -112,7 +112,6 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
             if (not gene_seq or not canonical_exon_pepseq):
                 ct += 1
                 print 'no sequence found for ', gene_id, "   ",   ct, "out of ", tot
-                seqs_not_found.append(gene_id)
                 continue
 
 
