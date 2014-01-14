@@ -4,6 +4,24 @@ import MySQLdb
 from   mysql import search_db, switch_to_db
 from   exon  import Exon
 import commands
+#########################################
+def canonical_transl_info (cursor, gene_id):
+    
+    qry  = "select canonical_transcript_id from gene  where gene_id = %d " % gene_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+    
+    canonical_transcript_id = int(rows[0][0])
+    qry = "select start_exon_id, seq_start, end_exon_id,  seq_end "
+    qry += " from translation where transcript_id = %d " % canonical_transcript_id
+    rows = search_db (cursor, qry)
+    if ( not rows):
+         search_db (cursor, qry, verbose = True)
+         return []
+ 
+    return rows[0]
 
 #########################################
 def check_ccds (cursor, transcript_stable_id = "", transcript_id = ""):
