@@ -173,6 +173,7 @@ def find_maps_to (cursor, ensembl_db_name,  human_exon_map, concat_seq_name, exo
 
 
 #########################################
+#########################################
 def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sorted_seq_names, human_stable_id, human_exon_map):
 
     gene_id        = {}
@@ -1067,6 +1068,7 @@ def find_lower_denom_name(para1, para2):
     return [name_to_keep, name_to_drop]
 
 #########################################
+#########################################
 def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon, canonical_human_exons, human_exon_map):
 
     # find species that have multiple orthologues
@@ -1120,7 +1122,15 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             else:
                 interspersed = True
                
-            if interspersed: continue            
+            if interspersed: continue         
+            
+            # one last check, the most expensive if I'm not mistaken:
+            # are these two 'genes'  on different scaffolds?
+            # or perhaps we might still take them to actually represent a single gene
+            # if they are on the same chromosome, not too far apart
+            # we defeintely do not want them to be on different chromosomes
+        
+   
                 
             # if we got so far, join the two seqs under the lower denominator name
             [name_to_keep, name_to_drop] = find_lower_denom_name(para1, para2)
