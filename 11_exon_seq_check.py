@@ -17,87 +17,6 @@ from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 
 #########################################
-def  get_primary_seq_info (cursor, gene_id, species):
-
-    # seq identifier from gene table
-    qry  = "select seq_region_id, seq_region_start, seq_region_end, seq_region_strand"
-    qry += " from gene where gene_id = %d" % gene_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         exit(1)
-    [seq_region_id, seq_region_start, seq_region_end, seq_region_strand] = rows[0]
-    
-
-    qry  = "select name, file_name from seq_region "
-    qry += " where seq_region_id= %d" %  seq_region_id
-    rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         return []
-    [seq_name, file_names] = rows[0]
-
-    return [seq_name, file_names, seq_region_start, seq_region_end, seq_region_strand, False]
-
-
-
-
-#########################################
-def get_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  seq_region_start, seq_region_end):
-
-    # now the question is, which file do I use if there are several options?
-    first_choice  = ""
-    second_choice = ""
-    for file_name in file_names.split(" "):
-        if  '.chromosome.' in  file_name:
-            first_choice = file_name
-        elif '.toplevel.' in  file_name:
-            second_choice = file_name
-            
-    fasta_db_file = ""
-    if first_choice:
-        fasta_db_file = first_choice
-    elif second_choice:
-        fasta_db_file = second_choice
-
-    if not fasta_db_file:
-        print "failed to decide on fasta_db_file:"
-        print file_names
-        exit(1)
-
-
-    # extract gene sequence  from fasta db
-    fastacmd = acg.generate_fastacmd_gene_command(species, seq_name, fasta_db_file,
-                                                  seq_region_strand,  seq_region_start,    
-                                                  seq_region_end)
-    ret = commands.getoutput(fastacmd)
-    if not ret:
-        print "no refturn for fastacmd for", species, gene_id
-        print "fastacmd: ", fastacmd
-        exit (1)
-    if ('ERROR' in ret):
-        print "Error running fastacmd: ", fastacmd
-        print ret
-        if 'Ignoring sequence location' in ret:
-            print 'will ignore'
-            print
-        else:
-            exit (1)
-    gene_seq = ""
-    reading = 0
-    for line in ret.split("\n"):
-        if ('>' in line):
-            reading = 1
-            continue
-        if (not reading):
-            continue
-        line.rstrip()
-        gene_seq += line
-
-    return gene_seq
-            
- 
-#########################################
 def compare_seqs (canonical_translation, translated_seq, verbose=False):
 
     comparison_ok = True
@@ -173,84 +92,29 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
         ct  = 0
         tot = 0
         
-        seen = {}
+        
         for gene_id in gene_ids[:10]:
         #for gene_id in [412667]:
         #for tot in range(1000):
             gene_id = choice(gene_ids)
             tot +=1 
  
-            if seen.has_key(gene_id):
-                continue
-            seen[gene_id] = True
-            #print 
-            #print gene_id, gene2stable (cursor, gene_id), get_description (cursor, gene_id)
-            # find canonical translation
-            canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
-
-            # find all canonical exons associated with the gene id
-            canonical_coding_exons = get_canonical_exons (cursor, gene_id)
-
-            # find seq_name and region
-            ret = get_primary_seq_info (cursor, gene_id, species)
-            if ret:
-                [seq_name, file_names,  seq_region_start, 
-                 seq_region_end, seq_region_strand, mitochondrial] = ret
-            else:
-                print "no seq info "
-                ct += 1 
-                continue
-
-
-            # extract raw gene  region
-            gene_seq = get_gene_seq( acg, species, seq_name, file_names, seq_region_strand,  
-                                     seq_region_start, seq_region_end)
-
-            # reconstruct the translation from the raw gene_seq and exon boundaries
-            translated_seq = transl_reconstruct (cursor, gene_id, gene_seq, 
-                                                 canonical_coding_exons, mitochondrial, verbose = verbose)
-            if (translated_seq):
-                # compare the two sequences and cry foul if they are not the same:
-                comparison_ok = compare_seqs (canonical_translation, translated_seq, verbose = verbose)
-                if (comparison_ok):
-                    #print "translation ok"
-                    continue
-            ###################### if ok, we are done here ######################
-
-            # if translation does not match the reported canonical sequence,
-            # find the alternative seq_region
-            [orig_name, orig_file,  orig_start, orig_end] = [seq_name, file_names, 
-                                                             seq_region_start, seq_region_end]
-            ret = get_alt_seq_info (cursor, gene_id, species)
-            if ret:
-                [seq_name, file_names, seq_region_start, seq_region_end, mitochondrial] = ret
-                print "alt seq info ", seq_name, file_names, seq_region_start, seq_region_end
-            else:
-                ct +=1 
-                continue
-            # extract raw gene  region
-            gene_seq = get_gene_seq( acg, species, seq_name, file_names, seq_region_strand,  
-                                     seq_region_start, seq_region_end)
-
-            # reconstruct the translation from the raw gene_seq and exon boundaries
-            translated_seq = transl_reconstruct (cursor, gene_id, gene_seq, 
-                                                 canonical_coding_exons, verbose = verbose)
-            if (translated_seq):
-                # compare the two sequences and cry foul if they are not the same:
-                comparison_ok = compare_seqs (canonical_translation, translated_seq, verbose = verbose)
-                if (comparison_ok):
-                    continue
-
-            if (not translated_seq or not comparison_ok):
-                print "error translating", gene_id, gene2stable(cursor, gene_id)
-                print "original name: ",  orig_name, orig_file,  orig_start, orig_end
-                print "attempted fix: ",  seq_name, file_names,  seq_region_start, seq_region_end
+            # get _all_ exons
+            exons = gene2exon_list(cursor, gene_id, ensembl_db_name[species])
+            if (not exons):
+                print 'no exons for ', gene_id
                 ct += 1
-                print ct, "out of",  tot
-                print "==========================================="
-                print canonical_translation
-                print "========"
-                print translated_seq
+                continue
+
+            # extract raw gene  region - bonus return from checking whether the 
+            # sequence is correct: translation of canonical exons
+            [gene_seq, canonical_exon_pepseq, file_names] = get_gene_seq(acg, cursor, gene_id, species)
+            if (not gene_seq or not canonical_exon_pepseq):
+                ct += 1
+                print 'no sequence found for ', gene_id, "   ",   ct, "out of ", tot
+                seqs_not_found.append(gene_id)
+                continue
+
 
  
         print "\t translation fail: ", ct, "out of ", tot

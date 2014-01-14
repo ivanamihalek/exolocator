@@ -156,9 +156,9 @@ def store_exon_seqs(species_list, db_info):
         acg    = AlignmentCommandGenerator()
         cfg    = ConfigurationReader()
     else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg    = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db     = connect_to_mysql          (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        acg    = AlignmentCommandGenerator (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg    = ConfigurationReader       (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     for species in ['homo_sapiens']:
@@ -201,6 +201,7 @@ def store_exon_seqs(species_list, db_info):
             if (not exons):
                 #print 'no exons for ', gene_id
                 #exit(1)
+                ct += 1
                 continue
 
             # get the sequence for each of the exons, as well as for the flanks
