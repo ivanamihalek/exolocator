@@ -218,7 +218,7 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     """
     Given gene_id, return dna region which reproduces the correct canonical translation.
     """
-    null = ["",{}]
+    null = ["",{}, []]
 
     #########################################
     # which file should we be looking in, which sequence, from where to where
@@ -248,7 +248,7 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     # if we succefully translated the exons, and came up with the same answer 
     # as the canonical translation, we are done here
     if (comparison_ok):
-        return [gene_seq, canonical_exon_pepseq]
+        return [gene_seq, canonical_exon_pepseq, file_names]
  
     #########################################
     # otherwise repeat the procedure with the alternative seq info:
