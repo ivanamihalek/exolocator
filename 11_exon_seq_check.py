@@ -301,7 +301,7 @@ def check_canonical_sequence(local_db, species_list, ensembl_db_name):
             canonical_coding_exons = get_canonical_exons (cursor, gene_id)
 
             # find seq_name and region
-            ret = get_seq_info (cursor, gene_id, species)
+            ret = get_primary_seq_info (cursor, gene_id, species)
             if ret:
                 [seq_name, file_names,  seq_region_start, 
                  seq_region_end, seq_region_strand] = ret
