@@ -1078,11 +1078,11 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
     for seq_name in output_pep.keys():
         name_pieces = seq_name.split("_")
         if not isinteger(name_pieces[-1]): continue
-        species = "_".join(name_pieces[:-1])
-        if species not in mulitple_orthos: mulitple_orthos.append(species)
+        species_common = "_".join(name_pieces[:-1])
+        if species_common not in mulitple_orthos: mulitple_orthos.append(species_common)
     
-    for species in mulitple_orthos:
-        paralogues = filter (lambda seq_name: species in seq_name,  output_pep.keys())
+    for species_common in mulitple_orthos:
+        paralogues = filter (lambda seq_name: species_common in seq_name,  output_pep.keys())
         # for all pairs of paralogues
         for [para1, para2] in find_pairs (paralogues):
 
@@ -1135,9 +1135,15 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             
             # at this point, para1 and para2 should belong to the same 'gene'
             [exon_id, exon_known] = names_of_exons[para1][0].split ("_")[-2:]
+            species    = "_".join (names_of_exons[para1][0].split ("_")[:-2]) 
             gene_id_1   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
-            [gene_seq, canonical_exon_pepseq, file_names] = get_gene_seq(acg, cursor, gene_id_1, species)
-            print  gene_id_1, file_names
+            [gene_seq, canonical_exon_pepseq, file_names_1] = get_gene_seq(acg, cursor, gene_id_1, species)
+            print  gene_id_1, file_names_1
+
+            [exon_id, exon_known] = names_of_exons[para2][0].split ("_")[-2:]
+            gene_id_2   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
+            [gene_seq, canonical_exon_pepseq, file_names_2] = get_gene_seq(acg, cursor, gene_id_1, species)
+            print  gene_id_2, file_names_2
             exit(1)
 
             # if we got so far, join the two seqs under the lower denominator name
