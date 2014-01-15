@@ -1134,9 +1134,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             # [gene_seq, canonical_exon_pepseq, file_names] = get_gene_seq(acg, cursor, gene_id, species)
             
             # at this point, para1 and para2 should belong to the same 'gene'
-            print exon_name
-            exit(1)
-            [exon_id, exon_known] = names_of_exons[para1][0].split ("_")
+            [exon_id, exon_known] = names_of_exons[para1][0].split ("_")[-2:]
             gene_id_1   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
             [gene_seq, canonical_exon_pepseq, file_names] = get_gene_seq(acg, cursor, gene_id_1, species)
             print  gene_id_1, file_names
