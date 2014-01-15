@@ -455,7 +455,7 @@ def  exon_id2gene_id (cursor, ensembl_db_name, exon_id, is_known):
         qry += "exon_id = %d " % exon_id
     else:
         qry  = "select gene_id from gene2exon where "
-        qry += "exon_id = %d and is_known = %d " % (exon_id, is_known)
+        qry += "exon_id = %s and is_known = %s " % (exon_id, is_known)
     
     rows = search_db (cursor, qry)
     if (not rows or 'ERROR' in rows[0]):
