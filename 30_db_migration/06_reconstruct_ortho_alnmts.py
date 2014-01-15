@@ -217,7 +217,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
         out_string += "\n" 
         out_string += "% The following pieces of sequence were found split across different scaffolds/contigs\n" 
         out_string += "% and assumed to actually belong to the same gene:\n" 
-        outstring  += fusion_notes
+        out_string += fusion_notes
 
     out_string += "\n" 
     out_string += "% The following exons appear in the alignment\n" 
