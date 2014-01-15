@@ -1144,8 +1144,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             gene_id_2   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
             [gene_seq, canonical_exon_pepseq,  file_name_2, seq_name_2, start_2, end_2] = get_gene_seq(acg, cursor, gene_id_2, species)
             print  gene_id_2, file_name_2, seq_name_2, start_2, end_2
-            exit(1)
-
+ 
             # if we got so far, join the two seqs under the lower denominator name
             [name_to_keep, name_to_drop] = find_lower_denom_name(para1, para2)
             print "keep:", name_to_keep, "  drop:", name_to_drop
