@@ -1154,7 +1154,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             stable_id_2 = gene2stable(cursor, gene_id_2, ensembl_db_name[species])
             [gene_seq, canonical_exon_pepseq,  file_name_2, seq_name_2, start_2, end_2] = get_gene_seq(acg, cursor, gene_id_2, species)
             
-            if file_name_1 == file_name2 and seq_name_1 == seq_name_2:
+            if file_name_1 == file_name_2 and seq_name_1 == seq_name_2:
                     continue
                 # I should also check here how far apart are these two seqs
                 # if they are two far apart, the assumption that this is actually the same gene
