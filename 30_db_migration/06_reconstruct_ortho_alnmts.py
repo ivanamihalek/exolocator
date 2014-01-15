@@ -1081,7 +1081,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
         species = "_".join(name_pieces[:-1])
         if species not in mulitple_orthos: mulitple_orthos.append(species)
     
-   for species in mulitple_orthos:
+    for species in mulitple_orthos:
         paralogues = filter (lambda seq_name: species in seq_name,  output_pep.keys())
         # for all pairs of paralogues
         for [para1, para2] in find_pairs (paralogues):
