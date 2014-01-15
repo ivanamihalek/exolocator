@@ -1069,7 +1069,8 @@ def find_lower_denom_name(para1, para2):
 
 #########################################
 #########################################
-def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon, canonical_human_exons, human_exon_map):
+def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, names_of_exons, 
+                                  ortho_exon_to_human_exon, canonical_human_exons, human_exon_map):
 
     # find species that have multiple orthologues
     
@@ -1077,11 +1078,11 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
     for seq_name in output_pep.keys():
         name_pieces = seq_name.split("_")
         if not isinteger(name_pieces[-1]): continue
-        animal = "_".join(name_pieces[:-1])
-        if animal not in mulitple_orthos: mulitple_orthos.append(animal)
+        species = "_".join(name_pieces[:-1])
+        if species not in mulitple_orthos: mulitple_orthos.append(species)
     
-    for animal in mulitple_orthos:
-        paralogues = filter (lambda seq_name: animal in seq_name,  output_pep.keys())
+   for species in mulitple_orthos:
+        paralogues = filter (lambda seq_name: species in seq_name,  output_pep.keys())
         # for all pairs of paralogues
         for [para1, para2] in find_pairs (paralogues):
 
@@ -1131,8 +1132,14 @@ def fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human
             # we definitely do not want them to be on different chromosomes
             # use get_gene_seq function; note that file_names might be several names separated by space
             # [gene_seq, canonical_exon_pepseq, file_names] = get_gene_seq(acg, cursor, gene_id, species)
-   
-                
+            
+            # at this point, para1 and para2 should belong to the same 'gene'
+            [exon_id, exon_known] = names_of_exons[para1][0].split ("_")
+            gene_id_1   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
+            [gene_seq, canonical_exon_pepseq, file_names] = get_gene_seq(acg, cursor, gene_id_1, species)
+                                 
+
+
             # if we got so far, join the two seqs under the lower denominator name
             [name_to_keep, name_to_drop] = find_lower_denom_name(para1, para2)
             print "keep:", name_to_keep, "  drop:", name_to_drop
@@ -1403,7 +1410,8 @@ def make_alignments ( gene_list, db_info):
             # we may have chosen to delete some sequences
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
-        fuse_seqs_split_on_scaffolds(output_pep, names_of_exons, ortho_exon_to_human_exon, canonical_human_exons, human_exon_map)
+        fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, names_of_exons, 
+                                     ortho_exon_to_human_exon, canonical_human_exons, human_exon_map)
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
