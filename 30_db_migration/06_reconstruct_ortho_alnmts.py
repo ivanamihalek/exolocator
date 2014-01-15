@@ -174,7 +174,8 @@ def find_maps_to (cursor, ensembl_db_name,  human_exon_map, concat_seq_name, exo
 
 #########################################
 #########################################
-def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sorted_seq_names, human_stable_id, human_exon_map):
+def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sorted_seq_names, 
+                 human_stable_id, human_exon_map, fusion_notes):
 
     gene_id        = {}
     stable_gene_id = {}
@@ -211,6 +212,12 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
         for stable_id in stable_gene_id[name][1:]:
             out_string += ", %s" % stable_id
         out_string += "\n"
+    
+    if fusion_notes:
+        out_string += "\n" 
+        out_string += "% The following pieces of sequence were found split across different scaffolds/contigs\n" 
+        out_string += "% and assumed to actually belong to the same gene:\n" 
+        outstring  += fusion_notes
 
     out_string += "\n" 
     out_string += "% The following exons appear in the alignment\n" 
@@ -1072,6 +1079,8 @@ def find_lower_denom_name(para1, para2):
 def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, names_of_exons, 
                                   ortho_exon_to_human_exon, canonical_human_exons, human_exon_map):
 
+    notes = ""
+
     # find species that have multiple orthologues
     
     mulitple_orthos = []
@@ -1137,16 +1146,28 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             [exon_id, exon_known] = names_of_exons[para1][0].split ("_")[-2:]
             species    = "_".join (names_of_exons[para1][0].split ("_")[:-2]) 
             gene_id_1   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
+            stable_id_1 = gene2stable(cursor, gene_id_1, ensembl_db_name[species])
             [gene_seq, canonical_exon_pepseq, file_name_1, seq_name_1, start_1, end_1] = get_gene_seq(acg, cursor, gene_id_1, species)
-            print  gene_id_1, file_name_1, seq_name_1, start_1, end_1
-
+ 
             [exon_id, exon_known] = names_of_exons[para2][0].split ("_")[-2:]
             gene_id_2   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
+            stable_id_2 = gene2stable(cursor, gene_id_2, ensembl_db_name[species])
             [gene_seq, canonical_exon_pepseq,  file_name_2, seq_name_2, start_2, end_2] = get_gene_seq(acg, cursor, gene_id_2, species)
-            print  gene_id_2, file_name_2, seq_name_2, start_2, end_2
- 
+            
+            if file_name_1 == file_name2 and seq_name_1 == seq_name_2:
+                    continue
+                # I should also check here how far apart are these two seqs
+                # if they are two far apart, the assumption that this is actually the same gene
+                # might be valid; but then the qiestion is how far apart is too far apart
+                # (and then how many cases like that we have)
+            else:
+                pass
+  
             # if we got so far, join the two seqs under the lower denominator name
             [name_to_keep, name_to_drop] = find_lower_denom_name(para1, para2)
+
+
+
             print "keep:", name_to_keep, "  drop:", name_to_drop
             new_seq = ""
             for pos in range(len(output_pep[para1])):
@@ -1182,8 +1203,10 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             human_exon_map[name_to_keep] = new_map
             del human_exon_map[name_to_drop]
             
+            notes += "{0}  {1}:{2},{3}-{4}   {5}:{6},{7}-{8}\n".format(name_to_keep,  stable_id_1, seq_name_1, start_1, end_1, 
+                                                                       stable_id_2, seq_name_2, start_2, end_2)
 
-
+    return notes
 
 #########################################
 #########################################
@@ -1415,7 +1438,8 @@ def make_alignments ( gene_list, db_info):
             # we may have chosen to delete some sequences
             sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
-        fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, names_of_exons, 
+        # check if any two pieces of seqeunce ended up on different scaffolds/contigs
+        fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, names_of_exons, 
                                      ortho_exon_to_human_exon, canonical_human_exons, human_exon_map)
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
@@ -1462,7 +1486,8 @@ def make_alignments ( gene_list, db_info):
         if verbose: print afa_fnm
             
         # notes to accompany the alignment:
-        print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  sorted_seq_names, stable_id, human_exon_map)
+        print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  
+                     sorted_seq_names, stable_id, human_exon_map, fusion_notes)
        
     return 
 
