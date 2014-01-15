@@ -45,7 +45,7 @@ def get_gene_sequence (cursor, acg, species, gene_id):
     [seq_name, file_names, seq_region_start, seq_region_end, 
      seq_region_strand, is_mitochondrial] = ret
    
-    sequence = extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,  
+    [sequence, file_name] = extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,  
                                 seq_region_start, seq_region_end)
 
     return [seq_region_strand, is_mitochondrial, sequence]
@@ -149,7 +149,8 @@ def alt_splice_almt (cursor, cfg, acg, species, ensembl_db_name):
         if verbose: print "there are ", len(tr_w_ccds), " transscripts with ccds"
 
         # get the gene_sequence
-        [seq_region_strand, mitochondrial, gene_sequence] = get_gene_sequence (cursor, acg, species,  gene_id)
+        ret = get_gene_seq(acg, cursor, gene_id, species)
+        [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
         output_seq    = {}
         global_boundaries = []
         local_boundaries  = {}

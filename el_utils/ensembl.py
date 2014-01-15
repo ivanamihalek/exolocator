@@ -386,7 +386,7 @@ def extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,
         line.rstrip()
         gene_seq += line
 
-    return gene_seq
+    return [gene_seq, fasta_db_file]
 
 
 

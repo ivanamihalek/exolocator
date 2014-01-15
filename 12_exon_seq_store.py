@@ -189,7 +189,9 @@ def store_exon_seqs(species_list, db_info):
                
             # extract raw gene  region - bonus return from checking whether the 
             # sequence is correct: translation of canonical exons
-            [gene_seq, canonical_exon_pepseq, file_names] = get_gene_seq(acg, cursor, gene_id, species)
+            ret = get_gene_seq(acg, cursor, gene_id, species)
+            [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
+
             if (not gene_seq or not canonical_exon_pepseq):
                 ct += 1
                 print 'no sequence found for ', gene_id, "   ",   ct, "out of ", tot

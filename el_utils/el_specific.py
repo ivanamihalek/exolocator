@@ -218,7 +218,7 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     """
     Given gene_id, return dna region which reproduces the correct canonical translation.
     """
-    null = ["",{}, []]
+    null = ["",{}, "", "", None, None]
 
     #########################################
     # which file should we be looking in, which sequence, from where to where
@@ -234,9 +234,10 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     if not canonical_translation: return null
     # find all canonical exons associated with the gene id
     canonical_coding_exons = get_canonical_exons (cursor, gene_id)
-    # extract raw gene  region
-    gene_seq = extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,  
-                                seq_region_start, seq_region_end)
+    # extract raw gene  region TODO - store the information about which 
+    # file_name we ended up using, and the start and end in that region
+    [gene_seq, file_name] = extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  
+                                             seq_region_start, seq_region_end)
     # reconstruct the translation from the raw gene_seq and exon boundaries
     [canonical_exon_pepseq,translated_seq] = transl_reconstruct (cursor, gene_id, gene_seq, canonical_coding_exons, 
                                                  is_mitochondrial)
@@ -248,7 +249,7 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     # if we succefully translated the exons, and came up with the same answer 
     # as the canonical translation, we are done here
     if (comparison_ok):
-        return [gene_seq, canonical_exon_pepseq, file_names]
+        return [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]
  
     #########################################
     # otherwise repeat the procedure with the alternative seq info:
@@ -262,7 +263,7 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     # find all canonical exons associated with the gene id
     canonical_coding_exons = get_canonical_exons (cursor, gene_id)
     # extract raw gene  region
-    gene_seq = extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,  
+    [gene_seq, file_name] = extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,  
                                 seq_region_start, seq_region_end)
     # reconstruct the translation from the raw gene_seq and exon boundaries
     [canonical_exon_pepseq,translated_seq] = transl_reconstruct (cursor, gene_id, gene_seq, canonical_coding_exons, 
@@ -275,7 +276,7 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     # if we succefully translated the exons, and came up with the same answer 
     # as the canonical translation, we are done here
     if (comparison_ok):
-        return [gene_seq, canonical_exon_pepseq, file_names]
+        return [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]
  
     return null 
 
