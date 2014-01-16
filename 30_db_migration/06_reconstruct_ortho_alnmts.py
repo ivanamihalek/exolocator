@@ -175,7 +175,7 @@ def find_maps_to (cursor, ensembl_db_name,  human_exon_map, concat_seq_name, exo
 #########################################
 #########################################
 def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sorted_seq_names, 
-                 human_stable_id, human_exon_map, fusion_notes):
+                 human_stable_id, human_exon_map, assorted_notes):
 
     gene_id        = {}
     stable_gene_id = {}
@@ -213,11 +213,8 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
             out_string += ", %s" % stable_id
         out_string += "\n"
     
-    if fusion_notes:
-        out_string += "\n" 
-        out_string += "% The following pieces of sequence were found split across different scaffolds/contigs\n" 
-        out_string += "% and assumed to actually belong to the same gene:\n" 
-        out_string += fusion_notes
+    if assorted_notes:
+        out_string += assorted_notes
 
     out_string += "\n" 
     out_string += "% The following exons appear in the alignment\n" 
@@ -1206,6 +1203,11 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             notes += "{0}  {1}:{2},{3}-{4}   {5}:{6},{7}-{8}\n".format(name_to_keep,  stable_id_1, seq_name_1, start_1, end_1, 
                                                                        stable_id_2, seq_name_2, start_2, end_2)
 
+    if notes:
+        header  = "% The following pieces of sequence were found split across different scaffolds/contigs\n" 
+        header += "% and assumed to actually belong to the same gene:\n" 
+        header += notes
+
     return notes
 
 #########################################
@@ -1505,7 +1507,7 @@ def make_alignments ( gene_list, db_info):
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
-
+        assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
             # fix_one2many changes both output_pep and names_of_exons
             if not overlapping_maps[seq_to_fix]: continue
@@ -1518,8 +1520,10 @@ def make_alignments ( gene_list, db_info):
         # check if any two pieces of seqeunce ended up on different scaffolds/contigs
         fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, names_of_exons, 
                                      ortho_exon_to_human_exon, canonical_human_exons, human_exon_map)
+        assorted_notes += fusion_notes + "\n"
         # get rid of dubioius paralogues (multiple seqs from the same species)
         para_notes = remove_dubious_paralogues( cursor, ensembl_db_name, output_pep, names_of_exons, human_exon_map)
+        assorted_notes += para_notes + "\n"
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
@@ -1566,7 +1570,7 @@ def make_alignments ( gene_list, db_info):
             
         # notes to accompany the alignment:
         print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  
-                     sorted_seq_names, stable_id, human_exon_map, fusion_notes)
+                     sorted_seq_names, stable_id, human_exon_map, assorted_notes)
        
     return 
 
