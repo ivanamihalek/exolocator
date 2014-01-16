@@ -75,11 +75,9 @@ def find_mammals(cursor, species_list):
         tax_id = species2taxid (cursor, species)
         parent_id = taxid2parentid (cursor, tax_id)
 
-        print " >>>>> ", species, tax_id, parent_id
         tax_id = parent_id
         is_mammal = False
         while tax_id:
-            print "\t **  ", tax_id
             qry  = "select name_txt from names where tax_id= %d " % tax_id
             qry += " and name_class = 'scientific name'";
             rows = search_db (cursor, qry)
