@@ -1253,7 +1253,7 @@ def remove_dubious_paralogues (cursor, output_pep, names_of_exons, human_exon_ma
                 del names_of_exons[para]
                 del human_exon_map[para]
 
-           else:
+            else:
                 ct += 1
                 tmp_name = "tmp"
                 if ct > 1: tmp_name += "_"+str(ct)
