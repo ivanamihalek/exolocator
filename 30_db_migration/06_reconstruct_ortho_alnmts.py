@@ -1240,13 +1240,20 @@ def remove_dubious_paralogues (cursor, output_pep, names_of_exons, human_exon_ma
         tmp_names     = []
         dropped_paras = []
         for para in sorted_para:
+
             if tanimoto[para] < 0.9*max_tanimoto:
                 # drop
+                species = scientific_name
+                [exon_id, exon_known] = names_of_exons[para][0].split ("_")[-2:]
+                gene_id   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
+                stable_id = gene2stable(cursor, gene_id, ensembl_db_name[species])
+                dropped_paras.append(stable_id)
+                # 
                 del output_pep[para]
                 del names_of_exons[para]
                 del human_exon_map[para]
-                dropped_paras.append(para)
-            else:
+
+           else:
                 ct += 1
                 tmp_name = "tmp"
                 if ct > 1: tmp_name += "_"+str(ct)
@@ -1254,6 +1261,7 @@ def remove_dubious_paralogues (cursor, output_pep, names_of_exons, human_exon_ma
                 names_of_exons[tmp_name] = names_of_exons.pop(para)
                 human_exon_map[tmp_name] = human_exon_map.pop(para)
                 tmp_names.append(tmp_name)
+
         ct = 0
         for tmp_name in tmp_names:
             ct += 1
@@ -1266,7 +1274,7 @@ def remove_dubious_paralogues (cursor, output_pep, names_of_exons, human_exon_ma
         if dropped_paras:
             notes += "for {0}: ".format(scientific_name)
             first = True
-            for para in dropped_paras:
+            for stable_id in dropped_paras:
                 # find stable id
                 if not first:
                     notes += ";"
