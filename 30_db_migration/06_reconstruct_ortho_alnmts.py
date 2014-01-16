@@ -1265,7 +1265,7 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exo
         ct = 0
         for tmp_name in tmp_names:
             ct += 1
-            new_name = trivial
+            new_name = trivial_name
             if ct > 1: new_name += "_"+str(ct)
             output_pep    [new_name] = output_pep.pop(tmp_name)
             names_of_exons[new_name] = names_of_exons.pop(tmp_name)
