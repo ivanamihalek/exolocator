@@ -1274,7 +1274,7 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exo
             human_exon_map[new_name] = human_exon_map.pop(tmp_name)
             
         if dropped_paras:
-            notes += "for {0}: ".format(scientific_name)
+            notes += "for {0}: ".format(trivial_name)
             first = True
             for stable_id in dropped_paras:
                 # find stable id
