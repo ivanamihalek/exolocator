@@ -13,7 +13,7 @@ from el_utils.utils   import  *
 from el_utils.el_specific   import  *
 from el_utils.map     import  Map, get_maps, map2exon
 from el_utils.tree    import  species_sort
-from el_utils.ncbi    import  taxid2trivial
+from el_utils.ncbi    import  *
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from el_utils.config_reader      import ConfigurationReader
 from el_utils.translation        import phase2offset, translation_bounds, crop_dna, translate
