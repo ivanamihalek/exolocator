@@ -1209,7 +1209,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
     return notes
 
 #########################################
-def remove_dubious_paralogues (cursor, output_pep):
+def remove_dubious_paralogues (cursor, output_pep, names_of_exons, human_exon_map):
 
     notes = ""
     mulitple_orthos = []
@@ -1236,11 +1236,47 @@ def remove_dubious_paralogues (cursor, output_pep):
                 max_tanimoto = tanimoto[para]
         # sort paralogues by their tanimoto score
         sorted_para = sorted(paralogues, key=lambda para: -tanimoto[para])
+        ct = 0
+        tmp_names     = []
+        dropped_paras = []
         for para in sorted_para:
-            print para,  "   ", tanimoto[para] 
-
-    exit(1)
-
+            if tanimoto[para] < 0.9*max_tanimoto:
+                # drop
+                del output_pep[para]
+                del names_of_exons[para]
+                del human_exon_map[para]
+                dopeed_paras.append(para)
+            else:
+                ct += 1
+                tmp_name = "tmp"
+                if ct > 1: tmp_name += "_"+str(ct)
+                output_pep[tmp_name] = output_pep.pop(para)
+                names_of_exons[tmp_name] = names_of_exons.pop(para)
+                human_exon_map[tmp_name] = human_exon_map.pop(para)
+                tmp_names.append(tmp_name)
+        ct = 0
+        for tmp_name in tmp_names:
+            ct += 1
+            new_name = trivial
+            if ct > 1: new_name += "_"+str(ct)
+            output_pep    [new_name] = output_pep.pop(tmp_name)
+            names_of_exons[new_name] = names_of_exons.pop(tmp_name)
+            human_exon_map[new_name] = human_exon_map.pop(tmp_name)
+            
+        if dropped_paras:
+            notes += "for {0}: ".format(scientific_name)
+            first = True
+            for para in dropped_paras:
+                # find stable id
+                if not first:
+                    notes += ";"
+                notes += stable_id
+                first = False
+            notes += "\n"
+    if notes:
+        header = "% The following sequences, labeled in Ensembl  as one2many orthologues,  were dropped\n"
+        header = "% because they were deemed problematic: too short or too different compared to human sequence\n"
+        notes  = header + notes
     return notes
 
 #########################################
@@ -1470,17 +1506,13 @@ def make_alignments ( gene_list, db_info):
                                                          names_of_exons, seq_to_fix, 
                                                          overlapping_maps[seq_to_fix], 
                                                          alnmt_pep, output_pep)
-            # we may have chosen to delete some sequences
-            sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
         # check if any two pieces of seqeunce ended up on different scaffolds/contigs
         fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, names_of_exons, 
                                      ortho_exon_to_human_exon, canonical_human_exons, human_exon_map)
-        # we may have chosen to delete some sequences
-        sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
-
         # get rid of dubioius paralogues (multiple seqs from the same species)
-        para_notes = remove_dubious_paralogues( cursor, output_pep)
+        para_notes = remove_dubious_paralogues( cursor, output_pep, names_of_exons, human_exon_map)
+        # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
