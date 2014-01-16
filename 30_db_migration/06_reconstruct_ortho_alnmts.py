@@ -1209,6 +1209,25 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
     return notes
 
 #########################################
+def remove_dubious_paralogues (output_pep):
+
+    notes = ""
+    mulitple_orthos = []
+    for seq_name in output_pep.keys():
+        name_pieces = seq_name.split("_")
+        if not isinteger(name_pieces[-1]): continue
+        species_common = "_".join(name_pieces[:-1])
+        if species_common not in mulitple_orthos: mulitple_orthos.append(species_common)
+    
+    for species_common in mulitple_orthos:
+        paralogues = filter (lambda seq_name: species_common in seq_name,  output_pep.keys())
+        print paralogues
+
+    exit(1)
+
+    return notes
+
+#########################################
 #########################################
 #########################################
 def make_alignments ( gene_list, db_info):
@@ -1443,6 +1462,9 @@ def make_alignments ( gene_list, db_info):
                                      ortho_exon_to_human_exon, canonical_human_exons, human_exon_map)
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
+
+        # get rid of dubioius paralogues (multiple seqs from the same species)
+        para_notes = remove_dubious_paralogues( output_pep)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
             print "length check failure"
