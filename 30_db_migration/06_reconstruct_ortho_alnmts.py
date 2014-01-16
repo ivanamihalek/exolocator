@@ -1245,7 +1245,7 @@ def remove_dubious_paralogues (cursor, output_pep, names_of_exons, human_exon_ma
                 del output_pep[para]
                 del names_of_exons[para]
                 del human_exon_map[para]
-                dopeed_paras.append(para)
+                dropped_paras.append(para)
             else:
                 ct += 1
                 tmp_name = "tmp"
