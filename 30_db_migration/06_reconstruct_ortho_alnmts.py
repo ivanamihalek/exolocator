@@ -1225,17 +1225,19 @@ def remove_dubious_paralogues (cursor, output_pep):
         # find_mammals can handle a list of names, but we have only one here
         if not find_mammals(cursor, [scientific_name]): continue
         paralogues = filter (lambda seq_name: trivial_name in seq_name,  output_pep.keys())
-        tanimoto={}
+        tanimoto   = {}
         max_tanimoto = -1
         for para in  paralogues:
             # what is the is the  highest tanimoto with human?
             tanimoto[para] = pairwise_tanimoto (output_pep['human'],
                                                 output_pep[para], use_heuristics=False)
-            # keep everything within say 66% of the max
+            # keep everything within say 90% of the max
             if ( max_tanimoto < tanimoto[para]): 
                 max_tanimoto = tanimoto[para]
-                
-            print para, tanimoto[para] 
+        # sort paralogues by their tanimoto score
+        sorted_para = sorted(paralogues, key=lambda para: -tanimoto[para])
+        for para in sorted_para:
+            print para,  "   ", tanimoto[para] 
 
     exit(1)
 
