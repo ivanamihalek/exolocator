@@ -27,12 +27,17 @@ def taxid2trivial (cursor, tax_id):
 
 ########
 def taxid2parentid (cursor, tax_id):
+    switch_to_db (cursor, get_ncbi_tax_name (cursor))
     qry = "select parent_tax_id from nodes where tax_id= %d " % tax_id
     rows = search_db (cursor, qry)
     if (not rows):
         rows = search_db (cursor, qry, verbose = True)
         return ""
-    return rows[0][0]
+    try:
+        retval = int(rows[0][0])
+    except:
+        retval = ""
+    return retval
 
 ########
 def get_ncbi_tax_name (cursor):
@@ -60,3 +65,41 @@ def get_common_name (cursor, species):
             return rows[0][0]
 
     return ""
+
+#########
+def find_mammals(cursor, species_list):
+    
+    mammals = []
+    for species in species_list:
+        switch_to_db(cursor, get_compara_name(cursor))
+        tax_id = species2taxid (cursor, species)
+        parent_id = taxid2parentid (cursor, tax_id)
+
+        print " >>>>> ", species, tax_id, parent_id
+        tax_id = parent_id
+        is_mammal = False
+        while tax_id:
+            print "\t **  ", tax_id
+            qry  = "select name_txt from names where tax_id= %d " % tax_id
+            qry += " and name_class = 'scientific name'";
+            rows = search_db (cursor, qry)
+            if rows and rows[0][0]:
+                if 'mammal' in rows[0][0].lower():
+                    is_mammal = True
+                    break
+                elif 'vertebrat' in  rows[0][0].lower():
+                    # if the thing wasa mammal, we would have found it by now
+                    is_mammal = False
+                    break
+               
+            parent_id = taxid2parentid (cursor, tax_id)
+            if parent_id and parent_id>1:
+                tax_id = parent_id
+            else:
+                tax_id = None
+
+        if is_mammal: 
+            mammals.append(species)
+
+            
+    return mammals

@@ -3,7 +3,8 @@
 
 import MySQLdb
 from   el_utils.mysql   import  *
-from   el_utils.ensembl import  get_species, get_gene_ids
+from   el_utils.ensembl import  *
+from   el_utils.ncbi    import  *
 
 
 
@@ -364,6 +365,12 @@ def main():
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
+    # one index I need on ncbi
+    print "making name_index on ncbi ..."
+    db_name = get_ncbi_tax_name(cursor)
+    create_index (cursor, db_name, 'name_index',    'names', ['tax_id', 'name_class'])
+    #exit(1)
+
     # add exon tables to all species
     for species in all_species:
 
@@ -432,8 +439,7 @@ def main():
             else:
                 create_index (cursor, db_name,'gene_index', table, ['gene_id'])
 
-
-
+ 
     cursor.close()
     db.close()
 

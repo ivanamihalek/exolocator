@@ -1297,7 +1297,12 @@ def species2taxid (cursor, species):
         search_db (cursor, qry, verbose = True)
         return ""
     
-    return rows[0][0]
+    try:
+        retval = int(rows[0][0])
+    except:
+        retval = ""
+    return retval
+
 
 ########
 def species2genome_db_id (cursor, species):
