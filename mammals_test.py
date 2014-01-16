@@ -24,8 +24,8 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
     mammals = find_mammals(cursor, all_species)
-    for mammal in mammals:
-        print mammal
+    #for mammal in mammals:
+    #    print mammal
        
 
     cursor.close()
