@@ -67,6 +67,29 @@ def get_common_name (cursor, species):
     return ""
 
 #########
+########
+def trivial2scientific (cursor, trivial):
+    switch_to_db(cursor, get_compara_name(cursor))
+    tax_id = species2taxid (cursor, species)
+    switch_to_db(cursor,get_ncbi_tax_name (cursor))
+    qry   = "select tax_id from names where "
+    qry  += "name_txt = '%s' and " % trivial
+    qry  += "name_class = 'trivial'"
+    rows = search_db (cursor, qry)
+    if rows:
+        if ('ERROR' in rows[0]):
+            search_db (cursor, qry, verbose = True)
+            return ""
+        else:
+            try:
+                tax_id = int(rows[0][0])
+            except:
+                return ""
+            return taxid2name (cursor, tax_id)
+
+    return ""
+
+#########
 def find_mammals(cursor, species_list):
     
     mammals = []
