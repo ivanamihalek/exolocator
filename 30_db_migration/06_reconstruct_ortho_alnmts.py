@@ -1284,8 +1284,8 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exo
                 first = False
             notes += "\n"
     if notes:
-        header = "% The following sequences, labeled in Ensembl  as one2many orthologues,  were dropped\n"
-        header = "% because they were deemed problematic: too short or too different compared to human sequence\n"
+        header  = "% The following sequences, labeled in Ensembl as one2many orthologues,  were dropped\n"
+        header += "% because they were deemed problematic: too short, or too different compared to human sequence\n"
         notes  = "\n" + header + notes
     return notes
 
