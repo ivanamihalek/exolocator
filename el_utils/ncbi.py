@@ -83,7 +83,7 @@ def trivial2scientific (cursor, trivial):
                 tax_id = int(rows[0][0])
             except:
                 return ""
-            return taxid2name (cursor, tax_id)
+            return "_".join(taxid2name(cursor, tax_id)).lower()
 
     return ""
 
