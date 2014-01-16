@@ -1229,7 +1229,7 @@ def remove_dubious_paralogues (cursor, output_pep):
         max_tanimoto = -1
         for para in  paralogues:
             # what is the is the  highest tanimoto with human?
-            tanimoto[para] = pairwise_tanimoto (output_pep['homo_sapiens'],
+            tanimoto[para] = pairwise_tanimoto (output_pep['human'],
                                                 output_pep[para], use_heuristics=False)
             # keep everything within say 66% of the max
             if ( max_tanimoto < tanimoto[para]): 
