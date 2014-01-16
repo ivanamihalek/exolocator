@@ -1209,7 +1209,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
     return notes
 
 #########################################
-def remove_dubious_paralogues (output_pep):
+def remove_dubious_paralogues (cursor, output_pep):
 
     notes = ""
     mulitple_orthos = []
@@ -1467,7 +1467,8 @@ def make_alignments ( gene_list, db_info):
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
         # get rid of dubioius paralogues (multiple seqs from the same species)
-        para_notes = remove_dubious_paralogues( output_pep)
+        para_notes = remove_dubious_paralogues( cursor, output_pep)
+        sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
         if not check_seq_length (output_pep, "ouput_pep"): 
             print "length check failure"
