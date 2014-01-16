@@ -1206,7 +1206,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
     if notes:
         header  = "% The following pieces of sequence were found split across different scaffolds/contigs\n" 
         header += "% and assumed to actually belong to the same gene:\n" 
-        header += notes
+        notes   = "\n"+header+notes
 
     return notes
 
@@ -1286,7 +1286,7 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exo
     if notes:
         header = "% The following sequences, labeled in Ensembl  as one2many orthologues,  were dropped\n"
         header = "% because they were deemed problematic: too short or too different compared to human sequence\n"
-        notes  = header + notes
+        notes  = "\n" + header + notes
     return notes
 
 #########################################
