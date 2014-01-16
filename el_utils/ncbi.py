@@ -69,8 +69,6 @@ def get_common_name (cursor, species):
 #########
 ########
 def trivial2scientific (cursor, trivial):
-    switch_to_db(cursor, get_compara_name(cursor))
-    tax_id = species2taxid (cursor, species)
     switch_to_db(cursor,get_ncbi_tax_name (cursor))
     qry   = "select tax_id from names where "
     qry  += "name_txt = '%s' and " % trivial
