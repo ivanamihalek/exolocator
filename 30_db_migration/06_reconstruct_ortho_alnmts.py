@@ -1223,7 +1223,8 @@ def remove_dubious_paralogues (cursor, output_pep):
         # is this a mammal? otherwise we won't mess with it
         scientific_name = trivial2scientific (cursor, trivial_name)
         print trivial_name, scientific_name
-        if not find_mammals(cursor, scientific_name): continue
+        # find_mammals can handle a list of names, but we have only one here
+        if not find_mammals(cursor, [scientific_name]): continue
         paralogues = filter (lambda seq_name: trivial_name in seq_name,  output_pep.keys())
         print paralogues
 
