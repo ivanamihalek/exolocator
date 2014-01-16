@@ -1217,10 +1217,14 @@ def remove_dubious_paralogues (output_pep):
         name_pieces = seq_name.split("_")
         if not isinteger(name_pieces[-1]): continue
         species_common = "_".join(name_pieces[:-1])
-        if species_common not in mulitple_orthos: mulitple_orthos.append(species_common)
+        if species_common not in mulitple_orthos:  mulitple_orthos.append(species_common)
     
     for species_common in mulitple_orthos:
         paralogues = filter (lambda seq_name: species_common in seq_name,  output_pep.keys())
+        # is this a mammal? otherwise we won't mess with it
+        name_of_any_paralogue = paralogues.next()
+        species_scientific    = "_".join (names_of_exons[name_of_any_paralogue][0].split ("_")[:-2])
+        if not find_mammals(cursoe, species_scientific): continue
         print paralogues
 
     exit(1)
