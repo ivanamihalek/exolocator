@@ -1209,7 +1209,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
     return notes
 
 #########################################
-def remove_dubious_paralogues (cursor, output_pep, names_of_exons, human_exon_map):
+def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exons, human_exon_map):
 
     notes = ""
     mulitple_orthos = []
@@ -1519,7 +1519,7 @@ def make_alignments ( gene_list, db_info):
         fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, names_of_exons, 
                                      ortho_exon_to_human_exon, canonical_human_exons, human_exon_map)
         # get rid of dubioius paralogues (multiple seqs from the same species)
-        para_notes = remove_dubious_paralogues( cursor, output_pep, names_of_exons, human_exon_map)
+        para_notes = remove_dubious_paralogues( cursor, ensembl_db_name, output_pep, names_of_exons, human_exon_map)
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
