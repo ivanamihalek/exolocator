@@ -5,7 +5,7 @@ from ensembl import species2taxid, get_compara_name
 ########
 def taxid2name (cursor, tax_id):
     switch_to_db (cursor, get_ncbi_tax_name (cursor))
-    qry  = "select name_txt from names where tax_id= %d " % tax_id
+    qry  = "select name_txt from names where tax_id= %d " % int(tax_id)
     qry += " and name_class = 'scientific name'";
     rows = search_db (cursor, qry)
     if (not rows):
@@ -16,7 +16,7 @@ def taxid2name (cursor, tax_id):
 ########
 def taxid2trivial (cursor, tax_id):
     switch_to_db (cursor, get_ncbi_tax_name (cursor))
-    qry  = "select name_txt from names where tax_id= %d " % tax_id
+    qry  = "select name_txt from names where tax_id= %d " % int(tax_id)
     qry += " and name_class = 'trivial'";
     rows = search_db (cursor, qry)
     if (not rows or 'ERROR' in rows[0]):
@@ -28,7 +28,7 @@ def taxid2trivial (cursor, tax_id):
 ########
 def taxid2parentid (cursor, tax_id):
     switch_to_db (cursor, get_ncbi_tax_name (cursor))
-    qry = "select parent_tax_id from nodes where tax_id= %d " % tax_id
+    qry = "select parent_tax_id from nodes where tax_id= %d " % int(tax_id)
     rows = search_db (cursor, qry)
     if (not rows):
         rows = search_db (cursor, qry, verbose = True)
@@ -83,7 +83,10 @@ def trivial2scientific (cursor, trivial):
                 tax_id = int(rows[0][0])
             except:
                 return ""
-            return  taxid2name(cursor, tax_id).lower().replace(" ", "_")
+            sciname = taxid2name(cursor, tax_id).lower().replace(" ", "_")
+            #canis_lupus_familiaris - don't know what to do with it
+            sciname = sciname.replace("_familiaris", "")
+            return sciname
 
     return ""
 
@@ -99,7 +102,7 @@ def find_mammals(cursor, species_list):
         tax_id = parent_id
         is_mammal = False
         while tax_id:
-            qry  = "select name_txt from names where tax_id= %d " % tax_id
+            qry  = "select name_txt from names where tax_id= %d " % int(tax_id)
             qry += " and name_class = 'scientific name'";
             rows = search_db (cursor, qry)
             if rows and rows[0][0]:
