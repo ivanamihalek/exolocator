@@ -1244,7 +1244,7 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exo
             if tanimoto[para] < 0.9*max_tanimoto:
                 # drop
                 [exon_id, exon_known] = names_of_exons[para][0].split ("_")[-2:]
-                species   = "_".join (names_of_exons[para1][0].split ("_")[:-2])   
+                species   = "_".join (names_of_exons[para][0].split ("_")[:-2])   
                 gene_id   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
                 stable_id = gene2stable(cursor, gene_id, ensembl_db_name[species])
                 dropped_paras.append(stable_id)
