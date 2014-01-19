@@ -134,7 +134,7 @@ def find_mammals(cursor, trivial_name_list):
                 tax_id = None
 
         if is_mammal: 
-            mammals.append(species)
+            mammals.append(trivial_name)
 
             
     return mammals
