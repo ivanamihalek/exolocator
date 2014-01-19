@@ -24,6 +24,17 @@ def taxid2trivial (cursor, tax_id):
         return ""
     return rows[0][0]
 
+########
+def trivial2taxid (cursor, trivial_name):
+    switch_to_db (cursor, get_ncbi_tax_name (cursor))
+    qry  = "select tax_id from names where name_txt= '%s' " % trivial_name
+    qry += " and name_class = 'trivial'";
+    rows = search_db (cursor, qry)
+    if (not rows or 'ERROR' in rows[0]):
+        rows = search_db (cursor, qry, verbose = True)
+        return ""
+    return int(rows[0][0])
+
 
 ########
 def taxid2parentid (cursor, tax_id):
@@ -68,6 +79,8 @@ def get_common_name (cursor, species):
 
 #########
 ########
+# this is not working bcs the siceintific name is nto necessarilty unique
+# eg canis lupus, canis lupus familiaris, canis familiaris
 def trivial2scientific (cursor, trivial):
     switch_to_db(cursor,get_ncbi_tax_name (cursor))
     qry   = "select tax_id from names where "
@@ -91,12 +104,12 @@ def trivial2scientific (cursor, trivial):
     return ""
 
 #########
-def find_mammals(cursor, species_list):
+def find_mammals(cursor, trivial_name_list):
     
     mammals = []
-    for species in species_list:
+    for trivial_name in trivial_name_list:
         switch_to_db(cursor, get_compara_name(cursor))
-        tax_id = species2taxid (cursor, species)
+        tax_id = trivial2taxid (cursor, trivial_name)
         parent_id = taxid2parentid (cursor, tax_id)
 
         tax_id = parent_id

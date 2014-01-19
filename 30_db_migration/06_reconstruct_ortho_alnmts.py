@@ -1222,10 +1222,8 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exo
         if trivial_name not in mulitple_orthos:  mulitple_orthos.append(trivial_name)
     
     for trivial_name in mulitple_orthos:
-        # is this a mammal? otherwise we won't mess with it
-        scientific_name = trivial2scientific (cursor, trivial_name)
         # find_mammals can handle a list of names, but we have only one here
-        if not find_mammals(cursor, [scientific_name]): continue
+        if not find_mammals(cursor, [trivial_name]): continue
         paralogues = filter (lambda seq_name: trivial_name in seq_name,  output_pep.keys())
         tanimoto   = {}
         max_tanimoto = -1
