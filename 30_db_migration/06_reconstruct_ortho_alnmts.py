@@ -1090,7 +1090,9 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
     for species_common in mulitple_orthos:
         paralogues = filter (lambda seq_name: species_common in seq_name,  output_pep.keys())
         # for all pairs of paralogues
+        deleted = []
         for [para1, para2] in find_pairs (paralogues):
+            if para1 in deleted or para2 in deleted: continue
 
             # do they map to disjoint set of human exons?
             human_exons_1 = set([])
@@ -1163,8 +1165,6 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             # if we got so far, join the two seqs under the lower denominator name
             [name_to_keep, name_to_drop] = find_lower_denom_name(para1, para2)
 
-
-
             print "keep:", name_to_keep, "  drop:", name_to_drop
             new_seq = ""
             for pos in range(len(output_pep[para1])):
@@ -1200,8 +1200,10 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             human_exon_map[name_to_keep] = new_map
             del human_exon_map[name_to_drop]
             
-            notes += "{0}  {1}:{2},{3}-{4}   {5}:{6},{7}-{8}\n".format(name_to_keep,  stable_id_1, seq_name_1, start_1, end_1, 
+            notes += "{0}  {1}:{2},{3}-{4}   {5}:{6},{7}-{8}\n".format(name_to_keep,  
+                                                                       stable_id_1, seq_name_1, start_1, end_1, 
                                                                        stable_id_2, seq_name_2, start_2, end_2)
+            deleted.append(name_to_drop)
 
     if notes:
         header  = "% The following pieces of sequence were found split across different scaffolds/contigs\n" 
@@ -1346,7 +1348,7 @@ def make_alignments ( gene_list, db_info):
             time_modified = os.path.getmtime(afa_fnm)
             number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
             if number_of_days_since_modified < 5:
-                print "\t last modified %s. moving on" % time.ctime(os.path.getmtime(afa_fnm))
+                print "\t Last modified %s. Moving on." % time.ctime(os.path.getmtime(afa_fnm))
                 continue
         notes_fnm = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
         #if (os.path.exists(notes_fnm) and os.path.getsize(notes_fnm) > 0):
