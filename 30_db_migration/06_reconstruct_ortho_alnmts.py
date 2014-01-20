@@ -1146,12 +1146,19 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             species    = "_".join (names_of_exons[para1][0].split ("_")[:-2]) 
             gene_id_1   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
             stable_id_1 = gene2stable(cursor, gene_id_1, ensembl_db_name[species])
-            [gene_seq, canonical_exon_pepseq, file_name_1, seq_name_1, start_1, end_1] = get_gene_seq(acg, cursor, gene_id_1, species)
+            [gene_seq, canonical_exon_pepseq, file_name_1, seq_name_1, start_1, end_1] = \
+                get_gene_seq(acg, cursor, gene_id_1, species)
  
             [exon_id, exon_known] = names_of_exons[para2][0].split ("_")[-2:]
             gene_id_2   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
+            try:
+                gene_id_2 = int(gene_id_2)
+            except:
+                print species, exon_id, exon_known, "  ... ", gene_id_2
+                exit(1)
             stable_id_2 = gene2stable(cursor, gene_id_2, ensembl_db_name[species])
-            [gene_seq, canonical_exon_pepseq,  file_name_2, seq_name_2, start_2, end_2] = get_gene_seq(acg, cursor, gene_id_2, species)
+            [gene_seq, canonical_exon_pepseq,  file_name_2, seq_name_2, start_2, end_2] = \
+                get_gene_seq(acg, cursor, gene_id_2, species)
             
             if file_name_1 == file_name_2 and seq_name_1 == seq_name_2:
                     continue
