@@ -1154,6 +1154,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             try:
                 gene_id_2 = int(gene_id_2)
             except:
+                print para2
                 print species, exon_id, exon_known, "  ... ", gene_id_2
                 exit(1)
             stable_id_2 = gene2stable(cursor, gene_id_2, ensembl_db_name[species])
