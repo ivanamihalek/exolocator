@@ -5,7 +5,7 @@
 import pdb
 #pdb.set_trace()
 
-import MySQLdb, commands, re, os
+import MySQLdb, commands, re, os, time
 import inspect
 from el_utils.mysql   import  *
 from el_utils.ensembl import  *
