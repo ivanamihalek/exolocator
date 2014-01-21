@@ -1343,25 +1343,23 @@ def make_alignments ( gene_list, db_info):
 
         gene_ct += 1
 
-        if verbose: 
-            print gene_id, stable_id, get_description (cursor, gene_id)
-        elif (not gene_ct%100): 
-            print gene_ct, "out of ", len(gene_list)
 
         afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
         #afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
         if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0 ):
             time_modified = os.path.getmtime(afa_fnm)
             number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
-            if number_of_days_since_modified < 5:
-                print "\t Last modified %s. Moving on." % time.ctime(os.path.getmtime(afa_fnm))
+            if number_of_days_since_modified < 30:
+                #print "\t Last modified %s. Moving on." % time.ctime(os.path.getmtime(afa_fnm))
                 continue
         notes_fnm = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
-        #if (os.path.exists(notes_fnm) and os.path.getsize(notes_fnm) > 0):
-        #    print notes_fnm, "found - moving on"
-        #    continue
 
-        # find all exons we are tracking in the database
+        if verbose: 
+            print gene_id, stable_id, get_description (cursor, gene_id)
+        elif (not gene_ct%100): 
+            print gene_ct, "out of ", len(gene_list)
+
+       # find all exons we are tracking in the database
         human_exons     = gene2exon_list(cursor, gene_id)
         canonical_human_exons = []
         for human_exon in human_exons:
