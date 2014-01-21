@@ -1115,6 +1115,9 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
 
             # do these seqs belong to different pieces of sequence?
             # if one is on the left from an exon on the other group, then they should be all
+
+            print "he1: ", he1
+            print "he2: ", he2
             he1 = iter(human_exons_1).next()
             he2 = iter(human_exons_2).next()
             interspersed = False
