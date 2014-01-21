@@ -1077,6 +1077,13 @@ def find_lower_denom_name(para1, para2):
 
 #########################################
 #########################################
+def delete (name_to_drop, names_of_exons, human_exon_map, deleted):
+    deleted.append(name_to_drop)
+    del names_of_exons[name_to_drop]
+    del human_exon_map[name_to_drop]
+
+
+
 def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, names_of_exons, 
                                   ortho_exon_to_human_exon, canonical_human_exons, human_exon_map):
 
@@ -1104,20 +1111,26 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
                 human_counterparts = ortho_exon_to_human_exon[exon_name]
                 if human_counterparts: 
                     human_exons_1.update(set(human_counterparts))
-            
+
+            if not human_exons_1: # again, no idea how this happens
+                delete (para1, names_of_exons, human_exon_map, deleted)
+                continue
+           
             human_exons_2 = set([])
             for exon_name in names_of_exons[para2]:
                 human_counterparts = ortho_exon_to_human_exon[exon_name]
                 if human_counterparts: 
                     human_exons_2.update(set(human_counterparts))
 
+            if not human_exons_2: # again, no idea how this happens
+                delete (para2, names_of_exons, human_exon_map, deleted)
+                continue
+
             if  human_exons_1 & human_exons_2:continue # there is intersection - we move on
 
             # do these seqs belong to different pieces of sequence?
             # if one is on the left from an exon on the other group, then they should be all
 
-            print "he1: ", human_exons_1
-            print "he2: ", human_exons_2
             he1 = iter(human_exons_1).next()
             he2 = iter(human_exons_2).next()
             interspersed = False
@@ -1208,15 +1221,14 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
                             new_map[human_exon].append(ex2)
 
             names_of_exons[name_to_keep] = new_exon_set
-            del names_of_exons[name_to_drop]
-
             human_exon_map[name_to_keep] = new_map
-            del human_exon_map[name_to_drop]
+            delete (name_to_drop, names_of_exons, human_exon_map, deleted)
             
             notes += "{0}  {1}:{2},{3}-{4}   {5}:{6},{7}-{8}\n".format(name_to_keep,  
                                                                        stable_id_1, seq_name_1, start_1, end_1, 
                                                                        stable_id_2, seq_name_2, start_2, end_2)
-            deleted.append(name_to_drop)
+ 
+
 
     if notes:
         header  = "% The following pieces of sequence were found split across different scaffolds/contigs\n" 
