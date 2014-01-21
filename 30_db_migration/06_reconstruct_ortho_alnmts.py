@@ -1077,8 +1077,9 @@ def find_lower_denom_name(para1, para2):
 
 #########################################
 #########################################
-def delete (name_to_drop, names_of_exons, human_exon_map, deleted):
+def delete (name_to_drop, output_pep, names_of_exons, human_exon_map, deleted):
     deleted.append(name_to_drop)
+    del output_pep[name_to_drop]
     del names_of_exons[name_to_drop]
     del human_exon_map[name_to_drop]
 
@@ -1113,7 +1114,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
                     human_exons_1.update(set(human_counterparts))
 
             if not human_exons_1: # again, no idea how this happens
-                delete (para1, names_of_exons, human_exon_map, deleted)
+                delete (para1, output_pep, names_of_exons, human_exon_map, deleted)
                 continue
            
             human_exons_2 = set([])
@@ -1123,7 +1124,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
                     human_exons_2.update(set(human_counterparts))
 
             if not human_exons_2: # again, no idea how this happens
-                delete (para2, names_of_exons, human_exon_map, deleted)
+                delete (para2, output_pep, names_of_exons, human_exon_map, deleted)
                 continue
 
             if  human_exons_1 & human_exons_2:continue # there is intersection - we move on
@@ -1199,9 +1200,8 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
                 else:
                     new_seq += output_pep[para1][pos] 
             output_pep[name_to_keep] = new_seq
-            # remove the other sequence
-            del output_pep[name_to_drop]
-
+ 
+ 
             # make sure we have all exons listed correctly under the new name - we'll need them to expand dna
             new_exon_set = []
             new_map      = {}
@@ -1222,7 +1222,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
 
             names_of_exons[name_to_keep] = new_exon_set
             human_exon_map[name_to_keep] = new_map
-            delete (name_to_drop, names_of_exons, human_exon_map, deleted)
+            delete (name_to_drop, output_pep, names_of_exons, human_exon_map, deleted)
             
             notes += "{0}  {1}:{2},{3}-{4}   {5}:{6},{7}-{8}\n".format(name_to_keep,  
                                                                        stable_id_1, seq_name_1, start_1, end_1, 
