@@ -725,6 +725,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         if not check_seq_length(new_pep_slice, "new_pep_slice"):
             del output_pep[seq_to_fix]
+            del names_of_exons[seq_to_fix]
             print "abort 3"
             return [output_pep, names_of_exons]
 
@@ -738,6 +739,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         if not check_seq_length(new_alignment_pep, "new_alignment_pep"):
             del output_pep[seq_to_fix]
+            del names_of_exons[seq_to_fix]
             print "abort 4"
             return [output_pep, names_of_exons]
 
