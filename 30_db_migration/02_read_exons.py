@@ -46,7 +46,7 @@ def make_exon_table (cursor, table):
 #########################################
 def check_exon_table(cursor, db_name, table, verbose = False):
     
-    if 0:
+    if 1:
         if ( not check_table_exists (cursor, db_name, table)):
             if verbose:  print 'table', table, 'in', db_name, 'does not exist'
         else:
@@ -55,7 +55,8 @@ def check_exon_table(cursor, db_name, table, verbose = False):
             yr  = create_date.year
             mth = create_date.month
 
-            if yr==2012 or yr==2013 and mth<10:
+            #if yr==2012 or yr==2013 and mth<10:
+            if yr<2014:
                 if verbose: print 'old table', table, " found in ", db_name, '(will drop)'
                 qry = "drop table "+table
                 rows = search_db(cursor, qry)
