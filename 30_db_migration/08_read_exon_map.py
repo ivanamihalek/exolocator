@@ -36,7 +36,7 @@ def main ():
 
     qry = "source %s" % infile
     print qry
-    rows = search_db(cursor, qry)
+    rows = search_db(cursor, qry, verbose=True)
     print rows
 
     return True
