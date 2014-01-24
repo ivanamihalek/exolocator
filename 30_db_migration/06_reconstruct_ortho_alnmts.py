@@ -1354,7 +1354,10 @@ def make_alignments ( gene_list, db_info):
 
     # for each  gene in the provided list
     gene_ct = 0
-    gene_list.reverse()
+    #gene_list.reverse()
+    hack = gene_list[0:len(gene_list)/2] 
+    hack.reverse()
+    gene_list = hack
     for gene_id in gene_list:
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
