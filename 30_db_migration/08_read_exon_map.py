@@ -28,17 +28,21 @@ def main ():
         sys.exit(1)
     print "reading", infile
 
-    #credentials = " -u marioot -ptooiram"
-    #cmd = "mysql %s  exolocator_db  <  %s" % (credentials, infile)
-
     qry = "drop table exon_map"
     rows = search_db(cursor, qry)
+    # I could not get this to run, though it runs fine directly from the mysql shell:
+    #qry = "source %s" % infile
+    #rows = search_db(cursor, qry, verbose=True)
+    cursor.close()
+    db.close()
 
-    qry = "source %s" % infile
-    print qry
-    rows = search_db(cursor, qry, verbose=True)
-    print rows
+    credentials = " -u marioot -ptooiram"
+    cmd = "mysql %s  exolocator_db  <  %s" % (credentials, infile)
+    print cmd
+    ret = commands.getoutput(cmd)
+    print ret
 
+ 
     return True
 
 
