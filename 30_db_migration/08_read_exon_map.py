@@ -35,6 +35,7 @@ def main ():
     rows = search_db(cursor, qry)
 
     qry = "source "+infile
+    print qry
     rows = search_db(cursor, qry)
     print rows
 
