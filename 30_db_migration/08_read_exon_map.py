@@ -26,6 +26,7 @@ def main ():
     if (not os.path.exists(infile)):
         print "not found: ", infile
         sys.exit(1)
+    print "reading", infile
 
     #credentials = " -u marioot -ptooiram"
     #cmd = "mysql %s  exolocator_db  <  %s" % (credentials, infile)
