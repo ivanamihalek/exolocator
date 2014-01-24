@@ -27,13 +27,15 @@ def main ():
         print "not found: ", infile
         sys.exit(1)
 
-    credentials = " -u marioot -ptooiram"
-    cmd = "mysql %s  exolocator_db  <  %s" % (credentials, infile)
+    #credentials = " -u marioot -ptooiram"
+    #cmd = "mysql %s  exolocator_db  <  %s" % (credentials, infile)
 
-    print cmd
-    ret = commands.getoutput(cmd)
-    
-    print ret
+    qry = "drop table exon_map"
+    rows = search_db(cursor, qry)
+
+    qry = "source infile"
+    rows = search_db(cursor, qry)
+    print rows
 
     return True
 
