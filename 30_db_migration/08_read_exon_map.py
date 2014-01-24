@@ -33,7 +33,7 @@ def main ():
     qry = "drop table exon_map"
     rows = search_db(cursor, qry)
 
-    qry = "source infile"
+    qry = "source "+infile
     rows = search_db(cursor, qry)
     print rows
 
