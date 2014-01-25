@@ -7,15 +7,20 @@ $from_dir = "/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/ExoLocator/
 $to_dir   = "/home/ivanam/exolocator/Exolocator/Best_MSA";
 
 
-$filename = $ARGV[0];
-open (IF, "<$filename" ) 
-    || die "Cno $filename: $!.\n";
+if (!$filename or $filename eq 'none') {
+    $home = `pwd`; chomp $home;
+    chdir "$from_dir/pep/";
+    @ens_ids = split "\n", `ls *afa | sed  's/\.afa//g'`;
+    chdir $pwd; 
+} else {
+    $filename = $ARGV[0];
+    @ens_ids = split "\n", `awk '{print \$1}' $filename`;
+}
 
+print "@ens_ids[0..9]\n";
+exit(1);
 
-while ( <IF> ) {
-    chomp;
-    @aux = split;
-    $ensembl_id = $aux[0];
+foreach  $ensembl_id ( @ens_ids) {
     print  $ensembl_id, "\n";
 
     $cmd = "cp $from_dir/pep/$ensembl_id.afa $to_dir/pep/$ensembl_id.afa";
