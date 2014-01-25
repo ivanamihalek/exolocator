@@ -22,6 +22,8 @@ if (!$filename or $filename eq 'none') {
 
 foreach  $ensembl_id (@ens_ids) {
 
+    print  $ensembl_id, "\n";
+
     $donkey_full_path   = "$from_dir/pep/$ensembl_id.afa";
     $reindeer_full_path = "$to_dir/pep/$ensembl_id.afa";
 
@@ -39,7 +41,6 @@ foreach  $ensembl_id (@ens_ids) {
 
     $afa_exists &&  $is_up_to_date  && next;
 
-    print  $ensembl_id, "\n";
 
     $cmd = "cp $from_dir/pep/$ensembl_id.afa $to_dir/pep/$ensembl_id.afa";
     print $cmd, "\n";
