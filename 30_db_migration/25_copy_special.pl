@@ -1,20 +1,20 @@
 #! /usr/bin/perl -w
 
-@ARGV ||
-    die "Usage:  $0  <file name> \n";
-
 $from_dir = "/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/ExoLocator/results/dumpster";
 $to_dir   = "/home/ivanam/exolocator/Exolocator/Best_MSA";
 
+$filename = "";
+@ARGV && ($filename=$ARGV[0]);
 
 if (!$filename or $filename eq 'none') {
+    
     $home = `pwd`; chomp $home;
     chdir "$from_dir/pep/";
     @ens_ids = split "\n", `ls *afa | sed  's/\.afa//g'`;
-    chdir $pwd; 
+    chdir $home; 
 } else {
     $filename = $ARGV[0];
-    @ens_ids = split "\n", `awk '{print \$1}' $filename`;
+    @ens_ids  = split "\n", `awk '{print \$1}' $filename`;
 }
 
 print "@ens_ids[0..9]\n";
