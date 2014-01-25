@@ -27,7 +27,7 @@ foreach  $ensembl_id (@ens_ids) {
     $donkey_full_path   = "$from_dir/pep/$ensembl_id.afa";
     $reindeer_full_path = "$to_dir/pep/$ensembl_id.afa";
 
-    ( -z $donkey_full_path ) && next;
+    (!-e $donkey_full_path ||  -z $donkey_full_path ) && next;
 
     $afa_exists    = (  -e  $reindeer_full_path ) ? 1 : 0 ;
     $is_up_to_date = 0;
