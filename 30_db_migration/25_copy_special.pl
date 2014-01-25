@@ -22,13 +22,14 @@ if (!$filename or $filename eq 'none') {
 
 foreach  $ensembl_id (@ens_ids) {
 
-    print  $ensembl_id, "\n";
 
     $donkey_full_path   = "$from_dir/pep/$ensembl_id.afa";
     $reindeer_full_path = "$to_dir/pep/$ensembl_id.afa";
 
-    (!-e $donkey_full_path ||  -z $donkey_full_path ) && next;
-
+    if (!-e $donkey_full_path ||  -z $donkey_full_path ) {
+	print  $ensembl_id, " not found on donkey\n";
+	next;
+    }
     $afa_exists    = (  -e  $reindeer_full_path ) ? 1 : 0 ;
     $is_up_to_date = 0;
     if ( $afa_exists ) {
@@ -39,8 +40,12 @@ foreach  $ensembl_id (@ens_ids) {
 	$is_up_to_date = ($last_modify_time_on_donkey  <=  $last_modify_time_on_reindeer);
     }
 
-    $afa_exists &&  $is_up_to_date  && next;
+    if ($afa_exists &&  $is_up_to_date) {
+	print  $ensembl_id, " up to date\n";
+	next;
+    }
 
+    print  $ensembl_id, "\n";
 
     $cmd = "cp $from_dir/pep/$ensembl_id.afa $to_dir/pep/$ensembl_id.afa";
     print $cmd, "\n";
@@ -54,8 +59,6 @@ foreach  $ensembl_id (@ens_ids) {
     print $cmd, "\n";
     (system $cmd) && print "error ...\n";
 
-    print `grep SW  $to_dir/notes/$ensembl_id.txt | wc -l`;
-    print "\n";
 	
 }
 
