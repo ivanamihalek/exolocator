@@ -50,8 +50,6 @@ def store(cursor, in_path, infile):
     for line in inf:
 
         ct += 1
-        #if not ct%100:
-        print ct, fields[0]
 
         fixed_fields    = {}
         update_fields   = {}
@@ -59,6 +57,8 @@ def store(cursor, in_path, infile):
 
         line   = line.rstrip()
         fields = line.split("\t")
+        #if not ct%100:
+        print ct, fields[0]
         if  'ENSG' in fields[-1]: 
             ensembl_gene_id = fields[-1]
         else:
