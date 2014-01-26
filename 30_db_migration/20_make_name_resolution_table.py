@@ -46,6 +46,7 @@ def store(cursor, in_path, infile):
     inf   = erropen (in_path+"/"+infile, "r")
 
     print "storing contents of ", infile
+    ct = 0
     for line in inf:
 
 
@@ -59,7 +60,11 @@ def store(cursor, in_path, infile):
             ensembl_gene_id = fields[-1]
         else:
             continue
-        
+
+        ct += 1
+        if not ct%100:
+            print ct, fields[0]
+
         # check we are tracking that gene (for example, if it is pseudo, we are not)
         qry  = "select count(1) from exon_homo_sapiens where ensembl_gene_id  = '%s'" % ensembl_gene_id
         rows = search_db(cursor, qry)
