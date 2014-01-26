@@ -71,7 +71,7 @@ def store(cursor, in_path, infile):
             if not field.replace (' ',''): continue
 
             fixed_fields ['synonym']   = field.replace("'", "").upper()
-            update_fields['stable_id'] = ensembl_gene_id
+            fixed_fields ['stable_id'] = ensembl_gene_id
             store_or_update (cursor, table, fixed_fields, update_fields)
 
     inf.close()
