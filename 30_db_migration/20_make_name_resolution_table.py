@@ -49,6 +49,9 @@ def store(cursor, in_path, infile):
     ct = 0
     for line in inf:
 
+        ct += 1
+        if not ct%100:
+            print ct, fields[0]
 
         fixed_fields    = {}
         update_fields   = {}
@@ -61,9 +64,6 @@ def store(cursor, in_path, infile):
         else:
             continue
 
-        ct += 1
-        if not ct%100:
-            print ct, fields[0]
 
         # check we are tracking that gene (for example, if it is pseudo, we are not)
         qry  = "select count(1) from exon_homo_sapiens where ensembl_gene_id  = '%s'" % ensembl_gene_id
