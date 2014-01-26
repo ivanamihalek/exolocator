@@ -50,8 +50,8 @@ def store(cursor, in_path, infile):
     for line in inf:
 
         ct += 1
-        if not ct%100:
-            print ct, fields[0]
+        #if not ct%100:
+        print ct, fields[0]
 
         fixed_fields    = {}
         update_fields   = {}
