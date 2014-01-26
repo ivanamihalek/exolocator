@@ -46,7 +46,7 @@ def main():
 
     cfg      = ConfigurationReader (user="marioot", passwd="tooiram", check=False)
     in_path  = cfg.get_path('afs_dumps')
-    in+path += "/para_dump"
+    in_path += "/para_dump"
     if (not os.path.exists(in_path)):
         print in_path, "not found"
         sys.exit(1) # exit on non-existent outdir
