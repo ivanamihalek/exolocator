@@ -53,7 +53,7 @@ def main():
 
     
     ###############
-    if 0:
+    if 1:
         qry = "drop table paralog"
         search_db (cursor, qry)
         qry = "create table paralog (id int(10) primary key auto_increment) "
