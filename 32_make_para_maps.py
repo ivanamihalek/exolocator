@@ -15,7 +15,7 @@ from   el_utils.config_reader      import ConfigurationReader
 from   alignment import * # C implementation of smith waterman
 
 #########################################
-verbose = True
+verbose = False
 
 
 #########################################
@@ -299,7 +299,7 @@ def make_para_exon_maps(species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 10
 
     local_db = False
 
