@@ -5,177 +5,17 @@ import StringIO
 import MySQLdb, commands, re, sys
 from hashlib import sha1
 from random  import random, choice
-from   el_utils.mysql   import  connect_to_mysql, connect_to_db
-from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
+from   el_utils.mysql   import  *
 from   el_utils.ensembl import  *
 from   el_utils.utils   import  *
 from   el_utils.threads import  parallelize
-from   el_utils.map     import  get_maps, Map
+from   el_utils.map     import  *
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   alignment import * # C implementation of smith waterman
 
-
 #########################################
-def decorate_and_concatenate (exons):
-    decorated_seq = ""
-    count = 1
-    for  exon in exons:
-        pepseq = exon.pepseq
-        padded_count = "{0:03d}".format(count)
-        decorated_seq += 'B'+padded_count+pepseq+'Z'
-        count += 1
-
-    return decorated_seq
-
-#########################################
-def moveB (seq):
-    seqlist = list(seq)
-    begin_pattern = re.compile("B\d{3}\-+")
-
-    for begin_label in begin_pattern.finditer(seq):
-        start =  begin_label.start()
-        end   =  begin_label.end()
-        label =  seq[start:end]
-        for i in range(4):
-            seqlist[start+i] = '-'
-        for i in range(4):
-            seqlist[end-4+i] = label[i]
-
-    return "".join(seqlist)
-
-#########################################
-def find_exon_positions(seq):
-
-    exon_position = {}
-    
-    exon_pattern = re.compile("B.*?Z")
-    for match in exon_pattern.finditer(seq):
-        start       = match.start()
-        end         = match.end()
-        exon_seq_no = seq[start+1:start+4]
-        exon_position[exon_seq_no] = [start+4, end-1]  #B+3 digits on one end,  Z on the other
-
-    return exon_position
-
-#########################################
-def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
-    
-    seq_human = ""
-    seq_other = ""
-
-    padding = ""
-    if ( human_start > other_start):
-        for i in range (human_start-other_start):
-            padding += "-"
-    seq_human = padding + exon_seq_human
-
-
-    padding = ""
-    if ( other_start > human_start):
-        for i in range (other_start-human_start):
-            padding += "-"
-    seq_other = padding + exon_seq_other
-
-    if ( len(seq_human) >  len(seq_other)):
-        padding = ""
-        for i in range  (len(seq_human)-len(seq_other)):
-            padding += "-"
-        seq_other += padding
-
-    if ( len(seq_other) >  len(seq_human)):
-        padding = ""
-        for i in range  (len(seq_other)-len(seq_human)):
-            padding += "-"
-        seq_human += padding
-
-
-    return [seq_human, seq_other] 
-
-    
-
-#########################################
-def cigar_line (seq_human, seq_other):
-
-    cigar_line     = []
-
-    alignment_line = []
-
-    if ( not len(seq_human) ==  len(seq_other) ):
-        print "alignment_line:  the seqeunces must be aligned"
-        return ""
-    else:
-        length = len(seq_human)
-
-    if not length:
-        print "zero length sequence (?)"
-        return ""
-
-    for i in range(length):
-        if not seq_human[i] == "-" and  not seq_other[i] == "-":
-            alignment_line.append ("M")
-
-        elif seq_human[i] == "-" and  seq_other[i] == "-":
-            pass
-            #alignment_line.append ("-")
-
-        elif (seq_human[i]  == "-" ):
-            alignment_line.append ("A")
-
-        elif (seq_other[i]  == "-" ):
-            alignment_line.append ("B")
-
-            
-    prev_char = alignment_line[0]
-    count     = 1
-    for i in range(1,len(alignment_line)):
-        if ( alignment_line[i] == prev_char):
-            count += 1
-        else:
-            cigar_line.append( "{0}{1}".format(count, prev_char))
-            prev_char = alignment_line[i]
-            count     = 1
-                               
-    cigar_line.append("{0}{1}".format(count, prev_char))
-
-    return  "".join(cigar_line)
-
-
-#########################################
-def unfold_cigar_line (seq_A, seq_B, cigar_line):
-
-    seq_A_aligned = ""
-    seq_B_aligned = ""
-
-
-    char_pattern = re.compile("\D")
-    a_ct     = 0
-    b_ct     = 0
-    prev_end = 0
-
-    for match in char_pattern.finditer(cigar_line):
-        this_start       = match.start()
-        no_repeats = int(cigar_line[prev_end:this_start])
-        alignment_instruction = cigar_line[this_start]
-        prev_end = match.end()
-
-        if alignment_instruction == 'M':
-            seq_A_aligned += seq_A[a_ct:a_ct+no_repeats]
-            a_ct         += no_repeats
-            seq_B_aligned += seq_B[b_ct:b_ct+no_repeats]
-            b_ct  += no_repeats
-
-        elif alignment_instruction == 'A':
-            seq_A_aligned += '-'*no_repeats 
-            seq_B_aligned += seq_B[b_ct:b_ct+no_repeats]
-            b_ct  += no_repeats
-            
-        elif alignment_instruction == 'B':
-            seq_A_aligned += seq_A[a_ct:a_ct+no_repeats]
-            a_ct          += no_repeats
-            seq_B_aligned += '-'*no_repeats 
-
-    return [seq_A_aligned, seq_B_aligned]
+verbose = True
 
 
 #########################################
@@ -202,15 +42,6 @@ def  fract_identity (cigar_line):
         fraction = common/float(total_length)
         
     return  fraction
-
-#########################################
-def overlap (start, end, other_start, other_end):
-    if ( other_end < start): 
-        return False
-    elif ( end < other_start):
-        return False
-    else:
-        return True
 
 
 #########################################
@@ -386,8 +217,6 @@ def gene_has_a_para_map (cursor, species, ensembl_db_name, template_exons):
 #########################################
 def make_para_exon_maps(species_list, db_info):
     
-    verbose = False
-
     [local_db, ensembl_db_name] = db_info
     if local_db:
         db     = connect_to_mysql()
@@ -425,7 +254,7 @@ def make_para_exon_maps(species_list, db_info):
             if verbose: 
                 print
                 print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
-
+                exit(1)
             # get the paralogues - only the representative for  the family will have this 
             paralogues = get_paras (cursor, gene_id)  
             if not paralogues:
