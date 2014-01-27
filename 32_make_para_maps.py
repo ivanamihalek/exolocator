@@ -15,7 +15,7 @@ from   el_utils.config_reader      import ConfigurationReader
 from   alignment import * # C implementation of smith waterman
 
 #########################################
-verbose = True
+verbose = False
 
 
 #########################################
@@ -254,7 +254,7 @@ def make_para_exon_maps(species_list, db_info):
             if verbose: 
                 print
                 print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
-                exit(1)
+                
             # get the paralogues - only the representative for  the family will have this 
             paralogues = get_paras (cursor, gene_id)  
             if not paralogues:
