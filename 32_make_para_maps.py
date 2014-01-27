@@ -13,7 +13,6 @@ from   el_utils.threads import  parallelize
 from   el_utils.map     import  get_maps, Map
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
-from   el_utils.alignment          import smith_waterman, exon_aware_smith_waterman
 from   alignment import * # C implementation of smith waterman
 
 
