@@ -290,6 +290,7 @@ def make_para_exon_maps(species_list, db_info):
  
                 store (cursor, maps)
 
+        print species, "done"
 
     cursor.close()
     db.close()

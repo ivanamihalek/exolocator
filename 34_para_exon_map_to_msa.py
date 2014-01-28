@@ -162,11 +162,13 @@ def multiple_exon_alnmt(species_list, db_info):
                 commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
             if verbose: print " time: %8.3f\n" % (time()-start);
  
-        print species, "tot: ", tot,  "ok: ", ok
-        print "no maps       ", no_pepseq
-        print "no pepseq     ", no_pepseq
-        print "no paralogues ", no_paralogues
-        print
+        outstr  =  species + " done \n"
+        outstr +=  "tot: %d   ok: %d  \n" % (tot,  ok)
+        outstr +=  "no maps       %d  \n" % no_pepseq
+        outstr +=  "no pepseq     %d  \n" % no_pepseq
+        outstr +=  "no paralogues %d  \n" % no_paralogues
+        outstr += "\n"
+        print outstr
 
 
 #########################################
