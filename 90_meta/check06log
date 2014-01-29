@@ -1,0 +1,1 @@
+echo && date && grep notes  06_4.log 06_3.log 06_2.log 06_reconstruct_ortho_alnmts.log | wc -l && echo 'number of processes running: ' && ps -eLf | grep reconstruct | wc -l && echo
