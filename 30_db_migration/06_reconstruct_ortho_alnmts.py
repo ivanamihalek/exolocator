@@ -728,6 +728,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             del names_of_exons[seq_to_fix]
             del human_exon_map[seq_to_fix]
             print "abort 3"
+            c=inspect.currentframe()
+            print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
             return [output_pep, names_of_exons]
 
         #################################### 
@@ -743,14 +745,16 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             del names_of_exons[seq_to_fix]
             del human_exon_map[seq_to_fix]
             print "abort 4"
+            c=inspect.currentframe()
+            print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
             return [output_pep, names_of_exons]
 
         boundary_cleanup(new_alignment_pep, new_alignment_pep.keys())
         new_alignment_pep = strip_gaps(new_alignment_pep)
         if not new_alignment_pep:  
+            print "abort 5"
             c=inspect.currentframe()
             print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-            print "abort 5"
             return [output_pep, names_of_exons]
         
         current_pep = new_alignment_pep
@@ -768,6 +772,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         print "lengths:", exon_ct, len(new_names_of_exons)
         print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
         print new_names_of_exons
+        c=inspect.currentframe()
+        print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
         return [output_pep, names_of_exons]
 
     output_pep = new_alignment_pep
