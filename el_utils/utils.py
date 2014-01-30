@@ -374,9 +374,9 @@ def check_seq_length(sequence, msg):
         if not len(seq) == aln_length:
             print msg, 
             print "seq length check failure  for",  name, " length: ", len(seq),  "aln_length", aln_length
-            afa_fnm = msg+'.afa'
-            print "writing the offending alnmt to ", afa_fnm
-            output_fasta (afa_fnm, sequence.keys(), sequence)
+            #afa_fnm = msg+'.afa'
+            #print "writing the offending alnmt to ", afa_fnm
+            #output_fasta (afa_fnm, sequence.keys(), sequence)
             return False
     return True
 

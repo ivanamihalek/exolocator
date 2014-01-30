@@ -1430,6 +1430,7 @@ def make_alignments (species_list, db_info):
         print species, " has_paralogues = ", has_paralogues
         print species, " pep produced   = ", pep_produced
         print species, " dna produced   = ", dna_produced
+        print species, " done "
         sys.stdout.flush()
 
 
