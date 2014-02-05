@@ -1192,6 +1192,7 @@ def make_alignments (species_list, db_info):
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
 
+    species_list.reverse()
     for species in species_list:
 
         pep_produced = 0
@@ -1231,8 +1232,13 @@ def make_alignments (species_list, db_info):
             # see if perhaps already resolved this one
             if (1):
                 afa_fnm   = "{0}/pep/{1}.afa".format(directory, stable_id)
-                if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0):
-                    continue
+                if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0 ):
+                    time_modified = os.path.getmtime(afa_fnm)
+                    number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
+                    if number_of_days_since_modified < 30:
+                        print "\t %s last modified %s. Moving on." % (stable_id, time.ctime( os.path.getmtime(afa_fnm) ))
+                        continue
+
 
 
             # get the paralogues - only the representative for  the family will have this 

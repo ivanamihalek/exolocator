@@ -1378,7 +1378,7 @@ def make_alignments ( gene_list, db_info):
             time_modified = os.path.getmtime(afa_fnm)
             number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
             if number_of_days_since_modified < 30:
-                #print "\t Last modified %s. Moving on." % time.ctime(os.path.getmtime(afa_fnm))
+                print "\t %s last modified %s. Moving on." % (stable_id, time.ctime(os.path.getmtime(afa_fnm) ))
                 continue
         notes_fnm = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
 
