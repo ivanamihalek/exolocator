@@ -1160,8 +1160,6 @@ def check_directory (cfg, species, pep_or_dna):
     species_id = species_id.upper()
     directory = "{0}/para/{1}/{2}".format(cfg.dir_path['afs_dumps'], species_id, pep_or_dna)
     if not os.path.exists(directory):
-        print species, directory, "does not exist"
-        exit (1)
         try:
             os.makedirs(directory) 
         except:
@@ -1211,16 +1209,18 @@ def make_alignments (species_list, db_info):
             continue
 
         fields = species.split("_")
-        if species == "astyanax_mexicanus":
+        if species == "astyanax_mexicanus": # clash with ailuropoda melanoleuca
             species_id = "AMX";
         elif species == "ictidomys_tridecemlineatus":
-            species_id = "STO";
+            species_id = "STO";         # it used to be sperm-something or the other, but epople got too bashful
+        elif species == "mus_musculus": # clash with macaca mulatta
+            species_id = "MUS";
         else:
             species_id = fields[0][0]+fields[1][0:2]
             species_id = species_id.upper()
         directory = "{0}/para/{1}".format(cfg.dir_path['afs_dumps'], species_id)
         directory = check_directory (cfg, species, "pep")
-        continue
+  
         print species, "number of genes: ", len(gene_ids),  directory
         
         # for each human gene
