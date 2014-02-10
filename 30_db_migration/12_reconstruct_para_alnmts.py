@@ -1219,9 +1219,8 @@ def make_alignments (species_list, db_info):
             species_id = fields[0][0]+fields[1][0:2]
             species_id = species_id.upper()
         directory = "{0}/para/{1}".format(cfg.dir_path['afs_dumps'], species_id)
-       
-
         directory = check_directory (cfg, species, "pep")
+        continue
         print species, "number of genes: ", len(gene_ids),  directory
         
         # for each human gene
