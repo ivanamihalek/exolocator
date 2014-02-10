@@ -1160,6 +1160,8 @@ def check_directory (cfg, species, pep_or_dna):
     species_id = species_id.upper()
     directory = "{0}/para/{1}/{2}".format(cfg.dir_path['afs_dumps'], species_id, pep_or_dna)
     if not os.path.exists(directory):
+        print species, directory, "does not exist"
+        exit (1)
         try:
             os.makedirs(directory) 
         except:
@@ -1195,6 +1197,7 @@ def make_alignments (species_list, db_info):
     #species_list.reverse()
     #hack_list = species_list[len(species_list)/2:]
     #hack_list.reverse()
+    species_list = ["ictidomys_tridecemlineatus"]
     for species in species_list:
 
         pep_produced = 0
@@ -1208,8 +1211,13 @@ def make_alignments (species_list, db_info):
             continue
 
         fields = species.split("_")
-        species_id = fields[0][0]+fields[1][0:2]
-        species_id = species_id.upper()
+        if species == "astyanax_mexicanus":
+            species_id = "AMX";
+        elif species == "ictidomys_tridecemlineatus":
+            species_id = "STO";
+        else:
+            species_id = fields[0][0]+fields[1][0:2]
+            species_id = species_id.upper()
         directory = "{0}/para/{1}".format(cfg.dir_path['afs_dumps'], species_id)
        
 
