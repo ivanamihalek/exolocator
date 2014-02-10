@@ -18,13 +18,13 @@ for $spec_dir( @species_dirs ) {
 
     print  $spec_dir, "\n";
 
-=pod
     for $seq_type ( 'pep', 'dna') {
 
 	$target_dir = "$to_dir/$spec_dir/$seq_type";
 	(-e $target_dir) || `mkdir -p $target_dir`;
 
 	for $donkey_full_path ( split "\n", `ls $from_dir/$spec_dir/$seq_type/*.afa`) {
+=pod
 	    @aux = split "/", $donkey_full_path;
 	    $afa = pop @aux;
 	    $afa || next; # move onif it is an empty string
@@ -44,9 +44,9 @@ for $spec_dir( @species_dirs ) {
 		(system $cmd) && die  "error running $cmd\n";
 	    
 	    }
+=cut
 	}
 	print "\t $seq_type done\n";
     }
-=cut
 }
 
