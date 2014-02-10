@@ -18,6 +18,7 @@ for $spec_dir( @species_dirs ) {
 
     print  $spec_dir, "\n";
 
+=pod
     for $seq_type ( 'pep', 'dna') {
 
 	$target_dir = "$to_dir/$spec_dir/$seq_type";
@@ -46,6 +47,6 @@ for $spec_dir( @species_dirs ) {
 	}
 	print "\t $seq_type done\n";
     }
-
+=cut
 }
 

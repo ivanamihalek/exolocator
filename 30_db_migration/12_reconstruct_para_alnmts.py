@@ -1193,9 +1193,9 @@ def make_alignments (species_list, db_info):
     [all_species, ensembl_db_name] = get_species (cursor)
 
     #species_list.reverse()
-    hack_list = species_list[len(species_list)/2:]
-    hack_list.reverse()
-    for species in hack_list:
+    #hack_list = species_list[len(species_list)/2:]
+    #hack_list.reverse()
+    for species in species_list:
 
         pep_produced = 0
         dna_produced = 0
