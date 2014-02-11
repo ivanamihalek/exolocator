@@ -730,7 +730,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             print "abort 3"
             c=inspect.currentframe()
             print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-            return [output_pep, names_of_exons]
+            exit(1)
+            return [output_pep, names_of_exons] # ie return as it was
 
         #################################### 
         # replace the slice with the re-aligned one
