@@ -304,11 +304,11 @@ def sort_out_covering_exons (cursor, exons):
     for master_exon, covered_list in clusters.iteritems():
         master_exon.covering_exon       = -1 # nobody's covering this guy
         master_exon.covering_exon_known = -1 # formal
-
+        print "master exon",  master_exon.exon_id, "is covering"
         for covered_exon in covered_list:
             covered_exon.covering_exon       = master_exon.exon_id;
             covered_exon.covering_exon_known = master_exon.is_known;
-
+            print "\t", covered_exon.exon_id, covered_exon.is_canonical
            
 #########################################
 def mark_coding (cursor, gene_id, species, exons):
@@ -388,8 +388,6 @@ def find_exons (cursor, gene_id, species):
     mark_coding (cursor, gene_id, species, exons)
     
     
-    nr_us = len(get_exons(cursor, gene_id, species, 'sw_exon'))
-
     return exons
 
 #########################################
