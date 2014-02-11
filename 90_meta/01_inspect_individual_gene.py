@@ -44,7 +44,7 @@ def main():
     gene_id = stable2gene(cursor, stable_id)
 
     print get_description(cursor,gene_id)
-    print 
+    print "gene id:", gene_id
 
     # find all exons we are tracking in the database
     human_exons     = gene2exon_list(cursor, gene_id)
