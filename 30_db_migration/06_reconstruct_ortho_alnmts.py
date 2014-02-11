@@ -1401,8 +1401,6 @@ def make_alignments ( gene_list, db_info):
 
         # the exons are not guaranteed to be in order
         canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
-        for human_exon in canonical_human_exons:
-            print  human_exon.exon_id, human_exon.is_canonical
 
         # later, if we want to save time rebuilding the alignemnets without patches:
         # note also that we should check for usearch exons, not sure if this is being done
@@ -1429,6 +1427,8 @@ def make_alignments ( gene_list, db_info):
                bad_exons.append(human_exon)
 
         canonical_human_exons = filter (lambda x: not x in bad_exons, canonical_human_exons)
+        for human_exon in canonical_human_exons:
+            print  human_exon.exon_id, human_exon.is_canonical
 
         #has_sw_exons = False
         #for human_exon in canonical_human_exons:
