@@ -62,7 +62,7 @@ def main():
         exon_seqs = get_exon_seqs (cursor, exon.exon_id, 1)
         [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
          exon_right_flank, exon_dna_seq] = exon_seqs [1:]
-        print "covering exon:", exon.covering_exon,  "pepseq:", exon_pep_seq
+        print "exon:", exon.exon_id, "covering exon:", exon.covering_exon,  "pepseq:", exon_pep_seq
         if  not exon.covering_exon == -1:
             [exon_pep_seq_2, trsl_from, trsl_to, exon_left_flank,
              exon_right_flank, exon_dna_seq] =  get_exon_seqs (cursor, exon.covering_exon, 1)[1:]

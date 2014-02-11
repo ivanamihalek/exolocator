@@ -258,10 +258,12 @@ def find_master (cursor, exon_1, exon_2, is_ensembl, is_havana):
         novel_exon = exon_1
 
 
-    if havana_exon     is not None:
-        master_exon = havana_exon
-    elif canonical_exon is not None:
+    if canonical_exon is not None: 
+        # tough decision, but otherwise I get seqeunces which do not match ensembl's output
+        # how can canonical exon not be havana - nobody ever loked at it?
         master_exon = canonical_exon
+    elif havana_exon     is not None:
+        master_exon = havana_exon
     elif ensembl_exon  is not None:
         master_exon = ensembl_exon
     elif known_exon    is not None:
