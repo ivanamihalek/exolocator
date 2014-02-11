@@ -306,11 +306,9 @@ def sort_out_covering_exons (cursor, exons):
     for master_exon, covered_list in clusters.iteritems():
         master_exon.covering_exon       = -1 # nobody's covering this guy
         master_exon.covering_exon_known = -1 # formal
-        print "master exon",  master_exon.exon_id, "is covering"
         for covered_exon in covered_list:
             covered_exon.covering_exon       = master_exon.exon_id;
             covered_exon.covering_exon_known = master_exon.is_known;
-            print "\t", covered_exon.exon_id, covered_exon.is_canonical
            
 #########################################
 def mark_coding (cursor, gene_id, species, exons):
@@ -432,8 +430,7 @@ def gene2exon_all(species_list, db_info):
         db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    #for species in species_list:
-    for species in ['homo_sapiens']:
+    for species in species_list:
 
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
@@ -445,8 +442,7 @@ def gene2exon_all(species_list, db_info):
 
         number_of_genes = len(gene_ids)
 
-        #for gene_id in gene_ids:
-        for gene_id in [736801]:
+        for gene_id in gene_ids:
 
             # find all exons associated with the gene id 
             exons = find_exons (cursor, gene_id, species)
