@@ -90,6 +90,7 @@ def multiple_exon_alnmt(gene_list, db_info):
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, 
              left_flank, right_flank, dna_seq] = get_exon_seqs (cursor, human_exon.exon_id, human_exon.is_known)
             
+
             if (not pepseq):
                 if verbose and  human_exon.is_coding and  human_exon.covering_exon <0: # this should be a master exon
                     print "no pep seq for",  human_exon.exon_id, "coding ", human_exon.is_coding,
