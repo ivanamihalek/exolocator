@@ -17,7 +17,7 @@ def main():
 
     #######################################################
     # check if the config db exists -- if not, make it
-    qry  = "show databases like '%s'" %  "%_69%"
+    qry  = "show databases like '%s'" %  "%_73%"
     rows = search_db (cursor, qry, verbose=True)
     if rows:
         for row in rows:
