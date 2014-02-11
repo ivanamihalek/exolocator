@@ -1467,7 +1467,6 @@ def make_alignments ( gene_list, db_info):
         names_of_exons = {}
         human_exon_map = {}
         for human_exon in canonical_human_exons:
-            print  human_exon.exon_id, human_exon.is_canonical
             for exon_seq_name in alnmt_pep[human_exon].keys():
                 concat_seq_name = parent_seq_name[exon_seq_name]
 
@@ -1510,6 +1509,7 @@ def make_alignments ( gene_list, db_info):
 
             for human_exon in canonical_human_exons:
                 
+                print  human_exon.exon_id, human_exon.is_canonical
                 aln_length = len(alnmt_pep[human_exon].itervalues().next())
                 pep = '-'*aln_length
                 if human_exon in flagged_human_exons:
