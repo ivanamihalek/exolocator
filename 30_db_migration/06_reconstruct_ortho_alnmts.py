@@ -1427,8 +1427,6 @@ def make_alignments ( gene_list, db_info):
                bad_exons.append(human_exon)
 
         canonical_human_exons = filter (lambda x: not x in bad_exons, canonical_human_exons)
-        for human_exon in canonical_human_exons:
-            print  human_exon.exon_id, human_exon.is_canonical
 
         #has_sw_exons = False
         #for human_exon in canonical_human_exons:
@@ -1469,6 +1467,7 @@ def make_alignments ( gene_list, db_info):
         names_of_exons = {}
         human_exon_map = {}
         for human_exon in canonical_human_exons:
+            print  human_exon.exon_id, human_exon.is_canonical
             for exon_seq_name in alnmt_pep[human_exon].keys():
                 concat_seq_name = parent_seq_name[exon_seq_name]
 
