@@ -730,6 +730,9 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             print "abort 3"
             c=inspect.currentframe()
             print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
+            afa_fnm = 'full.afa'
+            print "the full alignment:", afa_fnm
+            output_fasta (afa_fnm, output_pep.keys(), output_pep)
             exit(1)
             return [output_pep, names_of_exons] # ie return as it was
 
