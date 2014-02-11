@@ -1452,7 +1452,7 @@ def make_alignments ( gene_list, db_info):
  
         # >>>>>>>>>>>>>>>>>>
         # find which species we have, and for how many exons
-        # we may have two orthologues for the same species
+        # we may have two orthologues from the same species
         seq_name = {}
         overlapping_maps = {}
         parent_seq_name  = {}
@@ -1547,6 +1547,10 @@ def make_alignments ( gene_list, db_info):
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
+        afa_fnm  = "debug.afa"
+        ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
+
+
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
             # fix_one2many changes both output_pep and names_of_exons
