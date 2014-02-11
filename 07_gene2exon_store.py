@@ -260,8 +260,6 @@ def find_master (cursor, exon_1, exon_2, is_ensembl, is_havana):
 
     if havana_exon     is not None:
         master_exon = havana_exon
-    elif novel_exon is not None:
-        master_exon = novel_exon
     elif canonical_exon is not None:
         master_exon = canonical_exon
     elif ensembl_exon  is not None:
@@ -270,6 +268,8 @@ def find_master (cursor, exon_1, exon_2, is_ensembl, is_havana):
         master_exon = known_exon
     elif superset_exon is not None:
         master_exon = superset_exon
+    elif novel_exon is not None: 
+        master_exon = novel_exon # ?
 
     if (master_exon == exon_1):
         covered_exon = exon_2
