@@ -1413,7 +1413,7 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons):
         overlapping_maps[concat_seq_name] = find_overlapping_maps (ortho_exon_to_human_exon, concat_exons, alnmt_pep)
 
 
-    return     [human_exon_to_ortho_exon, sequence_to_exons, ortho_exon_to_human_exon, overlapping_maps]
+    return [human_exon_to_ortho_exon, sequence_to_exons, ortho_exon_to_human_exon, overlapping_maps]
 
 #########################################
 #########################################
