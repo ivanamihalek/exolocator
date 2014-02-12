@@ -1421,6 +1421,7 @@ def make_alignments ( gene_list, db_info):
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
 
+        print "made exon alignments"
  
         # >>>>>>>>>>>>>>>>>>
         # do we have a sequence mapping to multiple human exons?
@@ -1466,6 +1467,9 @@ def make_alignments ( gene_list, db_info):
         for concat_seq_name, concat_exons in names_of_exons.iteritems():
             overlapping_maps[concat_seq_name] = find_overlapping_maps (ortho_exon_to_human_exon, concat_exons, alnmt_pep)
 
+        print "made exon alignments"
+
+        exit(1)
         # >>>>>>>>>>>>>>>>>>
         # concatenate the aligned exons for each species, taking into account that the alignment
         # doesn't have to be one to one
