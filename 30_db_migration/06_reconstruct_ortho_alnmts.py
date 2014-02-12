@@ -1325,6 +1325,47 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exo
     return notes
 
 #########################################
+def sort_trivial_names (cursor, all_species):
+    # in the afa headers use 'trivial' names for the species: cow, dog, pig, ...
+    trivial_name   = translate_to_trivial(cursor, all_species)
+
+    # walk the taxonomical tree, and sort the species according to
+    # the (distance of) the last common ancestor
+    sorted_species       = {}
+    sorted_trivial_names = {}
+    for qry_species in ['homo_sapiens']:
+        sorted_species[qry_species] = species_sort(cursor, all_species, qry_species)
+        trivial = trivial_name[qry_species]
+        sorted_trivial_names[trivial] = map(lambda species: trivial_name[species], sorted_species[qry_species])
+
+    return sorted_trivial_names
+
+#########################################
+def check_afa_age (cfg, stable_id):
+
+    max_days = 30
+
+    afa_age - "old"
+    afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+    if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0 ):
+        time_modified = os.path.getmtime(afa_fnm)
+        number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
+        if number_of_days_since_modified < max_days:
+            print "\t %s last modified %s. Moving on." % (stable_id, time.ctime(os.path.getmtime(afa_fnm) ))
+            afa_age  = "new"
+
+#########################################
+def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
+                         mitochondrial, min_similarity, flank_length):
+    alnmt_pep = {}
+    alnmt_dna = {}
+    for human_exon in canonical_human_exons:
+        [alnmt_pep[human_exon], alnmt_dna[human_exon]]  = \
+            make_exon_alignment(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known, 
+                                mitochondrial, min_similarity, flank_length)   
+    return [alnmt_pep, alnmt_dna] 
+
+#########################################
 #########################################
 #########################################
 def make_alignments ( gene_list, db_info):
@@ -1345,101 +1386,41 @@ def make_alignments ( gene_list, db_info):
 
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
-
-    # in the afa headers use 'trivial' names for the species: cow, dog, pig, ...
-    trivial_name   = translate_to_trivial(cursor, all_species)
-
-    # walk the taxonomical tree, and sort the species according to
-    # the (distance of) the last common ancestor
-    sorted_species       = {}
-    sorted_trivial_names = {}
-    for qry_species in ['homo_sapiens']:
-        sorted_species[qry_species] = species_sort(cursor, all_species, qry_species)
-        trivial = trivial_name[qry_species]
-        sorted_trivial_names[trivial] = map(lambda species: trivial_name[species], sorted_species[qry_species])
-        
+    # find triviaal names (cow, pig etc) and sort them according to tax distance from human
+    sorted_trivial_names = sort_trivial_names(cursor, all_species)
+    # find minimum acceptable similarity between mapped exons (used in this pipeline)
     switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
- 
-    min_similarity = cfg.get_value('min_accptbl_exon_sim') # minimum acceptable similarity between mapped exons
+    min_similarity = cfg.get_value('min_accptbl_exon_sim') 
 
+    ##########################################################################
     # for each  gene in the provided list
-    gene_ct = 0
-    #gene_list.reverse()
-    #hack = gene_list[0:len(gene_list)/2] 
-    #hack.reverse()
-    gene_list = gene_list[len(gene_list)/2:] 
     for gene_id in gene_list:
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
-
-        gene_ct += 1
-
-
-        afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-        #afa_fnm  = "{0}/pep/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-        if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0 ):
-            time_modified = os.path.getmtime(afa_fnm)
-            number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
-            if number_of_days_since_modified < 30:
-                print "\t %s last modified %s. Moving on." % (stable_id, time.ctime(os.path.getmtime(afa_fnm) ))
-                continue
-        notes_fnm = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
-
+        # if we are running this pipe repetedly we want to skip if
+        # the last time we worked on this gene was recently enough
+        if  check_afa_age (cfg, stable_id) == "new": continue                               
+ 
         if verbose: 
             print gene_id, stable_id, get_description (cursor, gene_id)
-        elif (not gene_ct%100): 
-            print gene_ct, "out of ", len(gene_list)
+        elif (not gene_list.index(gene_id)%100): 
+            print gene_list.index(gene_id), "out of ", len(gene_list)
 
-       # find all exons we are tracking in the database
-        human_exons     = gene2exon_list(cursor, gene_id)
-        canonical_human_exons = []
-        for human_exon in human_exons:
-            if not human_exon.is_canonical or  not human_exon.is_coding:
-                continue
-            canonical_human_exons.append(human_exon)
-
+        # mitochondrial?
+        mitochondrial = is_mitochondrial(cursor, gene_id)
+        # find all canonical coding  human exons 
+        canonical_human_exons = filter (lambda x: not x.is_canonical and x.is_coding, gene2exon_list(cursor, gene_id))
         # the exons are not guaranteed to be in order
         canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
-
-        # later, if we want to save time rebuilding the alignemnets without patches:
-        # note also that we should check for usearch exons, not sure if this is being done
-        # has_sw_exons = False
-        # for human_exon in canonical_human_exons:
-        #     this_exon_has_sw = check_has_sw_exons (cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known,  min_similarity)
-        #     has_sw_exons |= this_exon_has_sw
-        # print 'has sw: ', has_sw_exons
-        # if not has_sw_exons: continue
-        
-
-        # >>>>>>>>>>>>>>>>>>
-        # reconstruct the per-exon alignment with orthologues
-        mitochondrial = is_mitochondrial(cursor, gene_id)
- 
-        alnmt_pep = {}
-        alnmt_dna = {}
-        bad_exons = []
-        for human_exon in canonical_human_exons:
-            [alnmt_pep[human_exon], alnmt_dna[human_exon]]  = \
-                make_exon_alignment(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known, 
-                                    mitochondrial, min_similarity, flank_length)   
-            if not alnmt_pep[human_exon]: 
-               bad_exons.append(human_exon)
-
-        canonical_human_exons = filter (lambda x: not x in bad_exons, canonical_human_exons)
-
-        #has_sw_exons = False
-        #for human_exon in canonical_human_exons:
-        #    has_sw_exons |= check_has_sw_exons (cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known,  min_similarity)
-        #print 'has sw redux: ', has_sw_exons
-        #if not has_sw_exons: continue
-       
-        # >>>>>>>>>>>>>>>>>>
         # bail out if there is a problem
-        if not canonical_human_exons: 
-            #print "\t botched"
-            continue
+        if not canonical_human_exons: continue
+ 
+        # reconstruct  per-exon alignments with orthologues
+        [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
+                                                      mitochondrial, min_similarity, flank_length)
 
+ 
         # >>>>>>>>>>>>>>>>>>
         # do we have a sequence mapping to multiple human exons?
         ortho_exon_to_human_exon = {}
@@ -1509,7 +1490,6 @@ def make_alignments ( gene_list, db_info):
 
             for human_exon in canonical_human_exons:
                 
-                print  human_exon.exon_id, human_exon.is_canonical
                 aln_length = len(alnmt_pep[human_exon].itervalues().next())
                 pep = '-'*aln_length
                 if human_exon in flagged_human_exons:
