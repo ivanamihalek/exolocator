@@ -1367,14 +1367,14 @@ def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
     return [alnmt_pep, alnmt_dna] 
 
 #########################################
-def make_atlas(cursor, ensembl_db_name, canonical_human_exons):
+def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep):
     # >>>>>>>>>>>>>>>>>>
     # find which species we have, and for how many exons
     # we may have two orthologues from the same species
     seq_name = {}
     parent_seq_name  = {}
     for human_exon in canonical_human_exons:
-        for exon_seq_name, exon_seq in alnmt_pep[human_exon].iteritems():
+        for exon_seq_name in alnmt_pep[human_exon].keys():
             (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
             ortho_gene_id                  = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
             # gene --> name -- retrieve old name, or construct a new one
@@ -1480,7 +1480,7 @@ def make_alignments ( gene_list, db_info):
         # finally, collect in one place info about maps between human and orthologue that are not one-to-one
         #      overlapping_maps: overlapping_maps[concat_seq_name].append([human_exons, ortho_exons])
         [human_exon_to_ortho_exon, sequence_to_exons, 
-         ortho_exon_to_human_exon, overlapping_maps] = make_atlas(cursor, ensembl_db_name, canonical_human_exons)
+         ortho_exon_to_human_exon, overlapping_maps] = make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep)
 
         # >>>>>>>>>>>>>>>>>>
         # concatenate the aligned exons for each species, taking into account that the mapping
