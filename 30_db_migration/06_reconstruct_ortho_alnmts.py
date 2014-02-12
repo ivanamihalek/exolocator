@@ -1338,7 +1338,7 @@ def sort_trivial_names (cursor, all_species):
         trivial = trivial_name[qry_species]
         sorted_trivial_names[trivial] = map(lambda species: trivial_name[species], sorted_species[qry_species])
 
-    return sorted_trivial_names
+    return [trivial_name, sorted_trivial_names]
 
 #########################################
 def check_afa_age (cfg, stable_id):
@@ -1392,7 +1392,7 @@ def make_alignments ( gene_list, db_info):
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
     # find triviaal names (cow, pig etc) and sort them according to tax distance from human
-    sorted_trivial_names = sort_trivial_names(cursor, all_species)
+    [trivial_name, sorted_trivial_names] = sort_trivial_names(cursor, all_species)
     # find minimum acceptable similarity between mapped exons (used in this pipeline)
     switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
     min_similarity = cfg.get_value('min_accptbl_exon_sim') 
