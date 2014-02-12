@@ -69,7 +69,7 @@ def find_initial_pos (pepseq_pieces, remaining_indices):
     return initial_pos
     
 #########################################
-def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_names_of_exons):
+def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_sequence_to_exons):
     
     seq_names_to_remove = []
 
@@ -112,7 +112,7 @@ def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_names_of
     for i in to_delete:
         seq_names_to_remove.append(pep_seq_names[i])
         
-    new_names_of_exons = filter (lambda exon: exon not in seq_names_to_remove, new_names_of_exons)
+    new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, new_sequence_to_exons)
     remaining_names    = filter (lambda exon: exon not in seq_names_to_remove, pep_seq_names)
 
     # what is the order in which these sequences map to human?
@@ -123,20 +123,20 @@ def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_names_of
         a                 = range(len(initial_pos))    # for example    [0, 1, 2]
         a.sort (lambda i,j: cmp(initial_pos[i], initial_pos[j]) ) # for example  [2, 1, 0]
         to_reorder = []
-        for idx in  range(len(new_names_of_exons)):
-            name = new_names_of_exons[idx]
+        for idx in  range(len(new_sequence_to_exons)):
+            name = new_sequence_to_exons[idx]
             if name in remaining_names:
                 to_reorder.append(idx)
 
         for i in range(len(remaining_names)):
-            if i >= len(to_reorder): return new_names_of_exons
+            if i >= len(to_reorder): return new_sequence_to_exons
 
         for i in range(len(remaining_names)):
             idx = to_reorder[i]
             reordered_name = remaining_names[a[i]]
-            new_names_of_exons[idx] = reordered_name
+            new_sequence_to_exons[idx] = reordered_name
             
-    return new_names_of_exons
+    return new_sequence_to_exons
 
 
 #########################################
@@ -153,7 +153,7 @@ def check_notes_directory (cfg):
     return directory
 
 #########################################
-def find_maps_to (cursor, ensembl_db_name,  human_exon_map, concat_seq_name, exon_seq_name):
+def find_maps_to (cursor, ensembl_db_name,  human_exon_to_ortho_exon, concat_seq_name, exon_seq_name):
     
     stable_ids_str = ""
     stable_ids     = []
@@ -161,8 +161,8 @@ def find_maps_to (cursor, ensembl_db_name,  human_exon_map, concat_seq_name, exo
 
     switch_to_db ( cursor, ensembl_db_name['homo_sapiens'])
 
-    for human_exon in human_exon_map[concat_seq_name].keys():
-        if not exon_seq_name in human_exon_map[concat_seq_name][human_exon]: continue
+    for human_exon in human_exon_to_ortho_exon[concat_seq_name].keys():
+        if not exon_seq_name in human_exon_to_ortho_exon[concat_seq_name][human_exon]: continue
         stable_id = exon2stable (cursor, human_exon.exon_id)
         stable_ids.append(stable_id)
 
@@ -174,14 +174,14 @@ def find_maps_to (cursor, ensembl_db_name,  human_exon_map, concat_seq_name, exo
 
 #########################################
 #########################################
-def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sorted_seq_names, 
-                 human_stable_id, human_exon_map, assorted_notes):
+def print_notes (cursor, cfg,  ensembl_db_name, output_pep, sequence_to_exons, sorted_seq_names, 
+                 human_stable_id, human_exon_to_ortho_exon, assorted_notes):
 
     gene_id        = {}
     stable_gene_id = {}
     sci_name       = {}
     for name in output_pep.keys():
-        for exon_name in names_of_exons[name]:
+        for exon_name in sequence_to_exons[name]:
             [species, exon_id, exon_known] = parse_aln_name(exon_name)
             ortho_gene_id                  = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
             # sequence can contain pieces from "different" genes - if they are from different scaffold pieces
@@ -238,7 +238,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
         out_string += "%% %50s  %10s  %10s  %6s  %6s    %-s  %-s\n" % \
            ('exon_id', 'gene_from', 'gene_to', 'coding', 'canon', 'source', 'maps_to_human_exon')
 
-        for exon_name in names_of_exons[name]:
+        for exon_name in sequence_to_exons[name]:
             [species, exon_id, exon_known] = parse_aln_name(exon_name)
             exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
             if exon_known == 1:
@@ -290,7 +290,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons, sort
             else:
                 source = get_logic_name (cursor, exon.analysis_id,  ensembl_db_name[species])
                 
-            maps_to_human_stable = find_maps_to (cursor, ensembl_db_name, human_exon_map, name, exon_name)
+            maps_to_human_stable = find_maps_to (cursor, ensembl_db_name, human_exon_to_ortho_exon, name, exon_name)
                 
             out_string += "  %50s   %10s  %10s     %-6s  %-10s   %-s   %-s \n" % \
                 (exon_stable_id,  exon.start_in_gene, exon.end_in_gene,
@@ -356,7 +356,7 @@ def find_human_template(exon_alignment):
 
                      
 #########################################
-def name2count (output_pep, names_of_exons):
+def name2count (output_pep, sequence_to_exons):
 
     name_ct2exon_ct = {}
     exon_ct2name_ct = {}
@@ -377,9 +377,9 @@ def name2count (output_pep, names_of_exons):
             exon_ct += 1
 
         # sanity checking
-        if not nonempty_exon_ct == len( names_of_exons[name]):
+        if not nonempty_exon_ct == len( sequence_to_exons[name]):
             print " foul:    nonempty_exon_ct={0}".format(nonempty_exon_ct),
-            print " len(names_of_exons[name])={0}".format(len(names_of_exons[name])),
+            print " len(sequence_to_exons[name])={0}".format(len(sequence_to_exons[name])),
             print name
             return [{},{}]
 
@@ -405,7 +405,7 @@ def exon_seq_check(exon_seqs, pep_aligned, species, exon_name):
     return False
 
 #########################################
-def check_exon_order (cursor, ensembl_db_name, output_pep, names_of_exons):
+def check_exon_order (cursor, ensembl_db_name, output_pep, sequence_to_exons):
 
     order_ok = True
 
@@ -417,7 +417,7 @@ def check_exon_order (cursor, ensembl_db_name, output_pep, names_of_exons):
         for pepseq in pepseqs:
             if pepseq:
                 exon_name_ct += 1
-                exon_name = names_of_exons[name][exon_name_ct]
+                exon_name = sequence_to_exons[name][exon_name_ct]
                 [species, exon_id, exon_known] = parse_aln_name(exon_name)
                 exon_seqs   = get_exon_seqs(cursor, exon_id, exon_known, ensembl_db_name[species])[1:]
                 if not exon_seq_check(exon_seqs, pepseq, species, exon_name):
@@ -427,11 +427,11 @@ def check_exon_order (cursor, ensembl_db_name, output_pep, names_of_exons):
 
 #########################################
 def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
-                                 names_of_exons, alnmt_pep, output_pep, flank_length):
+                                 sequence_to_exons, alnmt_pep, output_pep, flank_length):
 
     output_dna         = {}
     # which exons correspond to which name?
-    [name_ct2exon_ct, exon_ct2name_ct] = name2count (output_pep, names_of_exons)
+    [name_ct2exon_ct, exon_ct2name_ct] = name2count (output_pep, sequence_to_exons)
     if not name_ct2exon_ct: 
         return output_dna
 
@@ -469,7 +469,7 @@ def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_seq_n
             if (name_ct < 0):
                 dna_aligned = expand_pepseq (pep_seq, [], flank_length)
             else:
-                exon_seq_name = names_of_exons[name][name_ct]
+                exon_seq_name = sequence_to_exons[name][name_ct]
                 [species, exon_id, exon_known] = parse_aln_name(exon_seq_name)
                 exon_seqs   = get_exon_seqs(cursor, exon_id, exon_known, ensembl_db_name[species])[1:]
                 if  exon_seq_check (exon_seqs, pep_seq, species, exon_seq_name):
@@ -605,26 +605,26 @@ def realign_slice (pep_slice, seq_to_fix, pep_seq_pieces):
     return new_pep_slice
 
 ########################################
-def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_map,
-                  names_of_exons, seq_to_fix, overlapping_maps, alnmt_pep, output_pep):
+def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_to_ortho_exon,
+                  sequence_to_exons, seq_to_fix, overlapping_maps, alnmt_pep, output_pep):
 
 
     count = 0
 
     #pdb.set_trace()
     # no overlapping maps - nothing to resolve"
-    if not overlapping_maps: return [output_pep, names_of_exons]
+    if not overlapping_maps: return [output_pep, sequence_to_exons]
     # not sure how this could happen
-    if not output_pep.has_key('human'): return [output_pep, names_of_exons]
+    if not output_pep.has_key('human'): return [output_pep, sequence_to_exons]
 
     new_alignment_pep  = {}
-    new_names_of_exons = []
+    new_sequence_to_exons = []
     for human_exon in canonical_human_exons:
         has_map = False
-        for ortho_exon in names_of_exons[seq_to_fix]:
+        for ortho_exon in sequence_to_exons[seq_to_fix]:
             if alnmt_pep[human_exon].has_key(ortho_exon):
-                if not ortho_exon in new_names_of_exons:
-                    new_names_of_exons.append(ortho_exon)
+                if not ortho_exon in new_sequence_to_exons:
+                    new_sequence_to_exons.append(ortho_exon)
                 has_map = True
 
     # find sequential numbers of exons that we have in this story
@@ -657,11 +657,11 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if not alnmt_pep[human_exon].has_key(exon_seq_name): continue
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 seq_piece_names.append(exon_seq_name)
-                new_names_of_exons = check_seq_overlap(template_seq, sequence_pieces, seq_piece_names, new_names_of_exons)
+                new_sequence_to_exons = check_seq_overlap(template_seq, sequence_pieces, seq_piece_names, new_sequence_to_exons)
 
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
-        for ortho_exon in new_names_of_exons:
+        for ortho_exon in new_sequence_to_exons:
             for human_exon in human_exons:
                 if alnmt_pep[human_exon].has_key(ortho_exon):
                     pep_seq_pieces.append( alnmt_pep[human_exon][ortho_exon].replace("-", "") )
@@ -693,7 +693,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         if len(exon_aln_start_pep) <= smallest_id or  len(exon_aln_start_pep) <= largest_id:
             print  len(exon_aln_start_pep), smallest_id, len(exon_aln_start_pep), largest_id
             print "abort 1"
-            return [output_pep, names_of_exons]
+            return [output_pep, sequence_to_exons]
 
         ####################################
         # find the slice position
@@ -709,7 +709,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             print seq_to_fix, " pep slice", pep_slice_start, pep_slice_end, 
             print "  len: ", len(output_pep['human']), "no human exons:", number_of_human_exons
             del output_pep[seq_to_fix]
-            return [output_pep, names_of_exons]
+            return [output_pep, sequence_to_exons]
 
         ####################################
         # cut out the slice
@@ -725,8 +725,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         if not check_seq_length(new_pep_slice, "new_pep_slice"):
             del output_pep[seq_to_fix]
-            del names_of_exons[seq_to_fix]
-            del human_exon_map[seq_to_fix]
+            del sequence_to_exons[seq_to_fix]
+            del human_exon_to_ortho_exon[seq_to_fix]
             print "abort 3"
             c=inspect.currentframe()
             print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
@@ -734,7 +734,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             print "the full alignment:", afa_fnm
             output_fasta (afa_fnm, output_pep.keys(), output_pep)
             exit(1)
-            return [output_pep, names_of_exons] # ie return as it was
+            return [output_pep, sequence_to_exons] # ie return as it was
 
         #################################### 
         # replace the slice with the re-aligned one
@@ -746,12 +746,12 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         if not check_seq_length(new_alignment_pep, "new_alignment_pep"):
             del output_pep[seq_to_fix]
-            del names_of_exons[seq_to_fix]
-            del human_exon_map[seq_to_fix]
+            del sequence_to_exons[seq_to_fix]
+            del human_exon_to_ortho_exon[seq_to_fix]
             print "abort 4"
             c=inspect.currentframe()
             print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-            return [output_pep, names_of_exons]
+            return [output_pep, sequence_to_exons]
 
         boundary_cleanup(new_alignment_pep, new_alignment_pep.keys())
         new_alignment_pep = strip_gaps(new_alignment_pep)
@@ -759,7 +759,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             print "abort 5"
             c=inspect.currentframe()
             print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-            return [output_pep, names_of_exons]
+            return [output_pep, sequence_to_exons]
         
         current_pep = new_alignment_pep
 
@@ -771,19 +771,19 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         if pe: 
             exon_ct += 1
 
-    if not exon_ct == len(new_names_of_exons):
+    if not exon_ct == len(new_sequence_to_exons):
         print seq_to_fix, 'length mismatch'
-        print "lengths:", exon_ct, len(new_names_of_exons)
+        print "lengths:", exon_ct, len(new_sequence_to_exons)
         print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
-        print new_names_of_exons
+        print new_sequence_to_exons
         c=inspect.currentframe()
         print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-        return [output_pep, names_of_exons]
+        return [output_pep, sequence_to_exons]
 
     output_pep = new_alignment_pep
-    names_of_exons[seq_to_fix] = new_names_of_exons
+    sequence_to_exons[seq_to_fix] = new_sequence_to_exons
 
-    return [output_pep, names_of_exons]
+    return [output_pep, sequence_to_exons]
 
 
 #########################################
@@ -837,7 +837,7 @@ def find_overlapping_maps (ortho_exon_to_human_exon, exon_seq_names, alnmt_pep):
     return overlapping_maps
 
 #########################################
-def remove_ghosts (output_pep, names_of_exons):
+def remove_ghosts (output_pep, sequence_to_exons):
 
     delimiter      = re.compile("Z")
 
@@ -898,10 +898,10 @@ def remove_ghosts (output_pep, names_of_exons):
             removed_exons.append(exon_ct)
             # remove the name from the list
             new_names = []
-            for exon_ct in range(len(names_of_exons[name])):
+            for exon_ct in range(len(sequence_to_exons[name])):
                 if not exon_ct in removed_exons:
-                    new_names.append(names_of_exons[name][exon_ct])
-            names_of_exons[name] = new_names
+                    new_names.append(sequence_to_exons[name][exon_ct])
+            sequence_to_exons[name] = new_names
 
     # strip gaps
     output_pep = strip_gaps(output_pep)
@@ -911,12 +911,12 @@ def remove_ghosts (output_pep, names_of_exons):
         return [None, None]
             
 
-    return [output_pep, names_of_exons]
+    return [output_pep, sequence_to_exons]
 
 
 #########################################
 def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
-                      mitochondrial, names_of_exons, alnmt_pep, output_pep, flank_length):
+                      mitochondrial, sequence_to_exons, alnmt_pep, output_pep, flank_length):
 
     
     ##########
@@ -927,7 +927,7 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
         return output_pep_new
 
     # which exons correspond to which name?
-    [name_ct2exon_ct, exon_ct2name_ct] = name2count (output_pep, names_of_exons)
+    [name_ct2exon_ct, exon_ct2name_ct] = name2count (output_pep, sequence_to_exons)
     if not name_ct2exon_ct: 
         return output_pep_new
 
@@ -965,7 +965,7 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
                 prev_right_flank = None
                 continue
 
-            exon_seq_name = names_of_exons[name][name_ct]
+            exon_seq_name = sequence_to_exons[name][name_ct]
             [species, exon_id, exon_known] = parse_aln_name(exon_seq_name)
             exon_seqs     = get_exon_seqs(cursor, exon_id, exon_known, ensembl_db_name[species])[1:]
 
@@ -1087,16 +1087,16 @@ def find_lower_denom_name(para1, para2):
 
 #########################################
 #########################################
-def delete (name_to_drop, output_pep, names_of_exons, human_exon_map, deleted):
+def delete (name_to_drop, output_pep, sequence_to_exons, human_exon_to_ortho_exon, deleted):
     deleted.append(name_to_drop)
     del output_pep[name_to_drop]
-    del names_of_exons[name_to_drop]
-    del human_exon_map[name_to_drop]
+    del sequence_to_exons[name_to_drop]
+    del human_exon_to_ortho_exon[name_to_drop]
 
 
-
-def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, names_of_exons, 
-                                  ortho_exon_to_human_exon, canonical_human_exons, human_exon_map):
+#########################################
+def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, sequence_to_exons, 
+                                  ortho_exon_to_human_exon, canonical_human_exons, human_exon_to_ortho_exon):
 
     notes = ""
 
@@ -1118,23 +1118,23 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
 
             # do they map to disjoint set of human exons?
             human_exons_1 = set([])
-            for exon_name in names_of_exons[para1]:
+            for exon_name in sequence_to_exons[para1]:
                 human_counterparts = ortho_exon_to_human_exon[exon_name]
                 if human_counterparts: 
                     human_exons_1.update(set(human_counterparts))
 
             if not human_exons_1: # again, no idea how this happens
-                delete (para1, output_pep, names_of_exons, human_exon_map, deleted)
+                delete (para1, output_pep, sequence_to_exons, human_exon_to_ortho_exon, deleted)
                 continue
            
             human_exons_2 = set([])
-            for exon_name in names_of_exons[para2]:
+            for exon_name in sequence_to_exons[para2]:
                 human_counterparts = ortho_exon_to_human_exon[exon_name]
                 if human_counterparts: 
                     human_exons_2.update(set(human_counterparts))
 
             if not human_exons_2: # again, no idea how this happens
-                delete (para2, output_pep, names_of_exons, human_exon_map, deleted)
+                delete (para2, output_pep, sequence_to_exons, human_exon_to_ortho_exon, deleted)
                 continue
 
             if  human_exons_1 & human_exons_2:continue # there is intersection - we move on
@@ -1173,8 +1173,8 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             # [gene_seq, canonical_exon_pepseq, file_names] = get_gene_seq(acg, cursor, gene_id, species)
             
             # at this point, para1 and para2 should belong to the same 'gene'
-            [exon_id, exon_known] = names_of_exons[para1][0].split ("_")[-2:]
-            species    = "_".join (names_of_exons[para1][0].split ("_")[:-2]) 
+            [exon_id, exon_known] = sequence_to_exons[para1][0].split ("_")[-2:]
+            species    = "_".join (sequence_to_exons[para1][0].split ("_")[:-2]) 
             gene_id_1   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
             # I have no idea how this could happen, but it does:
             if not gene_id_1: continue
@@ -1182,7 +1182,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             [gene_seq, canonical_exon_pepseq, file_name_1, seq_name_1, start_1, end_1] = \
                 get_gene_seq(acg, cursor, gene_id_1, species)
  
-            [exon_id, exon_known] = names_of_exons[para2][0].split ("_")[-2:]
+            [exon_id, exon_known] = sequence_to_exons[para2][0].split ("_")[-2:]
             gene_id_2   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
             # I have no idea how this could happen, but it does:
             if not gene_id_2: continue
@@ -1216,23 +1216,23 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
             new_exon_set = []
             new_map      = {}
             for human_exon in canonical_human_exons:
-                if human_exon in human_exon_map[para1].keys():
-                    for ex1 in  names_of_exons[para1]:
-                        if ex1 in human_exon_map[para1][human_exon]:
+                if human_exon in human_exon_to_ortho_exon[para1].keys():
+                    for ex1 in  sequence_to_exons[para1]:
+                        if ex1 in human_exon_to_ortho_exon[para1][human_exon]:
                             new_exon_set.append(ex1)
                             if not new_map.has_key(human_exon):  new_map[human_exon] = []
                             new_map[human_exon].append(ex1)
                 
-                if human_exon in human_exon_map[para2].keys():
-                    for ex2  in  names_of_exons[para2]:
-                        if ex2 in human_exon_map[para2][human_exon]:
+                if human_exon in human_exon_to_ortho_exon[para2].keys():
+                    for ex2  in  sequence_to_exons[para2]:
+                        if ex2 in human_exon_to_ortho_exon[para2][human_exon]:
                             new_exon_set.append(ex2)
                             if not new_map.has_key(human_exon):  new_map[human_exon] = []
                             new_map[human_exon].append(ex2)
 
-            names_of_exons[name_to_keep] = new_exon_set
-            human_exon_map[name_to_keep] = new_map
-            delete (name_to_drop, output_pep, names_of_exons, human_exon_map, deleted)
+            sequence_to_exons[name_to_keep] = new_exon_set
+            human_exon_to_ortho_exon[name_to_keep] = new_map
+            delete (name_to_drop, output_pep, sequence_to_exons, human_exon_to_ortho_exon, deleted)
             
             notes += "{0}  {1}:{2},{3}-{4}   {5}:{6},{7}-{8}\n".format(name_to_keep,  
                                                                        stable_id_1, seq_name_1, start_1, end_1, 
@@ -1248,7 +1248,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, nam
     return notes
 
 #########################################
-def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exons, human_exon_map):
+def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_to_exons, human_exon_to_ortho_exon):
 
     notes = ""
     mulitple_orthos = []
@@ -1280,23 +1280,23 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exo
 
             if tanimoto[para] < 0.9*max_tanimoto:
                 # drop
-                [exon_id, exon_known] = names_of_exons[para][0].split ("_")[-2:]
-                species   = "_".join (names_of_exons[para][0].split ("_")[:-2])   
+                [exon_id, exon_known] = sequence_to_exons[para][0].split ("_")[-2:]
+                species   = "_".join (sequence_to_exons[para][0].split ("_")[:-2])   
                 gene_id   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
                 stable_id = gene2stable(cursor, gene_id, ensembl_db_name[species])
                 dropped_paras.append(stable_id)
                 # 
                 del output_pep[para]
-                del names_of_exons[para]
-                del human_exon_map[para]
+                del sequence_to_exons[para]
+                del human_exon_to_ortho_exon[para]
 
             else:
                 ct += 1
                 tmp_name = "tmp"
                 if ct > 1: tmp_name += "_"+str(ct)
                 output_pep[tmp_name] = output_pep.pop(para)
-                names_of_exons[tmp_name] = names_of_exons.pop(para)
-                human_exon_map[tmp_name] = human_exon_map.pop(para)
+                sequence_to_exons[tmp_name] = sequence_to_exons.pop(para)
+                human_exon_to_ortho_exon[tmp_name] = human_exon_to_ortho_exon.pop(para)
                 tmp_names.append(tmp_name)
 
         ct = 0
@@ -1305,8 +1305,8 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, names_of_exo
             new_name = trivial_name
             if ct > 1: new_name += "_"+str(ct)
             output_pep    [new_name] = output_pep.pop(tmp_name)
-            names_of_exons[new_name] = names_of_exons.pop(tmp_name)
-            human_exon_map[new_name] = human_exon_map.pop(tmp_name)
+            sequence_to_exons[new_name] = sequence_to_exons.pop(tmp_name)
+            human_exon_to_ortho_exon[new_name] = human_exon_to_ortho_exon.pop(tmp_name)
             
         if dropped_paras:
             notes += "for {0}: ".format(trivial_name)
@@ -1364,11 +1364,56 @@ def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
         [alnmt_pep[human_exon], alnmt_dna[human_exon]]  =   make_exon_alignment(cursor, ensembl_db_name,  human_exon.exon_id, 
                                                                                 human_exon.is_known,  mitochondrial, min_similarity, 
                                                                                 flank_length)   
-        if not alnmt_pep[human_exon]:
-            print human_exon
-            exit(1)
-
     return [alnmt_pep, alnmt_dna] 
+
+#########################################
+def make_atlas(cursor, ensembl_db_name, canonical_human_exons):
+    # >>>>>>>>>>>>>>>>>>
+    # find which species we have, and for how many exons
+    # we may have two orthologues from the same species
+    seq_name = {}
+    parent_seq_name  = {}
+    for human_exon in canonical_human_exons:
+        for exon_seq_name, exon_seq in alnmt_pep[human_exon].iteritems():
+            (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
+            ortho_gene_id                  = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
+            # gene --> name -- retrieve old name, or construct a new one
+            parent_seq_name[exon_seq_name] = get_name (seq_name, trivial_name[species], ortho_gene_id) 
+                
+    # >>>>>>>>>>>>>>>>>>
+    sequence_to_exons = {}
+    human_exon_to_ortho_exon = {}
+    for human_exon in canonical_human_exons:
+        for exon_seq_name in alnmt_pep[human_exon].keys():
+            concat_seq_name = parent_seq_name[exon_seq_name]
+
+            if not sequence_to_exons.has_key(concat_seq_name): sequence_to_exons[concat_seq_name] = []
+            if not exon_seq_name in  sequence_to_exons[concat_seq_name]:
+                sequence_to_exons[concat_seq_name].append(exon_seq_name)
+                    
+            if not human_exon_to_ortho_exon.has_key(concat_seq_name): human_exon_to_ortho_exon[concat_seq_name] = {}
+            if not human_exon_to_ortho_exon[concat_seq_name].has_key(human_exon): 
+                human_exon_to_ortho_exon[concat_seq_name][human_exon] = []
+
+            human_exon_to_ortho_exon[concat_seq_name][human_exon].append(exon_seq_name)
+ 
+    # >>>>>>>>>>>>>>>>>>
+    # flag the cases when one orthologue exon maps to many human (and vice versa) for later
+    # do we have a sequence mapping to multiple human exons?
+    ortho_exon_to_human_exon = {}
+    for human_exon in canonical_human_exons:
+        for exon_seq_name in alnmt_pep[human_exon].keys():
+            if not ortho_exon_to_human_exon.has_key(exon_seq_name):
+                ortho_exon_to_human_exon[exon_seq_name] = [human_exon]
+            else:
+                ortho_exon_to_human_exon[exon_seq_name].append(human_exon)
+    # 
+    overlapping_maps = {}
+    for concat_seq_name, concat_exons in sequence_to_exons.iteritems():
+        overlapping_maps[concat_seq_name] = find_overlapping_maps (ortho_exon_to_human_exon, concat_exons, alnmt_pep)
+
+
+    return     [human_exon_to_ortho_exon, sequence_to_exons, ortho_exon_to_human_exon, overlapping_maps]
 
 #########################################
 #########################################
@@ -1425,67 +1470,30 @@ def make_alignments ( gene_list, db_info):
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
 
-        print "made exon alignments"
- 
-        # >>>>>>>>>>>>>>>>>>
-        # do we have a sequence mapping to multiple human exons?
-        ortho_exon_to_human_exon = {}
-        for human_exon in canonical_human_exons:
-            for exon_seq_name in alnmt_pep[human_exon].keys():
-                if not ortho_exon_to_human_exon.has_key(exon_seq_name):
-                    ortho_exon_to_human_exon[exon_seq_name] = [human_exon]
-                else:
-                    ortho_exon_to_human_exon[exon_seq_name].append(human_exon)
- 
-        # >>>>>>>>>>>>>>>>>>
-        # find which species we have, and for how many exons
-        # we may have two orthologues from the same species
-        seq_name = {}
-        overlapping_maps = {}
-        parent_seq_name  = {}
-        for human_exon in canonical_human_exons:
-            for exon_seq_name, exon_seq in alnmt_pep[human_exon].iteritems():
-                (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
-                ortho_gene_id                  = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
-                # gene --> name -- retrieve old name, or construct new one
-                parent_seq_name[exon_seq_name] = get_name (seq_name, trivial_name[species], ortho_gene_id) 
-                
-        # >>>>>>>>>>>>>>>>>>
-        names_of_exons = {}
-        human_exon_map = {}
-        for human_exon in canonical_human_exons:
-            for exon_seq_name in alnmt_pep[human_exon].keys():
-                concat_seq_name = parent_seq_name[exon_seq_name]
+        # we want to be able to retieve the info starting from whichever end, so we construct the following maps:
+        # to find all exons from an ortohologue, that map to a given human exon:
+        #      human_exon_to_ortho_exon:  human_exon_to_ortho_exon[concat_seq_name][human_exon].append(exon_seq_name)
+        # given a sequence name, retrieve all exons that belong to it
+        #     sequence_to_exon: sequence_to_exons[concat_seq_name].append(exon_seq_name)
+        # in the other direction - to find all human exons that a given exon  from orthologous sequence maps to
+        #      ortho_exon_to_human_exon:  ortho_exon_to_human_exon[exon_seq_name].append(human_exon)
+        # finally, collect in one place info about maps between human and orthologue that are not one-to-one
+        #      overlapping_maps: overlapping_maps[concat_seq_name].append([human_exons, ortho_exons])
+        [human_exon_to_ortho_exon, sequence_to_exons, 
+         ortho_exon_to_human_exon, overlapping_maps] = make_atlas(cursor, ensembl_db_name, canonical_human_exons)
 
-                if not names_of_exons.has_key(concat_seq_name): names_of_exons[concat_seq_name] = []
-                if not exon_seq_name in  names_of_exons[concat_seq_name]:
-                    names_of_exons[concat_seq_name].append(exon_seq_name)
-                    
-                if not human_exon_map.has_key(concat_seq_name): human_exon_map[concat_seq_name] = {}
-                if not human_exon_map[concat_seq_name].has_key(human_exon): 
-                    human_exon_map[concat_seq_name][human_exon] = []
-                human_exon_map[concat_seq_name][human_exon].append(exon_seq_name)
- 
         # >>>>>>>>>>>>>>>>>>
-        # flag the cases when one orthologue exon maps to many human (and vice versa) for later
-        for concat_seq_name, concat_exons in names_of_exons.iteritems():
-            overlapping_maps[concat_seq_name] = find_overlapping_maps (ortho_exon_to_human_exon, concat_exons, alnmt_pep)
-
-        print "made exon alignments"
-
-        exit(1)
-        # >>>>>>>>>>>>>>>>>>
-        # concatenate the aligned exons for each species, taking into account that the alignment
+        # concatenate the aligned exons for each species, taking into account that the mapping
         # doesn't have to be one to one
         headers     = []
         output_pep  = {}
         output_dna  = {}
         output_pep_ok = True
-        for concat_seq_name in names_of_exons.keys():
+        for concat_seq_name in sequence_to_exons.keys():
 
             if not output_pep_ok: break
 
-            if not human_exon_map.has_key(concat_seq_name):  continue # this shouldn't happen but oh well
+            if not human_exon_to_ortho_exon.has_key(concat_seq_name):  continue # this shouldn't happen but oh well
 
             output_pep[concat_seq_name] = ""
             output_pep_ok = True
@@ -1505,9 +1513,9 @@ def make_alignments ( gene_list, db_info):
                     # one ortho seq maps to multiple human exons
                     pep = '-'*aln_length
 
-                elif human_exon_map[concat_seq_name].has_key(human_exon):
+                elif human_exon_to_ortho_exon[concat_seq_name].has_key(human_exon):
                     # we have a neat one-to-one mapping
-                    exon_seq_name = human_exon_map[concat_seq_name][human_exon][0]
+                    exon_seq_name = human_exon_to_ortho_exon[concat_seq_name][human_exon][0]
                     pep = alnmt_pep[human_exon][exon_seq_name]
                     if not pep:  # what's this?
                         print exon_seq_name, " pep empty"
@@ -1543,20 +1551,20 @@ def make_alignments ( gene_list, db_info):
 
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
-            # fix_one2many changes both output_pep and names_of_exons
+            # fix_one2many changes both output_pep and sequence_to_exons
             if not overlapping_maps[seq_to_fix]: continue
-            [output_pep, names_of_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
-                                                         canonical_human_exons, human_exon_map, 
-                                                         names_of_exons, seq_to_fix, 
+            [output_pep, sequence_to_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
+                                                         canonical_human_exons, human_exon_to_ortho_exon, 
+                                                         sequence_to_exons, seq_to_fix, 
                                                          overlapping_maps[seq_to_fix], 
                                                          alnmt_pep, output_pep)
 
         # check if any two pieces of seqeunce ended up on different scaffolds/contigs
-        fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, names_of_exons, 
-                                     ortho_exon_to_human_exon, canonical_human_exons, human_exon_map)
+        fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, sequence_to_exons, 
+                                     ortho_exon_to_human_exon, canonical_human_exons, human_exon_to_ortho_exon)
         assorted_notes += fusion_notes + "\n"
         # get rid of dubioius paralogues (multiple seqs from the same species)
-        para_notes = remove_dubious_paralogues( cursor, ensembl_db_name, output_pep, names_of_exons, human_exon_map)
+        para_notes = remove_dubious_paralogues( cursor, ensembl_db_name, output_pep, sequence_to_exons, human_exon_to_ortho_exon)
         assorted_notes += para_notes + "\n"
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
@@ -1576,7 +1584,7 @@ def make_alignments ( gene_list, db_info):
         if (1):
             # >>>>>>>>>>>>>>>>>>
             output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
-                                                      sorted_trivial_names, names_of_exons,  
+                                                      sorted_trivial_names, sequence_to_exons,  
                                                       alnmt_pep, output_pep, flank_length)
             if not output_dna:
                 print "no output dna: moving on"
@@ -1590,7 +1598,7 @@ def make_alignments ( gene_list, db_info):
 
         # >>>>>>>>>>>>>>>>>>
         output_pep = fix_split_codons (cursor, ensembl_db_name, cfg, acg, 
-                                           sorted_trivial_names, mitochondrial, names_of_exons,  
+                                           sorted_trivial_names, mitochondrial, sequence_to_exons,  
                                            alnmt_pep, output_pep, flank_length)
 
         if not output_pep:
@@ -1603,8 +1611,8 @@ def make_alignments ( gene_list, db_info):
         if verbose: print afa_fnm
             
         # notes to accompany the alignment:
-        print_notes (cursor, cfg,  ensembl_db_name, output_pep, names_of_exons,  
-                     sorted_seq_names, stable_id, human_exon_map, assorted_notes)
+        print_notes (cursor, cfg,  ensembl_db_name, output_pep, sequence_to_exons,  
+                     sorted_seq_names, stable_id, human_exon_to_ortho_exon, assorted_notes)
        
     return 
 
