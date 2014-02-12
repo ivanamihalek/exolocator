@@ -1345,7 +1345,7 @@ def check_afa_age (cfg, stable_id):
 
     max_days = 30
 
-    afa_age - "old"
+    afa_age = "old"
     afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
     if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0 ):
         time_modified = os.path.getmtime(afa_fnm)
@@ -1353,6 +1353,7 @@ def check_afa_age (cfg, stable_id):
         if number_of_days_since_modified < max_days:
             print "\t %s last modified %s. Moving on." % (stable_id, time.ctime(os.path.getmtime(afa_fnm) ))
             afa_age  = "new"
+    return afa_age
 
 #########################################
 def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
