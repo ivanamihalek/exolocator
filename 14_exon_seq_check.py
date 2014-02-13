@@ -128,6 +128,7 @@ def main():
                 print exon.exon_id
                 print pepseq
                 print pepseq2
+                print pepseq_transl_start, pepseq_transl_end
                 print
 
                 if (not pepseq == pepseq2):
