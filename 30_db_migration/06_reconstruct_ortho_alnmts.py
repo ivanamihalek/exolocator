@@ -1515,7 +1515,7 @@ def make_alignments ( gene_list, db_info):
                 if human_exon in flagged_human_exons:
                     # one ortho seq maps to multiple human exons
                     pep = '-'*aln_length
-                    print "\t", flagged
+                    print "\t flagged"
 
                 elif human_exon_to_ortho_exon[concat_seq_name].has_key(human_exon):
                     # we have a neat one-to-one mapping
