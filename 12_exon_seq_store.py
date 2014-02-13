@@ -97,7 +97,8 @@ def reconstruct_exon_seqs (gene_seq, exons):
         left_flank[exon_id]  = gene_seq[start-15:start]
         exon_seq[exon_id]    = gene_seq[start:end+1]
         right_flank[exon_id] = gene_seq[end+1:end+16]
-        
+    
+
     return [exon_seq, left_flank, right_flank]
             
 #########################################
@@ -208,6 +209,12 @@ def store_exon_seqs(species_list, db_info):
                 #exit(1)
                 ct += 1
                 continue
+
+            for exon in exons:
+                print exon.exon._id
+                print "dna length: ", exon.start_in_gene - exon.end_in_gene
+                print "protein length: ", len(canonical_exon_pepseq[exon_id])*3
+
 
             # get the sequence for each of the exons, as well as for the flanks
             # (the return are three dictionaries, with exon_ids as keys)
