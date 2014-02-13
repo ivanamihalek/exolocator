@@ -1469,11 +1469,11 @@ def make_alignments ( gene_list, db_info):
         # reconstruct  per-exon alignments with orthologues
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
-        print alnmt_pep.keys()
-        exit(1)
 
+        first_exon = canincal_human_exons[0]
+        print "first exon: ", first_exon.exon_id
         afa_fnm  = "debug.afa"
-        ret = output_fasta (afa_fnm, alnmt_pep.keys(), almt_pep)
+        ret = output_fasta (afa_fnm, alnmt_pep[first_exon].keys(), almt_pep[first_exon])
         exit(1)
 
         # we want to be able to retieve the info starting from whichever end, so we construct the following maps:
