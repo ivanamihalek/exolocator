@@ -61,7 +61,7 @@ def main():
 
     for species in all_species:
 
-        #if species=='homo_sapiens': continue
+        if not species=='homo_sapiens': continue
 
         print
         print species
@@ -81,9 +81,9 @@ def main():
         stored_incorrect = 0
         translation_fail = 0
         #####################################
-        for tot in range(1000):
- 
-            gene_id = choice(gene_ids)
+        for gene_id in [736801]:
+        #for tot in range(1000):
+             #gene_id = choice(gene_ids)
 
             # get _all_ exons
             exons = gene2exon_list(cursor, gene_id)
@@ -124,6 +124,11 @@ def main():
                     pepseq2 = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
                 else:
                     pepseq2 = dnaseq.translate().tostring()
+
+                print exon.exon_id
+                print pepseq
+                print pepseq2
+                print
 
                 if (not pepseq == pepseq2):
                     stored_incorrect += 1
