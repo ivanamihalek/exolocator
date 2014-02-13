@@ -432,17 +432,13 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
     # find all other exons that map to the human exon
     maps    = get_maps(cursor, ensembl_db_name, human_exon_id, human_exon_known)
 
-    for map in maps:
-        print map
-        #print "before filter ", human_exon_id, "to", map.species2
-
 
     maps    = filter (lambda m: not m.exon_id_2 is None, maps)
     maps_sw = filter (lambda m: m.source=='sw_sharp' or m.source=='usearch', maps)
 
     for map in maps:
 
-        print human_exon_id, "to", map.species2
+        print human_exon_id, "to", map.species_2
 
         if map.similarity < min_similarity: continue
         # get the raw (unaligned) sequence for the exon that maps onto human
@@ -465,7 +461,7 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
         else:
             pepseq2 = dnaseq.translate().tostring()
 
-        if map.species2 == 'homo_sapiens':
+        if map.species_2 == 'homo_sapiens':
             print "in map"
             print pepseq
             print pepseq2
