@@ -1470,7 +1470,7 @@ def make_alignments ( gene_list, db_info):
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
 
-        first_exon = canonical_human_exons[0]
+        first_exon = canonical_human_exons[1]
         print "first exon: ", first_exon.exon_id
         afa_fnm  = "debug.afa"
         ret = output_fasta (afa_fnm, alnmt_pep[first_exon].keys(), alnmt_pep[first_exon])
