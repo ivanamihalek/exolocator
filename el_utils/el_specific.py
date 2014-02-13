@@ -251,6 +251,8 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     if (comparison_ok):
         return [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]
  
+    print " ALT SEQ !"
+
     #########################################
     # otherwise repeat the procedure with the alternative seq info:
     ret = get_alt_seq_info (cursor, gene_id, species)
