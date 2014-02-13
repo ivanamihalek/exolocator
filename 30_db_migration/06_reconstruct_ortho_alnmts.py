@@ -1527,6 +1527,7 @@ def make_alignments ( gene_list, db_info):
                 else: 
                     # no exon in this species
                     pep =  '-'*aln_length
+                    print "\t no exon in this species"
                    
                 if output_pep[concat_seq_name]: output_pep[concat_seq_name] += '-Z-'
                 output_pep[concat_seq_name] += pep
