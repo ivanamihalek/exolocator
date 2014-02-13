@@ -1534,7 +1534,7 @@ def make_alignments ( gene_list, db_info):
                     print " in %s:%d output peptide empty" % (c. f_code.co_filename, c.f_lineno)
                     output_pep_ok = False
                     # Oct 13: I am not sure of the full implication of this, so I'll just abort
-                print "\t\t", human_exon.exon_id
+                print "\t\t", human_exon.exon_id, pep
           
 
 
