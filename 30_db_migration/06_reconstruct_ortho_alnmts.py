@@ -1470,12 +1470,6 @@ def make_alignments ( gene_list, db_info):
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
 
-        first_exon = canonical_human_exons[0]
-        print "first exon: ", first_exon.exon_id
-        afa_fnm  = "debug.afa"
-        ret = output_fasta (afa_fnm, alnmt_pep[first_exon].keys(), alnmt_pep[first_exon])
-        exit(1)
-
         # we want to be able to retieve the info starting from whichever end, so we construct the following maps:
         # to find all exons from an ortohologue, that map to a given human exon:
         #      human_exon_to_ortho_exon:  human_exon_to_ortho_exon[concat_seq_name][human_exon].append(exon_seq_name)
@@ -1512,28 +1506,23 @@ def make_alignments ( gene_list, db_info):
                     if len(human_exons) == 1 and len(ortho_exons) == 1: continue 
                     flagged_human_exons |= set(human_exons)
 
-            for human_exon in canonical_human_exons[0:1]:
+            for human_exon in canonical_human_exons:
                 
-                print "\t", human_exon.exon_id
-
                 aln_length = len(alnmt_pep[human_exon].itervalues().next())
                 pep = '-'*aln_length
                 if human_exon in flagged_human_exons:
                     # one ortho seq maps to multiple human exons
                     pep = '-'*aln_length
-                    print "\t flagged"
 
                 elif human_exon_to_ortho_exon[concat_seq_name].has_key(human_exon):
                     # we have a neat one-to-one mapping
                     exon_seq_name = human_exon_to_ortho_exon[concat_seq_name][human_exon][0]
                     pep = alnmt_pep[human_exon][exon_seq_name]
                     if not pep:  # what's this?
-                        print exon_seq_name, " pep empty"
                         pep = '-'*aln_length
                 else: 
                     # no exon in this species
                     pep =  '-'*aln_length
-                    print "\t no exon in this species"
                    
                 if output_pep[concat_seq_name]: output_pep[concat_seq_name] += '-Z-'
                 output_pep[concat_seq_name] += pep
@@ -1542,10 +1531,6 @@ def make_alignments ( gene_list, db_info):
                     print " in %s:%d output peptide empty" % (c. f_code.co_filename, c.f_lineno)
                     output_pep_ok = False
                     # Oct 13: I am not sure of the full implication of this, so I'll just abort
-                print "\t\t", human_exon.exon_id, pep
-          
-
-
             if output_pep_ok:  headers.append(concat_seq_name)
 
         #########################################################
