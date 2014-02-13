@@ -161,8 +161,8 @@ def store_exon_seqs(species_list, db_info):
         cfg    = ConfigurationReader       (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    #for species in ['homo_sapiens']:
-    for species in species_list:
+    for species in ['homo_sapiens']:
+    #for species in species_list:
         print
         print "############################"
         print  species
@@ -182,7 +182,8 @@ def store_exon_seqs(species_list, db_info):
         seqs_not_found = []
         ct  = 0
         tot = 0
-        for gene_id in gene_ids[:10]:
+        #for gene_id in gene_ids:
+        for gene_id in [736801]:
             tot += 1
             if (not  tot%1000):
                 print species, "tot genes:", tot, " fail:", ct
@@ -243,16 +244,6 @@ def main():
         db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
-    # temp hack: it looks like some process went belly up, leaving some species
-    # unprocessed; try to fiure out which ones are question, and redo
-    #redo_species = []
-    #for species in all_species:
-    #    switch_to_db (cursor, ensembl_db_name[species])
-    #    qry  = "select count(1) from exon_seq"
-    #    rows = search_db(cursor, qry)
-    #    if not rows or rows[0] <10000:
-    #        redo_species.add(species)
-    #all_species = redo_species
 
     cursor.close()
     db    .close()
