@@ -1491,23 +1491,25 @@ def make_alignments ( gene_list, db_info):
         output_dna  = {}
         output_pep_ok = True
         for concat_seq_name in sequence_to_exons.keys():
-
-            if not output_pep_ok: break
+            
+            print concat_seq_name
 
             if not human_exon_to_ortho_exon.has_key(concat_seq_name):  continue # this shouldn't happen but oh well
 
             output_pep[concat_seq_name] = ""
             output_pep_ok = True
-            # single out one ortho to mult human cases
 
-            flagged_human_exons = []
+            # compile human exons which are in one-to-many relationship in this species (this sequence, actually)
+            flagged_human_exons = set([])
             if overlapping_maps.has_key(concat_seq_name):
                 for  [human_exons, ortho_exons] in overlapping_maps[concat_seq_name]:
                     if len(human_exons) == 1 and len(ortho_exons) == 1: continue 
-                    flagged_human_exons = flagged_human_exons + human_exons
+                    flagged_human_exons |= set(human_exons)
 
             for human_exon in canonical_human_exons:
                 
+                print "\t", human_exon.exon_id
+
                 aln_length = len(alnmt_pep[human_exon].itervalues().next())
                 pep = '-'*aln_length
                 if human_exon in flagged_human_exons:
@@ -1532,10 +1534,10 @@ def make_alignments ( gene_list, db_info):
                     print " in %s:%d output peptide empty" % (c. f_code.co_filename, c.f_lineno)
                     output_pep_ok = False
                     # Oct 13: I am not sure of the full implication of this, so I'll just abort
-
-                if verbose and not pep:
-                    print ">> ", human_exon.exon_id
             
+            exit(1)
+
+
             if output_pep_ok:  headers.append(concat_seq_name)
 
         #########################################################
@@ -1548,7 +1550,7 @@ def make_alignments ( gene_list, db_info):
         output_pep = strip_gaps(output_pep)
         afa_fnm  = "debug.afa"
         ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
-
+        exit(1)
 
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
