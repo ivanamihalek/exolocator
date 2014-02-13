@@ -730,10 +730,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             print "abort 3"
             c=inspect.currentframe()
             print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-            afa_fnm = 'full.afa'
-            print "the full alignment:", afa_fnm
-            output_fasta (afa_fnm, output_pep.keys(), output_pep)
-            exit(1)
             return [output_pep, sequence_to_exons] # ie return as it was
 
         #################################### 
@@ -1237,9 +1233,6 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, seq
             notes += "{0}  {1}:{2},{3}-{4}   {5}:{6},{7}-{8}\n".format(name_to_keep,  
                                                                        stable_id_1, seq_name_1, start_1, end_1, 
                                                                        stable_id_2, seq_name_2, start_2, end_2)
- 
-
-
     if notes:
         header  = "% The following pieces of sequence were found split across different scaffolds/contigs\n" 
         header += "% and assumed to actually belong to the same gene:\n" 

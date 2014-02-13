@@ -39,19 +39,21 @@ def  mark_canonical (cursor, gene_id, exons):
             end_found = True
             exon.canon_transl_end = canonical_end_in_exon-1
             canonical_end_in_gene = exon.start_in_gene+exon.canon_transl_end
+
+    # can somehting be canonical if we do not know where it starts
     if ( not start_found ):
         print "canonical translation start not found for ", gene_id
-        exit(1)
+        return
     if ( not end_found ):
         print "canonical translation end not found for ", gene_id
-        exit(1)
+        return
 
     # for each exon in canonical 
     qry = "select exon_id  from exon_transcript where transcript_id= %d" % canonical_transcript_id
     rows = search_db (cursor, qry)
     if (not rows):
-        rows = search_db (cursor, qry, veerbose=True)
-        exit(1)
+        rows = search_db (cursor, qry, verbose=True)
+        return
 
     canonical_ids = []
     for row in rows:
@@ -415,8 +417,7 @@ def store_exon (cursor, exon):
     update_fields['analysis_id']        = exon.analysis_id
 
     if ( not store_or_update (cursor, 'gene2exon', fixed_fields, update_fields)):
-        print "failed storing exon ", exon.exon_id
-        exit (1)
+        print "failed storing exon ", exon.exon_id, "from gene",  exon.gene_id
 
 
 
@@ -447,8 +448,8 @@ def gene2exon_all(species_list, db_info):
             # find all exons associated with the gene id 
             exons = find_exons (cursor, gene_id, species)
             if (not exons):
-                print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
-                exit (1)  # if I got to here in the pipeline this shouldn't happen
+                print gene2stable (cursor, gene_id = gene_id), " no exons found (%s)" % species
+                continue  # if I got to here in the pipeline this shouldn't happen
    
             # store into gene2exon table
             for exon in exons:
@@ -488,7 +489,7 @@ def gene2exon_orthologues(gene_list, db_info):
             if (not exons):
                 print gene2stable (cursor, gene_id = ortho_gene_id), " no exons found for", ortho_species
                 print 
-                exit (1)  # if I got to here in the pipeline this shouldn't happen
+                continue  # if I got to here in the pipeline this shouldn't happen
                 
             
             exons.sort(key=lambda exon: exon.start_in_gene)
@@ -513,7 +514,7 @@ def main():
 
     if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
         print "usage: %s <set name> <number of threads>" % sys.argv[0]
-        exit(1)
+        exit(1) # after usage statment
 
     elif len(sys.argv)==3:
 
@@ -560,16 +561,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-
-'''
-            prev_end = -1
-            for exon in exons:
-                #if exon.is_known>1: print exon
-                #store_exon (cursor, exon)
-                if exon.covering_exon>0: continue
-                excl = ">>> !" if prev_end>exon.start_in_gene else ""
-                exon.pepseq  = get_exon_pepseq (cursor, exon,  ensembl_db_name[ortho_species])
-                print "  %8d |  %8d   %8d  %s  %s" % (prev_end, exon.start_in_gene,  
-                                                      exon.end_in_gene, exon.pepseq, excl)
-                prev_end = exon.end_in_gene
-'''
