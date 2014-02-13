@@ -213,7 +213,7 @@ def store_exon_seqs(species_list, db_info):
             for exon in exons:
                 print exon.exon_id
                 print "dna length: ", exon.start_in_gene - exon.end_in_gene
-                print "protein length: ", len(canonical_exon_pepseq[exon_id])*3
+                print "protein length: ", len(canonical_exon_pepseq[exon.exon_id])*3
 
 
             # get the sequence for each of the exons, as well as for the flanks
