@@ -433,8 +433,8 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
     maps    = get_maps(cursor, ensembl_db_name, human_exon_id, human_exon_known)
 
     for map in maps:
-
-        print "before filter ", human_exon_id, "to", map.species2
+        print map
+        #print "before filter ", human_exon_id, "to", map.species2
 
 
     maps    = filter (lambda m: not m.exon_id_2 is None, maps)
