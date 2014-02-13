@@ -431,10 +431,18 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
     dna_aln_length = 0
     # find all other exons that map to the human exon
     maps    = get_maps(cursor, ensembl_db_name, human_exon_id, human_exon_known)
+
+    for map in maps:
+
+        print "before filter ", human_exon_id, "to", map.species2
+
+
     maps    = filter (lambda m: not m.exon_id_2 is None, maps)
     maps_sw = filter (lambda m: m.source=='sw_sharp' or m.source=='usearch', maps)
 
     for map in maps:
+
+        print human_exon_id, "to", map.species2
 
         if map.similarity < min_similarity: continue
         # get the raw (unaligned) sequence for the exon that maps onto human
@@ -456,6 +464,11 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
             pepseq2 = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
         else:
             pepseq2 = dnaseq.translate().tostring()
+
+        if map.species2 == 'homo_sapiens':
+            print "in map"
+            print pepseq
+            print pepseq2
         
 
         if (not pepseq == pepseq2):
