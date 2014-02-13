@@ -1473,7 +1473,7 @@ def make_alignments ( gene_list, db_info):
         first_exon = canonical_human_exons[0]
         print "first exon: ", first_exon.exon_id
         afa_fnm  = "debug.afa"
-        ret = output_fasta (afa_fnm, alnmt_pep[first_exon].keys(), almt_pep[first_exon])
+        ret = output_fasta (afa_fnm, alnmt_pep[first_exon].keys(), alnmt_pep[first_exon])
         exit(1)
 
         # we want to be able to retieve the info starting from whichever end, so we construct the following maps:
