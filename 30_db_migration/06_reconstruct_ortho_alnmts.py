@@ -1492,8 +1492,6 @@ def make_alignments ( gene_list, db_info):
         output_pep_ok = True
         for concat_seq_name in sequence_to_exons.keys():
             
-            print concat_seq_name
-
             if not human_exon_to_ortho_exon.has_key(concat_seq_name):  continue # this shouldn't happen but oh well
 
             output_pep[concat_seq_name] = ""
@@ -1541,9 +1539,6 @@ def make_alignments ( gene_list, db_info):
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
-        afa_fnm  = "debug.afa"
-        ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
-        exit(1)
 
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():

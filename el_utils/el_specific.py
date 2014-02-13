@@ -47,7 +47,8 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
     ok_so_far = True
     # sanity checking
     for exon in canonical_coding_exons:
- 
+        #print
+        #print "exon", exon.exon_id
         #find exon sequence within the gene
         start = exon.start_in_gene
         if (exon is canonical_coding_exons[0]):
@@ -250,8 +251,6 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     if (comparison_ok):
         return [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]
  
-    print " ALT SEQ !"
-
     #########################################
     # otherwise repeat the procedure with the alternative seq info:
     ret = get_alt_seq_info (cursor, gene_id, species)
@@ -432,14 +431,10 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
     dna_aln_length = 0
     # find all other exons that map to the human exon
     maps    = get_maps(cursor, ensembl_db_name, human_exon_id, human_exon_known)
-
-
     maps    = filter (lambda m: not m.exon_id_2 is None, maps)
     maps_sw = filter (lambda m: m.source=='sw_sharp' or m.source=='usearch', maps)
 
     for map in maps:
-
-        print human_exon_id, "to", map.species_2
 
         if map.similarity < min_similarity: continue
         # get the raw (unaligned) sequence for the exon that maps onto human
@@ -461,11 +456,6 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
             pepseq2 = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
         else:
             pepseq2 = dnaseq.translate().tostring()
-
-        if map.species_2 == 'homo_sapiens':
-            print "in map"
-            print pepseq
-            print pepseq2
         
 
         if (not pepseq == pepseq2):
