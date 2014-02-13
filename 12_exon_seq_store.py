@@ -211,7 +211,7 @@ def store_exon_seqs(species_list, db_info):
                 continue
 
             for exon in exons:
-                print exon.exon._id
+                print exon.exon_id
                 print "dna length: ", exon.start_in_gene - exon.end_in_gene
                 print "protein length: ", len(canonical_exon_pepseq[exon_id])*3
 
