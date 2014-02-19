@@ -90,28 +90,31 @@ def fill_in_annotation_info (cursor, gene_id, exons):
             exon.analysis_id = rows[0][0]
 
 #########################################
-def get_transcript_ids(cursor, gene_id, species):
+#
+#
+# Note: the original function went something like this:
+#
+#def get_transcript_ids(cursor, gene_id, species):
+#
+#    rows = []
+#    if ( species=='homo_sapiens'):
+#        qry    = "SELECT transcript_id  FROM transcript "
+#        qry   += " WHERE gene_id=%d AND status = 'known' AND biotype='protein_coding' "  \
+#            %  gene_id
+#        rows   = search_db (cursor, qry, verbose=False)
+#
+#    return  transcript_ids
+#
+#
+# however, for human almost 2000   protein coding genes have canonical transcript annotated as 'putative' or 'novel'
+# check:
+# select transcript.status  from transcript, gene where gene.biotype='protein_coding' \\
+# and gene.canonical_transcript_id = transcript.transcript_id and not transcript.status = 'KNOWN';
+# 
+# just go by the version in ensembl.py,
+# that simply returns all transcript ids for a gene 
+# (presumably we have cheked elsehwere that the gene is protein coding)
 
-    rows = []
-    if ( species=='homo_sapiens'):
-        qry    = "SELECT transcript_id  FROM transcript "
-        qry   += " WHERE gene_id=%d AND status = 'known' AND biotype='protein_coding' "  \
-            %  gene_id
-        rows   = search_db (cursor, qry, verbose=False)
-
-    if ((not rows) or species!='homo_sapiens'): # try softer criteria
-        qry    = "SELECT transcript_id  FROM transcript "
-        qry   += " WHERE gene_id=%d AND biotype='protein_coding' "  %  gene_id
-        rows   = search_db (cursor, qry, verbose=False)
-  
-    if (not rows):
-        return []
-
-    transcript_ids = []
-    for row in rows:
-        transcript_ids.append(row[0])
-
-    return  transcript_ids
 
 #########################################
 def get_exon_start(cursor, exon_id):
@@ -160,7 +163,7 @@ def get_translated_region(cursor, gene_id, species):
     transl_region_start = gene_region_end
     transl_region_end   = gene_region_start
 
-    for transcript_id in transcript_ids:
+    for [transcript_id, tr_stable_id] in transcript_ids:
    
         qry  = "SELECT seq_start, start_exon_id, seq_end, end_exon_id " 
         qry += " FROM translation WHERE transcript_id=%d"  %  transcript_id
