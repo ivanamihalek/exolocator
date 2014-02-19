@@ -363,7 +363,6 @@ def mark_coding (cursor, gene_id, species, exons):
             exon.is_coding = 0
             # if it is covered by a coding exon, it is coding
            
-    exit(1)
     return True
 
 
@@ -459,8 +458,8 @@ def gene2exon_all(species_list, db_info):
                 continue  # if I got to here in the pipeline this shouldn't happen
    
             # store into gene2exon table
-            #for exon in exons:
-                #store_exon (cursor, exon)
+            for exon in exons:
+                store_exon (cursor, exon)
             if not gene_ids.index(gene_id)%200:
                 print "%50s:  %5.1f%% " %  (species, float( int(gene_ids.index(gene_id)) +1 )/len(gene_ids)*100)
         print species, "done"
