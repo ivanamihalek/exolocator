@@ -511,6 +511,7 @@ def main():
 
     no_threads = 1
     special    = 'one'
+    local_db   = False
 
     if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
         print "usage: %s <set name> <number of threads>" % sys.argv[0]
@@ -522,10 +523,6 @@ def main():
         if special == 'none': special = None
 
         no_threads = int(sys.argv[2])
-
-
-    local_db   = False
-
 
     if local_db:
         db  = connect_to_mysql()

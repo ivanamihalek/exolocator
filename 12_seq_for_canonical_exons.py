@@ -162,8 +162,7 @@ def store_exon_seqs(species_list, db_info):
         cfg    = ConfigurationReader       (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    for species in ['homo_sapiens']:
-    #for species in species_list:
+    for species in species_list:
         print
         print "############################"
         print  species
@@ -183,8 +182,7 @@ def store_exon_seqs(species_list, db_info):
         seqs_not_found = []
         ct  = 0
         tot = 0
-        #for gene_id in gene_ids:
-        for gene_id in [736801]:
+        for gene_id in gene_ids:
             tot += 1
             if (not  tot%1000):
                 print species, "tot genes:", tot, " fail:", ct

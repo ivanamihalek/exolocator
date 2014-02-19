@@ -152,6 +152,7 @@ def main():
     else:
         species_list = all_species
  
+    species_list = ['homo_sapiens']
     ############################
     for species in species_list:
         print
@@ -167,8 +168,10 @@ def main():
         
         ct = 0
         tot = 0
-        for tot in range(1000):
-            gene_id = choice(gene_ids)
+
+        #for tot in range(1000):
+        for gene_id in gene_ids:
+            #gene_id = choice(gene_ids)
             #tot += 1
             # find all canonical coding exons associated with the gene id
             exons = get_canonical_coding_exons (cursor, gene_id)
@@ -199,6 +202,7 @@ def main():
             canonical_translation = get_canonical_transl (acg, cursor, gene_id, species)
             if ( not canonical_translation):
                 print "no canonical transl found for ", gene_id
+                exit(1)
                 continue
 
 
@@ -208,13 +212,13 @@ def main():
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
                 # print out all exons
-                # inspect (exons)
-                #print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
-                #print
+                inspect (exons)
+                print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
+                print
                 # print out exons more carefully filtered to belong to the canonical version of the translation
-                #print
-                #get_translated_region_talkative (cursor, gene_id, species)
-                # exit(1)
+                print
+                get_translated_region_talkative (cursor, gene_id, species)
+                 exit(1)
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
 
