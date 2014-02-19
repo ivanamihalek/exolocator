@@ -320,6 +320,8 @@ def mark_coding (cursor, gene_id, species, exons):
         return False
 
     [transl_region_start,transl_region_end, strand] = ret
+
+    print " &&&&& ", " start ", transl_region_start, "end", transl_region_end,  "strand", strand
         
     translated_length = 0
     for exon in exons:
@@ -340,11 +342,13 @@ def mark_coding (cursor, gene_id, species, exons):
             # now need to check that it is within the coding region
             exon_start = get_exon_start (cursor, exon.exon_id)
             exon_end   = get_exon_end   (cursor, exon.exon_id)
+            
+            print "\t", exon.exon_id, exon_start, exon_end
 
             translated_length += exon_end-exon_start+1
 
             if ( exon_end < transl_region_start or
-                 transl_region_end   < exon_start):
+                 transl_region_end  < exon_start):
                 exon.is_coding = 0
             else:
                 # there is _a_ translation that covers this exon
@@ -431,6 +435,7 @@ def gene2exon_all(species_list, db_info):
         db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
+    species_list = ['homo_sapiens']
     for species in species_list:
 
         qry = "use " + ensembl_db_name[species]
@@ -443,6 +448,7 @@ def gene2exon_all(species_list, db_info):
 
         number_of_genes = len(gene_ids)
 
+        gene_ids=[698756]
         for gene_id in gene_ids:
 
             # find all exons associated with the gene id 
@@ -452,8 +458,8 @@ def gene2exon_all(species_list, db_info):
                 continue  # if I got to here in the pipeline this shouldn't happen
    
             # store into gene2exon table
-            for exon in exons:
-                store_exon (cursor, exon)
+            #for exon in exons:
+                #store_exon (cursor, exon)
             if not gene_ids.index(gene_id)%200:
                 print "%50s:  %5.1f%% " %  (species, float( int(gene_ids.index(gene_id)) +1 )/len(gene_ids)*100)
         print species, "done"
