@@ -166,6 +166,7 @@ def get_translated_region(cursor, gene_id, species):
         qry += " FROM translation WHERE transcript_id=%d"  %  transcript_id
         rows = search_db (cursor, qry)
         if (not rows):
+            rows = search_db (cursor, qry, verbose=True)
             continue
         exon_seq_start = rows[0][0]
         start_exon_id  = rows[0][1]
