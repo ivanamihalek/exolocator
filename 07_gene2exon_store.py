@@ -363,7 +363,7 @@ def mark_coding (cursor, gene_id, species, exons):
             exon.is_coding = 0
             # if it is covered by a coding exon, it is coding
            
-
+    exit(1)
     return True
 
 
