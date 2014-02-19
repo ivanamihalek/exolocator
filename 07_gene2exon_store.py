@@ -438,8 +438,7 @@ def gene2exon_all(species_list, db_info):
     species_list = ['homo_sapiens']
     for species in species_list:
 
-        qry = "use " + ensembl_db_name[species]
-        search_db(cursor, qry)
+        switch_to_db (cursor_human,  ensembl_db_name['homo_sapiens'])
 
         if (species=='homo_sapiens'):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
@@ -450,6 +449,8 @@ def gene2exon_all(species_list, db_info):
 
         gene_ids=[698756]
         for gene_id in gene_ids:
+
+            print gene_id, get_description(cursor, gene_id)
 
             # find all exons associated with the gene id 
             exons = find_exons (cursor, gene_id, species)
