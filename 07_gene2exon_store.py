@@ -343,7 +343,6 @@ def mark_coding (cursor, gene_id, species, exons):
             exon_start = get_exon_start (cursor, exon.exon_id)
             exon_end   = get_exon_end   (cursor, exon.exon_id)
             
-            print "\t", exon.exon_id, exon_start, exon_end
 
             translated_length += exon_end-exon_start+1
 
@@ -357,7 +356,8 @@ def mark_coding (cursor, gene_id, species, exons):
                 # are never translated - is that possible?
                 exon.is_coding = 1
 
-           
+            print "\t", exon.exon_id, exon_start, exon_end, "coding: ", exon.is_coding
+         
         else: # exons belongs to a  predicted transcript 
             # == we don't know if it is coding or not
             exon.is_coding = 0
