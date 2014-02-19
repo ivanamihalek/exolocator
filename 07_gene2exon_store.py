@@ -156,9 +156,7 @@ def get_translated_region(cursor, gene_id, species):
         print "region not retrived for ", species, gene_id, species
         return []
 
-
     transcript_ids = get_transcript_ids(cursor, gene_id)
-    print " TTTTTT: ", transcript_ids
 
     transl_region_start = gene_region_end
     transl_region_end   = gene_region_start
@@ -200,8 +198,6 @@ def get_translated_region(cursor, gene_id, species):
         if (this_translation_region_end >= transl_region_end):
             transl_region_end = this_translation_region_end
 
-        print " while resolving: ", transcript_id, transl_region_start, transl_region_end
-        
     return [transl_region_start, transl_region_end, gene_region_strand]
 
 #########################################################
@@ -327,8 +323,6 @@ def mark_coding (cursor, gene_id, species, exons):
 
     [transl_region_start,transl_region_end, strand] = ret
 
-    print " &&&&& ", " start ", 0, "end", transl_region_end -transl_region_start ,  "strand", strand
-        
     translated_length = 0
     for exon in exons:
 
@@ -361,8 +355,6 @@ def mark_coding (cursor, gene_id, species, exons):
                 # the saem gene, and a couple of exons in the middle that 
                 # are never translated - is that possible?
                 exon.is_coding = 1
-
-            print "\t", exon.exon_id, exon_start-transl_region_start, exon_end-transl_region_start, "coding: ", exon.is_coding
          
         else: # exons belongs to a  predicted transcript 
             # == we don't know if it is coding or not
@@ -452,7 +444,6 @@ def gene2exon_all(species_list, db_info):
 
         number_of_genes = len(gene_ids)
 
-        gene_ids=[698756]
         for gene_id in gene_ids:
 
             print gene_id, get_description(cursor, gene_id)
