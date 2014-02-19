@@ -107,6 +107,7 @@ def inspect (exons):
 
 
     total_len = 0
+
     for exon in exons:
 
         exon_len = 0
@@ -130,7 +131,7 @@ def inspect (exons):
         print "canon transl end: ",   exon.canon_transl_end
         print "exon len %5d   total %d " % (exon_len, total_len)
 
-
+    print
 
 #########################################
 def main():
@@ -212,12 +213,17 @@ def main():
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
                 # print out all exons
+                print "exons:"
                 inspect (exons)
                 print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
                 print
                 # print out exons more carefully filtered to belong to the canonical version of the translation
                 print
                 get_translated_region_talkative (cursor, gene_id, species)
+                all_exons =  gene2exon_list (cursor, gene_id)
+                print "all exons:"
+                inspect (all_exons)
+
                 exit(1)
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
