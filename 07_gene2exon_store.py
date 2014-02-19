@@ -195,6 +195,8 @@ def get_translated_region(cursor, gene_id, species):
         
         if (this_translation_region_end >= transl_region_end):
             transl_region_end = this_translation_region_end
+
+        print " while resolving: ", transcript_id, transl_region_start, transl_region_end
         
     return [transl_region_start, transl_region_end, gene_region_strand]
 
