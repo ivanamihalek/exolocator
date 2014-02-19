@@ -172,8 +172,8 @@ def main():
 
         #for tot in range(1000):
         for gene_id in gene_ids:
+            tot += 1
             #gene_id = choice(gene_ids)
-            #tot += 1
             # find all canonical coding exons associated with the gene id
             exons = get_canonical_coding_exons (cursor, gene_id)
             if (not exons):
@@ -209,7 +209,7 @@ def main():
 
             if ( abs(length/3-len(canonical_translation)) > 3):
                 ct +=1
-                print gene_id, gene2stable (cursor, gene_id = gene_id),
+                print gene_id, gene2stable (cursor, gene_id), get_description (cursor, gene_id)
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
                 # print out all exons
