@@ -155,7 +155,7 @@ def get_translated_region(cursor, gene_id, species):
 
 
     transcript_ids = get_transcript_ids(cursor, gene_id, species)
-
+    print " TTTTTT: ", transcript_ids
 
     transl_region_start = gene_region_end
     transl_region_end   = gene_region_start
