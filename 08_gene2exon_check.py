@@ -47,9 +47,10 @@ def get_translated_region_talkative(cursor, gene_id, species):
         print "region not retrived for ", species, gene_id, species
         return []
 
-
+    canonical_transcript_id = get_canonical_transcript_id (cursor, gene_id)
     transcript_ids = get_transcript_ids(cursor, gene_id)
     print transcript_ids
+    print "canonical: ", canonical_transcript_id
 
     transl_region_start = gene_region_end
     transl_region_end   = gene_region_start
@@ -70,6 +71,8 @@ def get_translated_region_talkative(cursor, gene_id, species):
         end_exon_id    = rows[0][3]
         
         print
+        if transcript_id == canonical_transcript_id:
+            print "canonical: "
         print "transcript id: ", transcript_id
         print "start exon id:",  start_exon_id, "transl start (in the exon) ", exon_seq_start
         print "end exon id:",    end_exon_id,   "transl end (in the exon)", exon_seq_end
