@@ -423,7 +423,6 @@ def store_exon (cursor, exon):
         print "failed storing exon ", exon.exon_id, "from gene",  exon.gene_id
 
 
-
 #########################################
 def gene2exon_all(species_list, db_info):
 
@@ -448,8 +447,7 @@ def gene2exon_all(species_list, db_info):
 
         for gene_id in gene_ids:
 
-            print gene_id, get_description(cursor, gene_id)
-
+            #print gene_id, get_description(cursor, gene_id)
             # find all exons associated with the gene id 
             exons = find_exons (cursor, gene_id, species)
             if (not exons):
