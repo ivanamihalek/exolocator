@@ -173,8 +173,8 @@ def main():
         ct = 0
         tot = 0
 
-        for tot in range(1000):
-        #for gene_id in gene_ids:
+        #for tot in range(1000):
+        for gene_id in gene_ids:
             tot += 1
             gene_id = choice(gene_ids)
             # find all canonical coding exons associated with the gene id
