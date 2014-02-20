@@ -200,6 +200,8 @@ def get_translated_region(cursor, gene_id, species):
         if (this_translation_region_end >= transl_region_end):
             transl_region_end = this_translation_region_end
 
+        print transcript_id, tr_stable_id, this_translation_region_start, this_translation_region_end
+
     return [transl_region_start, transl_region_end, gene_region_strand]
 
 #########################################################
@@ -445,7 +447,8 @@ def gene2exon_all(species_list, db_info):
 
         number_of_genes = len(gene_ids)
 
-        for gene_id in gene_ids:
+        for gene in ['727579']:
+        #for gene_id in gene_ids:
 
             #print gene_id, get_description(cursor, gene_id)
             # find all exons associated with the gene id 
