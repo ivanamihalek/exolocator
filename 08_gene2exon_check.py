@@ -189,6 +189,10 @@ def main():
 
             # add up the coding length of the canonical exons
             exons_sorted = exons.sort(key=lambda exon: exon.start_in_gene)
+            print exons
+            print
+            print exons_sorted
+
 
             inside_the_coding_range = False
             start_properly_marked   = False
