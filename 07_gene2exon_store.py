@@ -327,6 +327,8 @@ def mark_coding (cursor, gene_id, species, exons):
 
     [transl_region_start,transl_region_end, strand] = ret
 
+    print ">>>>>> ",transl_region_start,transl_region_end, strand
+
     translated_length = 0
     for exon in exons:
 
