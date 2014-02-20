@@ -188,16 +188,12 @@ def main():
                 print species, tot, ct
 
             # add up the coding length of the canonical exons
-            exons_sorted = exons.sort(key=lambda exon: exon.start_in_gene)
-            print exons
-            print
-            print exons_sorted
-
+            exons.sort(key=lambda exon: exon.start_in_gene)
 
             inside_the_coding_range = False
             start_properly_marked   = False
             length = 0
-            for exon in exons_sorted:
+            for exon in exons:
 
                 if not exon.canon_transl_start is None:
                     start_properly_marked   = True # if it is not propermy marked, we'll never start reading
@@ -215,7 +211,7 @@ def main():
             # (this I believe is the case for predicted transcripts)
             if not start_properly_marked:
                 length = 0
-                for exon in exons_sorted:
+                for exon in exons:
                     length += exon.end_in_gene - exon.start_in_gene + 1
                 
             
