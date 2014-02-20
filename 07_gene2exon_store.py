@@ -447,7 +447,7 @@ def gene2exon_all(species_list, db_info):
 
         number_of_genes = len(gene_ids)
 
-        for gene in ['727579']:
+        for gene_id in ['727579']:
         #for gene_id in gene_ids:
 
             #print gene_id, get_description(cursor, gene_id)
