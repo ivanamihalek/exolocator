@@ -28,7 +28,6 @@ def  mark_canonical (cursor, gene_id, exons):
     [canonical_start_in_exon, canonical_start_exon_id,
      canonical_end_in_exon, canonical_end_exon_id] = get_canonical_coordinates (cursor, canonical_transcript_id)
 
-    print canonical_transcript_id, canonical_exon_ids
     
     start_found = False
     end_found   = False
@@ -177,6 +176,11 @@ def get_translated_region(cursor, gene_id, species):
         start_exon_id  = rows[0][1]
         exon_seq_end   = rows[0][2]
         end_exon_id    = rows[0][3]
+
+        print transcript_id, tr_stable_id
+        print "\t", start_exon_id, exon_seq_start
+        print "\t", end_exon_id, exon_seq_end
+
 
         if (gene_region_strand > 0):
             start = {}
