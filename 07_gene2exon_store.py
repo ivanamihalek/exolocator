@@ -199,6 +199,8 @@ def get_translated_region(cursor, gene_id, species):
 
             this_translation_region_start = end[end_exon_id]   - exon_seq_end   + 1
             this_translation_region_end   = end[start_exon_id] - exon_seq_start + 1
+            
+        print "\t", this_translation_region_start, this_translation_region_end
 
         if (this_translation_region_start <= transl_region_start):
             transl_region_start = this_translation_region_start
