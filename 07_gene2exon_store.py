@@ -27,7 +27,6 @@ def  mark_canonical (cursor, gene_id, exons):
             exon.is_canonical = 0
     [canonical_start_in_exon, canonical_start_exon_id,
      canonical_end_in_exon, canonical_end_exon_id] = get_canonical_coordinates (cursor, canonical_transcript_id)
-
     
     start_found = False
     end_found   = False
@@ -177,11 +176,6 @@ def get_translated_region(cursor, gene_id, species):
         exon_seq_end   = rows[0][2]
         end_exon_id    = rows[0][3]
 
-        print transcript_id, tr_stable_id
-        print "\t", start_exon_id, exon_seq_start
-        print "\t", end_exon_id, exon_seq_end
-
-
         if (gene_region_strand > 0):
             start = {}
  
@@ -199,15 +193,12 @@ def get_translated_region(cursor, gene_id, species):
 
             this_translation_region_start = end[end_exon_id]   - exon_seq_end   + 1
             this_translation_region_end   = end[start_exon_id] - exon_seq_start + 1
-            
-        print "\t", this_translation_region_start, this_translation_region_end
 
         if (this_translation_region_start <= transl_region_start):
             transl_region_start = this_translation_region_start
         
         if (this_translation_region_end >= transl_region_end):
             transl_region_end = this_translation_region_end
-
 
     return [transl_region_start, transl_region_end, gene_region_strand]
 
@@ -442,7 +433,6 @@ def gene2exon_all(species_list, db_info):
         db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    species_list = ['homo_sapiens']
     for species in species_list:
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -454,8 +444,7 @@ def gene2exon_all(species_list, db_info):
 
         number_of_genes = len(gene_ids)
 
-        for gene_id in [727579]:
-        #for gene_id in gene_ids:
+        for gene_id in gene_ids:
 
             #print gene_id, get_description(cursor, gene_id)
             # find all exons associated with the gene id 

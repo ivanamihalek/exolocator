@@ -174,7 +174,8 @@ def main():
         tot = 0
 
         #for tot in range(1000):
-        for gene_id in gene_ids:
+        #for gene_id in gene_ids:
+        for gene_id in [727579]:
             tot += 1
             #gene_id = choice(gene_ids)
             # find all canonical coding exons associated with the gene id
@@ -187,16 +188,32 @@ def main():
                 print species, tot, ct
 
             # add up the coding length of the canonical exons
-            length = 0
-            for exon in exons:
+            exons_sorted = exons.sort(key=lambda exon: exon.start_in_gene)
 
-                if  exon.canon_transl_end is None:
-                    length += exon.end_in_gene - exon.start_in_gene + 1
-                else:
-                    length += exon.canon_transl_end 
+            inside_the_coding_range = False
+            start_properly_marked   = False
+            length = 0
+            for exon in exons_sorted:
 
                 if not exon.canon_transl_start is None:
+                    start_properly_marked   = True # if it is not propermy marked, we'll never start reading
+                    inside_the_coding_range = True
                     length -= exon.canon_transl_start - 1
+
+                if not exon.canon_transl_start is None:
+                    inside_the_coding_range = True
+                    length += exon.canon_transl_end 
+
+                if inside_the_coding_range:
+                    length += exon.end_in_gene - exon.start_in_gene + 1
+
+            # take that all exons are coding full length if there is no start and end annotation
+            # (this I believe is the case for predicted transcripts)
+            if not start_properly_marked:
+                length = 0
+                for exon in exons_sorted:
+                    length += exon.end_in_gene - exon.start_in_gene + 1
+                
             
             if (not length):
                 print gene2stable (cursor, gene_id = gene_id), " no exons marked as canonical"
