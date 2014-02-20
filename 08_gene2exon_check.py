@@ -201,7 +201,7 @@ def main():
                     length -= exon.canon_transl_start - 1
 
                 if not exon.canon_transl_start is None:
-                    inside_the_coding_range = True
+                    inside_the_coding_range = False
                     length += exon.canon_transl_end 
 
                 if inside_the_coding_range:
