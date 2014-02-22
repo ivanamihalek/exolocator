@@ -156,7 +156,6 @@ def main():
     else:
         species_list = all_species
  
-    species_list = ['homo_sapiens']
     ############################
     for species in species_list:
         print
