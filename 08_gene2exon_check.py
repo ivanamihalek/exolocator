@@ -221,7 +221,6 @@ def main():
             canonical_translation = get_canonical_transl (acg, cursor, gene_id, species)
             if ( not canonical_translation):
                 print "no canonical transl found for ", gene_id
-                exit(1)
                 continue
 
 
@@ -230,19 +229,20 @@ def main():
                 print gene_id, gene2stable (cursor, gene_id), get_description (cursor, gene_id)
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
-                # print out all exons
-                print "exons:"
-                inspect (exons)
-                print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
-                print
-                # print out exons more carefully filtered to belong to the canonical version of the translation
-                print
-                get_translated_region_talkative (cursor, gene_id, species)
-                all_exons =  gene2exon_list (cursor, gene_id)
-                print "all exons:"
-                inspect (all_exons)
+                if False:
+                    # print out all exons
+                    print "exons:"
+                    inspect (exons)
+                    print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
+                    print
+                    # print out exons more carefully filtered to belong to the canonical version of the translation
+                    print
+                    get_translated_region_talkative (cursor, gene_id, species)
+                    all_exons =  gene2exon_list (cursor, gene_id)
+                    print "all exons:"
+                    inspect (all_exons)
 
-                exit(1)
+                
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
 
