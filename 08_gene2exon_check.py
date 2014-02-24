@@ -156,6 +156,7 @@ def main():
     else:
         species_list = all_species
  
+    species_list = ['mustela_putorius_furo']
     ############################
     for species in species_list:
         print
@@ -172,8 +173,8 @@ def main():
         ct = 0
         tot = 0
 
-        for tot in range(1000):
-        #for gene_id in gene_ids:
+        #for tot in range(1000):
+        for gene_id in gene_ids:
             #tot += 1
             gene_id = choice(gene_ids)
             # find all canonical coding exons associated with the gene id
@@ -229,7 +230,7 @@ def main():
                 print gene_id, gene2stable (cursor, gene_id), get_description (cursor, gene_id)
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
-                if False:
+                if True:
                     # print out all exons
                     print "exons:"
                     inspect (exons)
@@ -241,7 +242,7 @@ def main():
                     all_exons =  gene2exon_list (cursor, gene_id)
                     print "all exons:"
                     inspect (all_exons)
-
+                    exit(1)
                 
 
         print species, "checked a sample of ", tot, "genes;  problematic:", ct
