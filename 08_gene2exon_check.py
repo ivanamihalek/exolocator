@@ -252,12 +252,12 @@ def main():
 
     cursor.close()
     db.close()
-
-    print 'Note: some problems could not have be resolved up to this point,'
-    print 'becasue we have not really looged at the exons seqs yet.'
-    print 'For example, for MP furo the, start fo the cannonical translation'
-    print 'is sometimes given in the middle of NNNNN region,  '
-
+#
+#    print 'Note: some problems could not have be resolved up to this point,'
+#    print 'becasue we have not really looged at the exons seqs yet.'
+#    print 'For example, for MP furo the, start fo the cannonical translation'
+#    print 'is sometimes given in the middle of NNNNN region.'
+#
     return True
 
 

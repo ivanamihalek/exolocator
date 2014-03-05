@@ -18,39 +18,6 @@ from Bio.Alphabet import generic_dna
 #def is_mitochondrial (cursor, seq_region_id):
 
     
-
-
-#########################################
-def get_canonical_transl (acg, cursor, gene_id, species):
-
-    canonical_translation = ""
-
-    canonical_transl_id = gene2stable_canon_transl(cursor, gene_id)
-    if ( not canonical_transl_id):
-        print species, "no canonical transl id found for ", gene_id
-        return ""
-        #exit(1)
-
-    cmd = acg.generate_fastacmd_protein_command (canonical_transl_id, species, 
-                                                 "all", None)
-    fasta = commands.getoutput(cmd)
-    if (not fasta):
-        print species, gene2stable (cursor, gene_id = gene_id),  "fasta not found for ", canonical_transl_id
-        return ""
-        #exit(1)
-
-    canonical_translation = ""
-    for line in fasta.split("\n"):
-        if ('>' in line):
-            continue
-        line.rstrip()
-        canonical_translation += line
-
-    while (len(canonical_translation) and canonical_translation[0] == 'X'):
-        canonical_translation = canonical_translation[1:]
-
-    return canonical_translation
-
 ########################################
 def  get_canonical_exons (cursor, gene_id):
 
