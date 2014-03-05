@@ -504,7 +504,7 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
     return [sequence_stripped_pep, sequence_stripped_dna]
 
 #########################################
-def get_canonical_transl (acg, cursor, gene_id, species):
+def get_canonical_transl (acg, cursor, gene_id, species, strip_X = True):
 
     canonical_translation = ""
 
@@ -528,7 +528,8 @@ def get_canonical_transl (acg, cursor, gene_id, species):
         line.rstrip()
         canonical_translation += line
 
-    while (len(canonical_translation) and canonical_translation[0] == 'X'):
-        canonical_translation = canonical_translation[1:]
+    if strip_X:
+        while (len(canonical_translation) and canonical_translation[0] == 'X'):
+            canonical_translation = canonical_translation[1:]
 
     return canonical_translation

@@ -219,7 +219,7 @@ def main():
                 continue
 
             # what is the length of the canonical transcript according to Ensembl
-            canonical_translation = get_canonical_transl (acg, cursor, gene_id, species)
+            canonical_translation = get_canonical_transl (acg, cursor, gene_id, species, strip_X=False)
             if ( not canonical_translation):
                 print "no canonical transl found for ", gene_id
                 continue
@@ -234,6 +234,8 @@ def main():
                     # print out all exons
                     print "exons:"
                     inspect (exons)
+                    print
+                    print 'canonical sequence'
                     print re.sub("(.{50})", "\\1\n", canonical_translation)  # print canonical sequence with \n stuck in every 50 positions     
                     print
                     # print out exons more carefully filtered to belong to the canonical version of the translation
@@ -242,6 +244,8 @@ def main():
                     all_exons =  gene2exon_list (cursor, gene_id)
                     print "all exons:"
                     inspect (all_exons)
+                    print
+                    compare_seqs (canonical_translation, translated_seq, verbose=False)
                     exit(1)
                 
 
@@ -249,6 +253,11 @@ def main():
 
     cursor.close()
     db.close()
+
+    print 'Note: some problems could not have be resolved up to this point,'
+    print 'becasue we have not really looged at the exons seqs yet.'
+    print 'For example, for MP furo the, start fo the cannonical translation'
+    print 'is sometimes given in the middle of NNNNN region,  '
 
     return True
 
