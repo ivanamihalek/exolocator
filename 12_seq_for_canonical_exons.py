@@ -159,8 +159,6 @@ def store_exon_seqs(species_list, db_info):
             ret = get_gene_seq(acg, cursor, gene_id, species)
             [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
 
-            print canonical_exon_pepseq
-
             if (not gene_seq or not canonical_exon_pepseq):
                 ct += 1
                 print 'no sequence found for ', gene_id, "   ",   ct, "out of ", tot
