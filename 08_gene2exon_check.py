@@ -156,7 +156,6 @@ def main():
     else:
         species_list = all_species
  
-    species_list = ['mustela_putorius_furo']
     ############################
     for species in species_list:
         print
