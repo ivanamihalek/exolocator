@@ -298,6 +298,8 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
         print translated_seq
         print "canonical exons:"
         print canonical_exon_pepseq
+        print "gene seq: "
+        print gene_seq
 
     return null 
 
