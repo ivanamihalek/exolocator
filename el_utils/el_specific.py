@@ -79,6 +79,7 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
 
 
         exon_seq     =  gene_seq[ start: end+1]
+        print ">> exon seq: ",  exon_seq
         exon_seq_for_transl_purposes = carry + exon_seq
 
         remainder    = len(exon_seq_for_transl_purposes)%3
@@ -298,9 +299,7 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
         print translated_seq
         print "canonical exons:"
         print canonical_exon_pepseq
-        print "gene seq: "
-        print gene_seq
-
+ 
     return null 
 
 
