@@ -288,6 +288,12 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
 
     if verbose:
         print "Using alt seq info: failed comparison with canonical sequence."
+        print "canonical translation:"
+        print canonical_translation
+        print "translated:"
+        print translated_seq
+        print "canonical exons:"
+        print canonical_exon_pepseq
 
     return null 
 
