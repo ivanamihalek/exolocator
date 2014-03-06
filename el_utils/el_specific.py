@@ -79,7 +79,7 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
 
 
         exon_seq     =  gene_seq[ start: end+1]
-        print "start, end", start, end
+        print "start, end, length", start, end, len()
         print ">> exon seq: ",  exon_seq
         exon_seq_for_transl_purposes = carry + exon_seq
 
