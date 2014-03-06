@@ -295,12 +295,11 @@ def  get_primary_seq_info (cursor, gene_id, species):
 def  get_alt_seq_info (cursor, gene_id, species):
 
     # seq identifier from gene table
-    qry  = "select seq_region_id, seq_region_strand from gene where gene_id = %d" % gene_id
+    qry  = "select seq_region_id, seq_region_start, seq_region_end,  seq_region_strand from gene where gene_id = %d" % gene_id
     rows = search_db (cursor, qry)
-    if ( not rows):
-         search_db (cursor, qry, verbose = True)
-         exit(1)
-    [seq_region_id, seq_region_strand] = rows[0]
+    if not rows: return []
+
+    [seq_region_id, orig_seq_region_start, orig_seq_region_end, seq_region_strand] = rows[0]
     
     # check whether we have "assembly exception"
     # we do not want 'PAR' regions, though:
@@ -309,29 +308,24 @@ def  get_alt_seq_info (cursor, gene_id, species):
     They allow the pairing and crossing-over of these sex chromosomes the same way the autosomal 
     chromosomes do during meiosis. 
     As these genomic regions are identical between X and Y, they are oftentimes only stored once.
+    The exception types we are interested in are PATCH_FIX and  PATCH_NOVEL
     '''
-
-    qry  = "select seq_region.name,  assembly_exception.exc_seq_region_start, assembly_exception.exc_seq_region_end "
-    qry += "from seq_region, assembly_exception "
-    qry += "where seq_region.seq_region_id = assembly_exception.exc_seq_region_id "
-    qry += "and assembly_exception.seq_region_id = %d" % seq_region_id
-    qry += " and not assembly_exception.exc_type = 'PAR'"
+    qry  = "select  seq_region_start,  seq_region_end, exc_seq_region_id, exc_seq_region_start,  exc_seq_region_end "
+    qry += "from assembly_exception where seq_region_id = %d " % seq_region_id
+    qry += "and  assembly_exception.exc_type  like 'PATCH_%'"
     rows = search_db (cursor, qry)
-    if (rows):
-        [seq_name, seq_region_start, seq_region_end] = rows[0]
-        qry = " select distinct file_name from seq_region where seq_region.name = '%s' " % seq_name
-        rows = search_db (cursor, qry)
-        file_names = ""
-        for row in rows:
-            if file_names:
-                file_names += " "
-            file_names += row[0]
+    if not rows: return []
+    [seq_region_start,  seq_region_end, exc_seq_region_id, exc_seq_region_start,  exc_seq_region_end] = rows[0]
 
-        mitochondrial = is_mitochondrial (cursor, gene_id)
-        return [seq_name, file_names, seq_region_start, 
-                seq_region_end, seq_region_strand, mitochondrial]
-    else:
-        return []
+    qry  = "select name, file_name from seq_region where seq_region_id= %d" %  exc_seq_region_id
+    rows = search_db (cursor, qry)
+    if not rows: return []
+    [seq_name, file_names] = rows[0]
+
+    mitochondrial = is_mitochondrial (cursor, gene_id)
+
+    return [seq_name, file_names, seq_region_start, seq_region_end, seq_region_strand, mitochondrial]
+    
 
 #########################################
 def extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  
