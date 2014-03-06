@@ -47,8 +47,8 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
     ok_so_far = True
     # sanity checking
     for exon in canonical_coding_exons:
-        #print
-        #print "exon", exon.exon_id
+        print
+        print "exon", exon.exon_id
         #find exon sequence within the gene
         start = exon.start_in_gene
         if (exon is canonical_coding_exons[0]):
@@ -79,6 +79,7 @@ def  transl_reconstruct (cursor,  gene_id, gene_seq, canonical_coding_exons,
 
 
         exon_seq     =  gene_seq[ start: end+1]
+        print "start, end", start, end
         print ">> exon seq: ",  exon_seq
         exon_seq_for_transl_purposes = carry + exon_seq
 
