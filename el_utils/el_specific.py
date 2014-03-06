@@ -228,11 +228,11 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
 
     #########################################
     # which file should we be looking in, which sequence, from where to where
-    ret = get_primary_seq_info (cursor, gene_id, species)
-    if (not ret):
+    primary_seq_info = get_primary_seq_info (cursor, gene_id, species)
+    if not primary_seq_info:
         return null
     [seq_name, file_names, seq_region_start, seq_region_end, 
-     seq_region_strand, is_mitochondrial] = ret
+     seq_region_strand, is_mitochondrial] = primary_seq_info
     # find all canonical exons associated with the gene id
     canonical_coding_exons = get_canonical_exons (cursor, gene_id)
     # extract raw gene  region TODO - store the information about which 
@@ -253,6 +253,8 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
         return [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]
     if verbose:
         print "Using primary seq info: failed comparison with canonical sequence."
+        print "primary_seq_info: "
+        print primary_seq_info
         print "canonical translation:"
         print canonical_translation
         print "translated:"
