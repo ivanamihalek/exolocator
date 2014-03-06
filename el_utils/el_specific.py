@@ -252,10 +252,12 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
         return [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]
     if verbose:
         print "Using primary seq info: failed comparison with canonical sequence."
-        print "canonical:"
-        print canonical_exon_pepseq
+        print "canonical translation:"
+        print canonical_translation
         print "translated:"
         print translated_seq
+        print "canonical exons:"
+        print canonical_exon_pepseq
  
     #########################################
     # otherwise repeat the procedure with the alternative seq info:
