@@ -284,7 +284,7 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
     if (comparison_ok):
         return [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]
 
-     if verbose:
+    if verbose:
         print "Using alt seq info: failed comparison with canonical sequence."
 
     return null 
