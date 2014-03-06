@@ -213,7 +213,7 @@ def compare_seqs (canonical_translation, translated_seq, verbose=False):
 
 
 #########################################
-def  get_gene_seq (acg, cursor, gene_id, species):
+def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
 
     """
     Given gene_id, return dna region which reproduces the correct canonical translation.
@@ -239,8 +239,8 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     [gene_seq, file_name] = extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  
                                              seq_region_start, seq_region_end)
     # reconstruct the translation from the raw gene_seq and exon boundaries
-    [canonical_exon_pepseq,translated_seq] = transl_reconstruct (cursor, gene_id, gene_seq, canonical_coding_exons, 
-                                                 is_mitochondrial)
+    [canonical_exon_pepseq,translated_seq] = transl_reconstruct (cursor, gene_id, gene_seq, 
+                                                                 canonical_coding_exons, is_mitochondrial)
     if (translated_seq):
         # compare the two sequences and cry foul if they are not the same:
         comparison_ok = compare_seqs (canonical_translation, translated_seq)
@@ -250,6 +250,8 @@ def  get_gene_seq (acg, cursor, gene_id, species):
     # as the canonical translation, we are done here
     if (comparison_ok):
         return [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]
+    if verbose:
+        print "Using primary seq info: failed comparison with canonical sequence."
  
     #########################################
     # otherwise repeat the procedure with the alternative seq info:

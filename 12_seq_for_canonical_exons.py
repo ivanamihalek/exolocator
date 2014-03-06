@@ -129,7 +129,8 @@ def store_exon_seqs(species_list, db_info):
         cfg    = ConfigurationReader       (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    for species in species_list[len(species_list)/2:]:
+    species_list = ['homo_sapiens']
+    for species in species_list:
         print
         print "############################"
         print  species
@@ -149,6 +150,7 @@ def store_exon_seqs(species_list, db_info):
         seqs_not_found = []
         ct  = 0
         tot = 0
+        gene_ids = [698146,  698241,  698770,  698941]
         for gene_id in gene_ids:
             tot += 1
             if (not  tot%1000):
@@ -156,12 +158,13 @@ def store_exon_seqs(species_list, db_info):
                
             # extract raw gene  region - bonus return from checking whether the 
             # sequence is correct: translation of canonical exons
-            ret = get_gene_seq(acg, cursor, gene_id, species)
+            ret = get_gene_seq(acg, cursor, gene_id, species, verbose=True)
             [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
 
             if (not gene_seq or not canonical_exon_pepseq):
                 ct += 1
                 print 'no sequence found for ', gene_id, "   ",   ct, "out of ", tot
+                exit(1)
                 seqs_not_found.append(gene_id)
                 continue
 
@@ -200,7 +203,7 @@ def main():
     """
 
 
-    no_threads = 10
+    no_threads = 1
 
     local_db = False
 
