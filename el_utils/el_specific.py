@@ -220,6 +220,12 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
     """
     null = ["",{}, "", "", None, None]
 
+    # i'm not quite clear why Ensembl is doing this, but sometimes we need the alternative
+    # region - ("PATCH" deposited as tte right sequence, but its missing most of the gene)
+    # so first establish whether it is the case: find canonical translation.
+    canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
+    if not canonical_translation: return null
+
     #########################################
     # which file should we be looking in, which sequence, from where to where
     ret = get_primary_seq_info (cursor, gene_id, species)
@@ -227,11 +233,6 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
         return null
     [seq_name, file_names, seq_region_start, seq_region_end, 
      seq_region_strand, is_mitochondrial] = ret
-    # i'm not quite clear why Ensembl is doing this, but sometimes we need the alternative
-    # region - ("PATCH" deposited as tte right sequence, but its missing most of the gene)
-    # so first establish whether it is the case: find canonical translation.
-    canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
-    if not canonical_translation: return null
     # find all canonical exons associated with the gene id
     canonical_coding_exons = get_canonical_exons (cursor, gene_id)
     # extract raw gene  region TODO - store the information about which 
@@ -261,13 +262,11 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
  
     #########################################
     # otherwise repeat the procedure with the alternative seq info:
-    ret = get_alt_seq_info (cursor, gene_id, species)
-    if (not ret):
+    alt_seq_info = get_alt_seq_info (cursor, gene_id, species)
+    if (not alt_seq_info):
         return null
     [seq_name, file_names, seq_region_start, seq_region_end, 
-     seq_region_strand, is_mitochondrial] = ret
-    # check  canonical translation
-    canonical_translation  = get_canonical_transl (acg, cursor, gene_id, species)
+     seq_region_strand, is_mitochondrial] = alt_seq_info
     # find all canonical exons associated with the gene id
     canonical_coding_exons = get_canonical_exons (cursor, gene_id)
     # extract raw gene  region
@@ -287,7 +286,10 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
         return [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]
 
     if verbose:
+        print
         print "Using alt seq info: failed comparison with canonical sequence."
+        print "alt seq info:"
+        print alt_seq_info
         print "canonical translation:"
         print canonical_translation
         print "translated:"
