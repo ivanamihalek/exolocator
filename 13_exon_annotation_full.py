@@ -50,8 +50,8 @@ def pep_exon_seqs(species_list, db_info):
     cursor = db.cursor()
 
     #####################################
-    for species in species_list:
-    #for species in ['homo_sapiens']:   
+    #for species in species_list:
+    for species in ['homo_sapiens']:   
 
         print
         print "############################"
@@ -75,8 +75,8 @@ def pep_exon_seqs(species_list, db_info):
         translation_fail = 0
 
         #for all protein coding genes in a species
-        for gene_id in gene_ids:
-        #for gene_id in [736801]:
+        #for gene_id in gene_ids:
+        for gene_id in [706383]:
 
             # for all exons in the gene
             exons = gene2exon_list(cursor, gene_id)
