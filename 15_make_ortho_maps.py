@@ -117,6 +117,12 @@ def maps_for_gene_list(gene_list, db_info):
             # there are some novel exons - this one builds the maps from scratch)
             ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'sw_exon')
             ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'usearch_exon')
+            
+            print '+++++++++++++++++++++++++++++++'
+            print ortho_species
+            for exon in ortho_exons:
+                print exon
+            print
 
             if not ortho_exons:
                 missing_exon_info += 1
