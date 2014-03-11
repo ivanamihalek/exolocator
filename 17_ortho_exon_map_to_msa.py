@@ -79,9 +79,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 if not maps: 
                     print " no maps"
                     print human_exon
-                for map in maps:
-                    print map
-                print 
+                 print 
             if not maps: 
                 no_maps += 1
                 continue
@@ -177,8 +175,8 @@ def multiple_exon_alnmt(gene_list, db_info):
                   {"msa_bitstring":MySQLdb.escape_string(msa_bitmap)})
 
             ok += 1
-            commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
-            #print afa_fnm
+            #commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
+            print afa_fnm
             #exit(1)
 
         if verbose: print " time: %8.3f\n" % (time()-start);
