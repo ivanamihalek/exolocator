@@ -109,7 +109,7 @@ def maps_for_gene_list(gene_list, db_info):
         orthologues = get_reliable_orthos(cursor, ensembl_db_name, gene_id)
 
         for [ortho_gene_id, ortho_species] in  orthologues:
-            #if not ortho_species == 'equus_caballus': continue
+            if not ortho_species == 'pan_troglodytes': continue
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
             # in the first round of building the database there will be no 'novel' exons
             # but we put this here just in case we want to rerun the script anyway
@@ -134,10 +134,9 @@ def maps_for_gene_list(gene_list, db_info):
                 print "\t", ortho_species, "no maps"
                 continue
 
-            if ortho_species == 'pan_troglodytes':
-                for map in maps:
-                    print map
-                exit(1)
+            for map in maps:
+                print map
+            exit(1)
 
             no_maps += len(maps)
             store (cursor, maps, ensembl_db_name)
