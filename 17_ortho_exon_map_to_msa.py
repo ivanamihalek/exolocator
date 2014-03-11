@@ -21,7 +21,7 @@ from time      import  time
 from Bio       import  SeqIO
 from bitstring import  Bits
 
-verbose = False
+verbose = True
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):

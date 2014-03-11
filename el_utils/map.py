@@ -228,7 +228,7 @@ def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
 
 
 #########################################
-def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions):
+def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions, verbose=False):
 
     maps = []
    
@@ -290,10 +290,12 @@ def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, 
                     return []
 
                 map.similarity = pairwise_tanimoto(seq['human'], seq['other'])   
-                print '==============================='
-                print seq['human']
-                print seq['other']
-                print map
+
+                if verbose:
+                    print '==============================='
+                    print seq['human']
+                    print seq['other']
+                    print map
   
                 if map.similarity < min_similarity: continue
 
