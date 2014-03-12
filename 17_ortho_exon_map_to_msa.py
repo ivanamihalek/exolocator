@@ -79,7 +79,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 if not maps: 
                     print " no maps"
                     print human_exon
-                 print 
+                print 
             if not maps: 
                 no_maps += 1
                 continue
