@@ -69,7 +69,8 @@ def multiple_exon_alnmt(gene_list, db_info):
         human_exons = filter (lambda e: e.is_known==1 and e.is_coding and e.covering_exon<0, gene2exon_list(cursor, gene_id))
         human_exons.sort(key=lambda exon: exon.start_in_gene)
 
-
+        headers = []
+        seqeunces = {}
         for human_exon in human_exons:
             
             tot += 1
