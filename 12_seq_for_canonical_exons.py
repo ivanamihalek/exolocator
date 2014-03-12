@@ -209,7 +209,7 @@ def store_exon_seqs_special(gene_list, db_info):
         orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
 
 
-        for [ortho_gene_id, ortho_species] in [gene_id,'homo_sapiens'] + orthologues:
+        for [ortho_gene_id, ortho_species] in [[gene_id,'homo_sapiens']] + orthologues:
 
             print ">>> ", ortho_species, ortho_gene_id
             continue
