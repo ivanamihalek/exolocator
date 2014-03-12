@@ -66,12 +66,9 @@ def multiple_exon_alnmt(gene_list, db_info):
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         print gene_ct, len(gene_ids),  gene_id,  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
-        # find all human exons we are tracking in the database
-        for human_exon in gene2exon_list(cursor, gene_id):
-            print human_exon
-        exit(1)
-
         human_exons = filter (lambda e: e.is_known==1 and e.is_coding and e.covering_exon<0, gene2exon_list(cursor, gene_id))
+        human_exons.sort(key=lambda exon: exon.start_in_gene)
+
 
         for human_exon in human_exons:
             
@@ -126,8 +123,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 sequences[seqname] = pepseq
                 print seqname, "  ", pepseq
 
-            exit(1)
-
+ 
             if (len(headers) <=1 ):
                 if verbose: print "single species in the alignment"
                 no_orthologues += 1

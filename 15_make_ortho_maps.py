@@ -133,9 +133,6 @@ def maps_for_gene_list(gene_list, db_info):
                 print "\t", ortho_species, "no maps"
                 continue
 
-            for map in maps:
-                print map
- 
             no_maps += len(maps)
             store (cursor, maps, ensembl_db_name)
  
