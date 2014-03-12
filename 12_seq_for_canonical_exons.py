@@ -201,17 +201,20 @@ def store_exon_seqs_special(gene_list, db_info):
             
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
+
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
 
 
         for [ortho_gene_id, ortho_species] in orthologues:
-            
+
+            print ">>> ", ortho_species, ortho_gene_id
+
             switch_to_db (cursor, ensembl_db_name[ortho_species])
 
             # extract raw gene  region - bonus return from checking whether the 
             # sequence is correct: translation of canonical exons
-            ret = get_gene_seq(acg, cursor, gene_id, species, verbose=verbose)
+            ret = get_gene_seq(acg, cursor, gene_id, ortho_species, verbose=verbose)
             [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
 
             if (not gene_seq or not canonical_exon_pepseq):
@@ -223,7 +226,7 @@ def store_exon_seqs_special(gene_list, db_info):
                 continue
 
             # get _all_ exons
-            exons = gene2exon_list(cursor, gene_id, ensembl_db_name[species])
+            exons = gene2exon_list(cursor, gene_id, ensembl_db_name[ortho_species])
             if (not exons):
                 #print 'no exons for ', gene_id
                 #exit(1)
@@ -236,9 +239,9 @@ def store_exon_seqs_special(gene_list, db_info):
             store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
 
 
-        print gene_id, gene2stable(cursor, gene_id), species, "done; tot:", tot, " fail:", ct
+        print gene_id, gene2stable(cursor, gene_id), ortho_species, "done; tot:", tot, " fail:", ct
         if (seqs_not_found):
-            outf = open(species+".seqs_not_found", "w")
+            outf = open(ortho_species+".seqs_not_found", "w")
             for not_found in seqs_not_found:
                 print >> outf, str(not_found)+", ",
             print >> outf, "\n"
