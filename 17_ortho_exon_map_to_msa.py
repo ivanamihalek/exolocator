@@ -107,7 +107,7 @@ def multiple_exon_alnmt(gene_list, db_info):
             for map in maps:
 
                 switch_to_db (cursor, ensembl_db_name[map.species_2])
-
+                print map.species_2,  map.similarity
                 if map.similarity < min_similarity: continue
                 exon    = map2exon(cursor, ensembl_db_name, map)
                 pepseq  = get_exon_pepseq (cursor,exon)
