@@ -197,8 +197,11 @@ def store_exon_seqs_special(gene_list, db_info):
     cursor = db.cursor()
 
     fail_ct = 0
+    tot     = 0
     for gene_id in gene_list:
             
+        tot += 1
+
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
 
@@ -206,7 +209,7 @@ def store_exon_seqs_special(gene_list, db_info):
         orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
 
 
-        for [ortho_gene_id, ortho_species] in orthologues:
+        for [ortho_gene_id, ortho_species] in [gene_id,'homo_sapiens'] + orthologues:
 
             print ">>> ", ortho_species, ortho_gene_id
             continue
@@ -222,7 +225,6 @@ def store_exon_seqs_special(gene_list, db_info):
                 if verbose:
                     print 'no sequence found for ', gene_id, gene2stable(cursor, gene_id)
                 exit(1)
-                seqs_not_found.append(gene_id)
                 continue
 
             # get _all_ exons
@@ -239,14 +241,9 @@ def store_exon_seqs_special(gene_list, db_info):
             store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
 
 
-        print gene_id, gene2stable(cursor, gene_id), ortho_species, "done; tot:", tot, " fail:", fail_ct
-        if (seqs_not_found):
-            outf = open(ortho_species+".seqs_not_found", "w")
-            for not_found in seqs_not_found:
-                print >> outf, str(not_found)+", ",
-            print >> outf, "\n"
-            outf.close
+        print gene_id, gene2stable(cursor, gene_id), "done; tot:", tot, " fail:", fail_ct
 
+ 
     cursor.close()
     db    .close()
 
