@@ -151,7 +151,7 @@ def store_exon_seqs(species_list, db_info):
         seqs_not_found = []
         ct  = 0
         tot = 0
-        gene_ids = [698146,  698241,  698770,  698941]
+        gene_ids = [706383]
         for gene_id in gene_ids:
             tot += 1
             if (not  tot%1000):
