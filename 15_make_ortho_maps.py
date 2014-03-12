@@ -16,7 +16,7 @@ from   el_utils.almt_cmd_generator import  AlignmentCommandGenerator
 from   el_utils.config_reader      import  ConfigurationReader
 
 #########################################
-verbose = True
+verbose = False
     
 #########################################
 def store (cursor, maps, ensembl_db_name):
@@ -109,7 +109,7 @@ def maps_for_gene_list(gene_list, db_info):
         orthologues = get_reliable_orthos(cursor, ensembl_db_name, gene_id)
 
         for [ortho_gene_id, ortho_species] in  orthologues:
-            if not ortho_species == 'pan_troglodytes': continue
+            #if not ortho_species == 'pan_troglodytes': continue
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
             # in the first round of building the database there will be no 'novel' exons
             # but we put this here just in case we want to rerun the script anyway
@@ -118,7 +118,6 @@ def maps_for_gene_list(gene_list, db_info):
             ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'sw_exon')
             ortho_exons += get_novel_exons (cursor, ortho_gene_id, 'usearch_exon')
             
-
             if not ortho_exons:
                 missing_exon_info += 1
                 print "\t", ortho_species, "no exon info"
@@ -136,8 +135,7 @@ def maps_for_gene_list(gene_list, db_info):
 
             for map in maps:
                 print map
-            exit(1)
-
+ 
             no_maps += len(maps)
             store (cursor, maps, ensembl_db_name)
  
@@ -146,6 +144,7 @@ def maps_for_gene_list(gene_list, db_info):
             print >> datastring, "processed ", ct, "genes,  out of ", len(gene_list), "  ",
             print >> datastring, no_maps, " maps;  no_exon_info: ", missing_exon_info, "no_seq_info:", missing_seq_info 
             print datastring.getvalue()
+
     cursor.close()
     db.close()
 
