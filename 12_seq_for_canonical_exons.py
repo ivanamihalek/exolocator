@@ -272,8 +272,10 @@ def main():
 
     if local_db:
         db     = connect_to_mysql()
+        cfg    = ConfigurationReader()
     else:
         db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg    = ConfigurationReader       (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
     print '======================================='
