@@ -70,7 +70,7 @@ def multiple_exon_alnmt(gene_list, db_info):
         human_exons.sort(key=lambda exon: exon.start_in_gene)
 
         headers = []
-        seqeunces = {}
+        sequences = {}
         for human_exon in human_exons:
             
             tot += 1
