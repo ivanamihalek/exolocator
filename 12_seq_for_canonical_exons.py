@@ -200,8 +200,7 @@ def store_exon_seqs_special(gene_list, db_info):
     tot     = 0
     for gene_id in gene_list:
             
-        tot += 1
-
+ 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
 
@@ -212,7 +211,8 @@ def store_exon_seqs_special(gene_list, db_info):
         for [ortho_gene_id, ortho_species] in [[gene_id,'homo_sapiens']] + orthologues:
 
             print ">>> ", ortho_species, ortho_gene_id
-            continue
+            tot += 1
+
             switch_to_db (cursor, ensembl_db_name[ortho_species])
 
             # extract raw gene  region - bonus return from checking whether the 
