@@ -218,7 +218,7 @@ def store_exon_seqs_special(gene_list, db_info):
             [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
 
             if (not gene_seq or not canonical_exon_pepseq):
-                ct += 1
+                fail_ct += 1
                 if verbose:
                     print 'no sequence found for ', gene_id, gene2stable(cursor, gene_id)
                 exit(1)
