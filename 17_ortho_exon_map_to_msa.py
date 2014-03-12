@@ -67,6 +67,10 @@ def multiple_exon_alnmt(gene_list, db_info):
         print gene_ct, len(gene_ids),  gene_id,  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
         # find all human exons we are tracking in the database
+        for human_exon in gene2exon_list(cursor, gene_id):
+            print human_exon
+        exit(1)
+
         human_exons = filter (lambda e: e.is_known==1 and e.is_coding and e.covering_exon<0, gene2exon_list(cursor, gene_id))
 
         for human_exon in human_exons:
@@ -98,10 +102,6 @@ def multiple_exon_alnmt(gene_list, db_info):
                     print "length of dna ", len(dna_seq)
                 no_pepseq += 1
                 continue
-            headers   = [seqname]
-            sequences = {seqname:pepseq}
-            print seqname, "  ", pepseq
-
 
             hassw = False
             for map in maps:
