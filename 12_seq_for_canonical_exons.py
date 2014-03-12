@@ -209,7 +209,7 @@ def store_exon_seqs_special(gene_list, db_info):
         for [ortho_gene_id, ortho_species] in orthologues:
 
             print ">>> ", ortho_species, ortho_gene_id
-
+            continue
             switch_to_db (cursor, ensembl_db_name[ortho_species])
 
             # extract raw gene  region - bonus return from checking whether the 
