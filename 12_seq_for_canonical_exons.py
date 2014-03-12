@@ -17,7 +17,7 @@ from Bio.Alphabet import generic_dna
 
 #def is_mitochondrial (cursor, seq_region_id):
 
-verbose = True
+verbose = False
     
 ########################################
 def  get_canonical_exons (cursor, gene_id):
@@ -117,8 +117,6 @@ def store_exon_seqs(species_list, db_info):
 
     """
     
-    special    = ''
-
     [local_db, ensembl_db_name] = db_info
     if local_db:
         db     = connect_to_mysql()
@@ -130,7 +128,6 @@ def store_exon_seqs(species_list, db_info):
         cfg    = ConfigurationReader       (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    species_list = ['homo_sapiens']
     for species in species_list:
         print
         print "############################"
@@ -139,19 +136,11 @@ def store_exon_seqs(species_list, db_info):
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False      
  
-        if special:
-            print "using", special, "set"
-            gene_ids = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
-        elif (species=='homo_sapiens'):
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-        else:
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
         ###########################
         seqs_not_found = []
         ct  = 0
         tot = 0
-        gene_ids = [706383]
         for gene_id in gene_ids:
             tot += 1
             if (not  tot%1000):
@@ -195,6 +184,70 @@ def store_exon_seqs(species_list, db_info):
     db    .close()
 
 
+#########################################
+def store_exon_seqs_special(gene_list, db_info):
+    
+    [local_db, ensembl_db_name] = db_info
+    if local_db:
+        db     = connect_to_mysql()
+        acg    = AlignmentCommandGenerator()
+    else:
+        db     = connect_to_mysql          (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        acg    = AlignmentCommandGenerator (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    cursor = db.cursor()
+
+
+    for gene_id in gene_ids:
+            
+        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+        orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
+        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
+        orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
+
+
+        for [ortho_gene_id, ortho_species] in orthologues:
+            
+            switch_to_db (cursor, ensembl_db_name[ortho_species])
+
+            # extract raw gene  region - bonus return from checking whether the 
+            # sequence is correct: translation of canonical exons
+            ret = get_gene_seq(acg, cursor, gene_id, species, verbose=verbose)
+            [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
+
+            if (not gene_seq or not canonical_exon_pepseq):
+                ct += 1
+                if verbose:
+                    print 'no sequence found for ', gene_id, gene2stable(cursor, gene_id)
+                exit(1)
+                seqs_not_found.append(gene_id)
+                continue
+
+            # get _all_ exons
+            exons = gene2exon_list(cursor, gene_id, ensembl_db_name[species])
+            if (not exons):
+                #print 'no exons for ', gene_id
+                #exit(1)
+                ct += 1
+                continue
+
+            # get the sequence for each of the exons, as well as for the flanks
+            # (the return are three dictionaries, with exon_ids as keys)
+            [exon_seq, left_flank, right_flank] = reconstruct_exon_seqs (gene_seq, exons)
+            store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
+
+
+        print gene_id, gene2stable(cursor, gene_id), species, "done; tot:", tot, " fail:", ct
+        if (seqs_not_found):
+            outf = open(species+".seqs_not_found", "w")
+            for not_found in seqs_not_found:
+                print >> outf, str(not_found)+", ",
+            print >> outf, "\n"
+            outf.close
+
+    cursor.close()
+    db    .close()
+
+
 
 #########################################
 def main():
@@ -204,10 +257,18 @@ def main():
     The parallelization here is per-species.
     """
 
-
     no_threads = 1
-
+    special    = ''
     local_db = False
+
+    if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
+        print "usage: %s <set name> <number of threads>" % sys.argv[0]
+        exit(1) # after usage statment
+    elif len(sys.argv)==3:
+        special = sys.argv[1].lower()
+        if special == 'none': special = None
+        no_threads = int(sys.argv[2])
+
 
     if local_db:
         db     = connect_to_mysql()
@@ -215,13 +276,21 @@ def main():
         db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
-
+    print '======================================='
+    print sys.argv[0]
+    if special:
+        print "using", special, "set"
+        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
+ 
     cursor.close()
     db    .close()
 
-
-    parallelize (no_threads, store_exon_seqs, all_species, [local_db, ensembl_db_name])
-
+    # two version of the main loop:
+    # 1) over all species, and all genes in each speceis
+    if not special:
+        parallelize (no_threads, store_exon_seqs, all_species, [local_db, ensembl_db_name])
+    else:
+        parallelize (no_threads, store_exon_seqs_special, gene_list,  [local_db, ensembl_db_name])
 
 
 
