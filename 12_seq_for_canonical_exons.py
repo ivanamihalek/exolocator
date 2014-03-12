@@ -197,7 +197,7 @@ def store_exon_seqs_special(gene_list, db_info):
     cursor = db.cursor()
 
 
-    for gene_id in gene_ids:
+    for gene_id in gene_list:
             
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
