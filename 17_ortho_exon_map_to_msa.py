@@ -90,7 +90,7 @@ def multiple_exon_alnmt(gene_list, db_info):
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, 
              left_flank, right_flank, dna_seq] = get_exon_seqs (cursor, human_exon.exon_id, human_exon.is_known)
             
-
+            # human seqeunce
             if (not pepseq):
                 if verbose and  human_exon.is_coding and  human_exon.covering_exon <0: # this should be a master exon
                     print "no pep seq for",  human_exon.exon_id, "coding ", human_exon.is_coding,
@@ -100,6 +100,9 @@ def multiple_exon_alnmt(gene_list, db_info):
                 continue
             headers   = [seqname]
             sequences = {seqname:pepseq}
+            print seqname, "  ", pepseq
+
+
             hassw = False
             for map in maps:
 
@@ -121,6 +124,9 @@ def multiple_exon_alnmt(gene_list, db_info):
                 seqname = "{0}:{1}:{2}".format(map.species_2, map.exon_id_2, exon_known_code)
                 headers.append(seqname)
                 sequences[seqname] = pepseq
+                print seqname, "  ", pepseq
+
+            exit(1)
 
             if (len(headers) <=1 ):
                 if verbose: print "single species in the alignment"
@@ -133,6 +139,10 @@ def multiple_exon_alnmt(gene_list, db_info):
             # align
             afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], human_exon.exon_id)
             mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
+            print afa_fnm
+            continue
+
+
             #mafftcmd = "muscle -in" + fasta_fnm + " -out" + afa_fnm
             ret      = commands.getoutput(mafftcmd)
 
@@ -175,8 +185,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                   {"msa_bitstring":MySQLdb.escape_string(msa_bitmap)})
 
             ok += 1
-            #commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
-            print afa_fnm
+            commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
             #exit(1)
 
         if verbose: print " time: %8.3f\n" % (time()-start);
