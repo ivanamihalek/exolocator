@@ -196,7 +196,7 @@ def store_exon_seqs_special(gene_list, db_info):
         acg    = AlignmentCommandGenerator (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-
+    fail_ct = 0
     for gene_id in gene_list:
             
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
@@ -230,7 +230,7 @@ def store_exon_seqs_special(gene_list, db_info):
             if (not exons):
                 #print 'no exons for ', gene_id
                 #exit(1)
-                ct += 1
+                fail_ct += 1
                 continue
 
             # get the sequence for each of the exons, as well as for the flanks
@@ -239,7 +239,7 @@ def store_exon_seqs_special(gene_list, db_info):
             store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
 
 
-        print gene_id, gene2stable(cursor, gene_id), ortho_species, "done; tot:", tot, " fail:", ct
+        print gene_id, gene2stable(cursor, gene_id), ortho_species, "done; tot:", tot, " fail:", fail_ct
         if (seqs_not_found):
             outf = open(ortho_species+".seqs_not_found", "w")
             for not_found in seqs_not_found:
