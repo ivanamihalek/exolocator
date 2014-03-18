@@ -220,12 +220,15 @@ def store_exon_seqs_special(gene_list, db_info):
             ret = get_gene_seq(acg, cursor, gene_id, ortho_species, verbose=verbose)
             [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
 
+            print 1
+
             if (not gene_seq or not canonical_exon_pepseq):
                 fail_ct += 1
                 if verbose:
                     print 'no sequence found for ', gene_id, gene2stable(cursor, gene_id)
                 exit(1)
                 continue
+            print 2
 
             # get _all_ exons
             exons = gene2exon_list(cursor, gene_id, ensembl_db_name[ortho_species])
@@ -235,6 +238,7 @@ def store_exon_seqs_special(gene_list, db_info):
                 fail_ct += 1
                 continue
 
+            print 3
             # get the sequence for each of the exons, as well as for the flanks
             # (the return are three dictionaries, with exon_ids as keys)
             [exon_seq, left_flank, right_flank] = reconstruct_exon_seqs (gene_seq, exons)
