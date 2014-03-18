@@ -1472,7 +1472,11 @@ def make_alignments ( gene_list, db_info):
         #      ortho_exon_to_human_exon:  ortho_exon_to_human_exon[exon_seq_name].append(human_exon)
         # finally, collect in one place info about maps between human and orthologue that are not one-to-one
         #      overlapping_maps: overlapping_maps[concat_seq_name].append([human_exons, ortho_exons])
-        print " alnmt_pep: ", alnmt_pep
+        for a,b in alnmt_pep.iteritems():
+            print a, b 
+
+
+        exit(1)
         [human_exon_to_ortho_exon, sequence_to_exons, 
          ortho_exon_to_human_exon, overlapping_maps] = make_atlas(cursor, ensembl_db_name, canonical_human_exons, 
                                                                   alnmt_pep, trivial_name)
