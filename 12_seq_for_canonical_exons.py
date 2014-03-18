@@ -17,7 +17,7 @@ from Bio.Alphabet import generic_dna
 
 #def is_mitochondrial (cursor, seq_region_id):
 
-verbose = False
+verbose = True
     
 ########################################
 def  get_canonical_exons (cursor, gene_id):
@@ -217,7 +217,7 @@ def store_exon_seqs_special(gene_list, db_info):
 
             # extract raw gene  region - bonus return from checking whether the 
             # sequence is correct: translation of canonical exons
-            ret = get_gene_seq(acg, cursor, gene_id, ortho_species, verbose=verbose)
+            ret = get_gene_seq(acg, cursor, ortho_gene_id, ortho_species, verbose=verbose)
             [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
 
             print 1
