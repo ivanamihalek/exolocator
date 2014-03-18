@@ -223,14 +223,14 @@ def store_exon_seqs_special(gene_list, db_info):
             if (not gene_seq or not canonical_exon_pepseq):
                 fail_ct += 1
                 if verbose:
-                    print 'no sequence found for ', gene_id, gene2stable(cursor, gene_id)
+                    print 'no sequence found for ', ortho_gene_id, gene2stable(cursor, ortho_gene_id)
                 continue
 
             # get _all_ exons
-            exons = gene2exon_list(cursor, gene_id, ensembl_db_name[ortho_species])
+            exons = gene2exon_list(cursor, ortho_gene_id, ensembl_db_name[ortho_species])
             if (not exons):
                 if verbose:
-                    print 'no exons for ', gene_id
+                    print 'no sequence found for ', ortho_gene_id, gene2stable(cursor, ortho_gene_id)
                 fail_ct += 1
                 continue
 
