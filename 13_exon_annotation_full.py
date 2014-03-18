@@ -163,10 +163,17 @@ def pep_exon_seqs_special (gene_list, db_info):
         acg    = AlignmentCommandGenerator (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
+    tot         = 0
+    gene_ct     = 0
+    no_pepseq   = 0
+    pepseq_ok   = 0
+    short_dna   = 0
+    no_exon_seq = 0
+    translation_fail = 0
+
     #####################################
     for gene_id in gene_list:
 
-   
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
 
