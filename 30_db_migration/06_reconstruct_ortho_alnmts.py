@@ -1367,7 +1367,7 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
     seq_name = {}
     parent_seq_name  = {}
     for human_exon in canonical_human_exons:
-        if not alnmt_pep[human_exon]: continue
+        if not alnmt_pep[human_exon]: continue # -- this should not happen we should have at least human exons
         for exon_seq_name in alnmt_pep[human_exon].keys():
             (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
             ortho_gene_id                  = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
