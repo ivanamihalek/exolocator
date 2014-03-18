@@ -237,7 +237,6 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
     # file_name we ended up using, and the start and end in that region
     [gene_seq, file_name] = extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,  
                                              seq_region_start, seq_region_end)
-    print "extracted from ", file_name, "length: ", len(gene_seq)
     # reconstruct the translation from the raw gene_seq and exon boundaries
     [canonical_exon_pepseq,translated_seq] = transl_reconstruct (cursor, gene_id, gene_seq, 
                                                                  canonical_coding_exons, is_mitochondrial)
@@ -273,7 +272,6 @@ def  get_gene_seq (acg, cursor, gene_id, species, verbose = False):
     # extract raw gene  region
     [gene_seq, file_name] = extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,  
                                 seq_region_start, seq_region_end)
-    print "extracted from ", file_name, "length: ", len(gene_seq)
     # reconstruct the translation from the raw gene_seq and exon boundaries
     [canonical_exon_pepseq,translated_seq] = transl_reconstruct (cursor, gene_id, gene_seq, canonical_coding_exons, 
                                                                   is_mitochondrial)
