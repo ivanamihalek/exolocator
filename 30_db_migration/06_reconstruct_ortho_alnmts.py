@@ -1354,11 +1354,9 @@ def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
     alnmt_pep = {}
     alnmt_dna = {}
     for human_exon in canonical_human_exons:
-        [pep, dna]  =   make_exon_alignment(cursor, ensembl_db_name,  human_exon.exon_id, 
+        [alnmt_pep[human_exon], alnmt_dna[human_exon]]  =   make_exon_alignment(cursor, ensembl_db_name,  human_exon.exon_id, 
                                                                                 human_exon.is_known,  mitochondrial, min_similarity, 
-                                                                                flank_length)  
-        if pep and dna:
-            [alnmt_pep[human_exon], alnmt_dna[human_exon]] = [pep, dna]
+                                                                                flank_length)   
     return [alnmt_pep, alnmt_dna] 
 
 #########################################
@@ -1369,6 +1367,7 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
     seq_name = {}
     parent_seq_name  = {}
     for human_exon in canonical_human_exons:
+        if not alnmt_pep[human_exon]: continue
         for exon_seq_name in alnmt_pep[human_exon].keys():
             (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
             ortho_gene_id                  = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
@@ -1379,6 +1378,7 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
     sequence_to_exons = {}
     human_exon_to_ortho_exon = {}
     for human_exon in canonical_human_exons:
+        if not alnmt_pep[human_exon]: continue
         for exon_seq_name in alnmt_pep[human_exon].keys():
             concat_seq_name = parent_seq_name[exon_seq_name]
 
@@ -1397,6 +1397,7 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
     # do we have a sequence mapping to multiple human exons?
     ortho_exon_to_human_exon = {}
     for human_exon in canonical_human_exons:
+        if not alnmt_pep[human_exon]: continue
         for exon_seq_name in alnmt_pep[human_exon].keys():
             if not ortho_exon_to_human_exon.has_key(exon_seq_name):
                 ortho_exon_to_human_exon[exon_seq_name] = [human_exon]
