@@ -247,7 +247,7 @@ def pep_exon_seqs_special (gene_list, db_info):
 
         ####################################
         if not gene_list.index(gene_id)%1000:
-            print "%50s:  %5.1f%% " %  (species, 100*(float( gene_list.index(gene_id) +1 )/len(gene_list))  )
+            print "%5.1f%% " %  (100*(float( gene_list.index(gene_id) +1 )/len(gene_list))  )
             sys.stdout.flush()
        
                  
