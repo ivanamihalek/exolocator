@@ -10,6 +10,7 @@ from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.translation import crop_dna, translation_bounds, translate
 from   el_utils.threads     import parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
+from   el_utils.special_gene_sets  import get_theme_ids
 # BioPython
 from Bio.Seq      import Seq
 from Bio.Alphabet import generic_dna
