@@ -6,7 +6,7 @@ from   random           import choice
 from   el_utils.mysql   import connect_to_mysql, search_db, switch_to_db, check_null
 from   el_utils.mysql   import store_or_update
 from   el_utils.ensembl import  *
-
+from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.translation import crop_dna, translation_bounds, translate
 from   el_utils.threads     import parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
