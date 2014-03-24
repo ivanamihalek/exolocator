@@ -657,7 +657,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 seq_piece_names.append(exon_seq_name)
             new_sequence_to_exons = check_seq_overlap(template_seq, sequence_pieces, seq_piece_names, new_sequence_to_exons)
-
+            print " ** ", new_sequence_to_exons
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
         for ortho_exon in new_sequence_to_exons:
