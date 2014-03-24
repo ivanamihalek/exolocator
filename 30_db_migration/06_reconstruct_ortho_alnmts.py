@@ -119,14 +119,14 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
         mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
         ret      = commands.getoutput(mafftcmd)
 
-        new_pep_seq_pieces = {}
+        new_pep_seq_pieces = []
         inf = erropen(afa_fnm, "r")
         for record in SeqIO.parse(inf, "fasta"):
             if record.id == 'template':
                 new_template_seq = record.seq
             else:
                 if record.id in pep_seq_names:
-                    new_pep_seq_pieces [record.id] = record.seq
+                    new_pep_seq_pieces.append(record.seq)
                 else:
                     print "oink?"
         inf.close()
