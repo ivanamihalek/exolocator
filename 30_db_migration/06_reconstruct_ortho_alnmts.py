@@ -693,8 +693,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         # remove duplicates ? can this happen
         ortho_exons = list(set(ortho_exons))
-        # sort by the order in which they appear in the gene
-        ortho_exons.sort(key=lambda exon: exon.start_in_gene)
+
         # check sequence overlap, if several map to the same  human exon
         for human_exon in human_exons:
             [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
@@ -1437,7 +1436,14 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
                 human_exon_to_ortho_exon[concat_seq_name][human_exon] = []
 
             human_exon_to_ortho_exon[concat_seq_name][human_exon].append(exon_seq_name)
- 
+
+    # >>>>>>>>>>>>>>>>>>
+    # if there are multiple exons for the same species, make sure they are ordered in the same order they appear in the gene
+    for concat_seq_name, concat_exons in sequence_to_exons.iteritems():
+        if len(concat_exons)>1:
+            print concat_seq_name
+            print concat_exons
+            exit(1)
     # >>>>>>>>>>>>>>>>>>
     # flag the cases when one orthologue exon maps to many human (and vice versa) for later
     # do we have a sequence mapping to multiple human exons?
