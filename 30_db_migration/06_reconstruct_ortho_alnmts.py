@@ -87,7 +87,7 @@ def check_overlap (alnmt_length, seqs):
     return overlap
 
 #########################################
-def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, sequence_to_exons):
+def check_seq_overlap (cursor, cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, sequence_to_exons):
     
     seq_names_to_remove = []
 
@@ -708,7 +708,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if not alnmt_pep[human_exon].has_key(exon_seq_name):  continue
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 seq_piece_names.append(exon_seq_name)
-            new_sequence_to_exons = check_seq_overlap(cfg, acg, template_seq, sequence_pieces, seq_piece_names, new_sequence_to_exons)
+            new_sequence_to_exons = check_seq_overlap(cursor, cfg, acg, template_seq, sequence_pieces, seq_piece_names, new_sequence_to_exons)
 
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
