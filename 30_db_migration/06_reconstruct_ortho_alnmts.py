@@ -121,7 +121,7 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
         new_pep_seq_pieces = {}
         inf = erropen(afa_fnm, "r")
         for record in SeqIO.parse(inf, "fasta"):
-            if record.id = 'template':
+            if record.id == 'template':
                 new_template_seq = record.seq
             else:
                 if record.id in pepseq_names:
