@@ -89,6 +89,8 @@ def check_overlap (alnmt_length, seqs):
 #########################################
 def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, sequence_to_exons):
     
+    #I should resolve this at some earlier place - like when I am writing the exon maps
+
     seq_names_to_remove = []
 
     template_length = len(template_seq)
@@ -100,10 +102,8 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
             #print template_seq
             return []
 
-    to_delete = []
     # check whether any two pieces overlap
     overlap = check_overlap (template_length, pep_seq_pieces)
-
 
     if overlap: 
 
@@ -160,17 +160,15 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
             
 
         # check the similarity of the obtained pieces
+        min_similarity = cfg.get_value('min_accptbl_exon_sim')
         print
         for i in range(len(new_pep_seq_pieces)):
             print pep_seq_names[i]
             print template_pieces[i]
             print new_pep_seq_pieces[i]
             print pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i])
-
-        exit(1)
- 
-        for i in to_delete:
-            seq_names_to_remove.append(pep_seq_names[i])
+            if ( pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i]) < min_similarity ):
+                seq_names_to_remove.append(pep_seq_names[i])
         
         new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, sequence_to_exons)
         remaining_names       = filter (lambda exon: exon not in seq_names_to_remove, pep_seq_names)
