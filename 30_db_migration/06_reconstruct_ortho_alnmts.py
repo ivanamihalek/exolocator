@@ -608,7 +608,6 @@ def realign_slice (pep_slice, seq_to_fix, pep_seq_pieces):
 def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_to_ortho_exon,
                   sequence_to_exons, seq_to_fix, overlapping_maps, alnmt_pep, output_pep):
 
-
     count = 0
 
     #pdb.set_trace()
@@ -666,7 +665,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if alnmt_pep[human_exon].has_key(ortho_exon):
                     pep_seq_pieces.append( alnmt_pep[human_exon][ortho_exon].replace("-", "") )
                     break
-     
+        print template_seq
+        print pep_seq_pieces
         # pull  the slice out of the alignment
         # use human as the reference - in other species the boundaries might
         # be at different positions
@@ -1538,7 +1538,7 @@ def make_alignments ( gene_list, db_info):
 
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
-            print seq_to_fix
+            if not seq_to_fix=='chimpanzee': continue
             # fix_one2many changes both output_pep and sequence_to_exons
             if not overlapping_maps[seq_to_fix]: continue
             [output_pep, sequence_to_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
