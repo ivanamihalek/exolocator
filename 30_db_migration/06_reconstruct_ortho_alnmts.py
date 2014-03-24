@@ -138,10 +138,8 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
         for record in SeqIO.parse(inf, "fasta"):
             if record.id == 'other':
                 other_seq = record.seq
-                print other_seq
             else:
                 new_template_seq = record.seq
-                print new_template_seq
         inf.close()
         commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
@@ -161,12 +159,19 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
 
         # check the similarity of the obtained pieces
         min_similarity = cfg.get_value('min_accptbl_exon_sim')
-        print
+        if species =='gorilla_gorilla':
+            print 
+            print species
+            print new_template_seq
+            print other_seq
+            for i in range(len(new_pep_seq_pieces)):
+                print pep_seq_names[i]
+                print template_pieces[i]
+                print new_pep_seq_pieces[i]
+                print pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i])
+
+
         for i in range(len(new_pep_seq_pieces)):
-            print pep_seq_names[i]
-            print template_pieces[i]
-            print new_pep_seq_pieces[i]
-            print pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i])
             if ( pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i]) < min_similarity ):
                 seq_names_to_remove.append(pep_seq_names[i])
         
