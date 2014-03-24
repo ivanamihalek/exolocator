@@ -1446,7 +1446,7 @@ def make_alignments ( gene_list, db_info):
         stable_id = gene2stable(cursor, gene_id)
         # if we are running this pipe repetedly we want to skip if
         # the last time we worked on this gene was recently enough
-        if  check_afa_age (cfg, stable_id) == "new": continue                               
+        #if  check_afa_age (cfg, stable_id) == "new": continue                               
  
         if verbose: 
             print gene_id, stable_id, get_description (cursor, gene_id)
