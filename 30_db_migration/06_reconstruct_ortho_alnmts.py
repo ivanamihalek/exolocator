@@ -120,6 +120,9 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
 
         for exon_seq_name in pep_seq_names:
             print exon_seq_name, start_in_gene[exon_seq_name]
+        for pepseq in pep_seq_pieces:
+            print pepseq_start_in_gene[pepseq], pepseq
+      
         exit(1)
         
 
