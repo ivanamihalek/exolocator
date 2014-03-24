@@ -693,7 +693,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         # remove duplicates ? can this happen
         ortho_exons = list(set(ortho_exons))
-
+        # sort by the order in which they appear in the gene
+        ortho_exons.sort(key=lambda exon: exon.start_in_gene)
         # check sequence overlap, if several map to the same  human exon
         for human_exon in human_exons:
             [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
