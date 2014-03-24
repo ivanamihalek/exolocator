@@ -130,7 +130,7 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
                 else:
                     print "oink?"
         inf.close()
-        commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
+        #commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
         # re-check overlap
         overlap = check_overlap (len(new_template_seq), new_pep_seq_pieces)
@@ -157,11 +157,14 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
         new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, sequence_to_exons)
         remaining_names       = filter (lambda exon: exon not in seq_names_to_remove, pep_seq_names)
 
+        commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
+
     else:
         new_pep_seq_pieces     = pep_seq_pieces
         new_sequence_to_exons = sequence_to_exons
         remaining_names       = pep_seq_names
 
+ 
     # what is the order in which these sequences map to human?
     if len(remaining_names) > 1:
         # sort the names of the remaininig pieces by their initial position in the map to human exon(s)
