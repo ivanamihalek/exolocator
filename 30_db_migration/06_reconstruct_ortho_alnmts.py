@@ -125,7 +125,7 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
             if record.id == 'template':
                 new_template_seq = record.seq
             else:
-                if record.id in pepseq_names:
+                if record.id in pep_seq_names:
                     new_pep_seq_pieces [record.id] = record.seq
                 else:
                     print "oink?"
