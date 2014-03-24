@@ -117,7 +117,7 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
         # align
         afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], randstr)
         mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
-        ret      = commands.getoutput('cat '+afa_fnm)
+        ret      = commands.getoutput(mafftcmd)
 
         new_pep_seq_pieces = []
         inf = erropen(afa_fnm, "r")
@@ -144,7 +144,7 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
             print new_template_seq
             print pep_seq_pieces[i]
             print pep_seq_pieces[j]
-            print ret
+            print commands.getoutput('cat '+ afa_fnm)
             if ( fract_identity (template_seq, pep_seq_pieces[i]) < 
                  fract_identity (template_seq, pep_seq_pieces[j]) ):
                 to_delete.append(i)
