@@ -6,6 +6,7 @@ import pdb
 #pdb.set_trace()
 
 import MySQLdb, commands, re, os, time
+import random, string
 import inspect
 from el_utils.mysql   import  *
 from el_utils.ensembl import  *
@@ -69,7 +70,23 @@ def find_initial_pos (pepseq_pieces, remaining_indices):
     return initial_pos
     
 #########################################
-def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_sequence_to_exons):
+def check_overlap (alnmt_length, seqs):
+
+    overlap = []
+
+    for pos in alnmt_length: 
+        for i in range(len(seqs)):
+            if (seqs[i][pos] == '-'): continue
+            for j in range (i+1, len(seqs)):
+                if (seqs[j][pos] == '-'): continue
+                index = str(i) + " " + str(j)
+                if not index in overlap:
+                    overlap.append(index)
+                break
+    return overlap
+
+#########################################
+def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, sequence_to_exons):
     
     seq_names_to_remove = []
 
@@ -83,46 +100,72 @@ def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_sequence
             return []
 
     # check whether any two pieces overlap
-    overlap = []
-    for pos in range(template_length): 
+    overlap = check_overlap (template_length, pep_seq_pieces)
 
+    if overlap: 
+        # if there is an overlap, check that it is not the artefact of the multiple seqeunce alignment
+        # (sometimes it clears up when only two seqs are aligned)
+        randstr = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
+        fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], randstr)
+
+        sequences = {'template':template_seq.replace('-','')
         for i in range(len(pep_seq_pieces)):
-            if (pep_seq_pieces[i][pos] == '-'): continue
+            sequences[pep_seq_names[i]] = pep_seq_pieces[i].replace('-','')            
+        output_fasta (fasta_fnm, sequences.keys(), sequences)
 
-            for j in range (i+1, len(pep_seq_pieces)):
-                if (pep_seq_pieces[j][pos] == '-'): continue
-                index = str(i) + " " + str(j)
-                if not index in overlap:
-                    overlap.append(index)
-                break
+        # align
+        afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], randstr)
+        mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
+        ret      = commands.getoutput(mafftcmd)
 
-    # if yes, get rid of the less similar one
-    to_delete = []
-    for index in overlap:
-        tmp = index.split()
-        i = int(tmp[0])
-        j = int(tmp[1])
-        print "overlap: ", i, j 
-        print template_seq
-        print pep_seq_pieces[i]
-        print pep_seq_pieces[j]
-        if ( fract_identity (template_seq, pep_seq_pieces[i]) < 
-             fract_identity (template_seq, pep_seq_pieces[j]) ):
-            to_delete.append(i)
-        else:
-            to_delete.append(j)
+        new_pep_seq_pieces = {}
+        inf = erropen(afa_fnm, "r")
+        for record in SeqIO.parse(inf, "fasta"):
+            if record.id = 'template':
+                new_template_seq = record.seq
+            else:
+                if record.id in pepseq_names:
+                    new_pep_seq_pieces [record.id] = record.seq
+                else:
+                    print "oink?"
+        inf.close()
+        commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
-    for i in to_delete:
-        seq_names_to_remove.append(pep_seq_names[i])
+        # re-check overlap
+        overlap = check_overlap (len(new_template_seq), new_pep_seq_pieces)
+
+        # if there is still the overlap, get rid of the less similar one
+        to_delete = []
+        for index in overlap:
+            tmp = index.split()
+            i = int(tmp[0])
+            j = int(tmp[1])
+            print "overlap: ", i, j 
+            print new_template_seq
+            print pep_seq_pieces[i]
+            print pep_seq_pieces[j]
+            if ( fract_identity (template_seq, pep_seq_pieces[i]) < 
+                 fract_identity (template_seq, pep_seq_pieces[j]) ):
+                to_delete.append(i)
+            else:
+                to_delete.append(j)
+
+        for i in to_delete:
+            seq_names_to_remove.append(pep_seq_names[i])
         
-    new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, new_sequence_to_exons)
-    remaining_names    = filter (lambda exon: exon not in seq_names_to_remove, pep_seq_names)
+        new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, sequence_to_exons)
+        remaining_names       = filter (lambda exon: exon not in seq_names_to_remove, pep_seq_names)
+
+    else:
+        new_pep_seq_pieces     = pep_seq_pieces
+        new_sequence_to_exons = sequence_to_exons
+        remaining_names       = pep_seq_names
 
     # what is the order in which these sequences map to human?
     if len(remaining_names) > 1:
         # sort the names of the remaininig pieces by their initial position in the map to human exon(s)
         remaining_indices = filter (lambda idx: not idx in to_delete, range(len(pep_seq_names)))
-        initial_pos       = find_initial_pos(pep_seq_pieces, remaining_indices) # for ex [57, 25, 12]
+        initial_pos       = find_initial_pos(new_pep_seq_pieces, remaining_indices) # for ex [57, 25, 12]
         a                 = range(len(initial_pos))    # for example    [0, 1, 2]
         a.sort (lambda i,j: cmp(initial_pos[i], initial_pos[j]) ) # for example  [2, 1, 0]
         to_reorder = []
@@ -659,7 +702,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if not alnmt_pep[human_exon].has_key(exon_seq_name):  continue
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 seq_piece_names.append(exon_seq_name)
-            new_sequence_to_exons = check_seq_overlap(template_seq, sequence_pieces, seq_piece_names, new_sequence_to_exons)
+            new_sequence_to_exons = check_seq_overlap(cfg, acg, template_seq, sequence_pieces, seq_piece_names, new_sequence_to_exons)
             print " ** ", new_sequence_to_exons
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
