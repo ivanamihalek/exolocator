@@ -140,6 +140,11 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
                 template_pieces.append(new_template_seq[prev:i])
                 prev = i+1
 
+        for exon_seq_name in sequence_to_exons:
+            (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
+            exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
+            print exon_seq_name, exon.start_in_gene
+
         # check the similarity of the obtained pieces
         for i in range(len(new_pep_seq_pieces)):
             print pep_seq_names[i], pep_seq_names[j]
@@ -1441,7 +1446,6 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
     # if there are multiple exons for the same species, make sure they are ordered in the same order they appear in the gene
     for concat_seq_name, concat_exons in sequence_to_exons.iteritems():
         if len(concat_exons)>1:
-            print concat_seq_name
             start_in_gene = {}
             for exon_seq_name in  concat_exons:
                 (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
@@ -1449,8 +1453,7 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
                 start_in_gene[exon_seq_name]  = exon.start_in_gene
             concat_exons.sort(key=lambda exon_seq_name: start_in_gene[exon_seq_name])
             sequence_to_exons[concat_seq_name] = concat_exons
-            for exon_seq_name in  concat_exons:
-                print exon_seq_name, start_in_gene[exon_seq_name]
+
     # >>>>>>>>>>>>>>>>>>
     # flag the cases when one orthologue exon maps to many human (and vice versa) for later
     # do we have a sequence mapping to multiple human exons?
