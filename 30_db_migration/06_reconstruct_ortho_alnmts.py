@@ -1505,7 +1505,7 @@ def make_alignments ( gene_list, db_info):
                 aln_length = len(alnmt_pep[human_exon].itervalues().next())
                 pep = '-'*aln_length
                 if human_exon in flagged_human_exons:
-                    # one ortho seq maps to multiple human exons
+                    # one ortho seq maps to multiple human exons, or vice versa
                     pep = '-'*aln_length
 
                 elif human_exon_to_ortho_exon[concat_seq_name].has_key(human_exon):
@@ -1538,6 +1538,7 @@ def make_alignments ( gene_list, db_info):
 
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
+            print seq_to_fix
             # fix_one2many changes both output_pep and sequence_to_exons
             if not overlapping_maps[seq_to_fix]: continue
             [output_pep, sequence_to_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
@@ -1545,6 +1546,7 @@ def make_alignments ( gene_list, db_info):
                                                          sequence_to_exons, seq_to_fix, 
                                                          overlapping_maps[seq_to_fix], 
                                                          alnmt_pep, output_pep)
+        exit(1)
 
         # check if any two pieces of seqeunce ended up on different scaffolds/contigs
         fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, sequence_to_exons, 
