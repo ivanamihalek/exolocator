@@ -74,7 +74,7 @@ def check_overlap (alnmt_length, seqs):
 
     overlap = []
 
-    for pos in rangr(alnmt_length): 
+    for pos in range(alnmt_length): 
         for i in range(len(seqs)):
             if (seqs[i][pos] == '-'): continue
             for j in range (i+1, len(seqs)):
