@@ -118,14 +118,6 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
         pep_seq_names.sort(key=lambda psn: start_in_gene[psn])
         pep_seq_pieces.sort(key=lambda psp: pepseq_start_in_gene[psp])
 
-        for exon_seq_name in pep_seq_names:
-            print exon_seq_name, start_in_gene[exon_seq_name]
-        for pepseq in pep_seq_pieces:
-            print pepseq_start_in_gene[pepseq], pepseq
-      
-        exit(1)
-        
-
         # if there is an overlap, check that it is not the artefact of the multiple seqeunce alignment
         # (sometimes it clears up when only two seqs are aligned)
         randstr = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
