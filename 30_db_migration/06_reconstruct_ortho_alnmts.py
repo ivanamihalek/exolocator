@@ -156,7 +156,7 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
 
         if prev < len(other_seq):
             new_pep_seq_pieces.append(other_seq[prev:len(other_seq)])
-            template_pieces.append(new_template_seq[prev:len(other_seq])
+            template_pieces.append(new_template_seq[prev:len(other_seq)])
             
 
         # check the similarity of the obtained pieces
