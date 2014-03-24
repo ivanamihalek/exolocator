@@ -1441,9 +1441,14 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
     # if there are multiple exons for the same species, make sure they are ordered in the same order they appear in the gene
     for concat_seq_name, concat_exons in sequence_to_exons.iteritems():
         if len(concat_exons)>1:
-            print concat_seq_name
-            print concat_exons
-            exit(1)
+            start_in_gene = {}
+            for exon_seq_name in  concat_exons:
+                (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
+                exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
+                start_in_gene[exon_seq_name]  = exon.start_in_gene
+            concat_exons.sort(key=lambda exon_seq_name: start_in_gene[exon_seq_name])
+            sequence_to_exons[concat_seq_name] = concat_exons
+
     # >>>>>>>>>>>>>>>>>>
     # flag the cases when one orthologue exon maps to many human (and vice versa) for later
     # do we have a sequence mapping to multiple human exons?
