@@ -103,16 +103,20 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
     to_delete = []
     # check whether any two pieces overlap
     overlap = check_overlap (template_length, pep_seq_pieces)
+
+
     if overlap: 
 
         start_in_gene = {}
+        pepseq_start_in_gene = {}
         for exon_seq_name in pep_seq_names:
             (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
             exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
             start_in_gene[exon_seq_name]  = exon.start_in_gene
-        # this looks nasty, but is just sorting accoring to the order in which exons appear in the gene
-        pep_seq_names.sort(key=lambda psn: start_in_gene[psn ])
-        #pep_seq_pieces.sort(key=lambda psp: start_in_gene[ pep_seq_names[pep_seq_pieces.index(psp)] ])
+            pepseq_start_in_gene[ pep_seq_pieces[ pep_seq_names.index(exon_seq_name)]  ] = exon.start_in_gene
+        # this looks nasty, but is just sorting according to the order in which exons appear in the gene
+        pep_seq_names.sort(key=lambda psn: start_in_gene[psn])
+        pep_seq_pieces.sort(key=lambda psp: pepseq_start_in_gene[psp])
 
         for exon_seq_name in pep_seq_names:
             print exon_seq_name, start_in_gene[exon_seq_name]
