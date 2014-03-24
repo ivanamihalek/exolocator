@@ -144,6 +144,7 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
             print new_template_seq
             print pep_seq_pieces[i]
             print pep_seq_pieces[j]
+            print ret
             if ( fract_identity (template_seq, pep_seq_pieces[i]) < 
                  fract_identity (template_seq, pep_seq_pieces[j]) ):
                 to_delete.append(i)
