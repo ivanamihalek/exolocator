@@ -149,7 +149,7 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
         new_pep_seq_pieces = []
         template_pieces    = []
         for i in range(len(other_seq)):
-            if record.seq[i] == 'Z' and i>0 :
+            if other_seq == 'Z' and i>0 :
                 new_pep_seq_pieces.append(other_seq[prev:i])
                 template_pieces.append(new_template_seq[prev:i])
                 prev = i+1
