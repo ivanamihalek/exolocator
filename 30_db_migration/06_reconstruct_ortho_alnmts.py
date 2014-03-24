@@ -165,7 +165,7 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
             print pep_seq_names[i]
             print template_pieces[i]
             print new_pep_seq_pieces[i]
-            print fract_identity (template_pieces[i], pep_seq_pieces[i])
+            print fract_identity (template_pieces[i], new_pep_seq_pieces[i])
 
         exit(1)
  
