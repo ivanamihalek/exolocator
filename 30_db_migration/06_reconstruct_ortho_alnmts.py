@@ -140,7 +140,7 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
                 template_pieces.append(new_template_seq[prev:i])
                 prev = i+1
 
-        for exon_seq_name in sequence_to_exons:
+        for exon_seq_name in pep_seq_names:
             (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
             exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
             print exon_seq_name, exon.start_in_gene
