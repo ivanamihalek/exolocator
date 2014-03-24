@@ -110,8 +110,8 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
         fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], randstr)
 
         sequences = {'template':template_seq.replace('-','')}
-        for i in range(len(pep_seq_pieces)):
-            sequences[pep_seq_names[i]] = pep_seq_pieces[i].replace('-','')            
+        #concatenate pieces by force - we trust here they are  given in the order in which tehy appear in the gene
+        sequences['other'] = 'Z'.join( pep_seq_pieces[i].replace('-','') )    
         output_fasta (fasta_fnm, sequences.keys(), sequences)
 
         # align
@@ -122,42 +122,37 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
         new_pep_seq_pieces = []
         inf = erropen(afa_fnm, "r")
         for record in SeqIO.parse(inf, "fasta"):
-            if record.id == 'template':
+            if record.id == 'other':
+                other_seq = record.seq
+            else:
                 new_template_seq = record.seq
-            else:
-                if record.id in pep_seq_names:
-                    new_pep_seq_pieces.append(record.seq)
-                else:
-                    print "oink?"
         inf.close()
-        #commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
+        commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
-        # re-check overlap
-        overlap = check_overlap (len(new_template_seq), new_pep_seq_pieces)
+        prev = 0
+        new_pep_seq_pieces = []
+        template_pieces    = []
+        for i in range(len(other_seq)):
+            if record.seq[i] == 'Z' and i>0 :
+                new_pep_seq_pieces.append(other_seq[prev:i])
+                template_pieces.append(new_template_seq[prev:i])
+                prev = i+1
 
-        # if there is still the overlap, get rid of the less similar one
-        for index in overlap:
-            tmp = index.split()
-            i = int(tmp[0])
-            j = int(tmp[1])
-            print "overlap: ", i, j, pep_seq_names[i], pep_seq_names[j]
-            print new_template_seq
+        # check the similarity of the obtained pieces
+        for i in range(len(new_pep_seq_pieces)):
+            print pep_seq_names[i], pep_seq_names[j]
+            print template_pieces[i]
             print new_pep_seq_pieces[i]
-            print  new_pep_seq_pieces[j]
-            #print commands.getoutput('cat '+ afa_fnm)
-            if ( fract_identity (template_seq, pep_seq_pieces[i]) < 
-                 fract_identity (template_seq, pep_seq_pieces[j]) ):
-                to_delete.append(i)
-            else:
-                to_delete.append(j)
+            print fract_identity (template_pieces[i], pep_seq_pieces[i])
 
+        exit(1)
+ 
         for i in to_delete:
             seq_names_to_remove.append(pep_seq_names[i])
         
         new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, sequence_to_exons)
         remaining_names       = filter (lambda exon: exon not in seq_names_to_remove, pep_seq_names)
 
-        commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
     else:
         new_pep_seq_pieces     = pep_seq_pieces
