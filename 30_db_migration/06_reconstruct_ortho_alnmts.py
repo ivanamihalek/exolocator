@@ -100,9 +100,9 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
             #print template_seq
             return []
 
+    to_delete = []
     # check whether any two pieces overlap
     overlap = check_overlap (template_length, pep_seq_pieces)
-
     if overlap: 
         # if there is an overlap, check that it is not the artefact of the multiple seqeunce alignment
         # (sometimes it clears up when only two seqs are aligned)
@@ -136,7 +136,6 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
         overlap = check_overlap (len(new_template_seq), new_pep_seq_pieces)
 
         # if there is still the overlap, get rid of the less similar one
-        to_delete = []
         for index in overlap:
             tmp = index.split()
             i = int(tmp[0])
