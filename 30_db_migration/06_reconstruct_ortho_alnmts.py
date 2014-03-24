@@ -665,6 +665,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if alnmt_pep[human_exon].has_key(ortho_exon):
                     pep_seq_pieces.append( alnmt_pep[human_exon][ortho_exon].replace("-", "") )
                     break
+        print human_exons, ortho_exons
         print template_seq
         print pep_seq_pieces
         # pull  the slice out of the alignment
