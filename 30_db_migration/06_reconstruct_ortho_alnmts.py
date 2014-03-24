@@ -25,6 +25,7 @@ from bitstring import Bits
 from alignment import * # C implementation of smith waterman
 from   random  import choice
 # BioPython
+from Bio          import  SeqIO
 from Bio.Seq      import Seq
 from Bio.Alphabet import generic_dna
 
