@@ -704,7 +704,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 seq_piece_names.append(exon_seq_name)
             new_sequence_to_exons = check_seq_overlap(cfg, acg, template_seq, sequence_pieces, seq_piece_names, new_sequence_to_exons)
-            print " ** ", new_sequence_to_exons
+
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
         for ortho_exon in new_sequence_to_exons:
@@ -712,9 +712,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if alnmt_pep[human_exon].has_key(ortho_exon):
                     pep_seq_pieces.append( alnmt_pep[human_exon][ortho_exon].replace("-", "") )
                     break
-        print human_exons, ortho_exons
-        print template_seq
-        print pep_seq_pieces
         # pull  the slice out of the alignment
         # use human as the reference - in other species the boundaries might
         # be at different positions
@@ -1586,7 +1583,7 @@ def make_alignments ( gene_list, db_info):
 
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
-            if not seq_to_fix=='chimpanzee': continue
+            #if not seq_to_fix=='chimpanzee': continue
             # fix_one2many changes both output_pep and sequence_to_exons
             if not overlapping_maps[seq_to_fix]: continue
             [output_pep, sequence_to_exons] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
@@ -1594,7 +1591,6 @@ def make_alignments ( gene_list, db_info):
                                                          sequence_to_exons, seq_to_fix, 
                                                          overlapping_maps[seq_to_fix], 
                                                          alnmt_pep, output_pep)
-        exit(1)
 
         # check if any two pieces of seqeunce ended up on different scaffolds/contigs
         fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, sequence_to_exons, 
