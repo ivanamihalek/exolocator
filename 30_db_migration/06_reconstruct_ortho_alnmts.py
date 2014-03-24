@@ -156,7 +156,7 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
 
         # check the similarity of the obtained pieces
         for i in range(len(new_pep_seq_pieces)):
-            print pep_seq_names[i], pep_seq_names[j]
+            print pep_seq_names[i]
             print template_pieces[i]
             print new_pep_seq_pieces[i]
             print fract_identity (template_pieces[i], pep_seq_pieces[i])
