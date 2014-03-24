@@ -111,7 +111,7 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
 
         sequences = {'template':template_seq.replace('-','')}
         #concatenate pieces by force - we trust here they are  given in the order in which tehy appear in the gene
-        sequences['other'] = 'Z'.join( pep_seq_pieces[i].replace('-','') )    
+        sequences['other'] = 'Z'.join( [pepseq.replace('-','') for pepseq in  pep_seq_pieces] )    
         output_fasta (fasta_fnm, sequences.keys(), sequences)
 
         # align
