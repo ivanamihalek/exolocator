@@ -117,7 +117,7 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
         # align
         afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], randstr)
         mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
-        ret      = commands.getoutput(mafftcmd)
+        ret      = commands.getoutput('cat '+afa_fnm)
 
         new_pep_seq_pieces = []
         inf = erropen(afa_fnm, "r")
