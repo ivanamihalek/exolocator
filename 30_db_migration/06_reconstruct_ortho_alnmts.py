@@ -154,7 +154,13 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
                 template_pieces.append(new_template_seq[prev:i])
                 prev = i+1
 
+        if prev < len(other_seq):
+            new_pep_seq_pieces.append(other_seq[prev:len(other_seq)])
+            template_pieces.append(new_template_seq[prev:len(other_seq])
+            
+
         # check the similarity of the obtained pieces
+        print
         for i in range(len(new_pep_seq_pieces)):
             print pep_seq_names[i]
             print template_pieces[i]
