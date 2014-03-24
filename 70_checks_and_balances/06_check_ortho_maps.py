@@ -16,6 +16,8 @@ from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.special_gene_sets  import  get_theme_ids
 
 
+verbose = True
+
 #########################################
 def main():
 
@@ -74,10 +76,11 @@ def main():
         has_a_map = False
         for human_exon in human_exons:
             if ( not human_exon.is_canonical or  not human_exon.is_coding): continue
-            #print  
-            #print "\t human",   human_exon.exon_id,  human_exon.is_known
-            #print "\t", get_exon_pepseq(cursor, human_exon, ensembl_db_name['homo_sapiens'])
-            #print "\t checking maps ...",
+            if verbose:
+                print  
+                print "\t human",   human_exon.exon_id,  human_exon.is_known
+                print "\t", get_exon_pepseq(cursor, human_exon, ensembl_db_name['homo_sapiens'])
+                print "\t checking maps ...",
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
             tot += 1
             if maps:
@@ -87,7 +90,7 @@ def main():
             else:
                 #print"no maps"
                 pass
-            if 0:
+            if verbose:
                 for map in maps:
                     species            = map.species_2
                     exon               = map2exon(cursor, ensembl_db_name, map)
