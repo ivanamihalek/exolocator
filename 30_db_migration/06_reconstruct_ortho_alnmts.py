@@ -108,7 +108,7 @@ def check_seq_overlap (cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, se
         randstr = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
         fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], randstr)
 
-        sequences = {'template':template_seq.replace('-','')
+        sequences = {'template':template_seq.replace('-','')}
         for i in range(len(pep_seq_pieces)):
             sequences[pep_seq_names[i]] = pep_seq_pieces[i].replace('-','')            
         output_fasta (fasta_fnm, sequences.keys(), sequences)
