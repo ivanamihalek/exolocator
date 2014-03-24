@@ -93,6 +93,7 @@ def main():
             if verbose:
                 for map in maps:
                     species            = map.species_2
+                    if not species == 'pan_troglodytes']: continue
                     exon               = map2exon(cursor, ensembl_db_name, map)
                     unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
                     if (1 or map.source=='sw_sharp'):
