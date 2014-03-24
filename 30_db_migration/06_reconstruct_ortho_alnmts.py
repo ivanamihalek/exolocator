@@ -111,7 +111,7 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
             exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
             start_in_gene[exon_seq_name]  = exon.start_in_gene
         # this looks nasty, but is just sorting accoring to the order in which exons appear in the gene
-        pep_seq_pieces.sort(key=lambda psp: start_in_gene[ pep_seq_names[pep_seq_pieces.idx(psp)] ])
+        pep_seq_pieces.sort(key=lambda psp: start_in_gene[ pep_seq_names[pep_seq_pieces.index(psp)] ])
         pep_seq_names.sort(key=lambda psn: start_in_gene[psn ])
 
         for exon_seq_name in pep_seq_names:
@@ -1452,17 +1452,6 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
 
             human_exon_to_ortho_exon[concat_seq_name][human_exon].append(exon_seq_name)
 
-    # >>>>>>>>>>>>>>>>>>
-    # if there are multiple exons for the same species, make sure they are ordered in the same order they appear in the gene
-    for concat_seq_name, concat_exons in sequence_to_exons.iteritems():
-        if len(concat_exons)>1:
-            start_in_gene = {}
-            for exon_seq_name in  concat_exons:
-                (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
-                exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
-                start_in_gene[exon_seq_name]  = exon.start_in_gene
-            concat_exons.sort(key=lambda exon_seq_name: start_in_gene[exon_seq_name])
-            sequence_to_exons[concat_seq_name] = concat_exons
 
     # >>>>>>>>>>>>>>>>>>
     # flag the cases when one orthologue exon maps to many human (and vice versa) for later
