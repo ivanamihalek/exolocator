@@ -102,22 +102,24 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
             #print template_seq
             return []
 
+    # we'll want the pieces returned in the order in which they appear on the gene
+    # this means taht I'll lose some if they do not come in the same order in different species -- can that happen?
+    # I doubt it, but I do not know
+    start_in_gene = {}
+    pepseq_start_in_gene = {}
+    for exon_seq_name in pep_seq_names:
+        (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
+        exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
+        start_in_gene[exon_seq_name]  = exon.start_in_gene
+        pepseq_start_in_gene[ pep_seq_pieces[ pep_seq_names.index(exon_seq_name)]  ] = exon.start_in_gene
+
+    # this looks nasty, but is just sorting according to the order in which exons appear in the gene
+    pep_seq_names.sort(key=lambda psn: start_in_gene[psn])
+    pep_seq_pieces.sort(key=lambda psp: pepseq_start_in_gene[psp])
+
     # check whether any two pieces overlap
     overlap = check_overlap (template_length, pep_seq_pieces)
-
     if overlap: 
-
-        start_in_gene = {}
-        pepseq_start_in_gene = {}
-        for exon_seq_name in pep_seq_names:
-            (species, exon_id, exon_known) = parse_aln_name(exon_seq_name)
-            exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
-            start_in_gene[exon_seq_name]  = exon.start_in_gene
-            pepseq_start_in_gene[ pep_seq_pieces[ pep_seq_names.index(exon_seq_name)]  ] = exon.start_in_gene
-        # this looks nasty, but is just sorting according to the order in which exons appear in the gene
-        pep_seq_names.sort(key=lambda psn: start_in_gene[psn])
-        pep_seq_pieces.sort(key=lambda psp: pepseq_start_in_gene[psp])
-
         # if there is an overlap, check that it is not the artefact of the multiple seqeunce alignment
         # (sometimes it clears up when only two seqs are aligned)
         randstr = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
@@ -171,36 +173,14 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
                 seq_names_to_remove.append(pep_seq_names[i])
         
         new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, sequence_to_exons)
-        remaining_names       = filter (lambda exon: exon not in seq_names_to_remove, pep_seq_names)
 
 
     else:
         new_pep_seq_pieces     = pep_seq_pieces
         new_sequence_to_exons = sequence_to_exons
-        remaining_names       = pep_seq_names
 
  
-    # what is the order in which these sequences map to human?
-    if len(remaining_names) > 1:
-        # sort the names of the remaininig pieces by their initial position in the map to human exon(s)
-        remaining_indices = filter (lambda idx: not idx in to_delete, range(len(pep_seq_names)))
-        initial_pos       = find_initial_pos(new_pep_seq_pieces, remaining_indices) # for ex [57, 25, 12]
-        a                 = range(len(initial_pos))    # for example    [0, 1, 2]
-        a.sort (lambda i,j: cmp(initial_pos[i], initial_pos[j]) ) # for example  [2, 1, 0]
-        to_reorder = []
-        for idx in  range(len(new_sequence_to_exons)):
-            name = new_sequence_to_exons[idx]
-            if name in remaining_names:
-                to_reorder.append(idx)
-
-        for i in range(len(remaining_names)):
-            if i >= len(to_reorder): return new_sequence_to_exons
-
-        for i in range(len(remaining_names)):
-            idx = to_reorder[i]
-            reordered_name = remaining_names[a[i]]
-            new_sequence_to_exons[idx] = reordered_name
-            
+             
     return new_sequence_to_exons
 
 
