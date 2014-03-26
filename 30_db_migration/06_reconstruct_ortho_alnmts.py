@@ -79,6 +79,8 @@ def sort_exon_names (list_of_exon_names):
         start_in_gene[exon_seq_name]  = exon_start
     list_of_exon_names.sort(key=lambda en: start_in_gene[en])
 
+    if species == 'pongo_abelii':
+        print '\n'.join(list_of_exon_names)
     return 
     
 #########################################
