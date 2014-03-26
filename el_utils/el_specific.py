@@ -497,7 +497,7 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
         species       = map.species_2
         # let's also have the start in gene here - might make our lives easier later
         exon2 = get_exon (cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[species])
-        sequence_name = species + "_" + str(map.exon_id_2)+"_"+str(map.exon_known_2)+"_"+str(exon.start_in_gene)
+        sequence_name = species + "_" + str(map.exon_id_2)+"_"+str(map.exon_known_2)+"_"+str(exon2.start_in_gene)
 
 
         if reconst_pepseq: 
