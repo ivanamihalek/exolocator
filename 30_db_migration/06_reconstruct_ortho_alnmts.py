@@ -79,8 +79,6 @@ def sort_exon_names (list_of_exon_names):
         start_in_gene[exon_seq_name]  = exon_start
     list_of_exon_names.sort(key=lambda en: start_in_gene[en])
 
-    if species == 'pongo_abelii':
-        print '\n'.join(list_of_exon_names)
     return 
     
 #########################################
@@ -1418,6 +1416,9 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
     # make sure we are sorted, will come handy down the line
     for seq_name in sequence_name_to_exon_names.keys():
         sort_exon_names (sequence_name_to_exon_names[seq_name]  )
+        if 'chimp' in seq_name:
+            print '\n'.join( sequence_name_to_exon_names[seq_name])
+            exit (1)
 
     # >>>>>>>>>>>>>>>>>>
     # flag the cases when one orthologue exon maps to many human (and vice versa) for later
