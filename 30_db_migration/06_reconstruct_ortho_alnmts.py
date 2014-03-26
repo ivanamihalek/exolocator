@@ -796,7 +796,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         # check sequence overlap, if several map to the same  human exon
         for human_exon in human_exons:
             [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
-            sequence_pieces = {}
+            sequence_pieces = []
+            sequence_piece_names = []
             for exon_seq_name in ortho_exons:
                 if not alnmt_pep[human_exon].has_key(exon_seq_name):  continue
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
