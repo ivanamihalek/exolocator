@@ -1416,7 +1416,7 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
     # make sure we are sorted, will come handy down the line
     for seq_name in sequence_name_to_exon_names.keys():
         sort_exon_names (sequence_name_to_exon_names[seq_name]  )
-        if 'chimp' in seq_name:
+        if 'orangutan' in seq_name:
             print '\n'.join( sequence_name_to_exon_names[seq_name])
             exit (1)
 
