@@ -125,7 +125,7 @@ def find_overlapping_maps (ortho_exon_to_human_exon, exon_seq_names, alnmt_pep):
                 for hu_ex in ortho_exon_to_human_exon[exon_seq_name]:
                     if not hu_ex in human_exons:
                         human_exons.append(hu_ex)
-            ortho_exons = list(set(join_group) )
+            ortho_exons = list(set(join_group) ) # this should take care of duplicates
             overlapping_maps.append([human_exons, ortho_exons])
 
 
@@ -793,8 +793,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         smallest_id  = exon_numbers[0]
         largest_id   = exon_numbers[-1]
 
-        # remove duplicates ? can this happen -- this crap will reorder the list
-        #ortho_exons = list(set(ortho_exons))
 
         # check sequence overlap, if several map to the same  human exon
         for human_exon in human_exons:
