@@ -793,6 +793,9 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         smallest_id  = exon_numbers[0]
         largest_id   = exon_numbers[-1]
 
+        # remove duplicates ? can this happen -- this crap will reorder the list
+        #ortho_exons = list(set(ortho_exons))
+
         # check sequence overlap, if several map to the same  human exon
         for human_exon in human_exons:
             [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
@@ -1433,8 +1436,6 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
         overlapping_maps[concat_seq_name] = find_overlapping_maps (ortho_exon_to_human_exon, concat_exons, alnmt_pep)
         # could the overlapping maps end up not being sorted?
         for [human_exons, ortho_exons] in overlapping_maps[concat_seq_name]:
-            # remove duplicates ? can this happen - caveat emptor  this crap will reorder the list
-            ortho_exons = list(set(ortho_exons))
             sort_exon_names (ortho_exons)
             human_exons.sort(key=lambda exon: exon.start_in_gene)
 
