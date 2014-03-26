@@ -1454,7 +1454,7 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
         overlapping_maps[concat_seq_name] = find_overlapping_maps (ortho_exon_to_human_exon, concat_exons, alnmt_pep)
         # could the overlapping maps end up not being sorted?
         for [human_exons, ortho_exons] in overlapping_maps[concat_seq_name]:
-            sort(exon_names, cursor, ensembl_db_name, ortho_exons)
+            sort_exon_names (cursor, ensembl_db_name, ortho_exons)
             human_exons.sort(key=lambda exon: exon.start_in_gene)
 
     return [human_exon_to_ortho_exon, sequence_name_to_exon_names, ortho_exon_to_human_exon, overlapping_maps]
