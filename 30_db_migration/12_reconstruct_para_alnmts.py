@@ -668,7 +668,7 @@ def check_exon_order (cursor, ensembl_db_name, output_pep, names_of_exons):
             if pepseq:
                 exon_name_ct += 1
                 exon_name = names_of_exons[name][exon_name_ct]
-                [species, exon_id, exon_known] = parse_aln_name(exon_name)
+                [species, exon_id, exon_known, exon_start] = parse_aln_name(exon_name)
                 exon_seqs   = get_exon_seqs(cursor, exon_id, exon_known, ensembl_db_name[species])[1:]
                 if not exon_seq_check(exon_seqs, pepseq, species, exon_name):
                     order_ok = False
@@ -720,7 +720,7 @@ def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_seq_n
                 dna_aligned = expand_pepseq (pep_seq, [], flank_length)
             else:
                 exon_seq_name = names_of_exons[name][name_ct]
-                [filler, exon_id, exon_known] = parse_aln_name(exon_seq_name)
+                [filler, exon_id, exon_known, exon_start] = parse_aln_name(exon_seq_name)
                 exon_seqs   = get_exon_seqs(cursor, exon_id, exon_known)[1:]
                 if  exon_seq_check (exon_seqs, pep_seq, name, exon_seq_name):
                     dna_aligned = expand_pepseq (pep_seq, exon_seqs, flank_length)
@@ -1312,7 +1312,7 @@ def make_alignments (species_list, db_info):
             parent_seq_name    = {}
             for template_exon in template_exons:
                 for exon_seq_name, exon_seq in alnmt_pep[template_exon].iteritems():
-                    (filler, exon_id, exon_known)  = parse_aln_name(exon_seq_name)
+                    [filler, exon_id, exon_known, exon_start]  = parse_aln_name(exon_seq_name)
                     para_gene_id                   = exon_id2gene_id(cursor, ensembl_db_name[species], 
                                                                      exon_id, exon_known)
                     parent_seq_name[exon_seq_name] = gene2stable(cursor, para_gene_id)
