@@ -775,9 +775,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
      
     if 'orangutan' in seq_to_fix:
         for  [human_exons, ortho_exons] in overlapping_maps:
-            print human_exon
             print '\n'.join(ortho_exons)
-        exit(1)
     # find sequential numbers of exons that we have in this story
     seqid = {}
     ct    = 0
@@ -807,6 +805,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if not alnmt_pep[human_exon].has_key(exon_seq_name):  continue
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 sequence_piece_names.append(exon_seq_name)
+            if 'orangutan' in seq_to_fix:
+                print '\n'.join(sequence_piece_names)
             list_of_ok_exon_names = check_seq_overlap(cursor, ensembl_db_name, cfg, acg, template_seq, 
                                                       sequence_pieces, sequence_piece_names, list_of_ok_exon_names)
 
