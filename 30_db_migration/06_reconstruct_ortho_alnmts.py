@@ -286,7 +286,8 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
 
         # check the similarity of the obtained pieces
         min_similarity = cfg.get_value('min_accptbl_exon_sim')
-        print
+        print 
+        print "===================================================="
         for i in range(len(new_pep_seq_pieces)):
             print pep_seq_names[i]
             print template_pieces[i]
