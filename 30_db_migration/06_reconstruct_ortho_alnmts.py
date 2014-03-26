@@ -265,10 +265,8 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
         for record in SeqIO.parse(inf, "fasta"):
             if record.id == 'other':
                 other_seq = record.seq
-                print other_seq
             else:
                 new_template_seq = record.seq
-                print new_template_seq
         inf.close()
         commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
