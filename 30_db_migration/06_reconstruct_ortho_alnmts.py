@@ -793,8 +793,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         smallest_id  = exon_numbers[0]
         largest_id   = exon_numbers[-1]
 
-        # remove duplicates ? can this happen
-        ortho_exons = list(set(ortho_exons))
+        # remove duplicates ? can this happen -- this crap will reorder the list
+        #ortho_exons = list(set(ortho_exons))
 
         # check sequence overlap, if several map to the same  human exon
         for human_exon in human_exons:
