@@ -489,10 +489,11 @@ def input_fasta (filename):
 #########################################
 def parse_aln_name (name):
     fields     = name.split("_")
-    exon_id    = int(fields[-2])
-    exon_known = int(fields[-1])
-    species    =  "_".join(fields[:-2])
-    return [species, exon_id, exon_known]
+    exon_id    = int(fields[-3])
+    exon_known = int(fields[-2])
+    exon_start = int(fields[-1])
+    species    =  "_".join(fields[:-3])
+    return [species, exon_id, exon_known, exon_start]
 
 #########################################
 def  fract_identity (cigar_line):
