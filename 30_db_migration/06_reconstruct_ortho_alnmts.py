@@ -210,103 +210,6 @@ def remove_ghosts (output_pep, sequence_name_to_exon_names):
     return [output_pep, sequence_name_to_exon_names]
 
 
-#########################################
-def check_overlap (alnmt_length, seqs):
-
-    overlap = []
-
-    for pos in range(alnmt_length): 
-        for i in range(len(seqs)):
-            if (seqs[i][pos] == '-'): continue
-            for j in range (i+1, len(seqs)):
-                if (seqs[j][pos] == '-'): continue
-                index = str(i) + " " + str(j)
-                if not index in overlap:
-                    overlap.append(index)
-                break
-    return overlap
-
-#########################################
-def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, sequence_to_exons):
-    
-    #I should resolve this at some earlier place - like when I am writing the exon maps
-    seq_names_to_remove = []
-
-    template_length = len(template_seq)
-
-    for piece in pep_seq_pieces:
-        if (not len(piece) == template_length):
-            #print "length mismatch for aligned exons (?)"
-            #print piece
-            #print template_seq
-            return []
-
-    # check whether any two pieces overlap
-    overlap = check_overlap (template_length, pep_seq_pieces)
-    if overlap: 
-        # if there is an overlap, check that it is not the artefact of the multiple sequence alignment
-        # (sometimes it clears up when only two seqs are aligned)
-        randstr = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
-        fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], randstr)
-
-        sequences = {'template':template_seq.replace('-','')}
-        #concatenate pieces by force - we trust here they are  given in the order in which they appear in the gene
-        sequences['other'] = 'Z'.join( [pepseq.replace('-','') for pepseq in  pep_seq_pieces] )    
-        output_fasta (fasta_fnm, sequences.keys(), sequences)
-
-        # align
-        afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], randstr)
-        mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
-        ret      = commands.getoutput(mafftcmd)
-
-        new_pep_seq_pieces = []
-        inf = erropen(afa_fnm, "r")
-        for record in SeqIO.parse(inf, "fasta"):
-            if record.id == 'other':
-                other_seq = record.seq
-            else:
-                new_template_seq = record.seq
-        inf.close()
-        commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
-
-        prev = 0
-        new_pep_seq_pieces = []
-        template_pieces    = []
-        for i in range(len(other_seq)):
-            if other_seq[i] == 'Z' and i>0 :
-                new_pep_seq_pieces.append(other_seq[prev:i])
-                template_pieces.append(new_template_seq[prev:i])
-                prev = i+1
-
-        if prev < len(other_seq):
-            new_pep_seq_pieces.append(other_seq[prev:len(other_seq)])
-            template_pieces.append(new_template_seq[prev:len(other_seq)])
-            
-
-        # check the similarity of the obtained pieces
-        min_similarity = cfg.get_value('min_accptbl_exon_sim')
-        print 
-        print "===================================================="
-        for i in range(len(new_pep_seq_pieces)):
-            print pep_seq_names[i]
-            print template_pieces[i]
-            print new_pep_seq_pieces[i]
-            print pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i])
-            print "======="
-            if ( pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i]) < min_similarity ):
-                seq_names_to_remove.append(pep_seq_names[i])
-        
-        new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, sequence_to_exons)
-
-
-    else:
-        new_pep_seq_pieces     = pep_seq_pieces
-        new_sequence_to_exons = sequence_to_exons
-
-    # make sure 
-             
-    return new_sequence_to_exons
-
 
 #########################################
 def check_notes_directory (cfg):
@@ -754,6 +657,102 @@ def realign_slice (pep_slice, seq_to_fix, pep_seq_pieces):
 
     return new_pep_slice
 
+#########################################
+def check_overlap (alnmt_length, seqs):
+
+    overlap = []
+
+    for pos in range(alnmt_length): 
+        for i in range(len(seqs)):
+            if (seqs[i][pos] == '-'): continue
+            for j in range (i+1, len(seqs)):
+                if (seqs[j][pos] == '-'): continue
+                index = str(i) + " " + str(j)
+                if not index in overlap:
+                    overlap.append(index)
+                break
+    return overlap
+
+#########################################
+def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_pieces, pep_seq_names, sequence_to_exons):
+    
+    #I should resolve this at some earlier place - like when I am writing the exon maps
+    seq_names_to_remove = []
+
+    template_length = len(template_seq)
+
+    for piece in pep_seq_pieces:
+        if (not len(piece) == template_length):
+            #print "length mismatch for aligned exons (?)"
+            #print piece
+            #print template_seq
+            return []
+
+    # check whether any two pieces overlap
+    overlap = check_overlap (template_length, pep_seq_pieces)
+    if overlap: 
+        # if there is an overlap, check that it is not the artefact of the multiple sequence alignment
+        # (sometimes it clears up when only two seqs are aligned)
+        randstr = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
+        fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], randstr)
+
+        sequences = {'template':template_seq.replace('-','')}
+        #concatenate pieces by force - we trust here they are  given in the order in which they appear in the gene
+        sequences['other'] = 'Z'.join( [pepseq.replace('-','') for pepseq in  pep_seq_pieces] )    
+        output_fasta (fasta_fnm, sequences.keys(), sequences)
+
+        # align
+        afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], randstr)
+        mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
+        ret      = commands.getoutput(mafftcmd)
+
+        new_pep_seq_pieces = []
+        inf = erropen(afa_fnm, "r")
+        for record in SeqIO.parse(inf, "fasta"):
+            if record.id == 'other':
+                other_seq = record.seq
+            else:
+                new_template_seq = record.seq
+        inf.close()
+        commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
+
+        prev = 0
+        new_pep_seq_pieces = []
+        template_pieces    = []
+        for i in range(len(other_seq)):
+            if other_seq[i] == 'Z' and i>0 :
+                new_pep_seq_pieces.append(other_seq[prev:i])
+                template_pieces.append(new_template_seq[prev:i])
+                prev = i+1
+
+        if prev < len(other_seq):
+            new_pep_seq_pieces.append(other_seq[prev:len(other_seq)])
+            template_pieces.append(new_template_seq[prev:len(other_seq)])
+            
+        # check the similarity of the obtained pieces
+        min_similarity = cfg.get_value('min_accptbl_exon_sim')
+        print 
+        print "===================================================="
+        for i in range(len(new_pep_seq_pieces)):
+            print pep_seq_names[i]
+            print template_pieces[i]
+            print new_pep_seq_pieces[i]
+            print pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i])
+            print "======="
+            if ( pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i]) < min_similarity ):
+                seq_names_to_remove.append(pep_seq_names[i])
+        
+        new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, sequence_to_exons)
+
+
+    else:
+        new_pep_seq_pieces     = pep_seq_pieces
+        new_sequence_to_exons = sequence_to_exons
+
+    # make sure 
+             
+    return new_sequence_to_exons
+
 ########################################
 def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical_human_exons, human_exon_to_ortho_exon,
                   sequence_name_to_exon_names, seq_to_fix, overlapping_maps, alnmt_pep, output_pep):
@@ -766,15 +765,13 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     # not sure how this could happen
     if not output_pep.has_key('human'): return [output_pep, sequence_name_to_exon_names]
 
-    new_alignment_pep  = {}
-    new_sequence_name_to_exon_names = []
-    for human_exon in canonical_human_exons:
-        has_map = False
-        for ortho_exon in sequence_name_to_exon_names[seq_to_fix]:
-            if alnmt_pep[human_exon].has_key(ortho_exon):
-                if not ortho_exon in new_sequence_name_to_exon_names:
-                    new_sequence_name_to_exon_names.append(ortho_exon)
-                has_map = True
+    # get rid of things that are duplicates or have not been associated with any humam exon
+    list_of_ok_exon_names = []
+    for ortho_exon in sequence_name_to_exon_names[seq_to_fix]:
+        for human_exon in canonical_human_exons:
+            if not alnmt_pep[human_exon].has_key(ortho_exon): continue
+            if ortho_exon in new_sequence_name_to_exon_names: continue
+            list_of_ok_exon_names.append(ortho_exon)
      
     # find sequential numbers of exons that we have in this story
     seqid = {}
@@ -790,7 +787,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     for  [human_exons, ortho_exons] in overlapping_maps:
 
         exon_numbers = sorted(map(lambda ex: seqid[ex], human_exons))
-        
         smallest_id  = exon_numbers[0]
         largest_id   = exon_numbers[-1]
 
@@ -800,17 +796,20 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         # check sequence overlap, if several map to the same  human exon
         for human_exon in human_exons:
             [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
-            sequence_pieces = []
-            seq_piece_names = []
+            sequence_pieces = {}
             for exon_seq_name in ortho_exons:
                 if not alnmt_pep[human_exon].has_key(exon_seq_name):  continue
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
-                seq_piece_names.append(exon_seq_name)
-            new_sequence_name_to_exon_names = check_seq_overlap(cursor, ensembl_db_name, cfg, acg, template_seq, sequence_pieces, seq_piece_names, new_sequence_name_to_exon_names)
+                sequence_piece_names.append(exon_seq_name)
+            if 'orangutan' in seq_to_fix:
+                print human_exon
+                print '\n'.join(sequence_piece_names)
+            list_of_ok_exon_names = check_seq_overlap(cursor, ensembl_db_name, cfg, acg, template_seq, 
+                                                      sequence_pieces, sequence_piece_names, list_of_ok_exon_names)
 
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
-        for ortho_exon in new_sequence_name_to_exon_names:
+        for ortho_exon in list_of_ok_exon_names:
             for human_exon in human_exons:
                 if alnmt_pep[human_exon].has_key(ortho_exon):
                     pep_seq_pieces.append( alnmt_pep[human_exon][ortho_exon].replace("-", "") )
@@ -915,17 +914,17 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         if pe: 
             exon_ct += 1
 
-    if not exon_ct == len(new_sequence_name_to_exon_names):
+    if not exon_ct == len(list_of_ok_exon_names):
         print seq_to_fix, 'length mismatch'
-        print "lengths:", exon_ct, len(new_sequence_name_to_exon_names)
+        print "lengths:", exon_ct, len(list_of_ok_exon_names)
         print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
-        print new_sequence_name_to_exon_names
+        print list_of_ok_exon_names
         c=inspect.currentframe()
         print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
         return [output_pep, sequence_name_to_exon_names]
 
     output_pep = new_alignment_pep
-    sequence_name_to_exon_names[seq_to_fix] = new_sequence_name_to_exon_names
+    sequence_name_to_exon_names[seq_to_fix] = list_of_ok_exon_names
 
     return [output_pep, sequence_name_to_exon_names]
 
@@ -1436,9 +1435,6 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
         for [human_exons, ortho_exons] in overlapping_maps[concat_seq_name]:
             sort_exon_names (ortho_exons)
             human_exons.sort(key=lambda exon: exon.start_in_gene)
-            if 'orangutan' in concat_seq_name:
-                print '\n'.join(ortho_exons)
-                exit (1)
 
     return [human_exon_to_ortho_exon, sequence_name_to_exon_names, ortho_exon_to_human_exon, overlapping_maps]
 
