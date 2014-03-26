@@ -731,14 +731,7 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
             
         # check the similarity of the obtained pieces
         min_similarity = cfg.get_value('min_accptbl_exon_sim')
-        print 
-        print "===================================================="
         for i in range(len(new_pep_seq_pieces)):
-            print pep_seq_names[i]
-            print template_pieces[i]
-            print new_pep_seq_pieces[i]
-            print pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i])
-            print "======="
             if ( pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i]) < min_similarity ):
                 seq_names_to_remove.append(pep_seq_names[i])
         
@@ -773,9 +766,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             if ortho_exon in list_of_ok_exon_names: continue
             list_of_ok_exon_names.append(ortho_exon)
      
-    if 'orangutan' in seq_to_fix:
-        for  [human_exons, ortho_exons] in overlapping_maps:
-            print '\n'.join(ortho_exons)
     # find sequential numbers of exons that we have in this story
     seqid = {}
     ct    = 0
@@ -803,8 +793,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if not alnmt_pep[human_exon].has_key(exon_seq_name):  continue
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 sequence_piece_names.append(exon_seq_name)
-            if 'orangutan' in seq_to_fix:
-                print '\n'.join(sequence_piece_names)
             list_of_ok_exon_names = check_seq_overlap(cursor, ensembl_db_name, cfg, acg, template_seq, 
                                                       sequence_pieces, sequence_piece_names, list_of_ok_exon_names)
 
