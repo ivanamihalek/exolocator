@@ -76,7 +76,7 @@ def sort_exon_names (cursor, ensembl_db_name, list_of_exon_names):
     start_in_gene = {}
     for exon_seq_name in list_of_exon_names:
         [species, exon_id, exon_known] = parse_aln_name(exon_seq_name)
-        exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name,[species])
+        exon = get_exon (cursor, exon_id, exon_known, ensembl_db_name[species])
         start_in_gene[exon_seq_name]  = exon.start_in_gene
     list_of_exon_names.sort(key=lambda en: start_in_gene[en])
 
