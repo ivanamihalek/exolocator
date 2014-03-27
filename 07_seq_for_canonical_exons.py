@@ -136,6 +136,10 @@ def store_exon_seqs(species_list, db_info):
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False      
  
+        if (species=='homo_sapiens'):
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        else:
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
         ###########################
         seqs_not_found = []

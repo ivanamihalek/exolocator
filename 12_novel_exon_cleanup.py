@@ -388,7 +388,8 @@ def exon_cleanup(gene_list, db_info):
                      ok = 0
                      for novel_exon in novel_exons:
 
-                         print "novel exon found in table %s, mapping to human exon %s" % (table,  exon2stable (cursor, human_exon.exon_id, ensembl_db_name['homo_sapiens']) )
+                         print "%s: novel exon found in table %s, mapping to human exon %s" % 
+                         (species, table, exon2stable (cursor, human_exon.exon_id, ensembl_db_name['homo_sapiens']) )
                          ct += 1
 
                          has_stop = False
