@@ -379,22 +379,24 @@ def exon_cleanup(gene_list, db_info):
                  for table in ['sw_exon','usearch_exon']:
                      switch_to_db(cursor, ensembl_db_name[species])
                      qry      = "select * from %s where maps_to_human_exon_id = %d " % (table, human_exon.exon_id)
-                     sw_exons = search_db(cursor, qry)
+                     novel_exons = search_db(cursor, qry)
 
-                     if not sw_exons:
+                     if not novel_exons:
                          #print  "human_exon: ", human_exon.exon_id, "no", table,  "for", species
                          continue
                      ct = 0
                      ok = 0
-                     for sw_exon in sw_exons:
+                     for novel_exon in novel_exons:
+
+                         print "novel exon found in table %s, mapping to human exon %s" % (table,  exon2stable (cursor, human_exon.exon_id, ensembl_db_name['homo_sapiens']) )
                          ct += 1
 
                          has_stop = False
                          has_NNN  = False
 
-                         [sw_exon_id, gene_id, start_in_gene, end_in_gene,  maps_to_human_exon_id, exon_seq_id,
+                         [novel_exon_id, gene_id, start_in_gene, end_in_gene,  maps_to_human_exon_id, exon_seq_id,
                           template_exon_seq_id, template_species,  strand, phase, end_phase, has_NNN, has_stop, 
-                          has_3p_ss, has_5p_ss] = sw_exon
+                          has_3p_ss, has_5p_ss] = novel_exon
 
                          tot +=1
              
@@ -576,7 +578,7 @@ def exon_cleanup(gene_list, db_info):
                          # 18_find_exons is sometimes messing up the coordinates 
                          # I do not know why
                          ret = check_coordinates_in_the_gene (cursor, cfg, acg, ensembl_db_name, 
-                                                              species, sw_exon, new_dna_seq)
+                                                              species, novel_exon, new_dna_seq)
                          if not ret: 
                              print "\t coordinate check failed"
                              continue
@@ -617,7 +619,7 @@ def exon_cleanup(gene_list, db_info):
                              set_fields += " has_5p_ss = '%s' "  % ("me_score="+str(end_max_score))
                          
                          
-                         qry += set_fields + " where exon_id=%d" %  sw_exon_id
+                         qry += set_fields + " where exon_id=%d" %  novel_exon_id
                          
                          if set_fields:
                              search_db(cursor, qry)
@@ -632,8 +634,8 @@ def exon_cleanup(gene_list, db_info):
                              qry += " right_flank = '%s',       " % new_right_flank
                              qry += " pepseq_transl_start = %d, " % pepseq_transl_start
                              qry += " pepseq_transl_end   = %d  " % pepseq_transl_end
-                             table_id = 2 if table=='sw_exon' else 3
-                             qry += " where exon_id=%d and is_known=%d" % (sw_exon_id, table_id)
+                             table_id = 2 if table=='novel_exon' else 3
+                             qry += " where exon_id=%d and is_known=%d" % (novel_exon_id, table_id)
                              search_db(cursor, qry)
                             
                          # gene2exon --> have to go back to 07_gene2exon for that
