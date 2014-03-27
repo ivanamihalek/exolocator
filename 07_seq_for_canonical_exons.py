@@ -159,7 +159,6 @@ def store_exon_seqs(species_list, db_info):
                 ct += 1
                 if verbose:
                     print 'no sequence found for ', gene_id, gene2stable(cursor, gene_id)
-                exit(1)
                 seqs_not_found.append(gene_id)
                 continue
 
@@ -204,13 +203,11 @@ def store_exon_seqs_special(gene_list, db_info):
     tot     = 0
     for gene_id in gene_list:
             
- 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
-
 
         for [ortho_gene_id, ortho_species] in [[gene_id,'homo_sapiens']] + orthologues:
 
@@ -272,7 +269,6 @@ def main():
         special = sys.argv[1].lower()
         if special == 'none': special = None
         no_threads = int(sys.argv[2])
-
 
     if local_db:
         db     = connect_to_mysql()
