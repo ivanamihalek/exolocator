@@ -241,6 +241,10 @@ def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, 
         other_species = species
         break
 
+    if verbose:
+        print '=============================================================='
+        print other_species
+
     min_similarity = cfg.get_value('min_accptbl_exon_sim')
 
     for human_exon_ct in range(len(human_exons)):
@@ -376,7 +380,7 @@ def find_exon_positions(seq):
 
 
 #########################################
-def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons):
+def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons, verbose=False):
 
     maps = []
 
@@ -415,6 +419,6 @@ def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, or
 
     # fill in the actual map values
     maps = maps_evaluate (cfg, ensembl_db_name, relevant_human_exons, 
-                          relevant_ortho_exons, aligned_seq, exon_positions)
+                          relevant_ortho_exons, aligned_seq, exon_positions, verbose)
 
     return maps

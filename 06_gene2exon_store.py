@@ -393,13 +393,6 @@ def find_exons (cursor, gene_id, species):
     # mark coding exons
     mark_coding (cursor, gene_id, species, exons)
     
-    if species == 'ficedula_albicollis':
-        print 'ficedula_albicollis'
-        print "sw:", get_exons  (cursor, gene_id, species, 'sw_exon')
-        print "usearch:", get_exons  (cursor, gene_id, species, 'usearch_exon')
-        for exon in exons:
-            print exon
-
     
     return exons
 

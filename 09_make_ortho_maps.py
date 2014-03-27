@@ -109,7 +109,7 @@ def maps_for_gene_list(gene_list, db_info):
         orthologues = get_reliable_orthos(cursor, ensembl_db_name, gene_id)
 
         for [ortho_gene_id, ortho_species] in  orthologues:
-            #if not ortho_species == 'pan_troglodytes': continue
+            if not ortho_species == 'ficedula_albicollis': continue
             ortho_exons = gene2exon_list(cursor, ortho_gene_id, db_name=ensembl_db_name[ortho_species] )
             # in the first round of building the database there will be no 'novel' exons
             # but we put this here just in case we want to rerun the script anyway
@@ -122,12 +122,11 @@ def maps_for_gene_list(gene_list, db_info):
                 missing_exon_info += 1
                 print "\t", ortho_species, "no exon info"
                 continue
-
             # maps are based on pairwise alignements of human to other species
             # multiple seqence alignements on exon-by-exon basis are produced in 17_ortho_exon_map_to_msa.py
             # reconstruction of full length multiple seqence alignments is  done only in 
             # 30_db_migration/06_reconstruct_ortho_alnmts.py
-            maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons)   
+            maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons, verbose=True)   
             if not maps:
                 missing_seq_info += 1
                 print "\t", ortho_species, "no maps"
