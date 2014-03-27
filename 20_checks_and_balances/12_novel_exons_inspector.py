@@ -52,22 +52,19 @@ def main():
     # loop over all genes
     sw_count = 0
     tot_count = 0
-    outf = erropen ('genes_w_usearch_exons.txt', "w")
     for human_gene_id in gene_list:
         
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
  	human_stable      = gene2stable    (cursor, human_gene_id)
         human_description = get_description(cursor, human_gene_id)
         tot_count += 1
-	#print human_gene_id, human_stable, human_description
+	print human_gene_id, human_stable, human_description
    
   	human_exons = [e for e in gene2exon_list(cursor, human_gene_id, verbose=True) 
                        if e.covering_exon < 0 and e.is_canonical and e.is_known]
         if not human_exons: 
             print "\t\t", human_stable, "no exons found"
             continue
-
-        #map_cleanup (cursor, ensembl_db_name, human_exons)
 
 	human_exons.sort(key=lambda exon: exon.start_in_gene)
         # loop over all exons in this gene
@@ -90,7 +87,6 @@ def main():
                 continue
 
             sw_count += 1
-            print >>outf, human_stable
             break
 
             print
@@ -115,7 +111,6 @@ def main():
     print "tot count: ", tot_count
     print "sw count: ", sw_count
     
-    outf.close()
     cursor.close()
     db.close()
 
