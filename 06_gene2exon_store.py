@@ -385,7 +385,7 @@ def find_exons (cursor, gene_id, species):
 
     if species == 'ficedula_albicollis':
         print "sw:", get_exons  (cursor, gene_id, species, 'sw_exon')
-        print "usearch:", get_exons  (cursor, gene_id, species, 'sw_exon')
+        print "usearch:", get_exons  (cursor, gene_id, species, 'usearch_exon')
         exit(1)
 
     # mark the exons belonging to canonical transcript
