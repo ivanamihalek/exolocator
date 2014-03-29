@@ -240,7 +240,7 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, multiple_exon_alnmt, gene_list, [local_db, ensembl_db_name])
+    parallelize (no_threads, multiple_exon_alnmt, gene_list[0:30], [local_db, ensembl_db_name])
     
     return True
 
