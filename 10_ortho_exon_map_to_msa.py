@@ -169,7 +169,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                     #print MySQLdb.escape_string(msa_bitmap)
                     if not msa_bitmap:
                         print "no msa_bitmap"
-                        exit(1)
+                        continue
                     print
                 store_or_update(cursor, "exon_map",    {"cognate_genome_db_id":cognate_genome_db_id,
                    "cognate_exon_id":cognate_exon_id   ,"cognate_exon_known"  :cognate_exon_known,
@@ -178,7 +178,6 @@ def multiple_exon_alnmt(gene_list, db_info):
 
             ok += 1
             commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
-            #exit(1)
 
         if verbose: print " time: %8.3f\n" % (time()-start);
 
@@ -198,7 +197,7 @@ def main():
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
         print "usage: %s <set name> <number of threads> <method>" % sys.argv[0]
-        exit(1)
+        exit(1) # after usage statement
     elif len(sys.argv)==3:
 
         special = sys.argv[1]
