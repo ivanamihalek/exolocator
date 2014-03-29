@@ -27,6 +27,9 @@ verbose = False
 def multiple_exon_alnmt(gene_list, db_info):
 
 
+    print "pid", get_process_id()
+    return
+
     [local_db, ensembl_db_name] = db_info
 
 
