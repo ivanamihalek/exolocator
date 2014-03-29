@@ -52,11 +52,6 @@ def parallelize (number_of_chunks, embarassingly_pllbl_fn, list, other_args):
             print "Error: unable to start process"
             return False
     
-        try:
-            process.join()
-        except:
-            print "Error: unable to join process"
-            return False
     
         
         
