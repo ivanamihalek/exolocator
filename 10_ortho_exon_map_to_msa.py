@@ -14,7 +14,7 @@ from   el_utils.ncbi    import  taxid2trivial
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.special_gene_sets  import *
-from   el_utils.processes import  parallelize
+from   el_utils.processes import  parallelize, get_process_id
 
 
 from time      import  time
