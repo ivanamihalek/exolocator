@@ -231,7 +231,7 @@ def main():
             gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
         else:
             gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
-        multiple_exon_alnmt, gene_list, [local_db, ensembl_db_name])
+        multiple_exon_alnmt (gene_list, [local_db, ensembl_db_name])
 
     else:
         print "using all protein coding genes"
