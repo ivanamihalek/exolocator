@@ -59,6 +59,7 @@ def multiple_exon_alnmt(gene_list, db_info):
     no_orthologues = 0
     min_similarity = cfg.get_value('min_accptbl_exon_sim')
 
+    gene_list.reverse()
     for gene_id in gene_list:
 
         start = time()
