@@ -59,7 +59,6 @@ def main():
         gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
         
 
-
     with_map = 0
     tot      = 0
     #for gene_id in gene_list: 
@@ -93,7 +92,7 @@ def main():
             if verbose:
                 for map in maps:
                     species            = map.species_2
-                    if not species == 'pan_troglodytes': continue
+                    #if not species == 'pan_troglodytes': continue
                     exon               = map2exon(cursor, ensembl_db_name, map)
                     unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
                     if (1 or map.source=='sw_sharp'):
