@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 
 import MySQLdb, subprocess, re, commands
 import copy, pdb
