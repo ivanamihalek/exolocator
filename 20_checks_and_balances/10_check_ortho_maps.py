@@ -61,8 +61,9 @@ def main():
 
     with_map = 0
     tot      = 0
+    for gene_id in [730826]: 
     #for gene_id in gene_list: 
-    for sampling_count in range(1000):
+    #for sampling_count in range(1000):
  
         gene_id = choice(gene_list)
        
@@ -87,7 +88,9 @@ def main():
                 with_map += 1
                 #print "ok"
             else:
-                #print"no maps"
+                print"no maps"
+                print human_exon
+                exit(1)
                 pass
             if verbose:
                 for map in maps:
