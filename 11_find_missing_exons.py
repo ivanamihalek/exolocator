@@ -19,11 +19,11 @@ from el_utils.tree    import  species_sort
 from el_utils.special_gene_sets  import get_theme_ids, get_complement_ids
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from el_utils.config_reader      import ConfigurationReader
-from el_utils.threads import  parallelize
+from el_utils.processes import  parallelize
 from subprocess import Popen, PIPE, STDOUT
 
 #########################################
-verbose = True
+verbose = False
 
 
 
