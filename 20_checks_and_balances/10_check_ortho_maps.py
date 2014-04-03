@@ -58,15 +58,16 @@ def main():
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
         
-
-    with_map = 0
-    tot      = 0
-    for gene_id in [730826]: 
-    #for gene_id in gene_list: 
+    incomplete = 0
+    genes_checked = 0
+    #for gene_id in [730826]: 
+    for gene_id in gene_list: 
     #for sampling_count in range(1000):
  
         gene_id = choice(gene_list)
-       
+        genes_checked += 1
+        with_map = 0
+        tot      = 0
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         print  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
@@ -106,9 +107,12 @@ def main():
                         if not map.bitmap:
                             print "\t bitmap not assigned"
                         print
-        print "####  gene id: %d   total exons: %d     with map:  %d   ( = %d%%) " % \
-            (gene_id,  tot,  with_map, int(float(with_map)/tot*100) )
+        if not tot== with_map:
+            print "####  gene id: %d   total exons: %d     with map:  %d   ( = %d%%) " % \
+                (gene_id,  tot,  with_map, int(float(with_map)/tot*100) )
+            incomplete += 1
 
+    print "genes checked: %d,  incomplete: %d"  %  (genes_checked, incomplete)
     cursor.close()
     db.close()
 
