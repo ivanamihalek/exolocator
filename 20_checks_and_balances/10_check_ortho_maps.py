@@ -16,7 +16,7 @@ from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.special_gene_sets  import  get_theme_ids
 
 
-verbose = True
+verbose = False
 
 #########################################
 def main():
