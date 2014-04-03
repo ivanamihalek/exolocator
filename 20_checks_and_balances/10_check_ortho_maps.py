@@ -95,7 +95,7 @@ def main():
                     #if not species == 'pan_troglodytes': continue
                     exon               = map2exon(cursor, ensembl_db_name, map)
                     unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
-                    if (1 or map.source=='sw_sharp'):
+                    if (0  and  map.source=='sw_sharp'):
                         print "\t", species,  map.source, map.exon_id_2, map.exon_known_2
                         print "\tmaps to ",  map.exon_id_1, map.exon_known_1
                         print "\tsim",  map.similarity
