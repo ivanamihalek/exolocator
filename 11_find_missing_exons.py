@@ -756,9 +756,9 @@ def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  
         print "translation:   " + pepseq            # verbose 
         print "template:      " + template_pepseq   # verbose 
         print "human version: " + human_exon.pepseq # verbose 
-        print "template similarity to human:  %6.2f" % template_similarity_to_human  # verbose 
-        print "based on {0}, exon {1}, position {2} - {3}:". \  
-        format(template_species,template_exon_seq_id,template_start, template_end)
+        print "template similarity to human:  %6.2f" % template_similarity_to_human      # verbose 
+        print "based on {0}, exon {1}, ". format(template_species,template_exon_seq_id), # verbose 
+        print "position {2} - {3}:". format(template_start, template_end)                # verbose 
         
         print "storing to ", ensembl_db_name[species], "  db id", species2genome_db_id(cursor, species)  # verbose 
         if ret: 
