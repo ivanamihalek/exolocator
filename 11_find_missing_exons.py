@@ -71,8 +71,8 @@ def get_seq_region(cursor, ensembl_db_name,  gene_coords, exon_id, exon_known):
         elif exon_known == 0:
             qry += "from prediction_exon "
         else:
-            print "exon_known", exon_known
-            print "get_seq_region() from sw and usearch exon not implemented"
+            if verbose: print "exon_known", exon_known
+            if verbose: print "get_seq_region() from sw and usearch exon not implemented"
             return None
 
         qry += "join seq_region on exon.seq_region_id = seq_region.seq_region_id "
@@ -80,7 +80,6 @@ def get_seq_region(cursor, ensembl_db_name,  gene_coords, exon_id, exon_known):
         rows = search_db(cursor, qry)
         if not rows:   return False
         if not len(rows[0]) ==5:
-            print rows[0]
             return False
         [name, file_names, strand, start, end] = rows[0]
 
@@ -120,10 +119,10 @@ def get_alt_seq_region(cursor,ensembl_db_name, exon_id, exon_known):
     elif exon_known == 0:
         qry += "from prediction_exon "
     elif exon_known == 2:
-        print "get_alt_seq_region() from sw exon not implemented - need to fishi it up from the gene region "
+        if verbose: print "get_alt_seq_region() from sw exon not implemented - need to fish it up from the gene region "
         return None
     else:
-        print "error in get_alt_seq_region() "
+        if verbose: print "error in get_alt_seq_region() "
         return None
     
     qry += "join assembly_exception as ae on ae.seq_region_id=exon.seq_region_id "
@@ -232,8 +231,8 @@ def store_novel_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene,
     elif method == 'usearch':
         qry  = "update usearch_exon set exon_seq_id = {0} where exon_id = {1}".format(exon_seq_id, novel_exon_id)
     else:
-        print "unrecognized method: ", method
-        exit(1)
+        if verbose: print "unrecognized method: ", method
+        return False
     cursor.execute(qry)
 
     return novel_exon_id
@@ -252,8 +251,10 @@ def translate(searchseq, search_start, search_end, mitochondrial):
         try:
             pepseq = str(Seq(dnaseq,generic_dna).translate())
         except:
-            print dnaseq
-            print Seq(dnaseq,generic_dna).translate()
+            if verbose:
+                print "Error translating DNA to protein"   # verbose 
+                print dnaseq                               # verbose 
+                print Seq(dnaseq,generic_dna).translate()  # verbose 
             pepseq = ""
   
     return pepseq
@@ -310,7 +311,6 @@ def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchs
 
     if "*" in pepseq and len(pepseq) > len(template_pepseq): # if the stop is outside of the matching region with template, 
                                                              # return only the matching region
-        print 'resolving a stop codon'
         s      = SequenceMatcher(None, pepseq, template_pepseq)
         blocks = s.get_matching_blocks()
         blocks = filter( lambda (i,j,n): n>0, blocks)
@@ -398,12 +398,10 @@ def get_neighboring_region  (cursor, ensembl_db_name, map_table, species, gene_c
     if not nbr_he:
         # the bound will be my present left boud 
         #  + default range of search on the left
-        #print "\t no nbr"
         pass
     else:
         nbr_map        = map_table[species][nbr_he]
         if not nbr_map: 
-            #print "\t no nbr map"
             return None
         nbr_exon_id    = nbr_map.exon_id_2
         nbr_exon_known = nbr_map.exon_known_2
@@ -480,9 +478,11 @@ def patch_aligned_seq (aligned_target_seq, aligned_template_seq,  template_start
 #########################################
 def translation_check ( searchseq, match_start, match_end, mitochondrial, pepseq):
     if not pepseq == translate(searchseq, match_start, match_end, mitochondrial):
-        print " ! "
-        print pepseq
-        print translate(searchseq, match_start, match_end, mitochondrial)
+        if verbose:
+            print "translation check failure:"                                 # verbose
+            print pepseq                                                       # verbose
+            print translate(searchseq, match_start, match_end, mitochondrial)  # verbose
+            print   # verbose
         return False
     return True
 
@@ -492,7 +492,7 @@ def find_search_region (acg, species,  prev_seq_region, next_seq_region, extensi
 
     # determine the search region, and extract it using fastacmd
     if not next_seq_region and not prev_seq_region:
-        print "no regions specified in sw_search()"
+        if verbose: print "no regions specified in sw_search()"
         return []
     
     if not prev_seq_region:
@@ -522,25 +522,28 @@ def find_search_region (acg, species,  prev_seq_region, next_seq_region, extensi
         if prev_seq_region.name == next_seq_region.name:
             searchname =  prev_seq_region.name
         else:
-            print "prev_seq_region.name != next_seq_region.name ",  
-            print prev_seq_region.name,  next_seq_region.name
-            print "(cannot handle such cases yet)"
+            if verbose:
+                print "prev_seq_region.name != next_seq_region.name ",   # verbose
+                print prev_seq_region.name,  next_seq_region.name        # verbose
+                print "(cannot handle such cases yet)"                   # verbose
             return []
 
         if prev_seq_region.filename == next_seq_region.filename:
             searchfile =  prev_seq_region.filename
         else:
-            print "prev_seq_region.filename != next_seq_region.filename ",  
-            print prev_seq_region.filename,  next_seq_region.filename
-            print "(cannot handle such cases yet)"
+            if verbose:
+                print "prev_seq_region.filename != next_seq_region.filename ", # verbose
+                print prev_seq_region.filename,  next_seq_region.filename      # verbose
+                print "(cannot handle such cases yet)"                         # verbose
             return []
 
         if prev_seq_region.strand == next_seq_region.strand:
             searchstrand = prev_seq_region.strand
         else:
-            print "prev_seq_region.strand != next_seq_region.strand ",  
-            print prev_seq_region.strand,  next_seq_region.strand
-            print "(cannot handle such cases yet)"
+            if verbose:
+                print "prev_seq_region.strand != next_seq_region.strand ",  # verbose
+                print prev_seq_region.strand,  next_seq_region.strand       # verbose
+                print "(cannot handle such cases yet)"                      # verbose
             return []
 
         searchstart = prev_seq_region.end
@@ -577,7 +580,6 @@ def organize_and_store_sw_exon (cursor, acg, ensembl_db_name, species, gene_id,
     # if we patched the translation will not work out
     if not patched:
         if not translation_check (searchseq, match_start, match_end, mitochondrial, pepseq):
-            print "failed translation check"
             return None
                 
     # flanking seqeunces
@@ -599,20 +601,13 @@ def organize_and_store_sw_exon (cursor, acg, ensembl_db_name, species, gene_id,
         start_in_gene = match_start - (region_end - gene_end) + 1
         end_in_gene   = match_end   - (region_end - gene_end) + 1
       
-
-    print "region:", region_start, region_end
-    print " match:", match_start,  match_end
-    print "  gene:", gene_start, gene_end, gene_strand
-    print "in gene:", start_in_gene, end_in_gene
-
-
     sw_exon_id  = None
     sw_exon_id  = store_novel_exon (cursor, ensembl_db_name[species], he.exon_id, gene_id, 
                                  start_in_gene, end_in_gene, gene_strand, dnaseq, left_flank, right_flank, pepseq,
                                  has_NNN, has_stop, template_exon_seq_id, template_species, method)
     
     if not sw_exon_id: 
-        print "no sw exon id"
+        if verbose: print gene_id, "no sw exon id"
         return None
 
 
@@ -623,6 +618,8 @@ def organize_and_store_sw_exon (cursor, acg, ensembl_db_name, species, gene_id,
 #########################################
 def brute_force_search(cfg, acg, query_seq, target_seq, method):
 
+    match = ''
+
     if method   == 'sw_sharp':
         resultstr = sw_search (cfg, acg, query_seq, target_seq)
         match = parse_sw_output(resultstr)
@@ -630,7 +627,7 @@ def brute_force_search(cfg, acg, query_seq, target_seq, method):
         resultstr = usearch (cfg, acg, query_seq, target_seq, delete=True)
         match = parse_usearch_output(resultstr)
     else:
-        print "unrecognized search method: ", method
+        if verbose: print "unrecognized search method: ", method
 
 
     return match
@@ -671,11 +668,11 @@ def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  
     extension = MAX_SEARCH_LENGTH if method=='usearch' else 2*MAX_SEARCH_LENGTH
     ret = find_search_region (acg, species,  prev_seq_region, next_seq_region, extension)
     if not ret: 
-        print "no search region "
+        if verbose: print "no search region "
         return matching_region
     [region_name, region_file, region_start, region_end, fasta] = ret
     if not fasta: 
-        print "no search region (fasta empty)"
+        if verbose: print "no search region (fasta empty)"
         return matching_region
 
         
@@ -695,9 +692,6 @@ def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  
             #store_warning_map (cursor, ensembl_db_name, species,  human_exon, 'has NNN')
             pass
         else:
-            #print "no match",
-            #print template_species, template_pepseq
-            #print "search region contains NNN:", searchseq_contains_NNN
             pass
         return matching_region
         
@@ -708,14 +702,13 @@ def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  
 
     patched = False
     if patch_failure: 
-        print "patching failure ?"
         #store_warning_map (cursor, ensembl_db_name, species,  human_exon, 'gappy')
         return matching_region
     elif patched_positions:
         warnstr =  "patched: "+str(patched_positions)
         store_warning_map (cursor, ensembl_db_name, species,  human_exon, warnstr)
         patched = True
-        print warnstr
+        if verbose: print warnstr
 
     # how different is translation from the translated template?
     # align in all three frames and pick one which is the most similar to the template 
@@ -751,37 +744,35 @@ def search_and_store (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  
     if verbose:# Print out some debugging info
         if ret:
             [left_flank, right_flank, has_stop, sw_exon_id] = ret
-        print "============================================"
+        print "============================================"    # verbose 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
 	human_stable      = gene2stable     (cursor, human_exon.gene_id)
         human_description = get_description (cursor, human_exon.gene_id)
-        print human_exon.gene_id, human_stable, human_description 
-        print "found sequence for {0}:".format(species)
-        #print dnaseq
+        print human_exon.gene_id, human_stable, human_description  # verbose 
+        print "found sequence for {0}:".format(species) # verbose 
         if  ret:
-            print "left flank:    " + left_flank 
-            print "right flank:   " + right_flank
-        #print "translation:   " + pepseq + (" (Stop codon)" if has_stop == 1 else "")
-        print "translation:   " + pepseq 
-        print "template:      " + template_pepseq
-        print "human version: " + human_exon.pepseq
-        print "template similarity to human:  %6.2f" % template_similarity_to_human
-        print "based on {0}, exon {1}, position {2} - {3}:".format(template_species,template_exon_seq_id,
-                                                                   template_start, template_end)
+            print "left flank:    " + left_flank    # verbose 
+            print "right flank:   " + right_flank   # verbose 
+        print "translation:   " + pepseq            # verbose 
+        print "template:      " + template_pepseq   # verbose 
+        print "human version: " + human_exon.pepseq # verbose 
+        print "template similarity to human:  %6.2f" % template_similarity_to_human  # verbose 
+        print "based on {0}, exon {1}, position {2} - {3}:". \  # verbose 
+        format(template_species,template_exon_seq_id,template_start, template_end)
         
-        print "storing to ", ensembl_db_name[species], "  db id", species2genome_db_id(cursor, species)
+        print "storing to ", ensembl_db_name[species], "  db id", species2genome_db_id(cursor, species)  # verbose 
         if ret: 
-            print "stored as exon " , sw_exon_id,
+            print "stored as exon " , sw_exon_id,   # verbose 
             if method=='sw_sharp':
-                print "to sw_exon"
-            elif method=='usearch':
-                print "to usearch_exon"
+                print "to sw_exon"                  # verbose 
+            elif method=='usearch':                 # verbose 
+                print "to usearch_exon"             # verbose 
             else:
-                print "oink ?!"
+                print "oink ?!"                     # verbose 
         else:
-            print "not stored"
+            print "not stored"                      # verbose 
             #exit(1)
-        print 
+        print                                       # verbose 
        
  
     return matching_region
@@ -832,8 +823,8 @@ def find_missing_exons(human_gene_list, db_info):
     gene_ct = 0
     found   = 0
     sought  = 0
-    #human_gene_list.reverse()
-    for human_gene_id in human_gene_list:
+    human_gene_list.reverse()
+    for human_gene_id in human_gene_list[0:400]:
 
 
         # I have no clue what's with this guy:
@@ -844,19 +835,19 @@ def find_missing_exons(human_gene_list, db_info):
 	human_stable      = gene2stable    (cursor, human_gene_id)
 	if verbose: 
             human_description = get_description(cursor, human_gene_id)
-            print human_gene_id, human_stable, human_description
+            print human_gene_id, human_stable, human_description     # verbose
 
 	# progress counter 
 	gene_ct += 1
 	if (not gene_ct%10): 
-            print "processed ",   gene_ct, " out of ", len(human_gene_list), "genes"
+            print "processed ",   gene_ct, " out of ", len(human_gene_list), "genes; ",
             print "exons found: ",  found, " out of ", sought, "sought"
 
 	# find all human exons for this gene that we are tracking in the database 
 	human_exons = [e for e in gene2exon_list(cursor, human_gene_id) 
                        if e.covering_exon < 0 and e.is_canonical and e.is_known]
         if not human_exons: 
-            print "\t\t no exons found"
+            if verbose: print "\t\t no exons found"
             continue
 
 	human_exons.sort(key=lambda exon: exon.start_in_gene)
@@ -879,10 +870,6 @@ def find_missing_exons(human_gene_list, db_info):
             for m in maps_for_exon[he]:
                 #if m.source ==  'usearch': continue
                 #if m.source == 'sw_sharp': continue
-                #if m.source == 'sw_sharp': 
-                #    print 'sw_sharp'
-                #if m.source == 'usearch': 
-                #    print 'usearch',  m.similarity, m.species_2, m.exon_id_1, m.exon_id_2
                 if m.similarity < min_similarity: continue
                 m_previous = map_table[m.species_2][he]
                 if m_previous and m_previous.similarity > m.similarity:
@@ -1050,14 +1037,10 @@ def find_missing_exons(human_gene_list, db_info):
                 matching_region = search_and_store (cursor, ensembl_db_name, cfg, acg, he,  maps_for_exon[he], 
                                                     species, gene_id, gene_coords, prev_seq_region, next_seq_region,
                                                     template_info, mitochondrial, method)
-                #print he.pepseq
-                #print template_pepseq
                 if matching_region: 
                     found += 1
                     prev_seq_region = matching_region
                     
-        if verbose: print "done with ",  human_gene_id, human_stable, human_description 
-        if verbose: print "sought", sought, " found", found
                 
 
 #########################################
