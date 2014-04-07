@@ -10,7 +10,7 @@ from el_utils.utils   import  *
 from el_utils.config_reader      import ConfigurationReader
 from el_utils.special_gene_sets  import *
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
-from el_utils.threads import  parallelize
+from el_utils.processes import  parallelize
 # BioPython
 from Bio.Seq      import Seq
 
