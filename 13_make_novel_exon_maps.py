@@ -89,8 +89,8 @@ def maps_for_gene_list(gene_list, db_info):
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        if not ct%10: print ct, "out of ", len(gene_list) 
-        
+        if not ct%100: print ct, "out of ", len(gene_list) 
+       
         # get _all_ exons
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         print  gene_id,  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
