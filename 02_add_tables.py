@@ -365,11 +365,21 @@ def main():
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
+    species = 'homo_sapiens'
+    db_name = ensembl_db_name[species]
+    switch_to_db (cursor, ensembl_db_name[species])
+    print "creating index ..."
+    create_index (cursor, db_name,'cognate_exon_index', 'exon_map', ['cognate_exon_id', 'cognate_exon_known', 'cognate_genome_db_id'])    
+    print "optimizing ..."
+    qry = "optimize table exon_map"
+    print search_db(cursor, qry)
+    print "done"
+    exit(1)
+
     # one index I need on ncbi
     print "making name_index on ncbi ..."
     db_name = get_ncbi_tax_name(cursor)
     create_index (cursor, db_name, 'name_index',    'names', ['tax_id', 'name_class'])
-    #exit(1)
 
     # add exon tables to all species
     for species in all_species:
@@ -394,6 +404,7 @@ def main():
         print "optimizing exon_seq"
         qry = "optimize table exon_seq"
         print search_db(cursor, qry)
+        
 
     # add file_name column to seq_region table (seq_region table  already exists in ensembl schema)
     for species in all_species:
@@ -422,6 +433,7 @@ def main():
         if table == 'exon_map':
             create_index (cursor, db_name,'gene_index', table, ['exon_id'])
             create_index (cursor, db_name,'exon_index', table, ['exon_id', 'exon_known'])
+            create_index (cursor, db_name,'cognate_exon_index', table, ['cognate_exon_id', 'cognate_exon_known', 'cognate_genome_db_id'])
         else:
             create_index (cursor, db_name,'gene_index', table, ['gene_id'])
 
