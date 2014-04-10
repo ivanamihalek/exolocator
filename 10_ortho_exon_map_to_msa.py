@@ -232,23 +232,17 @@ def main():
             gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
         else:
             gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
-        multiple_exon_alnmt(gene_list, [local_db, ensembl_db_name])
 
     else:
         print "using all protein coding genes"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-        if genes_to:
-            multiple_exon_alnmt ( gene_list[genes_from:genes_to], [local_db, ensembl_db_name]) 
-        else:
-            multiple_exon_alnmt ( gene_list[genes_from:], [local_db, ensembl_db_name]) 
-            
  
 
     cursor.close()
     db.close()
 
-    #parallelize (no_threads, multiple_exon_alnmt, gene_list, [local_db, ensembl_db_name])
+    parallelize (no_threads, multiple_exon_alnmt, gene_list, [local_db, ensembl_db_name])
     
     return True
 
