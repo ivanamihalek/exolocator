@@ -199,7 +199,7 @@ def main():
 
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
-        print "usage: %s <set name> <from> <to>" % sys.argv[0]
+        print "usage: %s <set name> <no of processes>" % sys.argv[0]
         exit(1) # after usage statement
     elif len(sys.argv)>=3:
 
@@ -207,10 +207,7 @@ def main():
         special = special.lower()
         if special == 'none': special = None
 
-        genes_from = int(sys.argv[2])
-        genes_to   = ""
-        if len(sys.argv)>=4:
-            genes_to   = int(sys.argv[3])
+        no_processes = int(sys.argv[2])
 
     local_db = False
 
@@ -242,7 +239,7 @@ def main():
     cursor.close()
     db.close()
 
-    parallelize (no_threads, multiple_exon_alnmt, gene_list, [local_db, ensembl_db_name])
+    parallelize (no_processes, multiple_exon_alnmt, gene_list, [local_db, ensembl_db_name])
     
     return True
 
