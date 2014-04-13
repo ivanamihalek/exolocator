@@ -19,7 +19,7 @@ from el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from el_utils.config_reader      import ConfigurationReader
 from el_utils.translation        import phase2offset, translation_bounds, crop_dna, translate
 from el_utils.special_gene_sets  import *
-from el_utils.threads import parallelize
+from el_utils.processes import parallelize
 from el_utils.exon_boundary_hacks import *
 from bitstring import Bits
 from alignment import * # C implementation of smith waterman
@@ -1108,6 +1108,9 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, seq
     # find species that have multiple orthologues
     
     mulitple_orthos = []
+    if ( type(output_pep) is str ):
+        print output_pep
+        exit(1)
     for seq_name in output_pep.keys():
         name_pieces = seq_name.split("_")
         if not isinteger(name_pieces[-1]): continue
