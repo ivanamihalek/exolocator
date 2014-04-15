@@ -1369,6 +1369,10 @@ def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
         [alnmt_pep[human_exon], alnmt_dna[human_exon]]  =   make_exon_alignment(cursor, ensembl_db_name,  human_exon.exon_id, 
                                                                                 human_exon.is_known,  mitochondrial, min_similarity, 
                                                                                 flank_length)   
+        print human_exon
+        print alnmt_pep[human_exon]
+        exit(1)
+
     return [alnmt_pep, alnmt_dna] 
 
 #########################################
@@ -1563,8 +1567,7 @@ def make_alignments ( gene_list, db_info):
             [output_pep, sequence_name_to_exon_names] = fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
                                                          canonical_human_exons, human_exon_to_ortho_exon, 
                                                          sequence_name_to_exon_names, seq_to_fix, 
-                                                         overlapping_maps[seq_to_fix], 
-                                                         alnmt_pep, output_pep)
+                                                         overlapping_maps[seq_to_fix], alnmt_pep, output_pep)
 
         # check if any two pieces of seqeunce ended up on different scaffolds/contigs
         fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, sequence_name_to_exon_names, 
