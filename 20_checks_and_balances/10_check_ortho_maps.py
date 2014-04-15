@@ -16,7 +16,7 @@ from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.special_gene_sets  import  get_theme_ids
 
 
-verbose = False
+verbose = True
 
 #########################################
 def main():
@@ -60,10 +60,10 @@ def main():
         
     incomplete = 0
     genes_checked = 0
-    #for gene_id in gene_list: 
-    for sampling_count in range(1000):
+    for gene_id in gene_list: 
+    #for sampling_count in range(1000):
  
-        gene_id = choice(gene_list)
+        #gene_id = choice(gene_list)
         genes_checked += 1
         with_map = 0
         tot      = 0

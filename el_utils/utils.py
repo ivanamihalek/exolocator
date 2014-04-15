@@ -364,12 +364,10 @@ def get_fasta (acg, species, searchname, searchfile, searchstrand, searchstart, 
 def check_seq_length(sequence, msg):
 
     if not sequence.values():
-        print "no sequences (?)"
-        return False
+         return [False, "no sequences"] 
     aln_length = len(sequence.values()[0])
     if not aln_length:
-        print "aln length zero (?)"
-        return False
+        return [False, "aln length zero"]
     for name, seq in sequence.iteritems():
         if not len(seq) == aln_length:
             print msg, 
@@ -377,8 +375,8 @@ def check_seq_length(sequence, msg):
             afa_fnm = msg+'.afa'
             print "writing the offending almt to ", afa_fnm
             output_fasta (afa_fnm, sequence.keys(), sequence)
-            return False
-    return True
+            return [False, "seq length check failure"]
+    return [True,""]
 
 #########################################
 def strip_gaps (sequence):
@@ -387,7 +385,7 @@ def strip_gaps (sequence):
 
     all_gaps = {}  
 
-    if not check_seq_length(sequence, 'in_strip_gaps'): 
+    if not check_seq_length(sequence, 'in_strip_gaps')[0]: 
         return ""
     
     aln_length = len(sequence.itervalues().next())
