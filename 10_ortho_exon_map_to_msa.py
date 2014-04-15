@@ -21,7 +21,7 @@ from time      import  time
 from Bio       import  SeqIO
 from bitstring import  Bits
 
-verbose = True
+verbose = False
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):
@@ -59,7 +59,7 @@ def multiple_exon_alnmt(gene_list, db_info):
     no_orthologues = 0
     min_similarity = cfg.get_value('min_accptbl_exon_sim')
 
-    gene_list.reverse()
+    #gene_list.reverse()
     for gene_id in gene_list:
 
         start = time()
@@ -165,7 +165,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 switch_to_db(cursor, ensembl_db_name['homo_sapiens']) # so move it back to homo sapiens
                 # Write the bitmap to the database
                 #if (cognate_species == 'homo_sapiens'):
-                if verbose and (source=='sw_sharp' or source=='usearch'):
+                if verbose: # and (source=='sw_sharp' or source=='usearch'):
                     print "storing"
                     print human_exon.exon_id, human_exon.is_known
                     print cognate_species, cognate_genome_db_id, cognate_exon_id, cognate_exon_known, source
