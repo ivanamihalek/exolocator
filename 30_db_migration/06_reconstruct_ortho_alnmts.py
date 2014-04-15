@@ -1284,6 +1284,7 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_nam
         for para in sorted_para:
 
             if tanimoto[para] < 0.9*max_tanimoto:
+                print sequence_name_to_exon_names[para][0]
                 # drop
                 [exon_id, exon_known] = sequence_name_to_exon_names[para][0].split ("_")[-2:]
                 species   = "_".join (sequence_name_to_exon_names[para][0].split ("_")[:-2])   
