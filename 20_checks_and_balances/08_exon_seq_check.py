@@ -126,9 +126,9 @@ def main():
                     pepseq2 = dnaseq.translate().tostring()
 
                 print exon.exon_id
-                print pepseq
-                print pepseq2
-                print pepseq_transl_start, pepseq_transl_end
+                print "pep stored:", pepseq
+                print "dna transl:", pepseq2
+                print "start: %d    end: %d " % (pepseq_transl_start, pepseq_transl_end)
                 print
 
                 if (not pepseq == pepseq2):
