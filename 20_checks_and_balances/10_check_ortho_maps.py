@@ -79,7 +79,7 @@ def main():
             if verbose:
                 print  
                 print "\t human",   human_exon.exon_id,  human_exon.is_known
-                print "\t", get_exon_pepseq(cursor, human_exon, ensembl_db_name['homo_sapiens'])
+                print "\t ", get_exon_pepseq(cursor, human_exon, ensembl_db_name['homo_sapiens'])
                 print "\t checking maps ..."
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
             tot += 1
@@ -98,10 +98,11 @@ def main():
                     #if not species == 'pan_troglodytes': continue
                     exon               = map2exon(cursor, ensembl_db_name, map)
                     unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
-                    if (0  and  map.source=='sw_sharp'):
+                    if (1 and  map.source=='sw_sharp'):
                         print "\t", species,  map.source, map.exon_id_2, map.exon_known_2
                         print "\tmaps to ",  map.exon_id_1, map.exon_known_1
-                        print "\tsim",  map.similarity
+                        print "\tsim",  map.similarity,
+                        print "\tsource",  map.source
                         print "\t", unaligned_sequence
                         if not map.bitmap:
                             print "\t bitmap not assigned"
