@@ -1181,8 +1181,8 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, seq
             # [gene_seq, canonical_exon_pepseq, file_names] = get_gene_seq(acg, cursor, gene_id, species)
             
             # at this point, para1 and para2 should belong to the same 'gene'
-            [exon_id, exon_known] = sequence_name_to_exon_names[para1][0].split ("_")[-2:]
-            species    = "_".join (sequence_name_to_exon_names[para1][0].split ("_")[:-2]) 
+            [exon_id, exon_known] = sequence_name_to_exon_names[para1][0].split ("_")[-3:-1]
+            species    = "_".join (sequence_name_to_exon_names[para1][0].split ("_")[:-3]) 
             gene_id_1   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
             # I have no idea how this could happen, but it does:
             if not gene_id_1: continue
@@ -1190,7 +1190,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, seq
             [gene_seq, canonical_exon_pepseq, file_name_1, seq_name_1, start_1, end_1] = \
                 get_gene_seq(acg, cursor, gene_id_1, species)
  
-            [exon_id, exon_known] = sequence_name_to_exon_names[para2][0].split ("_")[-2:]
+            [exon_id, exon_known] = sequence_name_to_exon_names[para2][0].split ("_")[-3:-1]
             gene_id_2   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
             # I have no idea how this could happen, but it does:
             if not gene_id_2: continue
@@ -1285,9 +1285,8 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_nam
 
             if tanimoto[para] < 0.9*max_tanimoto:
                 # drop
-                [exon_id, exon_known] = sequence_name_to_exon_names[para][0].split ("_")[-2:]
-                species   = "_".join (sequence_name_to_exon_names[para][0].split ("_")[:-2])   
-                print sequence_name_to_exon_names[para][0], species
+                [exon_id, exon_known] = sequence_name_to_exon_names[para][0].split ("_")[-3:-1] # the last number is the start in the gene
+                species   = "_".join (sequence_name_to_exon_names[para][0].split ("_")[:-3])   
                 gene_id   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
                 stable_id = gene2stable(cursor, gene_id, ensembl_db_name[species])
                 dropped_paras.append(stable_id)
