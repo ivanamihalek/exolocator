@@ -81,9 +81,9 @@ def main():
         stored_incorrect = 0
         translation_fail = 0
         #####################################
-        #for gene_id in [736801]:
-        for tot in range(1000):
-             gene_id = choice(gene_ids)
+        for gene_id in [727840]:
+        #for tot in range(1000):
+            #gene_id = choice(gene_ids)
 
             # get _all_ exons
             exons = gene2exon_list(cursor, gene_id)
