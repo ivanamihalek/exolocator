@@ -1370,7 +1370,7 @@ def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                                                 human_exon.is_known,  mitochondrial, min_similarity, 
                                                                                 flank_length)   
         print human_exon
-        for [name, seq] in alnmt_pep[human_exon].interitems():
+        for [name, seq] in alnmt_pep[human_exon].iteritems():
             print name
             print seq
         exit(1)
