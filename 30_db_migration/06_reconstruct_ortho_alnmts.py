@@ -1110,7 +1110,7 @@ def fuse_seqs_split_on_scaffolds (cursor, acg,  ensembl_db_name, output_pep, seq
     mulitple_orthos = []
     if ( type(output_pep) is str ):
         print "output_pep:", output_pep
-        exit(1)
+        return ""
     for seq_name in output_pep.keys():
         name_pieces = seq_name.split("_")
         if not isinteger(name_pieces[-1]): continue
