@@ -464,9 +464,11 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
         [pepseq, pepseq_transl_start, 
          pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs[1:]
 
-        if     len(pepseq)<3: continue
+        # rpl11 starts with an exon that translates into 2 aa's
+        # but will this give me tons of junk elsewhere? ...
+        if     len(pepseq)<2: continue 
         pepseq_noX = pepseq.replace ('X','')
-        if len(pepseq_noX)<3: continue
+        if len(pepseq_noX)<2: continue
        
 
         # check

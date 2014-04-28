@@ -1438,7 +1438,7 @@ def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                                                 flank_length)   
     if 1:
         for human_exon in canonical_human_exons:
-            print human_exon
+            print "**", human_exon
             for [name, seq] in alnmt_pep[human_exon].iteritems():
                 print name
                 print seq
