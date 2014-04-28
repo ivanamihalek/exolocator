@@ -63,6 +63,8 @@ def get_complement_ids(cursor, ensembl_db_name, config_reader):
 #########################################
 def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
 
+    print " akjfdgfghjkldfkjgh.kgjh;.bh;eqoghu'eqogh; "
+
     path = config_reader.get_path('resources')
     fnm  = path + '/' + theme_name + '.txt'
     if not os.path.exists(fnm):
