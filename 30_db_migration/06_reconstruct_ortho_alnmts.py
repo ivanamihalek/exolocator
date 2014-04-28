@@ -1436,6 +1436,7 @@ def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
         [alnmt_pep[human_exon], alnmt_dna[human_exon]]  =   make_exon_alignment(cursor, ensembl_db_name,  human_exon.exon_id, 
                                                                                 human_exon.is_known,  mitochondrial, min_similarity, 
                                                                                 flank_length)   
+
     return [alnmt_pep, alnmt_dna] 
 
 
@@ -1677,7 +1678,7 @@ def main():
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
         
- 
+    print ">>>", gene_list
 
     cursor.close()
     db.close()
