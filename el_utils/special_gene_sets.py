@@ -81,6 +81,7 @@ def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
     gene_ids = []
     for line in inf:
         line = line.rstrip()
+        print line
         if "\t" in line:
             fields = line.split("\t")
             stable_id = fields[0]
