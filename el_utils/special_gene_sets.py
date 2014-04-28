@@ -83,7 +83,7 @@ def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
             fields = line.split("\t")
             stable_id = fields[0]
         elif "\s" in line:
-            fields = line.split("\t")
+            fields = line.split("\s")
             stable_id = fields[0]
         else:
             stable_id = line
