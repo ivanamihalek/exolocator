@@ -1431,6 +1431,11 @@ def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                          mitochondrial, min_similarity, flank_length):
     alnmt_pep = {}
     alnmt_dna = {}
+    for human_exon in canonical_human_exons:
+        # make_exon_alignment defined in el_utils/el_specific.py
+        [alnmt_pep[human_exon], alnmt_dna[human_exon]]  =   make_exon_alignment(cursor, ensembl_db_name,  human_exon.exon_id, 
+                                                                                human_exon.is_known,  mitochondrial, min_similarity, 
+                                                                                flank_length)   
     if 1:
         for human_exon in canonical_human_exons:
             print human_exon
@@ -1438,11 +1443,6 @@ def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                 print name
                 print seq
         exit(1)
-    for human_exon in canonical_human_exons:
-        # make_exon_alignment defined in el_utils/el_specific.py
-        [alnmt_pep[human_exon], alnmt_dna[human_exon]]  =   make_exon_alignment(cursor, ensembl_db_name,  human_exon.exon_id, 
-                                                                                human_exon.is_known,  mitochondrial, min_similarity, 
-                                                                                flank_length)   
 
     return [alnmt_pep, alnmt_dna] 
 
