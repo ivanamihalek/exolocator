@@ -1257,6 +1257,9 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_nam
 
     notes = ""
     mulitple_orthos = []
+
+    if ( isinstance(output_pep,str)) : return notes
+
     for seq_name in output_pep.keys():
         name_pieces = seq_name.split("_")
         if not isinteger(name_pieces[-1]): continue
@@ -1527,6 +1530,9 @@ def make_alignments ( gene_list, db_info):
                     flagged_human_exons |= set(human_exons)
 
             for human_exon in canonical_human_exons:
+
+                if ( not alnmt_pep.has_key(human_exon)): continue
+                if ( isinstance(alnmt_pep[human_exon], str)): continue
                 
                 aln_length = len(alnmt_pep[human_exon].itervalues().next())
                 pep = '-'*aln_length
