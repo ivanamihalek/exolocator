@@ -57,8 +57,6 @@ def get_complement_ids(cursor, ensembl_db_name, config_reader):
 #########################################
 def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
 
-    print " akjfdgfghjkldfkjgh.kgjh;.bh;eqoghu'eqogh; "
-
     path = config_reader.get_path('resources')
     fnm  = path + '/' + theme_name + '.txt'
     if not os.path.exists(fnm):
@@ -74,17 +72,9 @@ def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
     inf = erropen(fnm, "r")
     gene_ids = []
     for line in inf:
-        line = line.rstrip()
-        print line
-        if "\t" in line:
-            fields = line.split("\t")
-            stable_id = fields[0]
-        elif "\s" in line:
-            print ">>>>>>>>>>>> s"
-            fields = line.split("\s")
-            stable_id = fields[0]
-        else:
-            stable_id = line
+        line      = line.rstrip()
+        fields    = line.split()
+        stable_id = fields[0]
         qry  = "select gene_id, description from gene where stable_id='%s'" % stable_id
         rows = search_db (cursor, qry)
         if not rows: continue
