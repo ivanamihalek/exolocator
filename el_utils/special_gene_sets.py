@@ -87,6 +87,8 @@ def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
             stable_id = fields[0]
         else:
             stable_id = line
+        print line
+        print "\t", stable_id
         qry  = "select gene_id, description from gene where stable_id='%s'" % stable_id
         rows = search_db (cursor, qry)
         if not rows: continue
