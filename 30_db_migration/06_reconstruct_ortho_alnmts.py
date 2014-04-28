@@ -1464,12 +1464,13 @@ def make_alignments ( gene_list, db_info):
     # find triviaal names (cow, pig etc) and sort them according to tax distance from human
     [trivial_name, sorted_trivial_names] = sort_trivial_names(cursor, all_species)
     # find minimum acceptable similarity between mapped exons (used in this pipeline)
-    switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
+    switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
     min_similarity = cfg.get_value('min_accptbl_exon_sim') 
 
     ##########################################################################
     # for each  gene in the provided list
-    for gene_id in gene_list:
+    # for gene_id in gene_list:
+    for gene_id in [727840]:
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
@@ -1490,6 +1491,9 @@ def make_alignments ( gene_list, db_info):
         canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
         # bail out if there is a problem
         if not canonical_human_exons: continue
+
+        for exon in canonical_human_exons:
+            print exon
  
         # reconstruct  per-exon alignments with orthologues
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
