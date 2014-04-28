@@ -8,8 +8,6 @@ from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 def get_theme_ids(cursor, cfg, theme_name):
     resources = cfg.dir_path['resources']
     fnm = resources + '/' + theme_name+'.txt'
-    print " ** ", theme_name
-    print " ** ", fnm
     if not os.path.exists(fnm):
         print fnm, "not found"
         exit(1)

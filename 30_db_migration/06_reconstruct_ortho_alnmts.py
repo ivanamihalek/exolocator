@@ -1468,8 +1468,7 @@ def make_alignments ( gene_list, db_info):
 
     ##########################################################################
     # for each  gene in the provided list
-    # for gene_id in gene_list:
-    for gene_id in [727840]:
+    for gene_id in gene_list:
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
