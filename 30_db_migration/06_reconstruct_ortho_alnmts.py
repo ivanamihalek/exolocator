@@ -1672,7 +1672,7 @@ def main():
         if special == 'complement':
             gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
         else:
-            gene_list = get_theme_ids (cursor, cfg, special )
+            gene_list = get_theme_ids (cursor, ensembl_db_nam, cfg, special )
     else:
         print "using all protein coding genes"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
