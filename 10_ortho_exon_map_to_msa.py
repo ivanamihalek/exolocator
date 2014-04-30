@@ -176,6 +176,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                     print human_exon.exon_id, human_exon.is_known
                     print cognate_species, cognate_genome_db_id, cognate_exon_id, cognate_exon_known, source
                     print record.seq
+                    print bs.bin
                     if not msa_bitmap:
                         print "no msa_bitmap"
                         continue
