@@ -1495,12 +1495,6 @@ def make_alignments ( gene_list, db_info):
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
 
-        for exon in alnmt_pep.keys():
-            for name in alnmt_pep[exon].keys():
-                print ">" + name
-                print alnmt_pep[exon][name]
-        exit(1);
-
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # we want to be able to retrieve the info starting from whichever end, so we construct the following maps:
         # to find all exons from an ortohologue, that map to a given human exon:
@@ -1573,6 +1567,10 @@ def make_alignments ( gene_list, db_info):
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
+
+        afa_fnm  = "test.afa"
+        ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
+        exit(1)
 
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
