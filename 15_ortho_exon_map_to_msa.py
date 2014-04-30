@@ -72,11 +72,16 @@ def multiple_exon_alnmt(gene_list, db_info):
         human_exons = filter (lambda e: e.is_known==1 and e.is_coding and e.covering_exon<0, gene2exon_list(cursor, gene_id))
         human_exons.sort(key=lambda exon: exon.start_in_gene)
 
-        headers = []
+        headers   = []
         sequences = {}
+
+        ##################################################################
         for human_exon in human_exons:
             
+            if not human_exon.exon_id == 8339254: continue
+
             tot += 1
+
             # find all orthologous exons the human exon  maps to
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
             if verbose: 
@@ -137,6 +142,10 @@ def multiple_exon_alnmt(gene_list, db_info):
             # align
             afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], human_exon.exon_id)
             mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
+
+            print afa_fnm
+            exit(1)
+
 
             #mafftcmd = "muscle -in" + fasta_fnm + " -out" + afa_fnm
             ret      = commands.getoutput(mafftcmd)
