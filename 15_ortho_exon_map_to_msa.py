@@ -21,7 +21,7 @@ from time      import  time
 from Bio       import  SeqIO
 from bitstring import  Bits
 
-verbose = False
+verbose = True
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):
@@ -147,9 +147,6 @@ def multiple_exon_alnmt(gene_list, db_info):
             #mafftcmd = "muscle -in" + fasta_fnm + " -out" + afa_fnm
             ret      = commands.getoutput(mafftcmd)
 
-            print afa_fnm
-            exit(1)
-
 
             # read in the alignment
             inf = erropen(afa_fnm, "r")
@@ -178,7 +175,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                     print "storing"
                     print human_exon.exon_id, human_exon.is_known
                     print cognate_species, cognate_genome_db_id, cognate_exon_id, cognate_exon_known, source
-                    #print MySQLdb.escape_string(msa_bitmap)
+                    print MySQLdb.escape_string(msa_bitmap)
                     if not msa_bitmap:
                         print "no msa_bitmap"
                         continue
