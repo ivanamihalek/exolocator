@@ -186,7 +186,6 @@ def multiple_exon_alnmt(gene_list, db_info):
                   {"msa_bitstring":MySQLdb.escape_string(msa_bitmap)})
                  
             ok += 1
-            print afa_fnm
             commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
         if verbose: print " time: %8.3f\n" % (time()-start);
