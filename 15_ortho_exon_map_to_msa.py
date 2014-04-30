@@ -180,7 +180,6 @@ def multiple_exon_alnmt(gene_list, db_info):
                     if not msa_bitmap:
                         print "no msa_bitmap"
                         continue
-                    print
                 store_or_update(cursor, "exon_map",    {"cognate_genome_db_id":cognate_genome_db_id,
                    "cognate_exon_id":cognate_exon_id   ,"cognate_exon_known"  :cognate_exon_known,
                    "source": source, "exon_id" :human_exon.exon_id, "exon_known":human_exon.is_known},
@@ -194,10 +193,10 @@ def multiple_exon_alnmt(gene_list, db_info):
                     qry += " and exon_known = %d" % int(human_exon.is_known)
                     rows = search_db (cursor, qry)
                     msa_bitmap = rows [0][0]
-                    print "msa bitmap: ", msa_bitmap
                     bs =  Bits(bytes=msa_bitmap)
                     print "stored: ", bs.bin
-                   
+                    print
+                 
             ok += 1
             commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
