@@ -21,7 +21,7 @@ from time      import  time
 from Bio       import  SeqIO
 from bitstring import  Bits
 
-verbose = True
+verbose = False
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):
@@ -187,7 +187,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                  
             ok += 1
             print afa_fnm
-            #commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
+            commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
         if verbose: print " time: %8.3f\n" % (time()-start);
 
