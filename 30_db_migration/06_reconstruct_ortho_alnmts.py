@@ -847,6 +847,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             del output_pep[seq_to_fix]
             return [output_pep, sequence_name_to_exon_names]
 
+
         ####################################
         # cut out the slice
         pep_slice = {}
@@ -855,11 +856,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         # slice realign
         new_pep_slice = realign_slice (pep_slice, seq_to_fix, pep_seq_pieces)
-        for ox in ortho_exons:
-            print ox
-            if 'procavia' in ox:
-                output_fasta ('test2.afa', new_pep_slice.keys(), new_pep_slice)
-                exit(1)
 
         # strip gaps and output
         # boundary_cleanup(new_pep_slice, new_pep_slice.keys())
