@@ -76,7 +76,8 @@ def main():
         human_exons.sort(key=lambda exon: exon.start_in_gene)
         has_a_map = False
         for human_exon in human_exons:
-            if ( not human_exon.is_canonical or  not human_exon.is_coding): continue
+            if not human_exon.exon_id == 8339843: continue
+            if (not human_exon.is_canonical or  not human_exon.is_coding): continue
             if verbose:
                 print  
                 print "\t human",   human_exon.exon_id,  human_exon.is_known
@@ -96,7 +97,7 @@ def main():
             if verbose:
                 for map in maps:
                     species            = map.species_2
-                    if not species == 'procavia_capensis': continue
+                    #if not species == 'procavia_capensis': continue
                     exon               = map2exon(cursor, ensembl_db_name, map)
                     unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
                     if ( map.similarity):
