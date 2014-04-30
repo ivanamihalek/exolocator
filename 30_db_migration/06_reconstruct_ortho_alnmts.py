@@ -1508,6 +1508,8 @@ def make_alignments ( gene_list, db_info):
         [human_exon_to_ortho_exon, sequence_name_to_exon_names, 
          ortho_exon_to_human_exon, overlapping_maps] = make_atlas(cursor, ensembl_db_name, canonical_human_exons, 
                                                                   alnmt_pep, trivial_name)
+
+        print overlapping_maps['hyrax']
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # concatenate the aligned exons for each species, taking into account that the mapping
         # doesn't have to be one to one
