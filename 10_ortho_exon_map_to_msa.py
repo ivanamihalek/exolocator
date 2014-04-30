@@ -156,7 +156,13 @@ def multiple_exon_alnmt(gene_list, db_info):
                 # Generate the bitmap
                 bs         = Bits(bin='0b' + re.sub("[^0]","1", str(record.seq).replace('-','0')))
                 msa_bitmap = bs.tobytes()
-                
+                print record.seq
+                print bs.bin
+                print "check: "
+                bs =  Bits(bytes=msa_bitmap)
+                print bs.bin
+                exit(1)
+             
                 # Retrieve information on the cognate
                 cognate_species, cognate_exon_id, cognate_exon_known = record.id.split(':')
                 if cognate_exon_known == '2':
@@ -176,11 +182,6 @@ def multiple_exon_alnmt(gene_list, db_info):
                     print human_exon.exon_id, human_exon.is_known
                     print cognate_species, cognate_genome_db_id, cognate_exon_id, cognate_exon_known, source
                     print record.seq
-                    print bs.bin
-                    print "check: "
-                    bs =  Bits(bytes=msa_bitmap)
-                    print bs.bin
-                 
                     if not msa_bitmap:
                         print "no msa_bitmap"
                         continue
