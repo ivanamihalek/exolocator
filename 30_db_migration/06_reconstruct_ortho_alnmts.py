@@ -856,6 +856,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         # slice realign
         new_pep_slice = realign_slice (pep_slice, seq_to_fix, pep_seq_pieces)
         for ox in ortho_exons:
+            print ox
             if 'procavia' in ox:
                 output_fasta ('test2.afa', new_pep_slice.keys(), new_pep_slice)
                 exit(1)
