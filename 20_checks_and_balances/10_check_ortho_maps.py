@@ -104,9 +104,21 @@ def main():
                         print "\tsim",  map.similarity,
                         print "\tsource",  map.source
                         print "\t", unaligned_sequence
-                        print "\t", map
                         if not map.bitmap:
                             print "\t bitmap not assigned"
+                        else:
+                            print "\t", map.bitmap
+                            bs = Bits(bytes=map.bitmap)
+                            reconst_pepseq = ''
+                            if (not bs.count(1) == len(pepseq)): 
+                                print "\talnd seq mismatch"
+                            
+                            else:
+                                usi = iter(pepseq)
+                                for c in bs.bin:
+                                    if c == '0': reconst_pepseq += '-'
+                                    else:        reconst_pepseq += next(usi)
+                                print "\talnd seq: ", reconst_pepseq
                         print
         if not tot== with_map:
             print "####  gene id: %d   total exons: %d     with map:  %d   ( = %d%%) " % \
