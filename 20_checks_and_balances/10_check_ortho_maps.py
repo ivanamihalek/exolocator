@@ -60,7 +60,7 @@ def main():
         
     incomplete = 0
     genes_checked = 0
-    for gene_id in [727840]: 
+    for gene_id in gene_list: 
     #for sampling_count in range(1000):
  
         #gene_id = choice(gene_list)
@@ -95,7 +95,7 @@ def main():
             if verbose:
                 for map in maps:
                     species            = map.species_2
-                    #if not species == 'pan_troglodytes': continue
+                    if not species == 'procavia_capensis': continue
                     exon               = map2exon(cursor, ensembl_db_name, map)
                     unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
                     if ( map.similarity):

@@ -1678,8 +1678,6 @@ def main():
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
         
-    print ">>>", gene_list
-
     cursor.close()
     db.close()
 
