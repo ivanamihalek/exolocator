@@ -185,7 +185,17 @@ def multiple_exon_alnmt(gene_list, db_info):
                    "cognate_exon_id":cognate_exon_id   ,"cognate_exon_known"  :cognate_exon_known,
                    "source": source, "exon_id" :human_exon.exon_id, "exon_known":human_exon.is_known},
                   {"msa_bitstring":MySQLdb.escape_string(msa_bitmap)})
-
+                if verbose:
+                    qry = "select msa_bitstring from exon_map where "
+                    qry += " cognate_genome_db_id = %d" % cognate_genome_db_id
+                    qry += " and cognate_exon_id = %d "  % ccognate_exon_id   
+                    qry += " and cognate_exon_known = %d " %cognate_exon_known
+                    qry += " and exon_id  =  %d " % human_exon.exon_id
+                    qry += " and exon_known = %d" % human_exon.is_known
+                    ret = db_seqch (cursor, qry)
+                    msa_bitmap = ret [0]
+                    print "stored: ", Bits(bytes=msa_bitmap).bin
+                   
             ok += 1
             commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
 
