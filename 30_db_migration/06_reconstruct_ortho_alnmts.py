@@ -855,6 +855,10 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         # slice realign
         new_pep_slice = realign_slice (pep_slice, seq_to_fix, pep_seq_pieces)
+        for ox in ortho_exons:
+            if 'procavia' in ox:
+                output_afa ('test2.afa', new_pep_slice.keys(), new_pep_slice)
+                exit(1)
 
         # strip gaps and output
         # boundary_cleanup(new_pep_slice, new_pep_slice.keys())
@@ -1509,14 +1513,7 @@ def make_alignments ( gene_list, db_info):
          ortho_exon_to_human_exon, overlapping_maps] = make_atlas(cursor, ensembl_db_name, canonical_human_exons, 
                                                                   alnmt_pep, trivial_name)
 
-        print overlapping_maps['hyrax']
-        for [human_exons, ortho_exons] in  overlapping_maps['hyrax']:
-            print human_exons, ortho_exons
-            for hx in human_exons:
-                print hx
-                for ox in ortho_exons:
-                    print alnmt_pep[hx][ox]
-         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # concatenate the aligned exons for each species, taking into account that the mapping
         # doesn't have to be one to one
         headers     = []
@@ -1525,7 +1522,7 @@ def make_alignments ( gene_list, db_info):
         output_pep_ok = True
         for concat_seq_name in sequence_name_to_exon_names.keys():
             
-            if not human_exon_to_ortho_exon.has_key(concat_seq_name):  continue # this shouldn't happen but oh well
+            if not human_exon_to_ortho_exon.has_key(concat_seq_name): continue # this shouldn't happen but oh well
 
             output_pep[concat_seq_name] = ""
             output_pep_ok = True
@@ -1575,10 +1572,6 @@ def make_alignments ( gene_list, db_info):
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
-
-        afa_fnm  = "test.afa"
-        ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
-        exit(1)
 
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
