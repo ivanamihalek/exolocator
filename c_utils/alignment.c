@@ -117,6 +117,13 @@ int load_sim_matrix (int ** similarity) {
 	}
     }
 
+    /* X is neutral */
+    char_i = (int) 'X';
+    for (j=0;j<=i;j++){
+	char_j = (int) amino_acid_order [j];
+	similarity[char_i][char_j] = similarity[char_j][char_i] =   0;
+    }
+
     /* special treatment for B, Z */
     char_i = (int) 'B';
     for (j=0;j<=i;j++){
@@ -153,7 +160,7 @@ int load_sim_matrix (int ** similarity) {
 	/* digit to amino acid */
 	for(j=0;j<aao_strlen;j++){
 	    char_j = amino_acid_order[j];
-	    similarity[char_i][char_j] = similarity[char_j][char_i] =  -DELIMITER_SCORE/2;
+	    similarity[char_i][char_j] = similarity[char_j][char_i] = -DELIMITER_SCORE/2;
 	}
 	/* Z and B to digit*/
 	char_j = 'Z';
