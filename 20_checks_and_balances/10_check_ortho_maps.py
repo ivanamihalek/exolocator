@@ -3,6 +3,7 @@
 # we currently have at hand
 
 import sys, MySQLdb, commands, re
+from bitstring import Bits
 from   random           import  choice
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
@@ -107,7 +108,6 @@ def main():
                         if not map.bitmap:
                             print "\t bitmap not assigned"
                         else:
-                            print "\t", map.bitmap
                             bs = Bits(bytes=map.bitmap)
                             reconst_pepseq = ''
                             if (not bs.count(1) == len(pepseq)): 
