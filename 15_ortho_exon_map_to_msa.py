@@ -188,7 +188,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 if verbose:
                     qry = "select msa_bitstring from exon_map where "
                     qry += " cognate_genome_db_id = %d" % cognate_genome_db_id
-                    qry += " and cognate_exon_id = %d "  % ccognate_exon_id   
+                    qry += " and cognate_exon_id = %d "  % cognate_exon_id   
                     qry += " and cognate_exon_known = %d " %cognate_exon_known
                     qry += " and exon_id  =  %d " % human_exon.exon_id
                     qry += " and exon_known = %d" % human_exon.is_known
