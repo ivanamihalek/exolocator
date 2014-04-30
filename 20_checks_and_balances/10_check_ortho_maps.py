@@ -114,7 +114,7 @@ def main():
                                 print "\talnd seq mismatch"
                             
                             else:
-                                usi = iter(pepseq)
+                                usi = iter(unaligned_sequence)
                                 for c in bs.bin:
                                     if c == '0': reconst_pepseq += '-'
                                     else:        reconst_pepseq += next(usi)
