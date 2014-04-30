@@ -1510,6 +1510,9 @@ def make_alignments ( gene_list, db_info):
                                                                   alnmt_pep, trivial_name)
 
         print overlapping_maps['hyrax']
+        for [human_exons, ortho_exons] in  overlapping_maps['hyrax']:
+            print human_exons, ortho_exons
+            
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # concatenate the aligned exons for each species, taking into account that the mapping
         # doesn't have to be one to one
