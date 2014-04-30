@@ -177,6 +177,10 @@ def multiple_exon_alnmt(gene_list, db_info):
                     print cognate_species, cognate_genome_db_id, cognate_exon_id, cognate_exon_known, source
                     print record.seq
                     print bs.bin
+                    print "check: "
+                    bs =  Bits(bytes=msa_bitmap)
+                    print bs.bin
+                 
                     if not msa_bitmap:
                         print "no msa_bitmap"
                         continue

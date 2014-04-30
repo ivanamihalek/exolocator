@@ -119,7 +119,7 @@ def main():
                                 for c in bs.bin:
                                     if c == '0': reconst_pepseq += '-'
                                     else:        reconst_pepseq += next(usi)
-                                print "\binary   : ", bs.bin
+                                print "\tbinary   : ", bs.bin
                                 print "\talnd seq: ", reconst_pepseq
                         print
         if not tot== with_map:
