@@ -110,7 +110,7 @@ def main():
                         else:
                             bs = Bits(bytes=map.bitmap)
                             reconst_pepseq = ''
-                            if (not bs.count(1) == len(pepseq)): 
+                            if (not bs.count(1) == len(unaligned_sequence)): 
                                 print "\talnd seq mismatch"
                             
                             else:
