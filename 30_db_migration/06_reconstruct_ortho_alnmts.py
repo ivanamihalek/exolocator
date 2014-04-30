@@ -1495,9 +1495,10 @@ def make_alignments ( gene_list, db_info):
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
 
-        for nm in alnmt_pep.keys():
-            print nm
-            print alnmt_pep[nm]
+        for exon in alnmt_pep.keys():
+            for name in alnmt_pep[exon].keys():
+                print ">" + name
+                print alnmt_pep[exon][name]
         exit(1);
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
