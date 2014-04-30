@@ -857,7 +857,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         new_pep_slice = realign_slice (pep_slice, seq_to_fix, pep_seq_pieces)
         for ox in ortho_exons:
             if 'procavia' in ox:
-                output_afa ('test2.afa', new_pep_slice.keys(), new_pep_slice)
+                output_fasta ('test2.afa', new_pep_slice.keys(), new_pep_slice)
                 exit(1)
 
         # strip gaps and output
@@ -1572,6 +1572,11 @@ def make_alignments ( gene_list, db_info):
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
+
+        afa_fnm  = "test.afa"
+        ret = output_fasta (afa_fnm, sorted_seq_names, output_pep)
+        exit(1)
+
 
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
