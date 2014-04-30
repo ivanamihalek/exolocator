@@ -461,8 +461,6 @@ static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
 	return Py_BuildValue("s", retstr);
     }
     
-
-   
     i = 0;
     j = 0;
     int done = 0;
@@ -499,18 +497,15 @@ static PyObject* py_smith_waterman_context(PyObject* self, PyObject* args)
 	}
 	pos ++;
     }
-           
-    
+               
     free_imatrix(F);
     free_cmatrix(direction);
     free(map_i2j);
     free(map_j2i);
-
     
     return Py_BuildValue("ss", aligned_seq_1, aligned_seq_2 );
     
 }
-
 
 
 /*
