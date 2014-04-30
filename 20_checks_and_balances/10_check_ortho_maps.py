@@ -104,6 +104,7 @@ def main():
                         print "\tsim",  map.similarity,
                         print "\tsource",  map.source
                         print "\t", unaligned_sequence
+                        print "\t", map.msa_bitstring
                         if not map.bitmap:
                             print "\t bitmap not assigned"
                         print
