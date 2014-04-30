@@ -155,13 +155,10 @@ def multiple_exon_alnmt(gene_list, db_info):
                 ### store the alignment as bitstring
                 # Generate the bitmap
                 bs         = Bits(bin='0b' + re.sub("[^0]","1", str(record.seq).replace('-','0')))
-                msa_bitmap = bs.tobytes()
-                print record.seq
-                print bs.bin
-                print "check: "
-                bs =  Bits(bytes=msa_bitmap)
-                print bs.bin
-                exit(1)
+                # The returned value of tobytes() will be padded at the end 
+                # with between zero and seven 0 bits to make it byte aligned.
+                # I will end up with something that looks like extra alignment gaps, that I'll have to return
+                msa_bitmap = bs.tobytes() 
              
                 # Retrieve information on the cognate
                 cognate_species, cognate_exon_id, cognate_exon_known = record.id.split(':')
@@ -189,18 +186,6 @@ def multiple_exon_alnmt(gene_list, db_info):
                    "cognate_exon_id":cognate_exon_id   ,"cognate_exon_known"  :cognate_exon_known,
                    "source": source, "exon_id" :human_exon.exon_id, "exon_known":human_exon.is_known},
                   {"msa_bitstring":MySQLdb.escape_string(msa_bitmap)})
-                if verbose:
-                    qry = "select msa_bitstring from exon_map where "
-                    qry += " cognate_genome_db_id = %d" % cognate_genome_db_id
-                    qry += " and cognate_exon_id = %d "  % int(cognate_exon_id)   
-                    qry += " and cognate_exon_known = %d " %  int(cognate_exon_known)
-                    qry += " and exon_id  =  %d " % int(human_exon.exon_id)
-                    qry += " and exon_known = %d" % int(human_exon.is_known)
-                    rows = search_db (cursor, qry)
-                    msa_bitmap = rows [0][0]
-                    bs =  Bits(bytes=msa_bitmap)
-                    print bs.bin, "  <-- stored "
-                    print
                  
             ok += 1
             commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
