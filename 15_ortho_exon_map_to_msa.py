@@ -72,9 +72,6 @@ def multiple_exon_alnmt(gene_list, db_info):
         human_exons = filter (lambda e: e.is_known==1 and e.is_coding and e.covering_exon<0, gene2exon_list(cursor, gene_id))
         human_exons.sort(key=lambda exon: exon.start_in_gene)
 
-        headers   = []
-        sequences = {}
-
         ##################################################################
         for human_exon in human_exons:
             
@@ -100,7 +97,7 @@ def multiple_exon_alnmt(gene_list, db_info):
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, 
              left_flank, right_flank, dna_seq] = get_exon_seqs (cursor, human_exon.exon_id, human_exon.is_known)
             
-            # human seqeunce
+            # human sequence
             if (not pepseq):
                 if verbose and  human_exon.is_coding and  human_exon.covering_exon <0: # this should be a master exon
                     print "no pep seq for",  human_exon.exon_id, "coding ", human_exon.is_coding,
@@ -110,6 +107,10 @@ def multiple_exon_alnmt(gene_list, db_info):
                 continue
 
             hassw = False
+
+            headers   = []
+            sequences = {}
+
             for map in maps:
 
                 switch_to_db (cursor, ensembl_db_name[map.species_2])
