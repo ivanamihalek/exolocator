@@ -192,8 +192,8 @@ def multiple_exon_alnmt(gene_list, db_info):
                     qry += " and cognate_exon_known = %d " %  int(cognate_exon_known)
                     qry += " and exon_id  =  %d " % int(human_exon.exon_id)
                     qry += " and exon_known = %d" % int(human_exon.is_known)
-                    ret = search_db (cursor, qry)
-                    msa_bitmap = ret [0]
+                    rows = search_db (cursor, qry)
+                    msa_bitmap = rows [0][0]
                     print "msa bitmap: ", msa_bitmap
                     bs =  Bits(bytes=msa_bitmap)
                     print "stored: ", bs.bin
