@@ -78,7 +78,7 @@ def multiple_exon_alnmt(gene_list, db_info):
         ##################################################################
         for human_exon in human_exons:
             
-            if not human_exon.exon_id == 8339254: continue
+            #if not human_exon.exon_id == 8339254: continue
 
             tot += 1
 
