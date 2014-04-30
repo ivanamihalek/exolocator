@@ -194,7 +194,9 @@ def multiple_exon_alnmt(gene_list, db_info):
                     qry += " and exon_known = %d" % int(human_exon.is_known)
                     ret = search_db (cursor, qry)
                     msa_bitmap = ret [0]
-                    print "stored: ", Bits(bytes=msa_bitmap).bin
+                    print "msa bitmap: ", msa_bitmap
+                    bs =  Bits(bytes=msa_bitmap)
+                    print "stored: ", bs.bin
                    
             ok += 1
             commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
