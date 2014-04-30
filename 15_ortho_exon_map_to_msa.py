@@ -143,12 +143,12 @@ def multiple_exon_alnmt(gene_list, db_info):
             afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], human_exon.exon_id)
             mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
 
-            print afa_fnm
-            exit(1)
-
-
+ 
             #mafftcmd = "muscle -in" + fasta_fnm + " -out" + afa_fnm
             ret      = commands.getoutput(mafftcmd)
+
+            print afa_fnm
+            exit(1)
 
 
             # read in the alignment
