@@ -1570,6 +1570,8 @@ def make_alignments ( gene_list, db_info):
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
 
+        output_fasta ("test.afa", output_pep);
+
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
             #if not seq_to_fix=='chimpanzee': continue
@@ -1585,7 +1587,7 @@ def make_alignments ( gene_list, db_info):
                                      ortho_exon_to_human_exon, canonical_human_exons, human_exon_to_ortho_exon)
         assorted_notes += fusion_notes + "\n"
         # get rid of dubious paralogues (multiple seqs from the same species)
-        para_notes = remove_dubious_paralogues( cursor, ensembl_db_name, output_pep, sequence_name_to_exon_names, human_exon_to_ortho_exon)
+        para_notes = remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_name_to_exon_names, human_exon_to_ortho_exon)
         assorted_notes += para_notes + "\n"
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
