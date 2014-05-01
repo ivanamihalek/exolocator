@@ -1580,11 +1580,12 @@ def make_alignments ( gene_list, db_info):
                                                          sequence_name_to_exon_names, seq_to_fix, 
                                                          overlapping_maps[seq_to_fix], alnmt_pep, output_pep)
 
-        output_fasta ("test.afa", sorted_seq_names, output_pep);
-
         # check if any two pieces of seqeunce ended up on different scaffolds/contigs
         fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, sequence_name_to_exon_names, 
                                      ortho_exon_to_human_exon, canonical_human_exons, human_exon_to_ortho_exon)
+
+        output_fasta ("after_fuse.afa", sorted_seq_names, output_pep);
+
         assorted_notes += fusion_notes + "\n"
         # get rid of dubious paralogues (multiple seqs from the same species)
         para_notes = remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_name_to_exon_names, human_exon_to_ortho_exon)
@@ -1592,6 +1593,7 @@ def make_alignments ( gene_list, db_info):
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
+        output_fasta ("after_remove_para.afa", sorted_seq_names, output_pep);
         if not check_seq_length (output_pep, "ouput_pep"): 
             print "length check failure"
             #continue
@@ -1604,6 +1606,7 @@ def make_alignments ( gene_list, db_info):
                 print "no output pep 3: moving on"
                 continue
 
+        output_fasta ("after_boundary_cleanup.afa", sorted_seq_names, output_pep);
         if (1):
             # >>>>>>>>>>>>>>>>>>
             output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
