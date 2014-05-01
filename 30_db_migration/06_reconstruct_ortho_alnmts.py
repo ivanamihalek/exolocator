@@ -1626,6 +1626,7 @@ def make_alignments ( gene_list, db_info):
         output_pep = fix_split_codons (cursor, ensembl_db_name, cfg, acg, 
                                            sorted_trivial_names, mitochondrial, sequence_name_to_exon_names,  
                                            alnmt_pep, output_pep, flank_length)
+        output_fasta ("after_fix_split.afa", sorted_seq_names, output_pep);
 
         if not output_pep:
             print "no output pep 4: moving on"
