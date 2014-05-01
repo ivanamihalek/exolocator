@@ -1049,7 +1049,7 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
                 new_pep += insert[name][prev_pos]
                 new_pep += pep_seq [i:]
 
-                output_pep_new[name] = new_pep
+                output_pep_new[name] += new_pep
                 if name == 'panda':
                     print pep_seq
                     print new_pep
