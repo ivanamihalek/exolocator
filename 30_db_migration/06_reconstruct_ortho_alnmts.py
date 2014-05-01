@@ -924,7 +924,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, 
                       mitochondrial, sequence_name_to_exon_names, alnmt_pep, output_pep, flank_length):
 
-    
     ##########
     output_pep_new  = {}
 
@@ -1000,7 +999,6 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
                     if not (prev_local_pos+3) in insert_global:
                         insert_global.append(prev_local_pos+3)
 
-
             # so here are the ad-hoc rules we will use: we will say that we have a valid previous flank
             # 1) the previous exon maps to previous human exon
             #        we are mkaing sure that this is the case by setting prev_right_flank to None
@@ -1023,9 +1021,9 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
 
             prev_local_pos = local_pos
 
+
     #######################################################################
     #rerun one more time - put in the inserts    
-
     insert_global.append(len(full_aligned_pepseq))
     insert_global.sort()
 
@@ -1041,11 +1039,17 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
             pep_seq        = full_aligned_pepseq[prev_pos:pos]
 
             if prev_pos in insert[name].keys() and insert[name][prev_pos]:
+                new_pep = ''
                 for i in range(len(pep_seq)):
                     if not pep_seq[i] == '-':  break
-                    output_pep_new[name] += '-'
-                output_pep_new[name] += insert[name][prev_pos]
-                output_pep_new[name] += pep_seq [i:]
+                    new_pep += '-'
+                new_pep += insert[name][prev_pos]
+                new_pep += pep_seq [i:]
+
+                output_pep_new[name] = new_pep
+                if name == 'panda':
+                    print pep_seq
+                    print new_pep
             
             else:
                 output_pep_new[name] += "-"
