@@ -1048,11 +1048,7 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
                     new_pep = new_pep[:-1]
                 new_pep += insert[name][prev_pos]
                 new_pep += pep_seq [i:]
-
                 output_pep_new[name] += new_pep
-                if name == 'panda':
-                    print pep_seq
-                    print new_pep
             
             else:
                 output_pep_new[name] += "-"
@@ -1591,8 +1587,6 @@ def make_alignments ( gene_list, db_info):
         fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, sequence_name_to_exon_names, 
                                      ortho_exon_to_human_exon, canonical_human_exons, human_exon_to_ortho_exon)
 
-        output_fasta ("after_fuse.afa", sorted_seq_names, output_pep);
-
         assorted_notes += fusion_notes + "\n"
         # get rid of dubious paralogues (multiple seqs from the same species)
         para_notes = remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_name_to_exon_names, human_exon_to_ortho_exon)
@@ -1600,7 +1594,6 @@ def make_alignments ( gene_list, db_info):
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
-        output_fasta ("after_remove_para.afa", sorted_seq_names, output_pep);
         if not check_seq_length (output_pep, "ouput_pep"): 
             print "length check failure"
             #continue
@@ -1613,7 +1606,6 @@ def make_alignments ( gene_list, db_info):
                 print "no output pep 3: moving on"
                 continue
 
-        output_fasta ("after_boundary_cleanup.afa", sorted_seq_names, output_pep);
         if (1):
             # >>>>>>>>>>>>>>>>>>
             output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
@@ -1633,7 +1625,6 @@ def make_alignments ( gene_list, db_info):
         output_pep = fix_split_codons (cursor, ensembl_db_name, cfg, acg, 
                                            sorted_trivial_names, mitochondrial, sequence_name_to_exon_names,  
                                            alnmt_pep, output_pep, flank_length)
-        output_fasta ("after_fix_split.afa", sorted_seq_names, output_pep);
 
         if not output_pep:
             print "no output pep 4: moving on"
