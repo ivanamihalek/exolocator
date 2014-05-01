@@ -1043,6 +1043,9 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
                 for i in range(len(pep_seq)):
                     if not pep_seq[i] == '-':  break
                     new_pep += '-'
+                if (len(new_pep) == len(pep_seq)) : # ie if these are gaps only 
+                    # not sure how this could happen
+                    new_pep = new_pep[:-1]
                 new_pep += insert[name][prev_pos]
                 new_pep += pep_seq [i:]
 
