@@ -1570,7 +1570,7 @@ def make_alignments ( gene_list, db_info):
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
 
-        output_fasta ("test.afa", output_pep);
+        output_fasta ("test.afa", sorted_seq_names, output_pep);
 
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
