@@ -21,7 +21,8 @@ foreach (@scripts) {
 ($set, $no_threads, $method) =  @ARGV;
 
 foreach (@scripts) {
-    $cmd = "$_  $set  $no_threads  $method";
+    $cmd = "$_  $set  $no_threads";
+    ( $_ +~ 'missing') && $cmd .= " $method";
     print "running $cmd\n";
     (system $cmd) && die "error running $cmd\n";
     print "        $cmd done\n\n";
