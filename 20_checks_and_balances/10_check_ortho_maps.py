@@ -89,7 +89,7 @@ def main():
                 with_map += 1
                 #print "ok"
             else:
-                print"no maps for exon", human_exon.exon_i
+                print"no maps for exon", human_exon.exon_id
                 continue
             if verbose:
                 for map in maps:
