@@ -22,5 +22,7 @@ foreach (@scripts) {
 
 foreach (@scripts) {
     $cmd = "$_  $set  $no_threads  $method";
+    print "running $cmd\n"
     (system $cmd) && die "error running $cmd\n";
+    print "        $cmd done\n\n"
 }
