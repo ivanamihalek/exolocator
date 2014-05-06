@@ -27,7 +27,7 @@ def main():
         gene_list.append([]) # make number_of_lists empty lists
         
     # distribute in round robin way
-    for gene_id in gene_ids[:117]:
+    for gene_id in gene_ids:
         stable_id = gene2stable (cursor, gene_id = gene_id)
         n = gene_ids.index(gene_id)%number_of_lists  # number (or index) of this gene_id in the whole list
         gene_list[n].append(stable_id)
