@@ -14,7 +14,7 @@ def main():
 
     if local_db:
         db  = connect_to_mysql()
-     else:
+    else:
         db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
@@ -24,19 +24,19 @@ def main():
 
     gene_list = [] 
     for n in range(number_of_lists):
-        gene_list.push([]) # make number_of_lists empty lists
+        gene_list.append([]) # make number_of_lists empty lists
         
     # distribute in round robin way
     for gene_id in gene_ids[:117]:
         stable_id = gene2stable (cursor, gene_id = gene_id)
-        n = gene_ids.id(gene_id)%number_of_lists  # number (or index) of this gene_id in the whole list
-        gene_list[n].push(stable_id)
+        n = gene_ids.index(gene_id)%number_of_lists  # number (or index) of this gene_id in the whole list
+        gene_list[n].append(stable_id)
 
     for n in range(number_of_lists):
-        print
-        print "list", n
-        for stable_id in gene_list:
-            print stable_id
+        outf = open ("stable_ids_"+str(n)+".txt", "w")
+        for stable_id in gene_list[n]:
+            print >> outf, stable_id
+        outf.close()
 
     cursor.close()
     db    .close()
