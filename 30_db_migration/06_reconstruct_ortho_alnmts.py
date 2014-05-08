@@ -1499,6 +1499,13 @@ def make_alignments ( gene_list, db_info):
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
 
+        # the alignment always has human sequence, but if it is the only one
+        # (see for example RPL41, ENSG00000229117, a 25 residue peptide,  for which NCBI REfseq
+        # reports a single  confirmed  homologue in mouse, but Ensembl reports no orthologues at all)
+        if ( len(alnmt_pep) <= 1):
+            print "\t no orthologues for",  gene_id, stable_id, " (?)"
+            continue
+
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # we want to be able to retrieve the info starting from whichever end, so we construct the following maps:
         # to find all exons from an ortohologue, that map to a given human exon:
@@ -1536,7 +1543,8 @@ def make_alignments ( gene_list, db_info):
 
             for human_exon in canonical_human_exons:
 
-                if ( not alnmt_pep.has_key(human_exon)): continue
+                if ( not alnmt_pep.has_key(human_exon)): 
+                    continue
                 if ( isinstance(alnmt_pep[human_exon], str)): continue
                 
                 aln_length = len(alnmt_pep[human_exon].itervalues().next())
