@@ -1506,6 +1506,8 @@ def make_alignments ( gene_list, db_info):
             print "\t no orthologues for",  gene_id, stable_id, " (?)"
             continue
 
+        print alnmt_pep
+
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # we want to be able to retrieve the info starting from whichever end, so we construct the following maps:
         # to find all exons from an ortohologue, that map to a given human exon:
