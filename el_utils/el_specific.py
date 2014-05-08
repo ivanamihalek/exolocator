@@ -459,7 +459,7 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
         # get the raw (unaligned) sequence for the exon that maps onto human
         exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
         if (not exon_seqs):
-            print " exon_seqs for" , map.source
+            #print " exon_seqs for" , map.source
             continue
         [pepseq, pepseq_transl_start, 
          pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs[1:]
@@ -515,13 +515,13 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
     sequence_stripped_pep = strip_gaps (sequence_pep)
     if not sequence_stripped_pep:  
         c=inspect.currentframe()
-        print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
+        #print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
         return ['','']
     # strip common gaps
     sequence_stripped_dna = strip_gaps (sequence_dna)
     if not sequence_stripped_dna:  
         c=inspect.currentframe()
-        print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
+        #print " in %s:%d" % ( c.f_code.co_filename, c.f_lineno)
         return ['', '']
 
     return [sequence_stripped_pep, sequence_stripped_dna]
