@@ -1562,7 +1562,7 @@ def make_alignments ( gene_list, db_info):
                     if len(human_exons) == 1 and len(ortho_exons) == 1: continue 
                     flagged_human_exons |= set(human_exons)
 
-            if concat_seq_name == 'xenopus':
+            if concat_seq_name == 'xenopus' or  concat_seq_name == 'human':
                 print "flagged"
                 for he in flagged_human_exons:
                     print he.exon_id
@@ -1596,9 +1596,13 @@ def make_alignments ( gene_list, db_info):
                     print " in %s:%d output peptide empty" % (c. f_code.co_filename, c.f_lineno)
                     output_pep_ok = False
                     # Oct 13: I am not sure of the full implication of this, so I'll just abort
+                if  concat_seq_name == 'human':
+                    print human_exon.exon_id, output_pep[concat_seq_name]
+
             if output_pep_ok:  headers.append(concat_seq_name)
 
         print 4, "*",  output_pep['human'][:100]
+        print 4, "*",  output_pep['xenopus'][:100]
 
         #########################################################
         if not output_pep_ok: continue
