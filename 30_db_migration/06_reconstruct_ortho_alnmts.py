@@ -1548,7 +1548,7 @@ def make_alignments ( gene_list, db_info):
         output_pep  = {}
         output_dna  = {}
         output_pep_ok = True
-        for concat_seq_name in sequence_name_to_exon_names.keys():
+        for concat_seq_name in ['human']:
             
             if not human_exon_to_ortho_exon.has_key(concat_seq_name): continue # this shouldn't happen but oh well
 
@@ -1562,10 +1562,62 @@ def make_alignments ( gene_list, db_info):
                     if len(human_exons) == 1 and len(ortho_exons) == 1: continue 
                     flagged_human_exons |= set(human_exons)
 
-            if concat_seq_name == 'xenopus' or  concat_seq_name == 'human':
-                print "flagged"
-                for he in flagged_human_exons:
-                    print he.exon_id
+            for human_exon in canonical_human_exons:
+
+                print human_exon.exon_id, ": "
+
+                if ( not alnmt_pep.has_key(human_exon)): 
+                    print " 1 "
+                    continue
+                if ( isinstance(alnmt_pep[human_exon], str)): 
+                    print " 2 "
+                    continue
+                
+                aln_length = len(alnmt_pep[human_exon].itervalues().next())
+                pep = '-'*aln_length
+                if human_exon in flagged_human_exons:
+                    # one ortho seq maps to multiple human exons, or vice versa
+                    print " 3 "
+                    pep = '-'*aln_length
+
+                elif human_exon_to_ortho_exon[concat_seq_name].has_key(human_exon):
+                    # we have a neat one-to-one mapping
+                    exon_seq_name = human_exon_to_ortho_exon[concat_seq_name][human_exon][0]
+                    pep = alnmt_pep[human_exon][exon_seq_name]
+                    if not pep:  # what's this?
+                        print " 4 "
+                        pep = '-'*aln_length
+                else: 
+                    # no exon in this species
+                    print " 5 "
+                    pep =  '-'*aln_length
+                   
+                if output_pep[concat_seq_name]: output_pep[concat_seq_name] += '-Z-'
+                output_pep[concat_seq_name] += pep
+                if not output_pep:  
+                    c=inspect.currentframe()
+                    print " in %s:%d output peptide empty" % (c. f_code.co_filename, c.f_lineno)
+                    output_pep_ok = False
+                    # Oct 13: I am not sure of the full implication of this, so I'll just abort
+
+            
+        exit(1)
+
+
+
+        for concat_seq_name in sequence_name_to_exon_names.keys():
+            
+            if not human_exon_to_ortho_exon.has_key(concat_seq_name): continue # this shouldn't happen but oh well
+
+            output_pep[concat_seq_name] = ""
+            output_pep_ok = True
+
+            # compile human exons which are in one-to-many relationship in this species (this sequence, actually)
+            flagged_human_exons = set([])
+            if overlapping_maps.has_key(concat_seq_name):
+                for  [human_exons, ortho_exons] in overlapping_maps[concat_seq_name]:
+                    if len(human_exons) == 1 and len(ortho_exons) == 1: continue 
+                    flagged_human_exons |= set(human_exons)
 
             for human_exon in canonical_human_exons:
 
@@ -1596,8 +1648,6 @@ def make_alignments ( gene_list, db_info):
                     print " in %s:%d output peptide empty" % (c. f_code.co_filename, c.f_lineno)
                     output_pep_ok = False
                     # Oct 13: I am not sure of the full implication of this, so I'll just abort
-                if  concat_seq_name == 'human':
-                    print human_exon.exon_id, output_pep[concat_seq_name]
 
             if output_pep_ok:  headers.append(concat_seq_name)
 
