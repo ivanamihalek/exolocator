@@ -1593,6 +1593,8 @@ def make_alignments ( gene_list, db_info):
                     # Oct 13: I am not sure of the full implication of this, so I'll just abort
             if output_pep_ok:  headers.append(concat_seq_name)
 
+        print 4, output_pep['human']
+
         #########################################################
         if not output_pep_ok: continue
 
