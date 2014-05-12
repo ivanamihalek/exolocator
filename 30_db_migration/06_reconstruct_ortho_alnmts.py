@@ -1562,6 +1562,11 @@ def make_alignments ( gene_list, db_info):
                     if len(human_exons) == 1 and len(ortho_exons) == 1: continue 
                     flagged_human_exons |= set(human_exons)
 
+            if concat_seq_name == 'xenopus':
+                print "flagged"
+                for he in flagged_human_exons:
+                    print he.exon_id
+
             for human_exon in canonical_human_exons:
 
                 if ( not alnmt_pep.has_key(human_exon)): 
@@ -1593,7 +1598,7 @@ def make_alignments ( gene_list, db_info):
                     # Oct 13: I am not sure of the full implication of this, so I'll just abort
             if output_pep_ok:  headers.append(concat_seq_name)
 
-        print 4, output_pep['human']
+        print 4, "*",  output_pep['human'][:100]
 
         #########################################################
         if not output_pep_ok: continue
