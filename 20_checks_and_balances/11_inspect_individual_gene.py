@@ -19,11 +19,11 @@ from Bio.Alphabet import generic_dna
 def main():
 
     if (len(sys.argv) < 3):
-        print "Usage: %s <species> <stable gene id>" % sys.argv[0]
+        print "Usage: %s  <stable gene id>" % sys.argv[0]
         exit(1)
 
-    [species, stable_id] = sys.argv[1:3]
-
+    [stable_id] = sys.argv[1:2]
+    sepecies = 'hoho_sapiens'
 
     local_db = False
 
@@ -68,22 +68,20 @@ def main():
              exon_right_flank, exon_dna_seq] =  get_exon_seqs (cursor, exon.covering_exon, 1)[1:]
             print "\t", exon.covering_exon, " seq:", exon_pep_seq_2
  
-    
-    if species == 'homo_sapiens':
         print
         print 'exon_alignments:'
 
-        maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
+        maps = get_maps(cursor, ensembl_db_name, exon.exon_id, exon.is_known)
         if not maps:
-            print"no maps for exon", human_exon.exon_id
+            print"no maps for exon", exon.exon_id
         else:
             for map in maps:
-                species            = map.species_2
+                species_2            = map.species_2
                 #if not species == 'procavia_capensis': continue
-                exon               = map2exon(cursor, ensembl_db_name, map)
-                unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
+                exon_2               = map2exon(cursor, ensembl_db_name, map)
+                unaligned_sequence = get_exon_pepseq(cursor, exon_2, ensembl_db_name[species_2])
                 if ( map.similarity):
-                    print "\t", species,  map.source, map.exon_id_2, map.exon_known_2
+                    print "\t", species_2,  map.source, map.exon_id_2, map.exon_known_2
                     print "\tmaps to ",  map.exon_id_1, map.exon_known_1
                     print "\tsim",  map.similarity,
                     print "\tsource",  map.source
@@ -104,10 +102,6 @@ def main():
                             print "\tbinary   : ", bs.bin
                             print "\talnd seq: ", reconst_pepseq
                     print
-
-
-    #canonical_translation = get_canonical_transl (acg, cursor, gene_id, species)
-    #print canonical_translation
 
     cursor.close()
     db    .close()
