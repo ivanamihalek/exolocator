@@ -59,6 +59,7 @@ def main():
 
     print "exons:"
     for exon in canonical_human_exons:
+        switch_to_db (cursor, ensembl_db_name[species])
         exon_seqs = get_exon_seqs (cursor, exon.exon_id, 1)
         [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
          exon_right_flank, exon_dna_seq] = exon_seqs [1:]
@@ -77,9 +78,8 @@ def main():
                 print"no maps for exon", exon.exon_id
             else:
                 for map in maps:
-                    species_2            = map.species_2
-                    #if not species == 'procavia_capensis': continue
-                    exon_2               = map2exon(cursor, ensembl_db_name, map)
+                    species_2          = map.species_2
+                    exon_2             = map2exon(cursor, ensembl_db_name, map)
                     unaligned_sequence = get_exon_pepseq(cursor, exon_2, ensembl_db_name[species_2])
                     if ( map.similarity):
                         print "\t", species_2,  map.source, map.exon_id_2, map.exon_known_2
