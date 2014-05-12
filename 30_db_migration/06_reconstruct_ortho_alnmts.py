@@ -802,7 +802,12 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 sequence_piece_names.append(exon_seq_name)
             list_of_ok_exon_names = check_seq_overlap(cursor, ensembl_db_name, cfg, acg, template_seq, 
                                                       sequence_pieces, sequence_piece_names, list_of_ok_exon_names)
-
+            if seq_to_fix=="xenopus":
+                exon_seqs = get_exon_seqs (cursor, human_exon.exon_id, 1)
+                [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
+                 exon_right_flank, exon_dna_seq] = exon_seqs [1:]
+                print "exon:", human_exon.exon_id, "covering exon:", human_exon.covering_exon,  "pepseq:", exon_pep_seq
+ 
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
         for ortho_exon in list_of_ok_exon_names:
@@ -1514,21 +1519,6 @@ def make_alignments ( gene_list, db_info):
         # reconstruct  per-exon alignments with orthologues
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
-        print "human exons:"
-        for exon in canonical_human_exons:
-            exon_seqs = get_exon_seqs (cursor, exon.exon_id, 1)
-            [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
-             exon_right_flank, exon_dna_seq] = exon_seqs [1:]
-            print "exon:", exon.exon_id, "covering exon:", exon.covering_exon,  "pepseq:", exon_pep_seq
-            if  not exon.covering_exon == -1:
-                [exon_pep_seq_2, trsl_from, trsl_to, exon_left_flank,
-                 exon_right_flank, exon_dna_seq] =  get_exon_seqs (cursor, exon.covering_exon, 1)[1:]
-                print "\t", exon.covering_exon, " seq:", exon_pep_seq_2
-            print "this exon has alignment?", alnmt_pep.has_key(exon)
-            if alnmt_pep.has_key(exon):
-                for name, seq in alnmt_pep[exon].iteritems():
-                    print ">", name
-                    print seq
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # we want to be able to retrieve the info starting from whichever end, so we construct the following maps:
