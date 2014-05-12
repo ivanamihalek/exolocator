@@ -920,7 +920,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         print seq_to_fix + ' :',
         print "exon_ct (%d) not equal to the length of list_of_ok_exon_names (%d)" % ( exon_ct, len(list_of_ok_exon_names))
         print "ok exon names: ", list_of_ok_exon_names
-        print "non-zero petitde sequences (for exons)"
+        print "non-zero petide sequences (for exons)"
         print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
         print "==================================================="
         return [output_pep, sequence_name_to_exon_names] # theses are empty
