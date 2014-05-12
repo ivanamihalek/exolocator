@@ -23,7 +23,7 @@ def main():
         exit(1)
 
     [stable_id] = sys.argv[1:2]
-    species = 'hoho_sapiens'
+    species = 'homo_sapiens'
 
     local_db = False
 
