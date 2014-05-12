@@ -1511,7 +1511,17 @@ def make_alignments ( gene_list, db_info):
         if not canonical_human_exons: continue
         # the exons are not guaranteed to be in order
         canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
- 
+        print "human exons:"
+        for exon in canonical_human_exons:
+            exon_seqs = get_exon_seqs (cursor, exon.exon_id, 1)
+            [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
+             exon_right_flank, exon_dna_seq] = exon_seqs [1:]
+            print "exon:", exon.exon_id, "covering exon:", exon.covering_exon,  "pepseq:", exon_pep_seq
+            if  not exon.covering_exon == -1:
+                [exon_pep_seq_2, trsl_from, trsl_to, exon_left_flank,
+                 exon_right_flank, exon_dna_seq] =  get_exon_seqs (cursor, exon.covering_exon, 1)[1:]
+                print "\t", exon.covering_exon, " seq:", exon_pep_seq_2
+
         # reconstruct  per-exon alignments with orthologues
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
@@ -1530,7 +1540,7 @@ def make_alignments ( gene_list, db_info):
         [human_exon_to_ortho_exon, sequence_name_to_exon_names, 
          ortho_exon_to_human_exon, overlapping_maps] = make_atlas(cursor, ensembl_db_name, canonical_human_exons, 
                                                                   alnmt_pep, trivial_name)
-         # the alignment always has human sequence, but if it is the only one
+        # the alignment always has human sequence, but if it is the only one
         # (see for example RPL41, ENSG00000229117, a 25 residue peptide,  for which NCBI REfseq
         # reports a single  confirmed  homologue in mouse, but Ensembl reports no orthologues at all)
         if ( len(sequence_name_to_exon_names) <= 1):
