@@ -68,40 +68,41 @@ def main():
              exon_right_flank, exon_dna_seq] =  get_exon_seqs (cursor, exon.covering_exon, 1)[1:]
             print "\t", exon.covering_exon, " seq:", exon_pep_seq_2
  
-        print
-        print 'exon_alignments:'
+        if 0:
+            print
+            print 'exon_alignments:'
 
-        maps = get_maps(cursor, ensembl_db_name, exon.exon_id, exon.is_known)
-        if not maps:
-            print"no maps for exon", exon.exon_id
-        else:
-            for map in maps:
-                species_2            = map.species_2
-                #if not species == 'procavia_capensis': continue
-                exon_2               = map2exon(cursor, ensembl_db_name, map)
-                unaligned_sequence = get_exon_pepseq(cursor, exon_2, ensembl_db_name[species_2])
-                if ( map.similarity):
-                    print "\t", species_2,  map.source, map.exon_id_2, map.exon_known_2
-                    print "\tmaps to ",  map.exon_id_1, map.exon_known_1
-                    print "\tsim",  map.similarity,
-                    print "\tsource",  map.source
-                    print "\t", unaligned_sequence
-                    if not map.bitmap:
-                        print "\t bitmap not assigned"
-                    else:
-                        bs = Bits(bytes=map.bitmap)
-                        reconst_pepseq = ''
-                        if (not bs.count(1) == len(unaligned_sequence)): 
-                            print "\talnd seq mismatch"
-
+            maps = get_maps(cursor, ensembl_db_name, exon.exon_id, exon.is_known)
+            if not maps:
+                print"no maps for exon", exon.exon_id
+            else:
+                for map in maps:
+                    species_2            = map.species_2
+                    #if not species == 'procavia_capensis': continue
+                    exon_2               = map2exon(cursor, ensembl_db_name, map)
+                    unaligned_sequence = get_exon_pepseq(cursor, exon_2, ensembl_db_name[species_2])
+                    if ( map.similarity):
+                        print "\t", species_2,  map.source, map.exon_id_2, map.exon_known_2
+                        print "\tmaps to ",  map.exon_id_1, map.exon_known_1
+                        print "\tsim",  map.similarity,
+                        print "\tsource",  map.source
+                        print "\t", unaligned_sequence
+                        if not map.bitmap:
+                            print "\t bitmap not assigned"
                         else:
-                            usi = iter(unaligned_sequence)
-                            for c in bs.bin:
-                                if c == '0': reconst_pepseq += '-'
-                                else:        reconst_pepseq += next(usi)
-                            print "\tbinary   : ", bs.bin
-                            print "\talnd seq: ", reconst_pepseq
-                    print
+                            bs = Bits(bytes=map.bitmap)
+                            reconst_pepseq = ''
+                            if (not bs.count(1) == len(unaligned_sequence)): 
+                                print "\talnd seq mismatch"
+
+                            else:
+                                usi = iter(unaligned_sequence)
+                                for c in bs.bin:
+                                    if c == '0': reconst_pepseq += '-'
+                                    else:        reconst_pepseq += next(usi)
+                                print "\tbinary   : ", bs.bin
+                                print "\talnd seq: ", reconst_pepseq
+                        print
 
     cursor.close()
     db    .close()
