@@ -1387,7 +1387,7 @@ def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivia
     seq_name = {}
     parent_seq_name  = {}
     for human_exon in canonical_human_exons:
-        if not alnmt_pep[human_exon]: continue # -- this should not happen we should have at least human exons
+        if not alnmt_pep[human_exon]: continue # -- this should not happen; we should have at least human exons
         for exon_seq_name in alnmt_pep[human_exon].keys():
             [species, exon_id, exon_known, exon_start] = parse_aln_name(exon_seq_name)
             ortho_gene_id                  = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
@@ -1447,11 +1447,16 @@ def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                          mitochondrial, min_similarity, flank_length):
     alnmt_pep = {}
     alnmt_dna = {}
+    first_human_exon = True
     for human_exon in canonical_human_exons:
         # make_exon_alignment defined in el_utils/el_specific.py
+        # we need the info about the first human exon
+        # to get a bit more lenient whent the first exon consists of M only
+        # (I'll have to take a look at one point what's up with that)
         [alnmt_pep[human_exon], alnmt_dna[human_exon]]  =   make_exon_alignment(cursor, ensembl_db_name,  human_exon.exon_id, 
                                                                                 human_exon.is_known,  mitochondrial, min_similarity, 
-                                                                                flank_length)   
+                                                                                flank_length, first_human_exon)   
+        first_human_exon = False
 
     return [alnmt_pep, alnmt_dna] 
 
@@ -1502,10 +1507,10 @@ def make_alignments ( gene_list, db_info):
         mitochondrial = is_mitochondrial(cursor, gene_id)
         # find all canonical coding  human exons 
         canonical_human_exons = filter (lambda x:  x.is_canonical and x.is_coding, gene2exon_list(cursor, gene_id))
-        # the exons are not guaranteed to be in order
-        canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
         # bail out if there is a problem
         if not canonical_human_exons: continue
+        # the exons are not guaranteed to be in order
+        canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
  
         # reconstruct  per-exon alignments with orthologues
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
