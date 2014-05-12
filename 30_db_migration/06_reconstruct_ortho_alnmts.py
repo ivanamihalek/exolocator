@@ -804,9 +804,10 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                                                       sequence_pieces, sequence_piece_names, list_of_ok_exon_names)
             if seq_to_fix=="xenopus":
                 exon_seqs = get_exon_seqs (cursor, human_exon.exon_id, 1)
-                [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
-                 exon_right_flank, exon_dna_seq] = exon_seqs [1:]
-                print "exon:", human_exon.exon_id, "covering exon:", human_exon.covering_exon,  "pepseq:", exon_pep_seq
+                print human_exon.exon_id, exon_seqs
+                #[exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
+                # exon_right_flank, exon_dna_seq] = exon_seqs [1:]
+                #print "exon:", human_exon.exon_id, "covering exon:", human_exon.covering_exon,  "pepseq:", exon_pep_seq
  
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
