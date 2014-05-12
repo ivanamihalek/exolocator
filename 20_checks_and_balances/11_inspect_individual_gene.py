@@ -18,12 +18,12 @@ from Bio.Alphabet import generic_dna
 #########################################
 def main():
 
-    if (len(sys.argv) < 3):
+    if (len(sys.argv) < 2):
         print "Usage: %s  <stable gene id>" % sys.argv[0]
         exit(1)
 
     [stable_id] = sys.argv[1:2]
-    sepecies = 'hoho_sapiens'
+    species = 'hoho_sapiens'
 
     local_db = False
 
