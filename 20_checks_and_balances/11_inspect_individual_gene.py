@@ -69,7 +69,7 @@ def main():
              exon_right_flank, exon_dna_seq] =  get_exon_seqs (cursor, exon.covering_exon, 1)[1:]
             print "\t", exon.covering_exon, " seq:", exon_pep_seq_2
  
-        if 0:
+        if 1:
             print
             print 'exon_alignments:'
 
