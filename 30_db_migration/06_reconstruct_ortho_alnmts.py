@@ -1525,6 +1525,10 @@ def make_alignments ( gene_list, db_info):
                  exon_right_flank, exon_dna_seq] =  get_exon_seqs (cursor, exon.covering_exon, 1)[1:]
                 print "\t", exon.covering_exon, " seq:", exon_pep_seq_2
             print "this exon has alignment?", alnmt_pep.has_key(exon)
+            if alnmt_pep.has_key(exon):
+                for name, seq in alnmt_pep.iteritems():
+                    print ">", name
+                    print seq
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # we want to be able to retrieve the info starting from whichever end, so we construct the following maps:
