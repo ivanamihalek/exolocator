@@ -67,6 +67,43 @@ def main():
             [exon_pep_seq_2, trsl_from, trsl_to, exon_left_flank,
              exon_right_flank, exon_dna_seq] =  get_exon_seqs (cursor, exon.covering_exon, 1)[1:]
             print "\t", exon.covering_exon, " seq:", exon_pep_seq_2
+ 
+
+    print
+    print 'exon_alignments:'
+
+    maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
+    if not maps:
+        print"no maps for exon", human_exon.exon_id
+    else:
+        for map in maps:
+            species            = map.species_2
+            #if not species == 'procavia_capensis': continue
+            exon               = map2exon(cursor, ensembl_db_name, map)
+            unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
+            if ( map.similarity):
+                print "\t", species,  map.source, map.exon_id_2, map.exon_known_2
+                print "\tmaps to ",  map.exon_id_1, map.exon_known_1
+                print "\tsim",  map.similarity,
+                print "\tsource",  map.source
+                print "\t", unaligned_sequence
+                if not map.bitmap:
+                    print "\t bitmap not assigned"
+                else:
+                    bs = Bits(bytes=map.bitmap)
+                    reconst_pepseq = ''
+                    if (not bs.count(1) == len(unaligned_sequence)): 
+                        print "\talnd seq mismatch"
+
+                    else:
+                        usi = iter(unaligned_sequence)
+                        for c in bs.bin:
+                            if c == '0': reconst_pepseq += '-'
+                            else:        reconst_pepseq += next(usi)
+                        print "\tbinary   : ", bs.bin
+                        print "\talnd seq: ", reconst_pepseq
+                print
+
 
     #canonical_translation = get_canonical_transl (acg, cursor, gene_id, species)
     #print canonical_translation
