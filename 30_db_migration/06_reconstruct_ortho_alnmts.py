@@ -1511,6 +1511,9 @@ def make_alignments ( gene_list, db_info):
         if not canonical_human_exons: continue
         # the exons are not guaranteed to be in order
         canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
+        # reconstruct  per-exon alignments with orthologues
+        [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
+                                                      mitochondrial, min_similarity, flank_length)
         print "human exons:"
         for exon in canonical_human_exons:
             exon_seqs = get_exon_seqs (cursor, exon.exon_id, 1)
@@ -1521,12 +1524,8 @@ def make_alignments ( gene_list, db_info):
                 [exon_pep_seq_2, trsl_from, trsl_to, exon_left_flank,
                  exon_right_flank, exon_dna_seq] =  get_exon_seqs (cursor, exon.covering_exon, 1)[1:]
                 print "\t", exon.covering_exon, " seq:", exon_pep_seq_2
+            print "this exon has alignment?", alnmt_pep.has_key(human_exon)
 
-        # reconstruct  per-exon alignments with orthologues
-        [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
-                                                      mitochondrial, min_similarity, flank_length)
-
- 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # we want to be able to retrieve the info starting from whichever end, so we construct the following maps:
         # to find all exons from an ortohologue, that map to a given human exon:
@@ -1546,7 +1545,6 @@ def make_alignments ( gene_list, db_info):
         if ( len(sequence_name_to_exon_names) <= 1):
             print "\t no orthologues for",  gene_id, stable_id, " (?)"
             continue
-
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # concatenate the aligned exons for each species, taking into account that the mapping
         # doesn't have to be one to one
