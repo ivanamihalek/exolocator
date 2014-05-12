@@ -466,7 +466,7 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
 
         # rpl11 starts with an exon that translates into 2 aa's
         # but will this give me tons of junk elsewhere? ...
-        if     len(pepseq)<2: continue 
+        if  len(pepseq)<3 and pepseq[0] != 'M': continue 
         pepseq_noX = pepseq.replace ('X','')
         if len(pepseq_noX)<2: continue
        
