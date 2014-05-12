@@ -901,17 +901,19 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     exon_ct   = 0
     for pe in pep_exons:
         pe = pe.replace('-','')
-        if pe: 
-            exon_ct += 1
+        if pe:   exon_ct += 1
 
     if not exon_ct == len(list_of_ok_exon_names):
-        print seq_to_fix, 'length mismatch'
-        print "lengths:", exon_ct, len(list_of_ok_exon_names)
-        print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
-        print list_of_ok_exon_names
+        print "///////////////////////////////////////////////////"
         c=inspect.currentframe()
-        print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-        return [output_pep, sequence_name_to_exon_names]
+        print " in %s:%d" % (c.f_code.co_filename, c.f_lineno), ", after religning slice"
+        print seq_to_fix + ' :',
+        print "exon_ct (%d) not equal to the length of list_of_ok_exon_names (%d)" % ( exon_ct, len(list_of_ok_exon_names))
+        print "ok exon names: ", list_of_ok_exon_names
+        print "non-zero petitde sequences (for exons)"
+        print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
+        print "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\""
+        return [output_pep, sequence_name_to_exon_names] # theses are empty
 
     output_pep = new_alignment_pep
     sequence_name_to_exon_names[seq_to_fix] = list_of_ok_exon_names
