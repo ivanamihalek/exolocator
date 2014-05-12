@@ -470,8 +470,8 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
         # but will this give me tons of junk elsewhere? ...
         if  len(pepseq)<3:
             # if this is the first exon, and if it starts with M, we'll let it off the hook
-            if first_human_exon and pepseq[0] -= 'M': 
-                pass:
+            if first_human_exon and pepseq[0] == 'M': 
+                pass
             else:
                 continue 
         pepseq_noX = pepseq.replace ('X','')
