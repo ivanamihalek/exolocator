@@ -857,6 +857,9 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         # slice realign
         new_pep_slice = realign_slice (pep_slice, seq_to_fix, pep_seq_pieces)
 
+        output_fasta ("old_slice.afa", pep_slice.keys(), pep_slice);
+        output_fasta ("new_slice.afa", new_pep_slice.keys(), new_pep_slice);
+
         # strip gaps and output
         # boundary_cleanup(new_pep_slice, new_pep_slice.keys())
 
@@ -906,13 +909,13 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     if not exon_ct == len(list_of_ok_exon_names):
         print "///////////////////////////////////////////////////"
         c=inspect.currentframe()
-        print " in %s:%d" % (c.f_code.co_filename, c.f_lineno), ", after religning slice"
+        print "in %s:%d" % (c.f_code.co_filename, c.f_lineno), ", after religning slice"
         print seq_to_fix + ' :',
         print "exon_ct (%d) not equal to the length of list_of_ok_exon_names (%d)" % ( exon_ct, len(list_of_ok_exon_names))
         print "ok exon names: ", list_of_ok_exon_names
         print "non-zero petitde sequences (for exons)"
         print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
-        print "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\""
+        print "==================================================="
         return [output_pep, sequence_name_to_exon_names] # theses are empty
 
     output_pep = new_alignment_pep
