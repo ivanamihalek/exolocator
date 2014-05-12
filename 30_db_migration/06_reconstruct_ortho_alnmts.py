@@ -1526,7 +1526,7 @@ def make_alignments ( gene_list, db_info):
                 print "\t", exon.covering_exon, " seq:", exon_pep_seq_2
             print "this exon has alignment?", alnmt_pep.has_key(exon)
             if alnmt_pep.has_key(exon):
-                for name, seq in alnmt_pep.iteritems():
+                for name, seq in alnmt_pep[exon].iteritems():
                     print ">", name
                     print seq
 
