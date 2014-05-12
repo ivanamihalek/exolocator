@@ -805,10 +805,9 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             if seq_to_fix=="xenopus":
                 switch_to_db(cursor, ensembl_db_name['homo_sapiens'])
                 exon_seqs = get_exon_seqs (cursor, human_exon.exon_id, 1)
-                print human_exon.exon_id, exon_seqs
-                #[exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
-                # exon_right_flank, exon_dna_seq] = exon_seqs [1:]
-                #print "exon:", human_exon.exon_id, "covering exon:", human_exon.covering_exon,  "pepseq:", exon_pep_seq
+                [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
+                 exon_right_flank, exon_dna_seq] = exon_seqs [1:]
+                print "exon:", human_exon.exon_id, "covering exon:", human_exon.covering_exon,  "pepseq:", exon_pep_seq
  
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
@@ -817,6 +816,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if alnmt_pep[human_exon].has_key(ortho_exon):
                     pep_seq_pieces.append( alnmt_pep[human_exon][ortho_exon].replace("-", "") )
                     break
+        print "pep_seq_pieces:", pep_seq_pieces
+
         # pull  the slice out of the alignment
         # use human as the reference - in other species the boundaries might
         # be at different positions
