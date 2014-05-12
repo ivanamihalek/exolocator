@@ -775,6 +775,10 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     number_of_human_exons = ct
 
     current_pep = output_pep
+    
+    if seq_to_fix == 'xenopus':
+        for om in overlapping_maps:
+            print ">>", om
 
     # for each unresolved "map"  cut out the slice and re-align
     for  [human_exons, ortho_exons] in overlapping_maps:
