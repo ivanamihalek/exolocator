@@ -1623,13 +1623,6 @@ def make_alignments ( gene_list, db_info):
         boundary_cleanup(output_pep, sorted_seq_names)
         output_pep = strip_gaps(output_pep)
 
-        for human_exon in canonical_human_exons:
-            print human_exon.exon_id
-            for nm, seq in  alnmt_pep[human_exon].iteritems():
-                print ">"+nm
-                print seq
-            exit(1)
-
         assorted_notes = ""
         for seq_to_fix in overlapping_maps.keys():
             #if not seq_to_fix=='chimpanzee': continue
