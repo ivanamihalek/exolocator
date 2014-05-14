@@ -472,7 +472,7 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
         if  len(pepseq_noX)<3:
             # if this is the first exon, and if it starts with M, we'll let it off the hook
             # abd then if it's human, we'll also salvage it at any price
-            if first_human_exon and pepseq_noX[0] == 'M' || map.species_2=='homo_sapiens': 
+            if first_human_exon and pepseq_noX[0] == 'M' or map.species_2=='homo_sapiens': 
                 pass
             else:
                 continue 
