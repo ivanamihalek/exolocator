@@ -805,6 +805,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
             if seq_to_fix=="xenopus":
                 print "<<<<<<  ", human_exon.exon_id, template_name, template_seq
+                print "<<<<<<  ", alnmt_pep[human_exon]
             sequence_pieces = []
             sequence_piece_names = []
             for exon_seq_name in ortho_exons:
@@ -821,7 +822,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             if seq_to_fix=="xenopus":
                 print 'ooooooooooooooo   4  ooooooooooooooooo'
                 print list_of_ok_exon_names
-                #exit(1)
+                exit(1)
                 switch_to_db(cursor, ensembl_db_name['homo_sapiens'])
                 exon_seqs = get_exon_seqs (cursor, human_exon.exon_id, 1)
                 [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
