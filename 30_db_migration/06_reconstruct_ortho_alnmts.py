@@ -861,7 +861,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         # strip gaps and output
         # boundary_cleanup(new_pep_slice, new_pep_slice.keys())
-
         if not check_seq_length(new_pep_slice, "new_pep_slice"):
             del output_pep[seq_to_fix]
             del sequence_name_to_exon_names[seq_to_fix]
