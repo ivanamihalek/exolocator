@@ -804,7 +804,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         for human_exon in human_exons:
             [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
             if seq_to_fix=="xenopus":
-                print human_exon.exon_id, template_name, template_seq
+                print "<<<<<<  ", human_exon.exon_id, template_name, template_seq
             sequence_pieces = []
             sequence_piece_names = []
             for exon_seq_name in ortho_exons:
