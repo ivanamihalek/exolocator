@@ -781,12 +781,17 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     current_pep = output_pep
     
     if seq_to_fix == 'xenopus':
+        print 'human sequence'
         print output_pep['human']
         for [human_exons, ortho_exons] in overlapping_maps:
             print ">>",
             for he in human_exons:
                 print he.exon_id,
             print ortho_exons
+
+    if seq_to_fix=="xenopus":
+        print 'ooooooooooooo   2  oooooooooooooooooooooooo'
+        print list_of_ok_exon_names
 
     # for each unresolved "map"  cut out the slice and re-align
     for  [human_exons, ortho_exons] in overlapping_maps:
@@ -804,10 +809,15 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if not alnmt_pep[human_exon].has_key(exon_seq_name):  continue
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 sequence_piece_names.append(exon_seq_name)
+
+
+            if seq_to_fix=="xenopus":
+                print 'ooooooooooooooo   3  ooooooooooooooooo'
+                print list_of_ok_exon_names
             list_of_ok_exon_names = check_seq_overlap(cursor, ensembl_db_name, cfg, acg, template_seq, 
                                                       sequence_pieces, sequence_piece_names, list_of_ok_exon_names)
             if seq_to_fix=="xenopus":
-                print 'ooooooooooooooo   2  ooooooooooooooooo'
+                print 'ooooooooooooooo   4  ooooooooooooooooo'
                 print list_of_ok_exon_names
                 switch_to_db(cursor, ensembl_db_name['homo_sapiens'])
                 exon_seqs = get_exon_seqs (cursor, human_exon.exon_id, 1)
