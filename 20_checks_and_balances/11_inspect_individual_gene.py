@@ -19,11 +19,12 @@ from Bio.Alphabet import generic_dna
 def main():
 
     if (len(sys.argv) < 2):
-        print "Usage: %s  <stable gene id>" % sys.argv[0]
+        print "Usage: %s  <stable gene id> [<exon1> <exon2> ... ]" % sys.argv[0]
         exit(1)
 
     [stable_id] = sys.argv[1:2]
-    species = 'homo_sapiens'
+    species     = 'homo_sapiens'
+    selected_exons = sys.argv[2:]
 
     local_db = False
 
@@ -59,6 +60,7 @@ def main():
 
     print "exons:"
     for exon in canonical_human_exons:
+        if selected_exons and  not exon in selected_exons: continue
         switch_to_db (cursor, ensembl_db_name[species])
         exon_seqs = get_exon_seqs (cursor, exon.exon_id, 1)
         [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
