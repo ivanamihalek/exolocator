@@ -61,7 +61,7 @@ def main():
     print "exons:"
     for exon in canonical_human_exons:
         print exon.exon_id, selected_exons
-        if selected_exons and  not exon.exon_id in selected_exons: continue
+        if selected_exons and  not str(exon.exon_id) in selected_exons: continue
         switch_to_db (cursor, ensembl_db_name[species])
         exon_seqs = get_exon_seqs (cursor, exon.exon_id, 1)
         [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
