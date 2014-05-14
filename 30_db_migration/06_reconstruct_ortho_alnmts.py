@@ -803,6 +803,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         # check sequence overlap, if several map to the same  human exon
         for human_exon in human_exons:
             [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
+            if seq_to_fix=="xenopus":
+                print human_exon.exon_id, template_name, template_seq
             sequence_pieces = []
             sequence_piece_names = []
             for exon_seq_name in ortho_exons:
@@ -810,17 +812,16 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 sequence_piece_names.append(exon_seq_name)
 
-
             if seq_to_fix=="xenopus":
                 print 'ooooooooooooooo   3  ooooooooooooooooo'
                 print list_of_ok_exon_names
-                pdb.set_trace()
+                #pdb.set_trace()
             list_of_ok_exon_names = check_seq_overlap(cursor, ensembl_db_name, cfg, acg, template_seq, 
                                                       sequence_pieces, sequence_piece_names, list_of_ok_exon_names)
             if seq_to_fix=="xenopus":
                 print 'ooooooooooooooo   4  ooooooooooooooooo'
                 print list_of_ok_exon_names
-                exit(1)
+                #exit(1)
                 switch_to_db(cursor, ensembl_db_name['homo_sapiens'])
                 exon_seqs = get_exon_seqs (cursor, human_exon.exon_id, 1)
                 [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
