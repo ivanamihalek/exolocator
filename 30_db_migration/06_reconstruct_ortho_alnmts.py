@@ -1625,7 +1625,9 @@ def make_alignments ( gene_list, db_info):
 
         for human_exon in canonical_human_exons:
             print human_exon.exon_id
-            print alnmt_pep[human_exon]
+            for nm, seq in  alnmt_pep[human_exon].iteritems():
+                print ">"+nm
+                print seq
             exit(1)
 
         assorted_notes = ""
