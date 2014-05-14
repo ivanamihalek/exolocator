@@ -22,7 +22,7 @@ def main():
         print "Usage: %s  <stable gene id> [<exon1> <exon2> ... ]" % sys.argv[0]
         exit(1)
 
-    [stable_id] = sys.argv[1:2]
+    stable_id  = sys.argv[1]
     species     = 'homo_sapiens'
     selected_exons = sys.argv[2:]
 
@@ -60,6 +60,7 @@ def main():
 
     print "exons:"
     for exon in canonical_human_exons:
+        print exon.exon_id, selected_exons
         if selected_exons and  not exon.exon_id in selected_exons: continue
         switch_to_db (cursor, ensembl_db_name[species])
         exon_seqs = get_exon_seqs (cursor, exon.exon_id, 1)
