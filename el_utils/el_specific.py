@@ -468,16 +468,14 @@ def make_exon_alignment(cursor, ensembl_db_name, human_exon_id, human_exon_known
         # rpl10A has a single methionine (or so they say) followed by a split codon
         # *supposedly there is evidence at the protein level
         # but will this give me tons of junk elsewhere? ...
-        if  len(pepseq)<3:
+        pepseq_noX = pepseq.replace ('X','')
+        if  len(pepseq_noX)<3:
             # if this is the first exon, and if it starts with M, we'll let it off the hook
-            if first_human_exon and pepseq[0] == 'M': 
+            if first_human_exon and pepseq_noX[0] == 'M': 
                 pass
             else:
                 continue 
-        pepseq_noX = pepseq.replace ('X','')
-        if len(pepseq_noX)<2: continue
        
-
         # check
         dnaseq  = Seq (dna_seq[pepseq_transl_start:pepseq_transl_end], generic_dna)
         if (mitochondrial):
