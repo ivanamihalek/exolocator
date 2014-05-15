@@ -785,7 +785,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         if (seq_to_fix == 'guinea_pig'):
             print " overlap being resolved: "
-            print "\t", [he.exon_id for he in human_exon]
+            print "\t", [he.exon_id for he in human_exons]
             print "\t", ortho_exons
 
         # check sequence overlap, if several map to the same  human exon
