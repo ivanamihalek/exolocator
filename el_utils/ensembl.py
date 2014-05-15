@@ -1174,7 +1174,7 @@ def exon2stable (cursor, exon_id=None, db_name=None):
 ########
 def stable2exon (cursor, stable_id, db_name=None):
 
-   if  (db_name):
+    if  (db_name):
         qry  = "use %s " % db_name
         rows = search_db (cursor, qry)
         if (rows):
