@@ -325,7 +325,7 @@ def get_reliable_orthos(cursor, ensembl_db_name, gene_id):
     # for each ortho check that it is not a pseudogene
     all_protein_coding_orthologues = []
     for  [ortho_gene_id, ortho_species] in all_orthologues:
-        biotype = get_gene_biotype(cursor, ortho_gene_id, ortho_species);
+        biotype = get_gene_biotype(cursor, ortho_gene_id, ensembl_db_name[ortho_species]);
         if ( biotype == 'protein_coding'):
             all_protein_coding_orthologues.append( [ortho_gene_id, ortho_species] )
         else:
