@@ -787,8 +787,9 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             print " overlap being resolved: "
             print "\t", [he.exon_id for he in human_exons]
             print "\t", ortho_exons
-            print "\t", 'human'
-            print "\t",  alnmt_pep[human_exon]['homo_sapiens']
+            [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
+            print "\t", template_name
+            print "\t",  template_seq
             for oe in ortho_exons:
                 print "\t", oe
                 print "\t", alnmt_pep[human_exon][oe]
