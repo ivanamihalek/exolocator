@@ -328,8 +328,8 @@ def get_reliable_orthos(cursor, ensembl_db_name, gene_id):
         biotype = get_gene_biotype(cursor, ortho_gene_id, ensembl_db_name[ortho_species]);
         if ( biotype == 'protein_coding'):
             all_protein_coding_orthologues.append( [ortho_gene_id, ortho_species] )
-        else:
-            print ortho_gene_id, ortho_species, biotype
+        #else:
+        print ortho_gene_id, ortho_species, biotype
 
     return all_protein_coding_orthologues
 
