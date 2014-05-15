@@ -792,9 +792,11 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if not alnmt_pep[human_exon].has_key(exon_seq_name):  continue
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 sequence_piece_names.append(exon_seq_name)
+            if (seq_to_fix == 'guinea_pig'): print "before: ", len(list_of_ok_exon_names)
 
             list_of_ok_exon_names = check_seq_overlap(cursor, ensembl_db_name, cfg, acg, template_seq, 
                                                       sequence_pieces, sequence_piece_names, list_of_ok_exon_names) 
+            if (seq_to_fix == 'guinea_pig'): print "after: ", len(list_of_ok_exon_names)
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
         for ortho_exon in list_of_ok_exon_names:
@@ -855,7 +857,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         # slice realign
         new_pep_slice = realign_slice (pep_slice, seq_to_fix, pep_seq_pieces)
-        if (seq_to_fix == 'european_hedgehog'):
+        if (seq_to_fix == 'guinea_pig'):
             output_fasta ("old_slice.afa", pep_slice.keys(), pep_slice);
             output_fasta ("new_slice.afa", new_pep_slice.keys(), new_pep_slice);
 
