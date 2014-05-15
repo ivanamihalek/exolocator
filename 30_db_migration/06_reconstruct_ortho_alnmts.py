@@ -783,6 +783,11 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         smallest_id  = exon_numbers[0]
         largest_id   = exon_numbers[-1]
 
+        if (seq_to_fix == 'guinea_pig'):
+            print " overlap being resolved: "
+            print "\t", [he.exon_id for he in human_exon]
+            print "\t", ortho_exons
+
         # check sequence overlap, if several map to the same  human exon
         for human_exon in human_exons:
             [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
@@ -792,11 +797,11 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
                 if not alnmt_pep[human_exon].has_key(exon_seq_name):  continue
                 sequence_pieces.append(alnmt_pep[human_exon][exon_seq_name])
                 sequence_piece_names.append(exon_seq_name)
-            if (seq_to_fix == 'guinea_pig'): print "before: ", len(list_of_ok_exon_names)
 
             list_of_ok_exon_names = check_seq_overlap(cursor, ensembl_db_name, cfg, acg, template_seq, 
                                                       sequence_pieces, sequence_piece_names, list_of_ok_exon_names) 
-            if (seq_to_fix == 'guinea_pig'): print "after: ", len(list_of_ok_exon_names)
+ 
+
         # join sequences that are deemed to be ok
         pep_seq_pieces = [] 
         for ortho_exon in list_of_ok_exon_names:
@@ -916,6 +921,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         print "non-zero petide sequences (for exons)"
         print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
         print "==================================================="
+        exit(1)
         return [output_pep, sequence_name_to_exon_names] # theses are empty
 
     output_pep = new_alignment_pep
