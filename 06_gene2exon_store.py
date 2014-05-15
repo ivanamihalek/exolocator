@@ -548,8 +548,8 @@ def main():
     cursor.close()
     db    .close()
 
-    # two version of the main loop:
-    # 1) over all species, and all genes in each speceis
+    # two versions of the main loop:
+    # 1) over all species, and all genes in each species
     if not special:
         parallelize (no_threads, gene2exon_all, all_species,  [local_db, ensembl_db_name])
     # 2) over orthologues for a given list of genes

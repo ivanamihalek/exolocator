@@ -540,6 +540,20 @@ def is_coding (cursor, gene_id, db_name=None):
     return rows[0][0]>0
     
 #########################################
+def get_gene_biotype (cursor, gene_id, db_name=None):
+    
+    if (db_name):
+        if not switch_to_db(cursor, db_name):
+            return False
+
+    qry = "select biotype from gene where gene_id = %d " % int(gene_id)
+    rows = search_db (cursor, qry)
+    if ( not rows):
+        return ""
+
+    return rows[0][0]
+    
+#########################################
 def get_biotype (cursor, exon_id, db_name=None):
     
     if (db_name):
@@ -549,7 +563,7 @@ def get_biotype (cursor, exon_id, db_name=None):
     qry = "select biotype from gene where gene_id = %d " % int(exon_id)
     rows = search_db (cursor, qry)
     if ( not rows):
-        return False
+        return ""
 
     return rows[0][0]
     
@@ -1160,8 +1174,7 @@ def exon2stable (cursor, exon_id=None, db_name=None):
 ########
 def stable2exon (cursor, stable_id, db_name=None):
 
-
-    if  (db_name):
+   if  (db_name):
         qry  = "use %s " % db_name
         rows = search_db (cursor, qry)
         if (rows):
@@ -1175,9 +1188,8 @@ def stable2exon (cursor, stable_id, db_name=None):
     if (not rows):
         rows = search_db (cursor, qry, verbose = True)
         return ""
-
     return rows[0][0]
-    
+
 
 ########
 def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None):

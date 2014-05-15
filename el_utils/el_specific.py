@@ -317,11 +317,21 @@ def get_reliable_orthos(cursor, ensembl_db_name, gene_id):
     for  [ortho_gene_id, ortho_species] in known_orthologues:
         species_with_known_orthologues.append(ortho_species)
     all_orthologues = known_orthologues
+
     for  [ortho_gene_id, ortho_species] in unresolved_orthologues:
         if ortho_species in species_with_known_orthologues: continue
         all_orthologues.append( [ortho_gene_id, ortho_species] )
 
-    return all_orthologues
+    # for each ortho check that it is not a pseudogene
+    all_protein_coding_orthologues = []
+    for  [ortho_gene_id, ortho_species] in all_orthologues:
+        biotype = get_gene_biotype(cursor, ortho_gene_id, ortho_species);
+        if ( biotype == 'protein_coding'):
+            all_protein_coding_orthologues.append( [ortho_gene_id, ortho_species] )
+        else:
+            print ortho_gene_id, ortho_species, biotype
+
+    return all_protein_coding_orthologues
 
 
 
