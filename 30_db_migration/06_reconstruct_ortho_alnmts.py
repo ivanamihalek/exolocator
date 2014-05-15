@@ -855,6 +855,9 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
         # slice realign
         new_pep_slice = realign_slice (pep_slice, seq_to_fix, pep_seq_pieces)
+        if (seq_to_fix == 'european_hedgehog'):
+            output_fasta ("old_slice.afa", pep_slice.keys(), pep_slice);
+            output_fasta ("new_slice.afa", new_pep_slice.keys(), new_pep_slice);
 
         # strip gaps and output
         # boundary_cleanup(new_pep_slice, new_pep_slice.keys())
