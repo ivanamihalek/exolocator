@@ -1380,7 +1380,7 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
     # count  the number of exons in human - if there is a single coding exon in human, drop this investigation
     # (just leave the alignment as-is)
     for trivial_name in mulitple_orthos:
-        min_no_of_exons = 1000000;
+        min_no_exons = 1000000;
         max_no_exons    = -1;
         paralogues = filter (lambda seq_name: trivial_name in seq_name,  output_pep.keys())
         for para in paralogues:
