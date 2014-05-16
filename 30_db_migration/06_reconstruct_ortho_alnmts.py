@@ -1384,7 +1384,7 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
         max_no_exons    = -1;
         paralogues = filter (lambda seq_name: trivial_name in seq_name,  output_pep.keys())
         for para in paralogues:
-            number_of_exons = sequence_name_to_exon_names.length()
+            number_of_exons = len(sequence_name_to_exon_names[para])
             if max_no_exons < number_of_exons:
                 max_no_exons = number_of_exons
             if min_no_exons > number_of_exons:
