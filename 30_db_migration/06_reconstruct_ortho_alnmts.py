@@ -1302,9 +1302,8 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_nam
                 max_tanimoto = tanimoto[para]
         # sort paralogues by their tanimoto score
         sorted_para = sorted(paralogues, key=lambda para: -tanimoto[para])
-        ct = 0
-        tmp_names     = []
-        dropped_paras = []
+        remaining_names = []
+        dropped_paras   = []
         for para in sorted_para:
 
             if tanimoto[para] < 0.9*max_tanimoto:
@@ -1319,23 +1318,17 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_nam
                 del sequence_name_to_exon_names[para]
                 del human_exon_to_ortho_exon[para]
 
-            else:
-                ct += 1
-                tmp_name = "tmp"
-                if ct > 1: tmp_name += "_"+str(ct)
-                output_pep[tmp_name] = output_pep.pop(para)
-                sequence_name_to_exon_names[tmp_name] = sequence_name_to_exon_names.pop(para)
-                human_exon_to_ortho_exon[tmp_name] = human_exon_to_ortho_exon.pop(para)
-                tmp_names.append(tmp_name)
+            else: #we'll renumber everybody else (? why am I doing this?)
+                remaining_names.append(para)
 
         ct = 0
-        for tmp_name in tmp_names:
+        for name in remaining_names:
             ct += 1
             new_name = trivial_name
             if ct > 1: new_name += "_"+str(ct)
-            output_pep    [new_name] = output_pep.pop(tmp_name)
-            sequence_name_to_exon_names[new_name] = sequence_name_to_exon_names.pop(tmp_name)
-            human_exon_to_ortho_exon[new_name] = human_exon_to_ortho_exon.pop(tmp_name)
+            output_pep    [new_name] = output_pep.pop(name)
+            sequence_name_to_exon_names[new_name] = sequence_name_to_exon_names.pop(name)
+            human_exon_to_ortho_exon[new_name] = human_exon_to_ortho_exon.pop(name)
             
         if dropped_paras:
             notes += "for {0}: ".format(trivial_name)
@@ -1401,11 +1394,11 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
         ct = 0
         tmp_names     = []
         dropped_paras = []
-        for para in sorted_para:
-            # find number of exons
-            # if there are no sequences without exons, continue
-            # if all seqs are without exons, continue
-            if 0: ###:  # if there is a sequence with >2 exons, and a 90% identical sequence with no exons, drop the one without exons
+        for single in single_exon:
+            # is there a sequence with >2 exons, and a 90% identical sequence with no exons?
+            for para in [p for p in paralogues if not p in single]: # one would think there is a more straightforward way to write this ...
+
+            if 0: ###:  
                 # drop
                 [exon_id, exon_known] = sequence_name_to_exon_names[para][0].split ("_")[-3:-1] # the last number is the start in the gene
                 species   = "_".join (sequence_name_to_exon_names[para][0].split ("_")[:-3])   
