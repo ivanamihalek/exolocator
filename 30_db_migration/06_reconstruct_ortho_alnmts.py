@@ -1396,7 +1396,7 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
         dropped_paras = []
         for single in single_exon:
             # is there a sequence with >2 exons, and a 90% identical sequence with no exons?
-            for para in [p for p in paralogues if not p in single]: # one would think there is a more straightforward way to write this ...
+            #for para in [p for p in paralogues if not p in single]: # one would think there is a more straightforward way to write this ...
 
             if 0: ###:  
                 # drop
