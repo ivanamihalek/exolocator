@@ -1390,37 +1390,30 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
         if min_no_exons > 1 or max_no_exons<2: continue
         print trivial_name, min_no_exons, max_no_exons, "single exon:", single_exon
 
-    if 0:
         ct = 0
-        tmp_names     = []
-        dropped_paras = []
+        tmp_names      = []
+        dropped_stable = []
         for single in single_exon:
             # is there a sequence with >2 exons, and a 90% identical sequence with no exons?
-            #for para in [p for p in paralogues if not p in single]: # one would think there is a more straightforward way to write this ...
-
-            if 0: ###:  
-                # drop
-                [exon_id, exon_known] = sequence_name_to_exon_names[para][0].split ("_")[-3:-1] # the last number is the start in the gene
-                species   = "_".join (sequence_name_to_exon_names[para][0].split ("_")[:-3])   
-                gene_id   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
-                stable_id = gene2stable(cursor, gene_id, ensembl_db_name[species])
-                dropped_paras.append(stable_id)
-                # 
-                del output_pep[para]
-                del sequence_name_to_exon_names[para]
-                del human_exon_to_ortho_exon[para]
-
-            else:
-                ct += 1
-                tmp_name = "tmp"
-                if ct > 1: tmp_name += "_"+str(ct)
-                output_pep[tmp_name] = output_pep.pop(para)
-                sequence_name_to_exon_names[tmp_name] = sequence_name_to_exon_names.pop(para)
-                human_exon_to_ortho_exon[tmp_name] = human_exon_to_ortho_exon.pop(para)
-                tmp_names.append(tmp_name)
+            for para in [p for p in paralogues if not p in single]: # one would think there is a more straightforward way to write this ...
+                tanimoto = pairwise_tanimoto (output_pep[single], output_pep[para], use_heuristics=False)
+                if tanimoto>0.9: ###:  
+                    # drop
+                    [exon_id, exon_known] = sequence_name_to_exon_names[single][0].split ("_")[-3:-1] # the last number is the start in the gene
+                    species   =   "_".join (sequence_name_to_exon_names[single][0].split ("_")[:-3])   
+                    gene_id   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
+                    stable_id = gene2stable(cursor, gene_id, ensembl_db_name[species])
+                    dropped_stable.append(stable_id)
+                    dropped.append(single)
+                    # 
+                    del output_pep[single]
+                    del sequence_name_to_exon_names[single]
+                    del human_exon_to_ortho_exon[single]
+                    #
+                    print 'dropped single-exon', single, ' -- tanimoto', tanimoto, 'with', para
 
         ct = 0
-        for tmp_name in tmp_names:
+        for para in [p for p in paralogues if not p in dropped]
             ct += 1
             new_name = trivial_name
             if ct > 1: new_name += "_"+str(ct)
@@ -1428,10 +1421,10 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
             sequence_name_to_exon_names[new_name] = sequence_name_to_exon_names.pop(tmp_name)
             human_exon_to_ortho_exon[new_name] = human_exon_to_ortho_exon.pop(tmp_name)
             
-        if dropped_paras:
+        if dropped_stable:
             notes += "for {0}: ".format(trivial_name)
             first = True
-            for stable_id in dropped_paras:
+            for stable_id in dropped_stable:
                 # find stable id
                 if not first:
                     notes += ";"
