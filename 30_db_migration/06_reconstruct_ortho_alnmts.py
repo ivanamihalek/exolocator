@@ -1413,7 +1413,7 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
                     print 'dropped single-exon', single, ' -- tanimoto', tanimoto, 'with', para
 
         ct = 0
-        for para in [p for p in paralogues if not p in dropped]
+        for para in [p for p in paralogues if not p in dropped]:
             ct += 1
             new_name = trivial_name
             if ct > 1: new_name += "_"+str(ct)
