@@ -1393,6 +1393,7 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
         ct = 0
         tmp_names      = []
         dropped_stable = []
+        dropped        = []
         for single in single_exon:
             # is there a sequence with >2 exons, and a 90% identical sequence with no exons?
             for para in [p for p in paralogues if not p in single]: # one would think there is a more straightforward way to write this ...
