@@ -1399,7 +1399,7 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
             # find number of exons
             # if there are no sequences without exons, continue
             # if all seqs are without exons, continue
-            if ###:  # if there is a sequence with >2 exons, and a 90% identical sequence with no exons, drop the one without exons
+            if 0: ###:  # if there is a sequence with >2 exons, and a 90% identical sequence with no exons, drop the one without exons
                 # drop
                 [exon_id, exon_known] = sequence_name_to_exon_names[para][0].split ("_")[-3:-1] # the last number is the start in the gene
                 species   = "_".join (sequence_name_to_exon_names[para][0].split ("_")[:-3])   
