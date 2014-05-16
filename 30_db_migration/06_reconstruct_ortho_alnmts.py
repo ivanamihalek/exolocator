@@ -1383,14 +1383,20 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
         min_no_exons = 1000000;
         max_no_exons    = -1;
         paralogues = filter (lambda seq_name: trivial_name in seq_name,  output_pep.keys())
+        single_exon = []
         for para in paralogues:
             number_of_exons = len(sequence_name_to_exon_names[para])
             if max_no_exons < number_of_exons:
                 max_no_exons = number_of_exons
             if min_no_exons > number_of_exons:
                 min_no_exons = number_of_exons
-                
-        print trivial_name, min_no_exons, max_no_exons
+            if number_of_exons== 1:
+                single_exon.append(para)
+        # we suspect a pseudogene only when it consists of a single exon
+        # also there has to be a case with more than 1 exon
+        if min_no_exons > 1 or max_no_exons<2: continue
+        print trivial_name, min_no_exons, max_no_exons, "single exon:", single_exon
+
     if 0:
         ct = 0
         tmp_names     = []
