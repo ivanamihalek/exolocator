@@ -1348,8 +1348,102 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_nam
                 first = False
             notes += "\n"
     if notes:
-        header  = "% The following sequences, labeled in Ensembl as one2many orthologues,  were dropped\n"
-        header += "% because they were deemed problematic: too short, or too different compared to human sequence\n"
+        header  = "% The following mammalian sequences, labeled in Ensembl as one2many orthologues,  were dropped\n"
+        header += "% because they were deemed problematic: too short, or too different compared to human sequence:\n"
+        notes  = "\n" + header + notes
+    return notes
+
+#########################################
+def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_exon_names, human_exon_to_ortho_exon):
+
+    print "removing pseudogenes"
+
+    # ensemble has the annotation for pseudogenes provided, but some still seem to slip through the cracks
+    # in sheep for example ENSOARG00000016758 (no exons; annotated as protein_coding, not as pseudogene)
+    # vs 5 exons in ENSOARG00000011986 and 3 in ENSOARG00000005453
+    # human orthologue (rpl10a) also has 5 protein coding exons
+
+    notes = ""
+    mulitple_orthos = []
+
+    if (isinstance(output_pep,str)): return notes
+
+    # do we have any multiple orthos at all?
+    for seq_name in output_pep.keys():
+        name_pieces = seq_name.split("_")
+        if not isinteger(name_pieces[-1]): continue
+        trivial_name = "_".join(name_pieces[:-1])
+        if trivial_name not in mulitple_orthos:  mulitple_orthos.append(trivial_name)
+
+    if not mulitple_orthos: return notes
+
+    # count  the number of exons in human - if there is a single coding exon in human, drop this investigation
+    # (just leave the alignment as-is)
+    for trivial_name in mulitple_orthos:
+        min_no_of_exons = 1000000;
+        max_no_exons    = -1;
+        paralogues = filter (lambda seq_name: trivial_name in seq_name,  output_pep.keys())
+        for para in paralogues:
+            number_of_exons = sequence_name_to_exon_names.length()
+            if max_no_exons < number_of_exons:
+                max_no_exons = number_of_exons
+            if min_no_exons > number_of_exons:
+                min_no_exons = number_of_exons
+                
+        print trivial_name, min_no_exons, max_no_exons
+    if 0:
+        ct = 0
+        tmp_names     = []
+        dropped_paras = []
+        for para in sorted_para:
+            # find number of exons
+            # if there are no sequences without exons, continue
+            # if all seqs are without exons, continue
+            if ###:  # if there is a sequence with >2 exons, and a 90% identical sequence with no exons, drop the one without exons
+                # drop
+                [exon_id, exon_known] = sequence_name_to_exon_names[para][0].split ("_")[-3:-1] # the last number is the start in the gene
+                species   = "_".join (sequence_name_to_exon_names[para][0].split ("_")[:-3])   
+                gene_id   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
+                stable_id = gene2stable(cursor, gene_id, ensembl_db_name[species])
+                dropped_paras.append(stable_id)
+                # 
+                del output_pep[para]
+                del sequence_name_to_exon_names[para]
+                del human_exon_to_ortho_exon[para]
+
+            else:
+                ct += 1
+                tmp_name = "tmp"
+                if ct > 1: tmp_name += "_"+str(ct)
+                output_pep[tmp_name] = output_pep.pop(para)
+                sequence_name_to_exon_names[tmp_name] = sequence_name_to_exon_names.pop(para)
+                human_exon_to_ortho_exon[tmp_name] = human_exon_to_ortho_exon.pop(para)
+                tmp_names.append(tmp_name)
+
+        ct = 0
+        for tmp_name in tmp_names:
+            ct += 1
+            new_name = trivial_name
+            if ct > 1: new_name += "_"+str(ct)
+            output_pep    [new_name] = output_pep.pop(tmp_name)
+            sequence_name_to_exon_names[new_name] = sequence_name_to_exon_names.pop(tmp_name)
+            human_exon_to_ortho_exon[new_name] = human_exon_to_ortho_exon.pop(tmp_name)
+            
+        if dropped_paras:
+            notes += "for {0}: ".format(trivial_name)
+            first = True
+            for stable_id in dropped_paras:
+                # find stable id
+                if not first:
+                    notes += ";"
+                notes += stable_id
+                first = False
+            notes += "\n"
+
+    if notes:
+        header  = "% The following sequences, labeled in Ensembl as one2many orthologues (and protein_coding),\n"
+        header += "% were dropped because they have no introns while a closely similar version with introns exists,"
+        header += "% indicating these might be pseudogenes:\n"
         notes  = "\n" + header + notes
     return notes
 
@@ -1615,11 +1709,14 @@ def make_alignments ( gene_list, db_info):
         # check if any two pieces of seqeunce ended up on different scaffolds/contigs
         fusion_notes = fuse_seqs_split_on_scaffolds(cursor, acg, ensembl_db_name,  output_pep, sequence_name_to_exon_names, 
                                      ortho_exon_to_human_exon, canonical_human_exons, human_exon_to_ortho_exon)
-
         assorted_notes += fusion_notes + "\n"
-        # get rid of dubious paralogues (multiple seqs from the same species)
+        # get rid of pseudogenes
+        para_notes = remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_exon_names, human_exon_to_ortho_exon)
+        assorted_notes += para_notes + "\n"
+        # get rid of other dubious paralogues (multiple seqs from the same species)
         para_notes = remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_name_to_exon_names, human_exon_to_ortho_exon)
         assorted_notes += para_notes + "\n"
+
         # we may have chosen to delete some sequences
         sorted_seq_names = sort_names (sorted_trivial_names['human'], output_pep)
 
