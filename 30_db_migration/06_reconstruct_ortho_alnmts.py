@@ -128,87 +128,7 @@ def find_overlapping_maps (ortho_exon_to_human_exon, exon_seq_names, alnmt_pep):
             ortho_exons = list(set(join_group) ) # this should take care of duplicates
             overlapping_maps.append([human_exons, ortho_exons])
 
-
-
     return overlapping_maps
-
-#########################################
-def remove_ghosts (output_pep, sequence_name_to_exon_names):
-
-    delimiter      = re.compile("Z")
-
-    #find positions that are all-gaps-but-one
-    for name, seq in output_pep.iteritems():
-        if name=='human': continue
-
-        # find Z positions
-        start    = 0
-        prev_end = 0
-        exon_ct  = 0
-        removed_exons = []
-        for match in delimiter.finditer(seq):
-            start    = prev_end 
-            end      = match.start()
-            prev_end = match.end()
-
-            pepseq = seq[start:end].replace('-','')
-            if not len(pepseq): continue
-
-            exon_ct +=1
-
-            # are perhaps all other seqs gap in that range?
-            is_ghost = True
-            for pos in range(start,end):
-                for name2, seq2 in output_pep.iteritems():
-                    if name2==name: continue
-                    if not seq2[pos] == '-':
-                        is_ghost = False
-                        break
-                        
-            # if yes replace with gaps 
-            if not is_ghost: continue
-
-            # check the Z itself
-            if start:
-                remove_start = True
-                for name2, seq2 in output_pep.iteritems():
-                    if name2==name: continue
-                    if not seq2[start-1] == '-':
-                        remove_start = False
-                        break
-                if remove_start: start -= 1
-
-            if end < len(seq):
-                remove_end = True
-                for name2, seq2 in output_pep.iteritems():
-                    if name2==name: continue
-                    if not seq2[end] == '-':
-                        remove_end = False
-                        break
-                if remove_end: end += 1
-
-            # remove
-            temp = output_pep[name]
-            output_pep[name] = temp[:start]+'-'*(end-start)+temp[end:]
-            # which exon is it
-            removed_exons.append(exon_ct)
-            # remove the name from the list
-            new_names = []
-            for exon_ct in range(len(sequence_name_to_exon_names[name])):
-                if not exon_ct in removed_exons:
-                    new_names.append(sequence_name_to_exon_names[name][exon_ct])
-            sequence_name_to_exon_names[name] = new_names
-
-    # strip gaps
-    output_pep = strip_gaps(output_pep)
-    if not output_pep:  
-        c=inspect.currentframe()
-        print " in %s:%d" % (c.f_code.co_filename, c.f_lineno)
-        return [None, None]
-            
-
-    return [output_pep, sequence_name_to_exon_names]
-
 
 
 #########################################
@@ -224,6 +144,7 @@ def check_notes_directory (cfg):
 
     return directory
 
+
 #########################################
 def find_maps_to (cursor, ensembl_db_name,  human_exon_to_ortho_exon, concat_seq_name, exon_seq_name):
     
@@ -231,7 +152,7 @@ def find_maps_to (cursor, ensembl_db_name,  human_exon_to_ortho_exon, concat_seq
     stable_ids     = []
 
 
-    switch_to_db ( cursor, ensembl_db_name['homo_sapiens'])
+    switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
 
     for human_exon in human_exon_to_ortho_exon[concat_seq_name].keys():
         if not exon_seq_name in human_exon_to_ortho_exon[concat_seq_name][human_exon]: continue
@@ -1396,7 +1317,8 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
         dropped        = []
         for single in single_exon:
             # is there a sequence with >2 exons, and a 90% identical sequence with no exons?
-            for para in [p for p in paralogues if not p in single]: # one would think there is a more straightforward way to write this ...
+            for para in paralogues: 
+                if para in single_exon: continue
                 tanimoto = pairwise_tanimoto (output_pep[single], output_pep[para], use_heuristics=False)
                 if tanimoto>0.9: ###:  
                     # drop
