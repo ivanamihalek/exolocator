@@ -1257,7 +1257,7 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_nam
             for stable_id in dropped_paras:
                 # find stable id
                 if not first:
-                    notes += ";"
+                    notes += "; "
                 notes += stable_id
                 first = False
             notes += "\n"
