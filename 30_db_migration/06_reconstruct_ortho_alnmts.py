@@ -1252,7 +1252,7 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_nam
             human_exon_to_ortho_exon[new_name] = human_exon_to_ortho_exon.pop(name)
             
         if dropped_paras:
-            notes += "for {0}: ".format(trivial_name)
+            notes += "from {0}: ".format(trivial_name)
             first = True
             for stable_id in dropped_paras:
                 # find stable id
@@ -1300,7 +1300,6 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
         single_exon = []
         for para in paralogues:
             number_of_exons = len(sequence_name_to_exon_names[para])
-            print para, "number of exons", number_of_exons
             if max_no_exons < number_of_exons:
                 max_no_exons = number_of_exons
             if min_no_exons > number_of_exons:
@@ -1350,7 +1349,7 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
             human_exon_to_ortho_exon[new_name]    = human_exon_to_ortho_exon.pop(para)
             
         if dropped_stable:
-            notes += "for {0}: ".format(trivial_name)
+            notes += "from {0}: ".format(trivial_name)
             first = True
             for stable_id in dropped_stable:
                 # find stable id
