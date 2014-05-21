@@ -1326,8 +1326,8 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
                     species   =   "_".join (sequence_name_to_exon_names[single][0].split ("_")[:-3])   
                     gene_id   = exon_id2gene_id(cursor, ensembl_db_name[species], exon_id, exon_known)
                     stable_id = gene2stable(cursor, gene_id, ensembl_db_name[species])
-                    dropped_stable.append(stable_id)
                     dropped.append(single)
+                    dropped_stable.append(stable_id) # the same as the above, only using stable identifiers - for notes (below)
                     # 
                     del output_pep[single]
                     del sequence_name_to_exon_names[single]
@@ -1336,13 +1336,14 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
                     print 'dropped single-exon', single, ' -- tanimoto', tanimoto, 'with', para
 
         ct = 0
-        for para in [p for p in paralogues if not p in dropped]:
+        for para in paralogues:
+            if para in dropped: continue
             ct += 1
             new_name = trivial_name
-            if ct > 1: new_name += "_"+str(ct)
-            output_pep    [new_name] = output_pep.pop(tmp_name)
-            sequence_name_to_exon_names[new_name] = sequence_name_to_exon_names.pop(tmp_name)
-            human_exon_to_ortho_exon[new_name] = human_exon_to_ortho_exon.pop(tmp_name)
+            if ct > 1: new_name   += "_"+str(ct)
+            output_pep [new_name]  = output_pep.pop(para)
+            sequence_name_to_exon_names[new_name] = sequence_name_to_exon_names.pop(para)
+            human_exon_to_ortho_exon[new_name]    = human_exon_to_ortho_exon.pop(para)
             
         if dropped_stable:
             notes += "for {0}: ".format(trivial_name)
