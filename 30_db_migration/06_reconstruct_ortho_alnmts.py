@@ -701,6 +701,17 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     # for each unresolved "map"  cut out the slice and re-align
     for  [human_exons, ortho_exons] in overlapping_maps:
 
+        if (seq_to_fix == 'guinea_pig'):
+            print " overlap being resolved: "
+            print "\t", [he.exon_id for he in human_exons]
+            print "\t", ortho_exons
+            [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
+            print "\t", template_name
+            print "\t",  template_seq
+            for oe in ortho_exons:
+                print "\t", oe
+                print "\t", alnmt_pep[human_exon][oe]
+
         exon_numbers = sorted(map(lambda ex: seqid[ex], human_exons))
         smallest_id  = exon_numbers[0]
         largest_id   = exon_numbers[-1]
@@ -742,7 +753,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
             end   = match.start()
             exon_aln_start_pep.append(start)
             exon_aln_end_pep.append(end)
-            prev_end   =  match.end()
+            prev_end   =  match.end()       
+
 
         start = prev_end + 1
         end   = len(current_pep['human'])
