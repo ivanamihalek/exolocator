@@ -1309,7 +1309,6 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
         # we suspect a pseudogene only when it consists of a single exon
         # also there has to be a case with more than 1 exon
         if min_no_exons > 1 or max_no_exons<2: continue
-        print trivial_name, min_no_exons, max_no_exons, "single exon:", single_exon
 
         ct = 0
         tmp_names      = []
@@ -1333,11 +1332,8 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
                     del sequence_name_to_exon_names[single]
                     del human_exon_to_ortho_exon[single]
                     #
-                    print 'dropped single-exon', single, ' -- tanimoto', tanimoto, 'with', para
-                    #
                     break
                     
-
         ct = 0
         for para in paralogues:
             if para in dropped: continue
@@ -1354,7 +1350,7 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
             for stable_id in dropped_stable:
                 # find stable id
                 if not first:
-                    notes += ";"
+                    notes += "; "
                 notes += stable_id
                 first = False
             notes += "\n"
