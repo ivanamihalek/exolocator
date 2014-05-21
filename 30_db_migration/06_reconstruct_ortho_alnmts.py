@@ -824,13 +824,15 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
 
     pep_exons = new_alignment_pep[seq_to_fix].split ('Z') 
     exon_ct   = 0
+    tot_ct    = 0
     empty_exons = []
     for pe in pep_exons:
         pe = pe.replace('-','')
+        tot_ct += 1
         if pe:   
             exon_ct += 1
         else:
-            empty_exons.append(pe)
+            empty_exons.append(tot_ct)
 
     if not exon_ct == len(list_of_ok_exon_names):
         print "///////////////////////////////////////////////////"
@@ -841,7 +843,10 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         print "ok exon names: ", list_of_ok_exon_names
         print "non-zero petide sequences (for exons)"
         print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
-        print "empty exons: ", empty_exons
+        print "empty exons:",
+        for i in empty_exons:
+            print list_of_ok_exon_names[i],
+        print
         print "==================================================="
         exit(1)
         return [output_pep, sequence_name_to_exon_names] # theses are empty
