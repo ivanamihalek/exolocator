@@ -827,6 +827,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     tot_ct    = 0
     empty_exons = []
     for pe in pep_exons:
+        print 'tot_ct', tot_ct
         pe = pe.replace('-','')
         if pe:   
             exon_ct += 1
