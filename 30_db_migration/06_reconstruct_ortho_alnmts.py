@@ -704,17 +704,6 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         smallest_id  = exon_numbers[0]
         largest_id   = exon_numbers[-1]
 
-        if (seq_to_fix == 'guinea_pig'):
-            print " overlap being resolved: "
-            print "\t", [he.exon_id for he in human_exons]
-            print "\t", ortho_exons
-            [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
-            print "\t", template_name
-            print "\t",  template_seq
-            for oe in ortho_exons:
-                print "\t", oe
-                print "\t", alnmt_pep[human_exon][oe]
- 
         # check sequence overlap, if several map to the same  human exon
         for human_exon in human_exons:
             [template_name, template_seq]  = find_human_template(alnmt_pep[human_exon])
@@ -1269,8 +1258,6 @@ def remove_dubious_paralogues (cursor, ensembl_db_name, output_pep, sequence_nam
 
 #########################################
 def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_exon_names, human_exon_to_ortho_exon):
-
-    print "removing pseudogenes"
 
     # ensemble has the annotation for pseudogenes provided, but some still seem to slip through the cracks
     # in sheep for example ENSOARG00000016758 (no exons; annotated as protein_coding, not as pseudogene)
