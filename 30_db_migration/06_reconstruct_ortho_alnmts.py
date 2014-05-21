@@ -1320,6 +1320,7 @@ def remove_pseudogenes (cursor, ensembl_db_name, output_pep, sequence_name_to_ex
             # is there a sequence with >2 exons, and a 90% identical sequence with no exons?
             for para in paralogues: 
                 if para in single_exon: continue
+                print "single:", single, "para:", para
                 tanimoto = pairwise_tanimoto (output_pep[single], output_pep[para], use_heuristics=False)
                 if tanimoto>0.9: ###:  
                     # drop
