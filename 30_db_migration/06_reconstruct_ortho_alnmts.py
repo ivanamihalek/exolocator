@@ -828,11 +828,11 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     empty_exons = []
     for pe in pep_exons:
         pe = pe.replace('-','')
-        tot_ct += 1
         if pe:   
             exon_ct += 1
         else:
             empty_exons.append(tot_ct)
+        tot_ct += 1
 
     if not exon_ct == len(list_of_ok_exon_names):
         print "///////////////////////////////////////////////////"
