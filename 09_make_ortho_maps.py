@@ -16,7 +16,7 @@ from   el_utils.almt_cmd_generator import  AlignmentCommandGenerator
 from   el_utils.config_reader      import  ConfigurationReader
 
 #########################################
-verbose = False
+verbose = True
     
 #########################################
 def store (cursor, maps, ensembl_db_name):
@@ -125,7 +125,7 @@ def maps_for_gene_list(gene_list, db_info):
             # multiple seqence alignements on exon-by-exon basis are produced in 17_ortho_exon_map_to_msa.py
             # reconstruction of full length multiple seqence alignments is  done only in 
             # 30_db_migration/06_reconstruct_ortho_alnmts.py
-            maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons, verbose=False)   
+            maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons, verbose)   
             if not maps:
                 missing_seq_info += 1
                 print "\t", ortho_species, "no maps"
