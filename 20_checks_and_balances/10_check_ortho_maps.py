@@ -62,7 +62,7 @@ def main():
     incomplete = 0
     genes_checked = 0
     #for gene_id in gene_list: 
-    for gene_id in [732535]: 
+    for gene_id in [743609]: 
     #for sampling_count in range(1000):
  
         #gene_id = choice(gene_list)
