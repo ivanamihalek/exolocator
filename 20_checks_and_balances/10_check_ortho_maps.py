@@ -95,7 +95,7 @@ def main():
             if verbose:
                 for map in maps:
                     species            = map.species_2
-                    #if not species == 'procavia_capensis': continue
+                    if not species == 'cavia_porcellus': continue
                     exon               = map2exon(cursor, ensembl_db_name, map)
                     unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
                     if ( map.similarity):
