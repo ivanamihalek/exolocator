@@ -657,6 +657,10 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
             if ( pairwise_tanimoto (template_pieces[i], new_pep_seq_pieces[i]) < min_similarity ):
                 seq_names_to_remove.append(pep_seq_names[i])
         
+        print
+        print " 8888 to remove "
+        print seq_names_to_remove
+                
         new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, sequence_to_exons)
 
 
@@ -664,8 +668,6 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
         new_pep_seq_pieces     = pep_seq_pieces
         new_sequence_to_exons = sequence_to_exons
 
-    # make sure 
-             
     return new_sequence_to_exons
 
 ########################################
