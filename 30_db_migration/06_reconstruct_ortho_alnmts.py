@@ -623,6 +623,7 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
         sequences['other'] = 'Z'.join( [pepseq.replace('-','') for pepseq in  pep_seq_pieces] )    
         output_fasta (fasta_fnm, sequences.keys(), sequences)
 
+        print pep_seq_names
         print "'other'", sequences['other'] 
 
         # align
