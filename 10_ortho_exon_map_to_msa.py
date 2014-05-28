@@ -21,7 +21,7 @@ from time      import  time
 from Bio       import  SeqIO
 from bitstring import  Bits
 
-verbose = False
+verbose = True
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):
@@ -75,7 +75,7 @@ def multiple_exon_alnmt(gene_list, db_info):
         ##################################################################
         for human_exon in human_exons:
             
-            #if not human_exon.exon_id == 8339254: continue
+            if not human_exon.exon_id == 8440600: continue
 
             tot += 1
 
@@ -145,7 +145,9 @@ def multiple_exon_alnmt(gene_list, db_info):
             mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
             ret      = commands.getoutput(mafftcmd)
 
-
+            if (verbose): print 'almt to', afa_fnm
+            exit(1)
+            
             # read in the alignment
             inf = erropen(afa_fnm, "r")
             human_seq_seen = False
