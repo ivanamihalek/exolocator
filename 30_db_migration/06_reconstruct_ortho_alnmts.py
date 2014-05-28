@@ -623,10 +623,16 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
         sequences['other'] = 'Z'.join( [pepseq.replace('-','') for pepseq in  pep_seq_pieces] )    
         output_fasta (fasta_fnm, sequences.keys(), sequences)
 
+        print "'other'", sequences['other'] 
+
         # align
         afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], randstr)
         mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
         ret      = commands.getoutput(mafftcmd)
+
+        print
+        print ret
+        print
 
         new_pep_seq_pieces = []
         inf = erropen(afa_fnm, "r")
@@ -658,7 +664,7 @@ def check_seq_overlap (cursor, ensembl_db_name, cfg, acg, template_seq, pep_seq_
                 seq_names_to_remove.append(pep_seq_names[i])
         
         print
-        print " 8888 to remove "
+        print " 8888 to remove:",
         print seq_names_to_remove
                 
         new_sequence_to_exons = filter (lambda exon: exon not in seq_names_to_remove, sequence_to_exons)
