@@ -141,7 +141,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 no_orthologues += 1
                 continue
 
-            # are there multiple candidates from the same species?
+            # are there multiple candidates from the same species? << HERE at least pull this into a function of its own
             for species_2, exons in exons_per_species.iteritems():
                 if len(exons) < 2: continue
                 # if there are multiple candidates from the same species - are they from the same gene?
@@ -153,16 +153,17 @@ def multiple_exon_alnmt(gene_list, db_info):
                     exons_per_gene[gene_id_2].append ([exon_id_2, exon_known_code]);
 
                 # if yes - do they overlap in the gene? ... I so need to do this whole crap differently
+                # the whole idea was no to be doing this here, but the alignment progs (mafft) can screw up here
+                # big time 
                 switch_to_db(cursor, ensembl_db_name[species_2])
                 for gene_id_2, exons_from_gene in exons_per_gene.iteritems():
                     if ( len(exons_from_gene) < 2): continue
                     # how robust should I be here? how many fragments should I worry about here
                     # how about some combinatorial pearls, like 3 exons non overlapping, but 4 overlapping 1 or more ...?
+                    # and then exons could be overlapping when the translation regions are not ...
                     # for now, I'll only offer this patch for the cases when the pieces are non-overlapping
-                    pepseq_range = {}
-                    for e in exons_from_gene:
-                        pepseq_range[e] = get_pepseq_transl_range (cursor, exon_id, exon_known)
-                    # sort by translation start
+                    
+                    # sort by translation start <<< HERE need to recalculate the start of translation in the gene
                     # is transl_Start < transl_end of the previous exon
                     # yes => overlp
                     
