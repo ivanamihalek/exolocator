@@ -91,13 +91,12 @@ def multiple_exon_alnmt(gene_list, db_info):
                 no_maps += 1
                 continue
 
-            # output to fasta:
+  
+            # human sequence to fasta:
             seqname   = "{0}:{1}:{2}".format('homo_sapiens', human_exon.exon_id, human_exon.is_known)
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, 
              left_flank, right_flank, dna_seq] = get_exon_seqs (cursor, human_exon.exon_id, human_exon.is_known)
-            
-            # human sequence
             if (not pepseq):
                 if verbose and  human_exon.is_coding and  human_exon.covering_exon <0: # this should be a master exon
                     print "no pep seq for",  human_exon.exon_id, "coding ", human_exon.is_coding,
@@ -106,10 +105,11 @@ def multiple_exon_alnmt(gene_list, db_info):
                 no_pepseq += 1
                 continue
 
+            # collect seq from all maps, and output them in fasta format
             hassw = False
-
             headers   = []
             sequences = {}
+            exons_per_species = {}
 
             for map in maps:
 
@@ -130,13 +130,46 @@ def multiple_exon_alnmt(gene_list, db_info):
                 seqname = "{0}:{1}:{2}".format(map.species_2, map.exon_id_2, exon_known_code)
                 headers.append(seqname)
                 sequences[seqname] = pepseq
-
- 
+                # for split exon concatenation (see below)
+                if not species_2 in exons_per_species.key():
+                    exons_per_species[species_2] = []
+                exons_per_species[species_2].append ([exon_id_2, exon_known_code]);
+                
+                    
             if (len(headers) <=1 ):
                 if verbose: print "single species in the alignment"
                 no_orthologues += 1
                 continue
-            
+
+            # are there multiple candidates from the same species?
+            for species_2, exons in exons_per_species.iteritems():
+                if len(exons) < 2: continue
+                # if there are multiple candidates from the same species - are they from the same gene?
+                exons_per_gene = {}
+                for [exon_id_2, exon_known_code] in exons:
+                    gene_id_2 = exon_id2gene_id (cursor, ensembl_db_name[species_2], exon_id_2, exon_known_code)
+                    if not species_2 in exons_per_species.key():
+                        exons_per_gene[gene_id_2] = []
+                    exons_per_gene[gene_id_2].append ([exon_id_2, exon_known_code]);
+
+                # if yes - do they overlap in the gene? ... I so need to do this whole crap differently
+                switch_to_db(cursor, ensembl_db_name[species_2])
+                for gene_id_2, exons_from_gene in exons_per_gene.iteritems():
+                    if ( len(exons_from_gene) < 2): continue
+                    # how robust should I be here? how many fragments should I worry about here
+                    # how about some combinatorial pearls, like 3 exons non overlapping, but 4 overlapping 1 or more ...?
+                    # for now, I'll only offer this patch for the cases when the pieces are non-overlapping
+                    pepseq_range = {}
+                    for e in exons_from_gene:
+                        pepseq_range[e] = get_pepseq_transl_range (cursor, exon_id, exon_known)
+                    # sort by translation start
+                    # is transl_Start < transl_end of the previous exon
+                    # yes => overlp
+                    
+                    # if they overlap, do nothing - ther are already both in the fasta set
+                    # if they do not not overlap, concatenate them, and mark them as concatenated
+                    # also remove the original seqs from the alignment
+         
             fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], human_exon.exon_id)
             output_fasta (fasta_fnm, headers, sequences)
 
@@ -148,10 +181,12 @@ def multiple_exon_alnmt(gene_list, db_info):
             if (verbose): print 'almt to', afa_fnm
             exit(1)
             
-            # read in the alignment
+            # read in the alignment 
             inf = erropen(afa_fnm, "r")
             human_seq_seen = False
             for record in SeqIO.parse(inf, "fasta"):
+                # if this is one of the concatenated seqs, split them back to two
+
                 ### store the alignment as bitstring
                 # Generate the bitmap
                 bs         = Bits(bin='0b' + re.sub("[^0]","1", str(record.seq).replace('-','0')))

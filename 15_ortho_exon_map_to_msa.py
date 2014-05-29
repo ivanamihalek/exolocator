@@ -91,6 +91,9 @@ def multiple_exon_alnmt(gene_list, db_info):
                 no_maps += 1
                 continue
 
+            # if there are multiple candidates from the same species - are they from the same gene?
+            # if yes
+
             # output to fasta:
             seqname   = "{0}:{1}:{2}".format('homo_sapiens', human_exon.exon_id, human_exon.is_known)
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
