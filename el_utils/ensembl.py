@@ -66,6 +66,16 @@ def get_exons (cursor, gene_id, species, table):
 
     return []
 
+#########################################
+def get_pepseq_transl_range (cursor, exon_id, exon_known, db_name=None):
+    if db_name and not switch_to_db(cursor, db_name):
+        return []
+    qry  = "select pepseq_transl_start, pepseq_transl_end from exon_seq "
+    qry += "where exon_id = %d " % int(exon_id)
+    qry += "and is_known = %d " % int(exon_known)
+    if not rows:
+        return []
+    return rows[0]
 
 #########################################
 def get_canonical_exon_ids (cursor, canonical_transcript_id):
