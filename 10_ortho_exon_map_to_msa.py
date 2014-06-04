@@ -24,6 +24,56 @@ from bitstring import  Bits
 verbose = True
 
 #########################################
+def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
+
+    # are there multiple candidates from the same s pecies? 
+    for species, exon_labels in exons_per_species.iteritems():
+        if len(exon_labels) < 2: continue
+        # if there are multiple candidates from the same species - are they from the same gene?
+        exons_per_gene = {}
+        for [exon_id, exon_known_code] in exon_labels:
+            gene_id = exon_id2gene_id (cursor, ensembl_db_name[species], exon_id, exon_known_code)
+            if not species in exons_per_species.key():
+                exons_per_gene[gene_id] = []
+            exons_per_gene[gene_id].append ([exon_id, exon_known_code])
+
+        # if yes - do they overlap in the gene? ... I so need to do this whole crap differently
+        # the whole idea was no to be doing this here, but the alignment progs (mafft) can screw up here
+        # big time 
+        switch_to_db(cursor, ensembl_db_name[species])
+        for gene_id, exons_from_gene in exons_per_gene.iteritems():
+            if ( len(exons_from_gene) < 2): continue
+            # how robust should I be here? how many fragments should I worry about?
+            # how about some combinatorial pearls, like 3 exons non overlapping, but 4 overlapping 1 or more ...?
+            # and then exons could be overlapping when the translation regions are not ...
+            # for now, I'll only offer this patch for the cases when the pieces are non-overlapping
+            exons = []
+            for [exon_id, exon_known_code] in exons_from_gene:
+                exon = get_exon (cursor, exon_id, exon_known_code)
+                if not exon: continue
+                exons.append(exon)
+                
+            # sort by translation start 
+            exons.sort(key=lambda exon: exon.start_in_gene)
+            # is transl_Start < transl_end of the previous exon
+            overlap = False
+            exon_prev = exons[0]
+            for exon in exons[1:]:
+                print species, exon_prev.start_in_gene + exon_prev.translation_end, exon.start_in_gene +  exon.translation_start
+                if exon_prev.start_in_gene + exon_prev.translation_end > exon.start_in_gene +  exon.translation_start:
+                    # yes => overlap
+                    overlap = True
+                    break
+                exon_prev = exon
+            print "overlap ?", overlap
+            # if they overlap, do nothing - ther are already both in the fasta set
+            if overlap: continue
+            # if they do not not overlap, concatenate them, and mark them as concatenated
+            # also remove the original seqs from the alignment
+
+    exit(1)
+
+#########################################
 def multiple_exon_alnmt(gene_list, db_info):
 
 
@@ -140,37 +190,10 @@ def multiple_exon_alnmt(gene_list, db_info):
                 if verbose: print "single species in the alignment"
                 no_orthologues += 1
                 continue
+            
+            # concatenate exons from the same gene - the alignment program might go wrong otherwise
+            concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species)
 
-            # are there multiple candidates from the same species? << HERE at least pull this into a function of its own
-            for species_2, exons in exons_per_species.iteritems():
-                if len(exons) < 2: continue
-                # if there are multiple candidates from the same species - are they from the same gene?
-                exons_per_gene = {}
-                for [exon_id_2, exon_known_code] in exons:
-                    gene_id_2 = exon_id2gene_id (cursor, ensembl_db_name[species_2], exon_id_2, exon_known_code)
-                    if not species_2 in exons_per_species.key():
-                        exons_per_gene[gene_id_2] = []
-                    exons_per_gene[gene_id_2].append ([exon_id_2, exon_known_code]);
-
-                # if yes - do they overlap in the gene? ... I so need to do this whole crap differently
-                # the whole idea was no to be doing this here, but the alignment progs (mafft) can screw up here
-                # big time 
-                switch_to_db(cursor, ensembl_db_name[species_2])
-                for gene_id_2, exons_from_gene in exons_per_gene.iteritems():
-                    if ( len(exons_from_gene) < 2): continue
-                    # how robust should I be here? how many fragments should I worry about here
-                    # how about some combinatorial pearls, like 3 exons non overlapping, but 4 overlapping 1 or more ...?
-                    # and then exons could be overlapping when the translation regions are not ...
-                    # for now, I'll only offer this patch for the cases when the pieces are non-overlapping
-                    
-                    # sort by translation start <<< HERE need to recalculate the start of translation in the gene
-                    # is transl_Start < transl_end of the previous exon
-                    # yes => overlp
-                    
-                    # if they overlap, do nothing - ther are already both in the fasta set
-                    # if they do not not overlap, concatenate them, and mark them as concatenated
-                    # also remove the original seqs from the alignment
-         
             fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], human_exon.exon_id)
             output_fasta (fasta_fnm, headers, sequences)
 
