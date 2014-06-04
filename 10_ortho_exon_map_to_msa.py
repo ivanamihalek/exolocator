@@ -181,7 +181,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 headers.append(seqname)
                 sequences[seqname] = pepseq
                 # for split exon concatenation (see below)
-                if not map.species_2 in exons_per_species.key():
+                if not map.species_2 in exons_per_species.keys():
                     exons_per_species[map.species_2] = []
                 exons_per_species[map.species_2].append ([exon_id_2, exon_known_code]);
                 
