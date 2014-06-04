@@ -59,8 +59,8 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             overlap = False
             exon_prev = exons[0]
             for exon in exons[1:]:
-                print species, exon_prev.start_in_gene + exon_prev.translation_end, exon.start_in_gene +  exon.translation_start
-                if exon_prev.start_in_gene + exon_prev.translation_end > exon.start_in_gene +  exon.translation_start:
+                print species, exon_prev.start_in_gene + exon_prev.pepseq_translation_end, exon.start_in_gene +  exon.pepseq_translation_start
+                if exon_prev.pepseq_start_in_gene + exon_prev.pepseq_translation_end > exon.pepseq_start_in_gene +  exon.pepseq_translation_start:
                     # yes => overlap
                     overlap = True
                     break
