@@ -33,7 +33,7 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
         exons_per_gene = {}
         for [exon_id, exon_known_code] in exon_labels:
             gene_id = exon_id2gene_id (cursor, ensembl_db_name[species], exon_id, exon_known_code)
-            if not species in exons_per_species.key():
+            if not species in exons_per_species.keys():
                 exons_per_gene[gene_id] = []
             exons_per_gene[gene_id].append ([exon_id, exon_known_code])
 
