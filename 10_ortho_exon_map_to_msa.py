@@ -26,6 +26,7 @@ verbose = True
 #########################################
 def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
 
+    concatenated = {}
     # are there multiple candidates from the same s pecies? 
     for species, exon_labels in exons_per_species.iteritems():
         if len(exon_labels) < 2: continue
@@ -56,7 +57,6 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             # sort by translation start 
             exons.sort(key=lambda exon: exon.start_in_gene)
             # is transl_Start < transl_end of the previous exon
-            print
             overlap = False
             exon_prev = exons[0]
             for exon in exons[1:]:
@@ -68,18 +68,31 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
                     start_this = exon.start_in_gene
                 else:
                     start_this = exon.start_in_gene + exon.pepseq_transl_start 
-                print species, "prev end:", end_prev, "this start:", start_this
+                #print species, "prev end:", end_prev, "this start:", start_this
                 if end_prev > start_this:
                     # yes => overlap
                     overlap = True
                     break
                 exon_prev = exon
-            print "overlap ?", overlap
             # if they overlap, do nothing - ther are already both in the fasta set
             if overlap: continue
             # if they do not not overlap, concatenate them, and mark them as concatenated
-            # also remove the original seqs from the alignment
+            new_name = species + "_"  +  str (len(concatenated) )
+            concatenated[new_name] = []
+            concat_seq = ""
+            for [exon_id, exon_known_code] in exons_from_gene:
+                old_name = "{0}_{1}_{2}".format(species, exon_id, exon_known_code)
+                if not sequences.has_key(old_name):
+                    print "no key ", old_name, "in the original set (?) "
+                    exit(1)
 
+                concatenated[name].append(old_name)
+                concat_seq += sequences[old_name]
+                # also remove the original seqs from the alignment
+                del sequences[old_name]
+            sequences[new_name] = concat_seq
+
+            print "concatenated: ", new_name, concatenated[new_name]
     exit(1)
 
 #########################################
