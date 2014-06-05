@@ -86,7 +86,7 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
                     print "no key ", old_name, "in the original set (?) "
                     exit(1)
 
-                concatenated[name].append(old_name)
+                concatenated[new_name].append(old_name)
                 concat_seq += sequences[old_name]
                 # also remove the original seqs from the alignment
                 del sequences[old_name]
