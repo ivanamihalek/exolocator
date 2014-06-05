@@ -27,6 +27,7 @@ verbose = True
 def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
 
     concatenated = {}
+
     # are there multiple candidates from the same s pecies? 
     for species, exon_labels in exons_per_species.iteritems():
         if len(exon_labels) < 2: continue
@@ -77,7 +78,7 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             # if they overlap, do nothing - ther are already both in the fasta set
             if overlap: continue
             # if they do not not overlap, concatenate them, and mark them as concatenated
-            new_name = species + "_"  +  str (len(concatenated) )
+            new_name = species + "_concat_"  +"_"  +  str (len(concatenated) )
             concatenated[new_name] = []
             concat_seq = ""
             for [exon_id, exon_known_code] in exons_from_gene:
@@ -87,13 +88,15 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
                     exit(1)
 
                 concatenated[new_name].append(old_name)
+                if concat_seq: concat_seq += "Z"
                 concat_seq += sequences[old_name]
                 # also remove the original seqs from the alignment
                 del sequences[old_name]
             sequences[new_name] = concat_seq
 
             print "concatenated: ", new_name, concatenated[new_name]
-    exit(1)
+
+    return concatenated
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):
@@ -214,7 +217,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 continue
             
             # concatenate exons from the same gene - the alignment program might go wrong otherwise
-            concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species)
+            concatenated = concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species)
 
             fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], human_exon.exon_id)
             output_fasta (fasta_fnm, headers, sequences)
