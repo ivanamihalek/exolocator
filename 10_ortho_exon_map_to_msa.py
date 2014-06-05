@@ -52,10 +52,15 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
                 exon = get_exon (cursor, exon_id, exon_known_code)
                 if not exon: continue
                 exons.append(exon)
-                
+             if ( len(exons) < 2):
+                 print species, gene_id
+                 print "exons_from_gene", exons_from_gene
+                 print "retriveable exons:", exons
+               
             # sort by translation start 
             exons.sort(key=lambda exon: exon.start_in_gene)
             # is transl_Start < transl_end of the previous exon
+            print
             overlap = False
             exon_prev = exons[0]
             for exon in exons[1:]:
