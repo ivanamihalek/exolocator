@@ -78,7 +78,7 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             # if they overlap, do nothing - ther are already both in the fasta set
             if overlap: continue
             # if they do not not overlap, concatenate them, and mark them as concatenated
-            new_name = species + "_concat_"  +"_"  +  str (len(concatenated) )
+            new_name = species + "_concat_"   +  str (len(concatenated) )
             concatenated[new_name] = []
             concat_seq = ""
             for [exon_id, exon_known_code] in exons_from_gene:
@@ -95,6 +95,7 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             sequences[new_name] = concat_seq
 
             print "concatenated: ", new_name, concatenated[new_name]
+            print sequences[new_name] 
 
     return concatenated
 
