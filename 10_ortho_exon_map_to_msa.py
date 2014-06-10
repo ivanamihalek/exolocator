@@ -256,26 +256,22 @@ def multiple_exon_alnmt(gene_list, db_info):
                 aligned_seqs[record.id] = str(record.seq)
             inf.close()
             # split back the concatenated exons
-            split_concatenated_exons (aligned_seqs, concatenated)
+            if concatenated: split_concatenated_exons (aligned_seqs, concatenated)
 
-            output_fasta (afa_fnm, aligned_seqs.keys(), aligned_seqs)
-            exit(1)
-
- 
             human_seq_seen = False
-            for record in SeqIO.parse(inf, "fasta"):
+            for seq_name, sequence in aligned_seqs.iteritems():
                 # if this is one of the concatenated seqs, split them back to two
 
                 ### store the alignment as bitstring
                 # Generate the bitmap
-                bs         = Bits(bin='0b' + re.sub("[^0]","1", str(record.seq).replace('-','0')))
+                bs         = Bits(bin='0b' + re.sub("[^0]","1", sequence.replace('-','0')))
                 # The returned value of tobytes() will be padded at the end 
                 # with between zero and seven 0 bits to make it byte aligned.
                 # I will end up with something that looks like extra alignment gaps, that I'll have to return
                 msa_bitmap = bs.tobytes() 
              
                 # Retrieve information on the cognate
-                cognate_species, cognate_exon_id, cognate_exon_known = record.id.split('_')
+                cognate_species, cognate_exon_id, cognate_exon_known = seq_name.split('-')
                 if cognate_exon_known == '2':
                     source = 'sw_sharp'
                 elif cognate_exon_known == '3':
@@ -292,7 +288,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                     print "storing"
                     print human_exon.exon_id, human_exon.is_known
                     print cognate_species, cognate_genome_db_id, cognate_exon_id, cognate_exon_known, source
-                    print record.seq
+                    print sequence
                     if not msa_bitmap:
                         print "no msa_bitmap"
                         continue
