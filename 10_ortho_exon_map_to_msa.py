@@ -82,8 +82,8 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             for [exon_id, exon_known_code] in exons_from_gene:
                 old_name = "{0}_{1}_{2}".format(species, exon_id, exon_known_code)
                 if not sequences.has_key(old_name):
-                    print "no key ", old_name, "in the original set (?) "
-                    exit(1)
+                    #print "no key ", old_name, "in the original set (?) "
+                    continue
 
                 concatenated[new_name].append(old_name)
                 if concat_seq: concat_seq += "Z"
@@ -92,10 +92,20 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
                 del sequences[old_name]
             sequences[new_name] = concat_seq
 
-            print "concatenated: ", new_name, concatenated[new_name]
-            print sequences[new_name] 
 
     return concatenated
+
+#########################################
+def split_concatenated_exons (sequences, concatenated):
+    for seq_name in concatenated:
+        if not 'concat' in seq_name: continue
+        print seq_name
+        print concatenated[seq_name]
+        print sequences[seq_name]
+        print
+
+    exit(1)
+
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):
@@ -230,8 +240,9 @@ def multiple_exon_alnmt(gene_list, db_info):
             ret      = commands.getoutput(mafftcmd)
 
             if (verbose): print 'almt to', afa_fnm
-            exit(1)
-            
+            # split back the concatenated exons
+            split_concatenated_exons (sequences, concatenated)
+
             # read in the alignment 
             inf = erropen(afa_fnm, "r")
             human_seq_seen = False
