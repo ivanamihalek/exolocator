@@ -251,7 +251,7 @@ def multiple_exon_alnmt(gene_list, db_info):
 
             # read in the alignment 
             inf = erropen(afa_fnm, "r")
-            aligned_seqs = []
+            aligned_seqs = {}
             for record in SeqIO.parse(inf, "fasta"):
                 aligned_seqs[record.id] = record.seq
             inf.close()
