@@ -55,11 +55,6 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
                 exons.append(exon)              
             # sort by translation start 
             exons.sort(key=lambda exon: exon.start_in_gene)
-            if species == 'erinaceus_europaeus':
-                for exon in exons:
-                    print exon
-                    old_name = "{0}_{1}_{2}".format(species, exon.exon_id, exon.is_known)
-                    print sequences[old_name]
             # is transl_Start < transl_end of the previous exon
             overlap = False
             exon_prev = exons[0]
@@ -84,8 +79,8 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             new_name = species + "_concat_"   +  str (len(concatenated) )
             concatenated[new_name] = []
             concat_seq = ""
-            for [exon_id, exon_known_code] in exons_from_gene:
-                old_name = "{0}_{1}_{2}".format(species, exon_id, exon_known_code)
+            for exon in exons: # note 'exons' are sorted, 'exons_from_gene' are not
+                old_name = "{0}_{1}_{2}".format(species, exon.exon_id, exon.is_known)
                 if not sequences.has_key(old_name):
                     #print "no key ", old_name, "in the original set (?) "
                     continue
