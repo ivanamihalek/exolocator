@@ -108,9 +108,7 @@ def split_concatenated_exons (sequences, concatenated):
         for piece_name in concatenated[seq_name]:
             piece_seq = ""
             for piece in pieces:
-                if piece: piece += '-' # to make up for 'Z' we have lost in the splitting op above
-                print pieces.index(piece)
-                print  concatenated[seq_name].index(piece_name)
+                if piece_seq: piece_seq += '-' # to make up for 'Z' we have lost in the splitting op above
                 if pieces.index(piece) == concatenated[seq_name].index(piece_name):
                     piece_seq += piece
                 else:
