@@ -117,8 +117,6 @@ def split_concatenated_exons (sequences, concatenated):
             print piece_seq
             sequences[piece_name] = piece_seq
 
-    exit(1)
-
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):
@@ -250,11 +248,21 @@ def multiple_exon_alnmt(gene_list, db_info):
             ret      = commands.getoutput(mafftcmd)
 
             if (verbose): print 'almt to', afa_fnm
-            # split back the concatenated exons
-            split_concatenated_exons (sequences, concatenated)
 
             # read in the alignment 
             inf = erropen(afa_fnm, "r")
+            aligned_seqs = []
+            for record in SeqIO.parse(inf, "fasta"):
+                aligned_seqs[record.id] = record.seq
+            inf.close()
+
+            output_fasta (afa_fnm, aligned_seqs.keys(), aligned_seqs)
+            exit(1)
+
+            # split back the concatenated exons
+            split_concatenated_exons (sequences, concatenated)
+            output_fasta (fasta_fnm, sequences.keys(), sequences)
+
             human_seq_seen = False
             for record in SeqIO.parse(inf, "fasta"):
                 # if this is one of the concatenated seqs, split them back to two
@@ -268,7 +276,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 msa_bitmap = bs.tobytes() 
              
                 # Retrieve information on the cognate
-                cognate_species, cognate_exon_id, cognate_exon_known = record.id.split(':')
+                cognate_species, cognate_exon_id, cognate_exon_known = record.id.split('_')
                 if cognate_exon_known == '2':
                     source = 'sw_sharp'
                 elif cognate_exon_known == '3':
