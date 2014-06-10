@@ -101,7 +101,7 @@ def split_concatenated_exons (sequences, concatenated):
         if not 'concat' in seq_name: continue
         print seq_name
         print concatenated[seq_name]
-        print sequences[seq_name]
+        print '  '.join( sequences[seq_name].split('Z'))
         print
 
     exit(1)
