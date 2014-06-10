@@ -16,7 +16,7 @@ from   el_utils.almt_cmd_generator import  AlignmentCommandGenerator
 from   el_utils.config_reader      import  ConfigurationReader
 
 #########################################
-verbose = True
+verbose = False
     
 #########################################
 def store (cursor, maps, ensembl_db_name):
