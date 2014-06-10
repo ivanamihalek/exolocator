@@ -58,7 +58,8 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             if species == 'erinaceus_europaeus':
                 for exon in exons:
                     print exon
-
+                    old_name = "{0}_{1}_{2}".format(species, exon.exon_id, exon.is_known)
+                    print sequences[old_name]
             # is transl_Start < transl_end of the previous exon
             overlap = False
             exon_prev = exons[0]
