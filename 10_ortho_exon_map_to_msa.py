@@ -217,7 +217,7 @@ def multiple_exon_alnmt(gene_list, db_info):
             
             # concatenate exons from the same gene - the alignment program might go wrong otherwise
             concatenated = concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species)
-            for conc_name in concatenate_exons:
+            for conc_name in concatenated:
                 print conc_name, ":"
                 print "seq: ", sequences[conc_name]
 
