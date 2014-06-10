@@ -21,7 +21,7 @@ from time      import  time
 from Bio       import  SeqIO
 from bitstring import  Bits
 
-verbose = True
+verbose = False
 
 #########################################
 def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
