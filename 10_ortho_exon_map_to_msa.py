@@ -253,7 +253,7 @@ def multiple_exon_alnmt(gene_list, db_info):
             inf = erropen(afa_fnm, "r")
             aligned_seqs = {}
             for record in SeqIO.parse(inf, "fasta"):
-                aligned_seqs[record.id] = record.seq
+                aligned_seqs[record.id] = str(record.seq)
             inf.close()
             # split back the concatenated exons
             split_concatenated_exons (aligned_seqs, concatenated)
