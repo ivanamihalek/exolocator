@@ -269,7 +269,6 @@ def multiple_exon_alnmt(gene_list, db_info):
                 # with between zero and seven 0 bits to make it byte aligned.
                 # I will end up with something that looks like extra alignment gaps, that I'll have to return
                 msa_bitmap = bs.tobytes() 
-             
                 # Retrieve information on the cognate
                 cognate_species, cognate_exon_id, cognate_exon_known = seq_name.split('-')
                 if cognate_exon_known == '2':
