@@ -222,7 +222,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 print "seq: ", sequences[conc_name]
 
             fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], human_exon.exon_id)
-            output_fasta (fasta_fnm, headers, sequences)
+            output_fasta (fasta_fnm, sequences.keys(), sequences)
 
             # align
             afa_fnm  = "{0}/{1}.afa".format( cfg.dir_path['scratch'], human_exon.exon_id)
