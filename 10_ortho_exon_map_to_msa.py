@@ -109,7 +109,7 @@ def split_concatenated_exons (sequences, concatenated):
             piece_seq = ""
             for piece in pieces:
                 if piece: piece += '-' # to make up for 'Z' we have lost in the splitting op above
-                if piece.index(pieces) == piece_name.index( concatenated[seq_name] ):
+                if pieces.index(piece) == concatenated[seq_name].index(piece_name):
                     piece_seq += piece
                 else:
                     piece_seq += '-'*len(piece)
@@ -240,9 +240,6 @@ def multiple_exon_alnmt(gene_list, db_info):
             
             # concatenate exons from the same gene - the alignment program might go wrong otherwise
             concatenated = concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species)
-            for conc_name in concatenated:
-                print conc_name, ":"
-                print "seq: ", sequences[conc_name]
 
             fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], human_exon.exon_id)
             output_fasta (fasta_fnm, sequences.keys(), sequences)
