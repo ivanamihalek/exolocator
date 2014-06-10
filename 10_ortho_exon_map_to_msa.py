@@ -98,10 +98,6 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
 def split_concatenated_exons (sequences, concatenated):
     for seq_name in concatenated:
         if not 'concat' in seq_name: continue
-        print seq_name
-        print concatenated[seq_name]
-        print '  '.join( sequences[seq_name].split('Z'))
-        print
         pieces = sequences[seq_name].split('Z')
         del sequences[seq_name]
         if not len(concatenated[seq_name]) == len(pieces): continue
@@ -113,8 +109,6 @@ def split_concatenated_exons (sequences, concatenated):
                     piece_seq += piece
                 else:
                     piece_seq += '-'*len(piece)
-            print piece_name
-            print piece_seq
             sequences[piece_name] = piece_seq
 
 
