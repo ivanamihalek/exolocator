@@ -80,7 +80,7 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             concatenated[new_name] = []
             concat_seq = ""
             for exon in exons: # note 'exons' are sorted, 'exons_from_gene' are not
-                old_name = "{0}_{1}_{2}".format(species, exon.exon_id, exon.is_known)
+                old_name = "{0}:{1}:{2}".format(species, exon.exon_id, exon.is_known)
                 if not sequences.has_key(old_name):
                     #print "no key ", old_name, "in the original set (?) "
                     continue
@@ -182,7 +182,7 @@ def multiple_exon_alnmt(gene_list, db_info):
 
   
             # human sequence to fasta:
-            seqname   = "{0}_{1}_{2}".format('homo_sapiens', human_exon.exon_id, human_exon.is_known)
+            seqname   = "{0}:{1}:{2}".format('homo_sapiens', human_exon.exon_id, human_exon.is_known)
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, 
              left_flank, right_flank, dna_seq] = get_exon_seqs (cursor, human_exon.exon_id, human_exon.is_known)
@@ -216,7 +216,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                     hassw = True
                 else:
                     exon_known_code = map.exon_known_2
-                seqname = "{0}_{1}_{2}".format(map.species_2, map.exon_id_2, exon_known_code)
+                seqname = "{0}:{1}:{2}".format(map.species_2, map.exon_id_2, exon_known_code)
                 headers.append(seqname)
                 sequences[seqname] = pepseq
                 # for split exon concatenation (see below)
@@ -264,8 +264,7 @@ def multiple_exon_alnmt(gene_list, db_info):
                 # I will end up with something that looks like extra alignment gaps, that I'll have to return
                 msa_bitmap = bs.tobytes() 
                 # Retrieve information on the cognate
-                print " ***** ", seq_name
-                cognate_species, cognate_exon_id, cognate_exon_known = seq_name.split('_')
+                cognate_species, cognate_exon_id, cognate_exon_known = seq_name.split(':')
                 if cognate_exon_known == '2':
                     source = 'sw_sharp'
                 elif cognate_exon_known == '3':
