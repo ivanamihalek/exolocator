@@ -38,7 +38,6 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             if not gene_id in exons_per_gene.keys():
                 exons_per_gene[gene_id] = []
             exons_per_gene[gene_id].append ([exon_id, exon_known_code])
-
         # if yes - do they overlap in the gene? ... I so need to do this whole crap differently
         # the whole idea was no to be doing this here, but the alignment progs (mafft) can screw up here
         # big time 
@@ -53,8 +52,7 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
             for [exon_id, exon_known_code] in exons_from_gene:
                 exon = get_exon (cursor, exon_id, exon_known_code)
                 if not exon: continue
-                exons.append(exon)
-               
+                exons.append(exon)              
             # sort by translation start 
             exons.sort(key=lambda exon: exon.start_in_gene)
             # is transl_Start < transl_end of the previous exon
@@ -219,6 +217,9 @@ def multiple_exon_alnmt(gene_list, db_info):
             
             # concatenate exons from the same gene - the alignment program might go wrong otherwise
             concatenated = concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species)
+            for conc_name in concatenate_exons:
+                print conc_name, ":"
+                print "seq: ", sequences[conc_name]
 
             fasta_fnm = "{0}/{1}.fa".format( cfg.dir_path['scratch'], human_exon.exon_id)
             output_fasta (fasta_fnm, headers, sequences)
