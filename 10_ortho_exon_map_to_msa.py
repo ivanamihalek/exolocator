@@ -55,11 +55,15 @@ def concatenate_exons (cursor, ensembl_db_name, sequences, exons_per_species):
                 exons.append(exon)              
             # sort by translation start 
             exons.sort(key=lambda exon: exon.start_in_gene)
+            if species == 'erinaceus_europaeus':
+                for exon in exons:
+                    print exon
+
             # is transl_Start < transl_end of the previous exon
             overlap = False
             exon_prev = exons[0]
             for exon in exons[1:]:
-                if exon_prev.pepseq_transl_end is None: 
+                 if exon_prev.pepseq_transl_end is None: 
                     end_prev = exon_prev.end_in_gene
                 else:
                     end_prev = exon_prev.start_in_gene + exon_prev.pepseq_transl_end
