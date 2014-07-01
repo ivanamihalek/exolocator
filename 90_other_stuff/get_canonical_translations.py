@@ -6,6 +6,8 @@ from   el_utils.el_specific import  *
 
 #########################################
 def main():
+
+    local_db = True
     if local_db:
         db     = connect_to_mysql()
         acg    = AlignmentCommandGenerator()
