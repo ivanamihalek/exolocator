@@ -28,7 +28,7 @@ def main():
         canonical = get_canonical_transl (acg, cursor, gene_id, species, strip_X = False)
         if canonical:
             print stable_id, canonical
-        exit(1)
+        
     cursor.close()
     db.close()
 
