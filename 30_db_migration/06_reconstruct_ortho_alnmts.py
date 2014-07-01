@@ -212,7 +212,7 @@ def print_notes (cursor, cfg,  ensembl_db_name, output_pep, sequence_to_exons, s
     out_string += "\n" 
     out_string += "% The following exons appear in the alignment\n" 
     out_string += "% Note: the exons assigned to the same peptide sequence might belong to several \"genes\"\n"
-    out_string += "% If the yare found split across several scaffolds\n"
+    out_string += "% If they are found split across several scaffolds\n"
     out_string += "% (in which case Ensembl assigned two different identifiers to the two exons sets).\n"
 
     novel       = []
