@@ -2,7 +2,7 @@
 # why is git not pushing this?
 
 import MySQLdb
-from   el_utils.el_special import  *
+from   el_utils.el_specific import  *
 
 #########################################
 def main():
