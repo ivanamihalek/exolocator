@@ -20,7 +20,7 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
     species = 'homo_sapiens'
     switch_to_db (cursor_species,  ensembl_db_name[species])
-    gene_list = get_gene_ids (cursor_species, biotype='protein_coding')
+    gene_list = get_gene_ids (cursor, species, biotype='protein_coding')
 
     for gene_id in gene_list:
         # find stable
