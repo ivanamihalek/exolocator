@@ -3,6 +3,7 @@
 
 import MySQLdb
 from   el_utils.el_specific import  *
+from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 
 #########################################
 def main():
