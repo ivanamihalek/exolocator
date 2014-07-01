@@ -20,6 +20,7 @@ def main():
     species = 'homo_sapiens'
     switch_to_db (cursor_species,  ensembl_db_name[species])
     gene_list = get_gene_ids (cursor_species, biotype='protein_coding')
+    print "====================================="
     for gene_id in gene_list:
         # find stable
         stable_id = gene2stable(cursor_species, gene_id=gene_id)
