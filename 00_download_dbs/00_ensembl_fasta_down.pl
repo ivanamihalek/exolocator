@@ -2,7 +2,7 @@
 
 use strict;
 use Net::FTP;
-my $release_num = 74;
+my $release_num = 76;
 my $local_repository = 
     "/mnt/ensembl-mirror/release-$release_num/fasta";
 #my $local_repository = 
@@ -36,7 +36,7 @@ my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
 
 my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 
-open (LOG, ">log") || die "error opening log: $!\n";
+open (LOG, ">enesmbl_download.log") || die "error opening log: $!\n";
 
 my $ct = 0;
 foreach $animal ( @farm ) {
@@ -67,13 +67,13 @@ foreach $animal ( @farm ) {
 	    next if ($item !~ /\.gz$/);
 	    next if ($item =~ /\.dna_sm\./);
 	    next if ($item =~ /\.dna_rm\./);
-	    print "\t$item\n";
+	    print LOG "\t$item\n";
 
 	    $unzipped = $item;
 	    $unzipped =~ s/\.gz$//;
 
 	    if ( -e "$local_dir/$unzipped" ) {
-		print "\t\t $unzipped found in $local_dir\n";
+		print  LOG  "\t\t $unzipped found in $local_dir\n";
 		next;
 	    }
 
@@ -82,13 +82,13 @@ foreach $animal ( @farm ) {
 
 	    `mv  $item  $local_dir`;
 	    
-	    print "\t\t $item moved to $local_dir\n";
+	    print  LOG "\t\t $item moved to $local_dir\n";
 
 	    if (system ( "gunzip $local_dir/$item" )) {
 		print LOG "error uncompressing $local_dir/$item.\n";
-		print     "\t\terror uncompressing $local_dir/$item.\n";
+		#print     "\t\terror uncompressing $local_dir/$item.\n";
 	    } else {
-		print "\t\t $item unzipped \n";
+		#print "\t\t $item unzipped \n";
 	    }
 	}
     }
