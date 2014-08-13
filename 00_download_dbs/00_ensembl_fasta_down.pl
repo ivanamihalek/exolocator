@@ -33,10 +33,11 @@ my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
 	    "ciona_savignyi", "drosophila_melanogaster",
 	    "saccharomyces_cerevisiae");
 
+my @skip = ("ailuropoda_melanoleuca", "anas_platyrhynchos", "anolis_carolinensis", "astyanax_mexicanus", "bos_taurus", "caenorhabditis_elegans", "callithrix_jacchus", "canis_familiaris", "cavia_porcellus", "choloepus_hoffmanni", "ciona_intestinalis", "ciona_savignyi", "danio_rerio", "dasypus_novemcinctus", "dipodomys_ordii", "drosophila_melanogaster");
 
 my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 
-open (LOG, ">enesmbl_download.log") || die "error opening log: $!\n";
+open (LOG, ">ensembl_download.log") || die "error opening log: $!\n";
 
 my $ct = 0;
 foreach $animal ( @farm ) {
