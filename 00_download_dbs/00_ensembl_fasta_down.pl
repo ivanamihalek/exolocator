@@ -28,12 +28,12 @@ my @farm = $ftp->ls;
 my $animal;
 
 
-my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
-	    "ciona_intestinalis",  
-	    "ciona_savignyi", "drosophila_melanogaster",
-	    "saccharomyces_cerevisiae");
+#my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
+#	    "ciona_intestinalis",  
+#	    "ciona_savignyi", "drosophila_melanogaster",
+#	    "saccharomyces_cerevisiae");
 
-my @skip = ("ailuropoda_melanoleuca", "anas_platyrhynchos", "anolis_carolinensis", "astyanax_mexicanus", "bos_taurus", "caenorhabditis_elegans", "callithrix_jacchus", "canis_familiaris", "cavia_porcellus", "choloepus_hoffmanni", "ciona_intestinalis", "ciona_savignyi", "danio_rerio", "dasypus_novemcinctus", "dipodomys_ordii", "drosophila_melanogaster");
+my @skip = ("ailuropoda_melanoleuca", "anas_platyrhynchos", "anolis_carolinensis", "astyanax_mexicanus", "bos_taurus", "caenorhabditis_elegans", "callithrix_jacchus", "canis_familiaris", "cavia_porcellus", "choloepus_hoffmanni", "ciona_intestinalis", "ciona_savignyi", "danio_rerio", "dasypus_novemcinctus", "dipodomys_ordii", "drosophila_melanogaster", "echinops_telfairi", "equus_caballus", "erinaceus_europaeus", "felis_catus", "ficedula_albicollis", "gadus_morhua", "gallus_gallus", "gasterosteus_aculeatus", "gorilla_gorilla", "homo_sapiens", "ictidomys_tridecemlineatus", "latimeria_chalumnae", "lepisosteus_oculatus", "loxodonta_africana", "macaca_mulatta", "macropus_eugenii");
 
 my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 
