@@ -9,6 +9,14 @@ chdir $local_repository;
 
 @farm =  split "\n", `ls -d *_*`;
 
+$ct = 0;
+foreach $animal (@farm) {
+    $ct ++;
+    print "$ct   $animal \n";
+}
+print "----------------------------\n";
+print " ... formating ... \n\n";
+
 foreach $animal (@farm) {
 
     print $animal, "\n";
