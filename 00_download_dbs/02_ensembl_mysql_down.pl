@@ -2,7 +2,7 @@
 
 use strict;
 use Net::FTP;
-my $release_num = 74;
+my $release_num = 76;
 
 my $local_repository = 
     "/mnt/ensembl-mirror/release-".$release_num."/mysql";
@@ -46,7 +46,7 @@ foreach $dir ( @farm ) {
 }
 
 
-open (LOG, ">log") || die "error opening log: $!\n";
+open (LOG, ">ensembl_mysql_download.log") || die "error opening log: $!\n";
 
 #################################################################################
 my $ct = 0;
