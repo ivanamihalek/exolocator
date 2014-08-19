@@ -985,8 +985,8 @@ def stable2member (cursor, stable_id):
     # member_id refers to compara db
     # of which we need to have one
     # qry = "select  member_id from member where stable_id = '%s'" % stable_id
-    # since version 76 the table is called gene_member, and the main id is gene_memeber_id
-    qry = "select  member_id from member where stable_id = '%s'" % stable_id
+    # since version 76 the table is called gene_member, and the main id is gene_member_id
+    qry = "select  gene_member_id from gene_member where stable_id = '%s'" % stable_id
     rows = search_db (cursor, qry)
     if (not rows or 'ERROR' in rows[0]):
         rows = search_db (cursor, qry, verbose = True)
