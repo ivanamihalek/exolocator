@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# why is git not pushing this?
 
 import MySQLdb
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db, search_db
@@ -77,7 +76,7 @@ def collect_paralogues(species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 5
+    no_threads = 1
     local_db = False
 
     if local_db:
