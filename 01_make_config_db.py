@@ -169,8 +169,10 @@ def  feed_trivial_names (cursor, all_species):
     trivial['otolemur_garnettii']          = 'galago_lemur' 
     trivial['ovis_aries']                  = 'sheep'
     trivial['pan_troglodytes']             = 'chimpanzee' 
+    trivial['papio_anubis']                = 'baboon' 
     trivial['pelodiscus_sinensis']         = 'turtle' 
     trivial['petromyzon_marinus']          = 'lamprey' 
+    trivial['poecilia_formosa']            = 'amazon_molly'
     trivial['pongo_abelii']                = 'orangutan' 
     trivial['procavia_capensis']           = 'hyrax' 
     trivial['pteropus_vampyrus']           = 'flying_fox' 
@@ -231,7 +233,7 @@ def main():
     # (but for now I don't have enough space)
     # note though that there are functions in el_utils/mysql.py that assume
     # that whatever ensembl stuff is available to the mysql server corresponds to the same release 
-    release_number = '74'
+    release_number = '76'
     parameter['ensembl_release_number'] = release_number
     parameter['blastp_e_value']         = "1.e-10" # it will be used as a string  when fmting the blastp cmd
     parameter['min_accptbl_exon_sim']   = 0.33333 #minimum acceptable exon similarity
