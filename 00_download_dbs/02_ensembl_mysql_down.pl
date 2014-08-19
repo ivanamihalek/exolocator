@@ -50,6 +50,11 @@ open (LOG, ">ensembl_mysql_download.log") || die "error opening log: $!\n";
 
 #################################################################################
 my $ct = 0;
+
+###!!!!!!!!!!!!!!!!  <<<< !!!!!
+@dirs_I_need = ();
+
+
 foreach $dir ( @dirs_I_need) {
 
     $ct += 1;
@@ -123,8 +128,9 @@ $ftp->cwd($foreign_dir)
 
 my $compara_sql = 'ensembl_compara_'.$release_num.'.sql.gz';
  
-foreach $item ('homology.txt.gz', 'homology_member.txt.gz', 
-	       'member.txt.gz', 'genome_db.txt.gz', $compara_sql) {
+#foreach $item ('homology.txt.gz', 'homology_member.txt.gz', 
+#	       'member.txt.gz', 'genome_db.txt.gz', $compara_sql) {
+foreach $item ( 'gene_member.txt.gz') {
 
     (grep {/$item/} @contents) || die "$item not found in $foreign_dir\n";
     
