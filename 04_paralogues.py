@@ -64,7 +64,7 @@ def collect_paralogues(species_list, db_info):
                 print species, ct , "out of ", len(gene_list) 
             # find all paralogue pairs suggested for this gene
             ortho_type = 'within_species_paralog'
-            paralogues = get_orthologues(cursor_compara, ortho_type, member_id)
+            paralogues = get_orthologues(cursor_compara, ortho_type, member_id, verbose=True)
             if not paralogues: continue
             store_paralogues (cursor_species, gene_id, paralogues)
         
