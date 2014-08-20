@@ -67,7 +67,7 @@ def collect_paralogues(species_list, db_info):
             paralogues = get_orthologues(cursor_compara, ortho_type, member_id)
             if not paralogues: continue
             store_paralogues (cursor_species, gene_id, paralogues)
-        
+        print species, 'done'
     cursor_species.close()
     db_species.close()
     cursor_compara.close()
