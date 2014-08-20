@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 
 import MySQLdb
 from   el_utils.mysql     import  connect_to_mysql, connect_to_db, search_db
