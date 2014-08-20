@@ -1020,7 +1020,7 @@ def get_orthologues(cursor, ortho_type, gene_member_id, verbose=False):
     orthos = []
 
     qry  = "select homology.homology_id from homology_member, homology "
-    qry += " where homology_member.gene_member_idb =%d " % gene_member_id
+    qry += " where homology_member.gene_member_id =%d " % gene_member_id
     qry += " and homology.homology_id = homology_member.homology_id "
     qry += " and  homology.description = '%s' " % ortho_type
     rows = search_db (cursor, qry)
