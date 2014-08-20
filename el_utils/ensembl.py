@@ -1000,7 +1000,7 @@ def member2stable (cursor, member_id):
     
     # member_id refers to compara db
     # of which we need to have one
-    qry = "select  stable_id from member where member_id = %d" % member_id
+    qry = "select  stable_id from gene_member where gene_member_id = %d" % member_id
     rows = search_db (cursor, qry)
     if (not rows):
         rows = search_db (cursor, qry, verbose = True)
@@ -1020,7 +1020,7 @@ def get_orthologues(cursor, ortho_type, member_id, verbose=False):
     orthos = []
 
     qry  = "select homology.homology_id from homology_member, homology "
-    qry += " where homology_member.member_id =%d " % member_id
+    qry += " where homology_member.gene_member_id =%d " % member_id
     qry += " and homology.homology_id = homology_member.homology_id "
     qry += " and  homology.description = '%s' " % ortho_type
     rows = search_db (cursor, qry)
@@ -1036,19 +1036,19 @@ def get_orthologues(cursor, ortho_type, member_id, verbose=False):
     for row in rows:
         homology_id = row[0]
 
-        qry  = "select member_id from homology_member "
+        qry  = "select gene_member_id from homology_member "
         qry += " where homology_id = %d"  % int(homology_id)
-        qry += " and not  member_id = %d" % member_id
+        qry += " and not  gene_member_id = %d" % member_id
         rows2 = search_db (cursor, qry, verbose = True)
         if (not rows2):
             rows2 = search_db (cursor, qry, verbose = True)
             return []
         ortho_id     = rows2[0][0]
         
-        qry  = "select  member.stable_id, genome_db.name, genome_db.genome_db_id "
-        qry += " from member, genome_db "
-        qry += " where member.member_id = %d " % ortho_id
-        qry += " and genome_db.genome_db_id = member.genome_db_id"
+        qry  = "select  gene_member.stable_id, genome_db.name, genome_db.genome_db_id "
+        qry += " from gene_member, genome_db "
+        qry += " where gene_member.member_id = %d " % ortho_id
+        qry += " and genome_db.genome_db_id = gene_member.genome_db_id"
         rows3 = search_db (cursor, qry, verbose = True)
         if (not rows3):
             rows3 = search_db (cursor, qry, verbose = True)
@@ -1060,7 +1060,7 @@ def get_orthologues(cursor, ortho_type, member_id, verbose=False):
         
 
 ########################
-def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, member_id, species):
+def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, gene_member_id, species):
 
     # the ortho_type is one of the following: 'ortholog_one2one', 
     # 'ortholog_one2many', 'ortholog_many2many', 'possible_ortholog', 'apparent_ortholog_one2one'
@@ -1073,7 +1073,7 @@ def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, member_id,
     switch_to_db (cursor, get_compara_name (cursor))
 
     qry  = "select homology.homology_id from homology_member, homology "
-    qry += " where homology_member.member_id =%d " % member_id
+    qry += " where homology_member.gene_member_id =%d " % gene_member_id
     qry += " and homology.homology_id = homology_member.homology_id "
     qry += " and  homology.description = '%s' "    % ortho_type
     rows = search_db (cursor, qry)
@@ -1089,9 +1089,9 @@ def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, member_id,
         homology_id = row[0]
         #print "\t homology id:", homology_id
         switch_to_db (cursor, get_compara_name (cursor))
-        qry  = "select member_id from homology_member "
+        qry  = "select gene_member_id from homology_member "
         qry += " where homology_id = %d"  % int(homology_id)
-        qry += " and not  member_id = %d" % member_id
+        qry += " and not  gene_member_id = %d" % gene_member_id
 
         rows2  = search_db (cursor, qry, verbose = False)
         if (not rows2):
@@ -1101,8 +1101,8 @@ def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, member_id,
         for row2 in rows2:
             ortho_id     = row2[0]
             #print "\t\t ortho id:", ortho_id
-            qry  = "select  stable_id  from member  "
-            qry += " where member_id = %d "  % ortho_id
+            qry  = "select  stable_id  from gene_member  "
+            qry += " where gene_member_id = %d "  % ortho_id
             qry += " and genome_db_id = %d " % genome_db_id
             rows3 = search_db (cursor, qry, verbose = False)
             if (not rows3):
