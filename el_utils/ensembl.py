@@ -1011,7 +1011,7 @@ def member2stable (cursor, member_id):
 
 
 ########
-def get_orthologues(cursor, ortho_type, member_id, verbose=False):
+def get_orthologues(cursor, ortho_type, gene_member_id, verbose=False):
 
     # cursor must be pointing to compara database
     # the ortho pytpe i sone of the following: 'ortholog_one2one', 
@@ -1020,7 +1020,7 @@ def get_orthologues(cursor, ortho_type, member_id, verbose=False):
     orthos = []
 
     qry  = "select homology.homology_id from homology_member, homology "
-    qry += " where homology_member.gene_member_id =%d " % member_id
+    qry += " where homology_member.gene_member_idb =%d " % gene_member_id
     qry += " and homology.homology_id = homology_member.homology_id "
     qry += " and  homology.description = '%s' " % ortho_type
     rows = search_db (cursor, qry)
@@ -1038,7 +1038,7 @@ def get_orthologues(cursor, ortho_type, member_id, verbose=False):
 
         qry  = "select gene_member_id from homology_member "
         qry += " where homology_id = %d"  % int(homology_id)
-        qry += " and not  gene_member_id = %d" % member_id
+        qry += " and not  gene_member_id = %d" % gene_member_id
         rows2 = search_db (cursor, qry, verbose = True)
         if (not rows2):
             rows2 = search_db (cursor, qry, verbose = True)
@@ -1047,7 +1047,7 @@ def get_orthologues(cursor, ortho_type, member_id, verbose=False):
         
         qry  = "select  gene_member.stable_id, genome_db.name, genome_db.genome_db_id "
         qry += " from gene_member, genome_db "
-        qry += " where gene_member.member_id = %d " % ortho_id
+        qry += " where gene_member.gene_member_id = %d " % ortho_id
         qry += " and genome_db.genome_db_id = gene_member.genome_db_id"
         rows3 = search_db (cursor, qry, verbose = True)
         if (not rows3):
