@@ -1011,7 +1011,7 @@ def member2stable (cursor, member_id):
 
 
 ########
-def get_orthologues(cursor, ortho_type, member_id):
+def get_orthologues(cursor, ortho_type, member_id, verbose=False):
 
     # cursor must be pointing to compara database
     # the ortho pytpe i sone of the following: 'ortholog_one2one', 
@@ -1024,6 +1024,10 @@ def get_orthologues(cursor, ortho_type, member_id):
     qry += " and homology.homology_id = homology_member.homology_id "
     qry += " and  homology.description = '%s' " % ortho_type
     rows = search_db (cursor, qry)
+
+    if verbose:
+        print qry
+        print rows
 
     if (not rows):
         return [] # no orthologs here
