@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 import MySQLdb
-from   el_utils.mysql   import  connect_to_mysql, connect_to_db, search_db
-from   el_utils.mysql   import  store_or_update,  switch_to_db
-from   el_utils.ensembl import  *
-from   el_utils.threads import  parallelize
+from   el_utils.mysql     import  connect_to_mysql, connect_to_db, search_db
+from   el_utils.mysql     import  store_or_update,  switch_to_db
+from   el_utils.ensembl   import  *
+from   el_utils.processes import  parallelize
 
 #########################################
 def store_paralogues (cursor_species,  gene_id, orthos):
@@ -64,7 +64,7 @@ def collect_paralogues(species_list, db_info):
                 print species, ct , "out of ", len(gene_list) 
             # find all paralogue pairs suggested for this gene
             ortho_type = 'within_species_paralog'
-            paralogues = get_orthologues(cursor_compara, ortho_type, member_id, verbose=True)
+            paralogues = get_orthologues(cursor_compara, ortho_type, member_id)
             if not paralogues: continue
             store_paralogues (cursor_species, gene_id, paralogues)
         
@@ -76,7 +76,7 @@ def collect_paralogues(species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 10
     local_db = False
 
     if local_db:
