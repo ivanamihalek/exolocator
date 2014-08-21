@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 
 import MySQLdb
 import commands, pdb
@@ -512,7 +512,7 @@ def gene2exon_orthologues(gene_list, db_info):
 #########################################
 def main():
 
-    no_threads = 1
+    no_threads = 5
     special    = 'one'
     local_db   = False
 
