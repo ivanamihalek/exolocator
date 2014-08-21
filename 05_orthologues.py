@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 # we are collecting orthologues for human only
 # the possibility that "A is ortholog of B, and B is ortholog of C, but A is not ortholog of C"
 # is something we don't want to know about right now
@@ -107,7 +107,7 @@ def collect_orthologues(gene_list, db_info):
 #########################################
 def main():
     
-    no_threads = 5
+    no_threads = 10
     local_db = False
 
     if local_db:

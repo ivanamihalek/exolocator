@@ -1,4 +1,5 @@
 #!/usr/bin/python -u
+# -u flag forces the flushing ('u' for unboffered output)
 
 import MySQLdb
 from   el_utils.mysql     import  connect_to_mysql, connect_to_db, search_db
