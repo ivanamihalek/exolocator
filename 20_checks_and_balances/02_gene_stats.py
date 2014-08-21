@@ -177,6 +177,7 @@ def main():
         rows  = search_db (cursor, qry)
         print "\t number of allele groups: ", rows[0][0]
 
+        ortho_stats (cursor, ensembl_db_name[species], species, all_genes)
 
     # how often does it happen that one  exon does not have
     # a map while the others do
