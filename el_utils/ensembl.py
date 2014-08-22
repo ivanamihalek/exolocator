@@ -898,7 +898,7 @@ def get_canonical_exons (cursor, gene_id):
 
     exons = gene2exon_list (cursor, gene_id)
     if (not exons):
-        print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
+        print " no exons found for ",  gene2stable (cursor, gene_id = gene_id) 
         exit(1) # shouldn't happen at this point
 
     # sorting exons in place by their start in gene:
