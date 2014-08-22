@@ -156,7 +156,6 @@ def main():
     else:
         species_list = all_species
  
-    species_list = ['homo_sapiens']
     ############################
     for species in species_list:
         print
@@ -249,7 +248,7 @@ def main():
                     exit(1)
                 
 
-        print species, "checked a sample of ", tot, "genes;  problematic:", ct
+        print species, "checked a sample of ", tot+1, "genes;  problematic:", ct
 
     cursor.close()
     db.close()
