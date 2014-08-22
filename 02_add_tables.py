@@ -382,7 +382,8 @@ def main():
                 print table, " found in ", db_name
                 qry = 'drop table '+ table
                 print search_db(cursor, qry)
-           else:
+                make_table (cursor, db_name, table)
+          else:
                 print table, " not found in ", db_name
                 make_table (cursor, db_name, table)
                 
