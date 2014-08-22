@@ -378,12 +378,12 @@ def main():
         
         #for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region']:
         for table in ['gene2exon']:
-           if ( check_table_exists (cursor, db_name, table)):
+            if ( check_table_exists (cursor, db_name, table)):
                 print table, " found in ", db_name
                 qry = 'drop table '+ table
                 print search_db(cursor, qry)
                 make_table (cursor, db_name, table)
-          else:
+            else:
                 print table, " not found in ", db_name
                 make_table (cursor, db_name, table)
                 
