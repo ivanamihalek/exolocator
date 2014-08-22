@@ -8,7 +8,7 @@ from   el_utils.mysql   import store_or_update
 from   el_utils.ensembl import  *
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.translation import crop_dna, translation_bounds, translate
-from   el_utils.threads     import parallelize
+from   el_utils.processes     import parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.special_gene_sets  import get_theme_ids
 # BioPython
