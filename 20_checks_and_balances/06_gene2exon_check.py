@@ -230,7 +230,7 @@ def main():
                 print gene_id, gene2stable (cursor, gene_id), get_description (cursor, gene_id)
                 print "(length of all exons)/3 ", length/3, 
                 print " does not match reported canonical transl len ", len(canonical_translation)
-                if True:
+                if False:
                     # print out all exons
                     print "exons:"
                     inspect (exons)
