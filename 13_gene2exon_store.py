@@ -436,7 +436,7 @@ def gene2exon_all(species_list, db_info):
 
     for species in species_list:
 
-        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
+        switch_to_db (cursor,  ensembl_db_name[species])
 
         if (species=='homo_sapiens'):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
