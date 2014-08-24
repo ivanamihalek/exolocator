@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 
 
 import StringIO
@@ -8,7 +8,7 @@ from random  import random
 from   el_utils.mysql   import  *
 from   el_utils.ensembl import  *
 from   el_utils.utils   import  *
-from   el_utils.threads import  parallelize
+from   el_utils.processes import  parallelize
 from   el_utils.map     import  *
 
 from   el_utils.special_gene_sets  import  get_theme_ids
