@@ -125,12 +125,13 @@ def main():
                 else:
                     pepseq2 = dnaseq.translate().tostring()
 
-                print exon.exon_id
-                print "pep stored:", pepseq
-                print "dna transl:", pepseq2
-                print "start:" , pepseq_transl_start, 
-                print "end:",  pepseq_transl_end
-                print
+                if False:
+                    print exon.exon_id
+                    print "pep stored:", pepseq
+                    print "dna transl:", pepseq2
+                    print "start:" , pepseq_transl_start, 
+                    print "end:",  pepseq_transl_end
+                    print
 
                 if (not pepseq == pepseq2):
                     stored_incorrect += 1
