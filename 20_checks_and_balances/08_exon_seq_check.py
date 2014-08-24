@@ -61,7 +61,7 @@ def main():
 
     for species in all_species:
 
-        if not species=='homo_sapiens': continue
+        #if not species=='homo_sapiens': continue
 
         print
         print species
@@ -128,7 +128,8 @@ def main():
                 print exon.exon_id
                 print "pep stored:", pepseq
                 print "dna transl:", pepseq2
-                print "start: %d    end: %d " % (pepseq_transl_start, pepseq_transl_end)
+                print "start:" , pepseq_transl_start, 
+                print "end:",  pepseq_transl_end
                 print
 
                 if (not pepseq == pepseq2):
