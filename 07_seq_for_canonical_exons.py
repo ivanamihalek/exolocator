@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 
 import MySQLdb
 import commands
@@ -6,7 +6,7 @@ from   el_utils.mysql   import  *
 from   el_utils.ensembl import  *
 from   el_utils.el_specific import  *
 from   el_utils.exon    import  Exon
-from   el_utils.threads import  parallelize
+from   el_utils.processes import  parallelize
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 from   el_utils.special_gene_sets  import get_theme_ids
