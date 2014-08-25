@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 # make the best alignment we can using the maps
 # we currently have at hand
 
