@@ -116,7 +116,7 @@ def split_concatenated_exons (sequences, concatenated):
 def multiple_exon_alnmt(gene_list, db_info):
 
 
-    print "process pid: %d, length of gene list:%d" % ( get_process_id(), len(gene_list))
+    print "process pid: %d, length of gene list: %d" % ( get_process_id(), len(gene_list))
 
     [local_db, ensembl_db_name] = db_info
 
@@ -164,8 +164,6 @@ def multiple_exon_alnmt(gene_list, db_info):
         ##################################################################
         for human_exon in human_exons:
             
-            if not human_exon.exon_id == 8440600: continue
-
             tot += 1
 
             # find all orthologous exons the human exon  maps to
