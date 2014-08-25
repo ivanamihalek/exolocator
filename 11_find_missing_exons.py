@@ -824,7 +824,7 @@ def find_missing_exons(human_gene_list, db_info):
     found   = 0
     sought  = 0
     human_gene_list.reverse()
-    for human_gene_id in human_gene_list[0:400]:
+    for human_gene_id in human_gene_list:
 
 
         # I have no clue what's with this guy:
