@@ -833,9 +833,9 @@ def find_missing_exons(human_gene_list, db_info):
 
 	# Get stable id and description of this gene -- DEBUG
 	human_stable      = gene2stable    (cursor, human_gene_id)
-	if verbose: 
+	if True:  # if verbose:
             human_description = get_description(cursor, human_gene_id)
-        print "visited", human_gene_id, human_stable, human_description     # verbose
+            print "visited", human_gene_id, human_stable, human_description     # verbose
 
 	# progress counter 
 	gene_ct += 1
