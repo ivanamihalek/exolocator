@@ -823,7 +823,7 @@ def find_missing_exons(human_gene_list, db_info):
     gene_ct = 0
     found   = 0
     sought  = 0
-    human_gene_list.reverse()
+    #human_gene_list.reverse()
     for human_gene_id in human_gene_list:
 
 
@@ -835,7 +835,7 @@ def find_missing_exons(human_gene_list, db_info):
 	human_stable      = gene2stable    (cursor, human_gene_id)
 	if verbose: 
             human_description = get_description(cursor, human_gene_id)
-            print human_gene_id, human_stable, human_description     # verbose
+        print "visited", human_gene_id, human_stable, human_description     # verbose
 
 	# progress counter 
 	gene_ct += 1
@@ -1053,7 +1053,8 @@ def main():
 
     if len(sys.argv) > 1 and  len(sys.argv)<4:
         print "usage: %s <set name> <number of threads> <method>" % sys.argv[0]
-        exit(1)
+        exit(1)  # exit if bad number of cmdline params
+
     elif len(sys.argv)==4:
 
         special = sys.argv[1]
@@ -1065,7 +1066,7 @@ def main():
         method = sys.argv[3]
         if not (method =='usearch' or method=='sw_sharp'):
             print "unrecognized method: ", method
-            exit(1)
+            exit(1) # exit if unrecognized search method
 
     # sw_sharps chokes if there is only one graphics card
     if method=='sw_sharp': no_threads = 1
