@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 
 
 import MySQLdb
@@ -345,7 +345,7 @@ def exon_cleanup(gene_list, db_info):
                'ictidomys_tridecemlineatus',   'loxodonta_africana',  'macaca_mulatta',  'macropus_eugenii',    
                'microcebus_murinus',  'monodelphis_domestica',  'mus_musculus',  'mustela_putorius_furo',  
                'myotis_lucifugus',  'nomascus_leucogenys',  'ochotona_princeps',   'ornithorhynchus_anatinus',  
-               'oryctolagus_cuniculus', 'otolemur_garnettii', 'pan_troglodytes', 'pongo_abelii',  
+               'oryctolagus_cuniculus', 'otolemur_garnettii', 'pan_troglodytes', 'papio_anubis', 'pongo_abelii',  
                'procavia_capensis', 'pteropus_vampyrus', 'rattus_norvegicus', 'sarcophilus_harrisii',  
                'sorex_araneus', 'sus_scrofa', 'tarsius_syrichta',  'tupaia_belangeri',  'tursiops_truncatus',  
                'vicugna_pacos']
