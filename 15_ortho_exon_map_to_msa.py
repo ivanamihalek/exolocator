@@ -147,7 +147,7 @@ def multiple_exon_alnmt(gene_list, db_info):
             ret      = commands.getoutput(mafftcmd)
 
             if (verbose): print 'almt to', afa_fnm
-            exit(1)
+            #exit(1)
             
             # read in the alignment
             inf = erropen(afa_fnm, "r")
