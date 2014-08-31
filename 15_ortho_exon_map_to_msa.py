@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 # make the best alignment we can using the maps
 # we currently have at hand
 
@@ -21,7 +21,7 @@ from time      import  time
 from Bio       import  SeqIO
 from bitstring import  Bits
 
-verbose = True
+verbose = False
 
 #########################################
 def multiple_exon_alnmt(gene_list, db_info):
@@ -67,7 +67,7 @@ def multiple_exon_alnmt(gene_list, db_info):
         if  not gene_ct%10: print gene_ct, "genes out of", len(gene_list)
 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        print gene_ct, len(gene_ids),  gene_id,  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+        if verbose: print gene_ct, len(gene_ids),  gene_id,  gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
         human_exons = filter (lambda e: e.is_known==1 and e.is_coding and e.covering_exon<0, gene2exon_list(cursor, gene_id))
         human_exons.sort(key=lambda exon: exon.start_in_gene)
@@ -75,8 +75,6 @@ def multiple_exon_alnmt(gene_list, db_info):
         ##################################################################
         for human_exon in human_exons:
             
-            if not human_exon.exon_id == 8440600: continue
-
             tot += 1
 
             # find all orthologous exons the human exon  maps to
