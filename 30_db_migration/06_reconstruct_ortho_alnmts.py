@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 # make the best alignment we can using the maps
 # we currently have at hand
 
@@ -1700,7 +1700,7 @@ def main():
     special    = 'test'
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
-        print "usage: %s <set name> <number of threads> <method>" % sys.argv[0]
+        print "usage: %s <set name> <number of threads>" % sys.argv[0]
         exit(1) # exit after the usage statement
     elif len(sys.argv)==3:
 
