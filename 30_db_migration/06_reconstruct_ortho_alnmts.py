@@ -843,10 +843,11 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         print "ok exon names: ", list_of_ok_exon_names
         print "non-zero petide sequences (for exons)"
         print "\n".join( map (lambda seq: seq.replace('-','') + " *** ", pep_exons) )
-        print "empty exons:",
-        for i in empty_exons:
-            print list_of_ok_exon_names[i],
-        print
+        # note: I'm getting and index out of bounds error here
+        #print "empty exons:",
+        #for i in empty_exons:
+        #    print list_of_ok_exon_names[i],
+        #print
         print "==================================================="
         exit(1)
         return [output_pep, sequence_name_to_exon_names] # theses are empty
@@ -1506,7 +1507,7 @@ def make_alignments ( gene_list, db_info):
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
-        # if we are running this pipe repetedly we want to skip if
+        # if we are running this pipe repeatedly we want to skip if
         # the last time we worked on this gene was recently enough
         #if  check_afa_age (cfg, stable_id) == "new": continue                               
  
