@@ -682,7 +682,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
     list_of_ok_exon_names = []
     for ortho_exon in sequence_name_to_exon_names[seq_to_fix]:
         for human_exon in canonical_human_exons:
-            if not alnmt_pep[human_exon].has_key(ortho_exon): continue
+            if type( alnmt_pep[human_exon]) is str or not alnmt_pep[human_exon].has_key(ortho_exon): continue
             if ortho_exon in list_of_ok_exon_names: continue
             list_of_ok_exon_names.append(ortho_exon)
 
