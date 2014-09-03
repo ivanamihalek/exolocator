@@ -1380,7 +1380,7 @@ def sort_trivial_names (cursor, all_species):
 #########################################
 def check_afa_age (cfg, stable_id):
 
-    max_days = 3
+    max_days = 3 
 
     afa_age = "old"
     afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
