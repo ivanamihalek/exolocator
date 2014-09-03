@@ -62,10 +62,10 @@ def main():
     incomplete = 0
     genes_checked = 0
     #for gene_id in gene_list: 
-    for gene_id in [743609]: 
-    #for sampling_count in range(1000):
+    #for gene_id in [743609]: 
+    for sampling_count in range(1000):
  
-        #gene_id = choice(gene_list)
+        gene_id = choice(gene_list)
         genes_checked += 1
         with_map = 0
         tot      = 0
@@ -95,7 +95,6 @@ def main():
             if verbose:
                 for map in maps:
                     species            = map.species_2
-                    if not species == 'cavia_porcellus': continue
                     exon               = map2exon(cursor, ensembl_db_name, map)
                     unaligned_sequence = get_exon_pepseq(cursor, exon, ensembl_db_name[species])
                     if ( map.similarity):

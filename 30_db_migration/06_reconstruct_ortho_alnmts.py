@@ -849,8 +849,8 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, canonical
         #    print list_of_ok_exon_names[i],
         #print
         print "==================================================="
-        exit(1)
-        return [output_pep, sequence_name_to_exon_names] # theses are empty
+        #exit(1)
+        return [output_pep, sequence_name_to_exon_names] # these are empty
 
     output_pep = new_alignment_pep
     sequence_name_to_exon_names[seq_to_fix] = list_of_ok_exon_names
@@ -1380,7 +1380,7 @@ def sort_trivial_names (cursor, all_species):
 #########################################
 def check_afa_age (cfg, stable_id):
 
-    max_days = 30
+    max_days = 3
 
     afa_age = "old"
     afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
@@ -1509,7 +1509,7 @@ def make_alignments ( gene_list, db_info):
         stable_id = gene2stable(cursor, gene_id)
         # if we are running this pipe repeatedly we want to skip if
         # the last time we worked on this gene was recently enough
-        #if  check_afa_age (cfg, stable_id) == "new": continue                               
+        if  check_afa_age (cfg, stable_id) == "new": continue                               
  
         if verbose: 
             print gene_id, stable_id, get_description (cursor, gene_id)
@@ -1545,7 +1545,7 @@ def make_alignments ( gene_list, db_info):
         # (see for example RPL41, ENSG00000229117, a 25 residue peptide,  for which NCBI REfseq
         # reports a single  confirmed  homologue in mouse, but Ensembl reports no orthologues at all)
         if ( len(sequence_name_to_exon_names) <= 1):
-            print "\t no orthologues for",  gene_id, stable_id, " (?)"
+            print "\t no orthologues for",  gene_id, stable_id, " (? there is something Ensembl calls 'alternate sequence gene')"
             continue
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # concatenate the aligned exons for each species, taking into account that the mapping
