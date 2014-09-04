@@ -1513,7 +1513,7 @@ def make_alignments ( gene_list, db_info):
  
         if verbose: 
             print gene_id, stable_id, get_description (cursor, gene_id)
-        elif (not gene_list.index(gene_id)%100): 
+        elif ( (gene_list.index(gene_id))%100 == 0 ): 
             print gene_list.index(gene_id), "out of ", len(gene_list)
 
         # mitochondrial?
@@ -1678,7 +1678,9 @@ def make_alignments ( gene_list, db_info):
         # notes to accompany the alignment:
         print_notes (cursor, cfg,  ensembl_db_name, output_pep, sequence_name_to_exon_names,  
                      sorted_seq_names, stable_id, human_exon_to_ortho_exon, assorted_notes)
-       
+
+    print "gene_list of length", len(gene_list), " done"
+
     return 
 
 

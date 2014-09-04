@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 # make the best alignment we can using the maps
 # we currently have at hand
 
@@ -17,7 +17,7 @@ from el_utils.ncbi    import  taxid2trivial
 from el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from el_utils.config_reader      import ConfigurationReader
 from el_utils.translation        import phase2offset, translation_bounds, crop_dna, translate
-from el_utils.threads import parallelize
+from el_utils.processes import parallelize
 from el_utils.custom  import get_theme_ids
 from bitstring import Bits
 from alignment import * # C implementation of smith waterman
@@ -1195,7 +1195,7 @@ def make_alignments (species_list, db_info):
     #species_list.reverse()
     #hack_list = species_list[len(species_list)/2:]
     #hack_list.reverse()
-    species_list = ["ictidomys_tridecemlineatus"]
+    #species_list = ["ictidomys_tridecemlineatus"]
     for species in species_list:
 
         pep_produced = 0
