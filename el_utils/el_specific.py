@@ -18,7 +18,7 @@ def check_afa_age (cfg, stable_id, max_days=3):
         time_modified = os.path.getmtime(afa_fnm)
         number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
         if number_of_days_since_modified < max_days:
-            print "\t %s last modified %s. Moving on." % (stable_id, time.ctime(os.path.getmtime(afa_fnm) ))
+            #print "\t %s last modified %s. Moving on." % (stable_id, time.ctime(os.path.getmtime(afa_fnm) ))
             afa_age  = "new"
     return afa_age
 
