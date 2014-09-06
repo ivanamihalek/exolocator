@@ -22,7 +22,6 @@ from el_utils.special_gene_sets  import *
 from el_utils.processes import parallelize
 from el_utils.exon_boundary_hacks import *
 from bitstring import Bits
-from alignment import * # C implementation of smith waterman
 from   random  import choice
 # BioPython
 from Bio          import  SeqIO
