@@ -305,10 +305,13 @@ def make_exon_alignment(cursor, species, ensembl_db_name, template_exon, mitocho
         reconst_pepseq = "".join(('-' if c=='0' else next(usi) for c in bs.bin))
   
         # come up with a unique name for this sequence
+        # let's also have the start in gene here - might make our lives easier later
+        exon2 = get_exon (cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[species])
+
         if  map.exon_id_2 == template_exon.exon_id and  map.exon_known_2 == template_exon.is_known:
-            sequence_name = "template_" + str(map.exon_id_2)+"_"+str(map.exon_known_2)
+            sequence_name = "template_" + str(map.exon_id_2)+"_"+str(map.exon_known_2)+"_"+str(exon2.start_in_gene)
         else:
-            sequence_name = "para_" + str(map.exon_id_2)+"_"+str(map.exon_known_2)
+            sequence_name = "para_" + str(map.exon_id_2)+"_"+str(map.exon_known_2)+"_"+str(exon2.start_in_gene)
             
         if reconst_pepseq: 
             sequence_pep[sequence_name] = reconst_pepseq
