@@ -23,6 +23,7 @@ def check_afa_age (cfg, stable_id, max_days=3):
     return afa_age
 
 
+
 #########################################
 def strip_stop(pepseq):
     if (not pepseq or len(pepseq)==0):

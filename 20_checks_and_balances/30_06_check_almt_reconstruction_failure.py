@@ -55,6 +55,8 @@ def main():
     new_afas = 0
     old_afas = 0
     ancient_afas = 0
+
+    failed_afas = []
     for gene_id in gene_list:
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
@@ -63,15 +65,29 @@ def main():
             continue                               
         elif  check_afa_age (cfg, stable_id, max_days=300) == "new": 
             old_afas += 1
+            failed_afas.append(gene_id)
             continue                               
         elif  check_afa_age (cfg, stable_id, max_days=1000) == "new": 
            ancient_afas += 1
+           failed_afas.append(gene_id)
            continue                               
             
     print "total genes", len(gene_list)
     print "new  afas", new_afas
     print "old  afas", old_afas
     print "ancient afas", ancient_afas
+
+    no_exons = 0
+    for gene_id in failed_afas:
+        canonical_human_exons = filter (lambda x:  x.is_canonical and x.is_coding, gene2exon_list(cursor, gene_id))
+        if not canonical_human_exons: 
+            no_exons += 1
+    
+    print
+    print "failure cases"
+    print "\t no exons", no_exons
+
+
 
     cursor.close()
     db.close()
