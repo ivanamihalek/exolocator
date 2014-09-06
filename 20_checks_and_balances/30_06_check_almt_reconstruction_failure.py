@@ -54,6 +54,7 @@ def main():
         
     new_afas = 0
     old_afas = 0
+    ancient_afas = 0
     for gene_id in gene_list:
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
@@ -63,9 +64,14 @@ def main():
         elif  check_afa_age (cfg, stable_id, max_days=300) == "new": 
             old_afas += 1
             continue                               
+        elif  check_afa_age (cfg, stable_id, max_days=1000) == "new": 
+           ancient_afas += 1
+           continue                               
+            
     print "total genes", len(gene_list)
-    print "old  afas", old_afas
     print "new  afas", new_afas
+    print "old  afas", old_afas
+    print "ancient afas", ancient_afas
 
     cursor.close()
     db.close()
