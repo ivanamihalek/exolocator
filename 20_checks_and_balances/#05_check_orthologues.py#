@@ -1,9 +1,0 @@
-#!/usr/bin/python -u
-#
-import MySQLdb
-
-from el_utils.mysql   import  *
-from el_utils.ensembl import  *
-from el_utils.utils   import  *
-
-

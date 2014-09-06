@@ -1377,20 +1377,6 @@ def sort_trivial_names (cursor, all_species):
 
     return [trivial_name, sorted_trivial_names]
 
-#########################################
-def check_afa_age (cfg, stable_id):
-
-    max_days = 3 
-
-    afa_age = "old"
-    afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
-    if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0 ):
-        time_modified = os.path.getmtime(afa_fnm)
-        number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
-        if number_of_days_since_modified < max_days:
-            print "\t %s last modified %s. Moving on." % (stable_id, time.ctime(os.path.getmtime(afa_fnm) ))
-            afa_age  = "new"
-    return afa_age
 
 #########################################
 def make_atlas(cursor, ensembl_db_name, canonical_human_exons, alnmt_pep, trivial_name):
@@ -1509,7 +1495,7 @@ def make_alignments ( gene_list, db_info):
         stable_id = gene2stable(cursor, gene_id)
         # if we are running this pipe repeatedly we want to skip if
         # the last time we worked on this gene was recently enough
-        if  check_afa_age (cfg, stable_id) == "new": continue                               
+        if  check_afa_age (cfg, stable_id, max_days=30) == "new": continue                               
  
         if verbose: 
             print gene_id, stable_id, get_description (cursor, gene_id)
