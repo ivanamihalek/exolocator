@@ -1,4 +1,4 @@
-import MySQLdb, commands, re, os
+import MySQLdb, commands, re, os, time
 import inspect
 # BioPython
 from Bio.Seq      import Seq
