@@ -32,6 +32,7 @@ import pdb
 
 verbose = True
 
+from reconstruct_ortho_alnmts import *
 
 
 #########################################
@@ -77,16 +78,44 @@ def main():
     print "old  afas", old_afas
     print "ancient afas", ancient_afas
 
-    no_exons = 0
+    no_exons  = 0
+    no_orthos = 0
     for gene_id in failed_afas:
         canonical_human_exons = filter (lambda x:  x.is_canonical and x.is_coding, gene2exon_list(cursor, gene_id))
         if not canonical_human_exons: 
             no_exons += 1
+            continue
+        # the exons are not guaranteed to be in order
+        canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
+        # reconstruct  per-exon alignments with orthologues
+        [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
+                                                      mitochondrial, min_similarity, flank_length)
+
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        # we want to be able to retrieve the info starting from whichever end, so we construct the following maps:
+        # to find all exons from an ortohologue, that map to a given human exon:
+        #      human_exon_to_ortho_exon:  human_exon_to_ortho_exon[concat_seq_name][human_exon].append(exon_seq_name)
+        # given a sequence name, retrieve all exons that belong to it
+        #     sequence_to_exon: sequence_name_to_exon_names[concat_seq_name].append(exon_seq_name)
+        # in the other direction - to find all human exons that a given exon  from orthologous sequence maps to
+        #      ortho_exon_to_human_exon:  ortho_exon_to_human_exon[exon_seq_name].append(human_exon)
+        # finally, collect in one place info about maps between human and orthologue that are not one-to-one
+        #      overlapping_maps: overlapping_maps[concat_seq_name].append([human_exons, ortho_exons])
+        [human_exon_to_ortho_exon, sequence_name_to_exon_names, 
+         ortho_exon_to_human_exon, overlapping_maps] = make_atlas(cursor, ensembl_db_name, canonical_human_exons, 
+                                                                  alnmt_pep, trivial_name)
+        # the alignment always has human sequence, but if it is the only one
+        # (see for example RPL41, ENSG00000229117, a 25 residue peptide,  for which NCBI REfseq
+        # reports a single  confirmed  homologue in mouse, but Ensembl reports no orthologues at all)
+        if ( len(sequence_name_to_exon_names) <= 1):
+            no_orthos += 1
+            continue
+         
     
     print
     print "failure cases"
     print "\t no exons", no_exons
-
+    print "\t no orthologues ", no_orthos
 
 
     cursor.close()
