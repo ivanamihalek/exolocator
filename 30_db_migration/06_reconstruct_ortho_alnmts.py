@@ -1589,7 +1589,9 @@ def make_alignments ( gene_list, db_info):
 
 
         #########################################################
-        if not output_pep_ok: continue
+        if not output_pep_ok: 
+            print stable_id, " output pep not ok"
+            continue
 
         #########################################################
         # >>>>>>>>>>>>>>>>>>
@@ -1711,7 +1713,7 @@ def main():
     else:
         print "using all protein coding genes"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
         
     cursor.close()
     db.close()
