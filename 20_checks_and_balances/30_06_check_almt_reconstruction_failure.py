@@ -97,7 +97,8 @@ def main():
     for gene_id in failed_afas:
 
         if ( (failed_afas.index(gene_id))%10 == 0 ): 
-            print failed_afas.index(gene_id), "out of ", len(failed_afas)
+            print failed_afas.index(gene_id), "out of ", len(failed_afas),
+            print "  no orthos: ", cases_with_no_orthos
 
         canonical_human_exons = get_canonical_coding_exons (cursor, gene_id, ensembl_db_name['homo_sapiens'])
 
