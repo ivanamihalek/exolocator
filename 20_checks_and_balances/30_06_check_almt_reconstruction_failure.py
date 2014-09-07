@@ -106,20 +106,21 @@ def main():
             no_exons += 1
             continue
 
+        if False:
         # reconstruct  per-exon alignments with orthologues
-        mitochondrial = is_mitochondrial(cursor, gene_id)
-        [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
-                                                      mitochondrial, min_similarity, flank_length)
+            mitochondrial = is_mitochondrial(cursor, gene_id)
+            [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
+                                                          mitochondrial, min_similarity, flank_length)
 
-        no_orthos = True
-        for human_exon, almt in alnmt_pep.iteritems():
-            if ( type(almt) is str or len(almt.keys()) >= 1): 
-                no_orthos = False
-                break
+            no_orthos = True
+            for human_exon, almt in alnmt_pep.iteritems():
+                if ( type(almt) is str or len(almt.keys()) >= 1): 
+                    no_orthos = False
+                    break
 
-        if no_orthos:
-            cases_with_no_orthos += 1
-            continue
+            if no_orthos:
+                cases_with_no_orthos += 1
+                continue
          
     
     print
