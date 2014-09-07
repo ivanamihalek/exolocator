@@ -91,11 +91,6 @@ def main():
            failed_afas.append(gene_id)
            continue                               
             
-    print "total genes", len(gene_list)
-    print "new  afas", new_afas
-    print "old  afas", old_afas
-    print "ancient afas", ancient_afas
-
     no_exons  = 0
     cases_with_no_orthos = 0
     for gene_id in failed_afas:
@@ -112,7 +107,10 @@ def main():
 
         no_orthos = True
         for human_exon, almt in alnmt_pep.iteritems():
-            if ( len(almt.keys()) >= 1): 
+            if ( type(almt) is str):
+                print almt
+                
+            elif ( len(almt.keys()) >= 1): 
                 no_orthos = False
                 break
 
@@ -121,6 +119,12 @@ def main():
             continue
          
     
+    print
+    print "total genes", len(gene_list)
+    print "new  afas", new_afas
+    print "old  afas", old_afas
+    print "ancient afas", ancient_afas
+
     print
     print "failure cases"
     print "\t no exons", no_exons
