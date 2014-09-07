@@ -132,7 +132,7 @@ def main():
     print
     for gene_id in no_exon_ids:
         print gene_id
-        for exon in gene2exon_list(cursor, gene_id)):
+        for exon in gene2exon_list(cursor, gene_id):
             print "\t", exon.is_canonical, exon.is_coding
 
     cursor.close()
