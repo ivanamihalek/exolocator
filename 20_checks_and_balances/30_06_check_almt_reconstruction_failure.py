@@ -93,9 +93,11 @@ def main():
             
     no_exons  = 0
     cases_with_no_orthos = 0
+    no_exon_ids = []
     for gene_id in failed_afas:
         canonical_human_exons = filter (lambda x:  x.is_canonical and x.is_coding, gene2exon_list(cursor, gene_id))
         if not canonical_human_exons: 
+            no_exon_ids.append(gene_id)
             no_exons += 1
             continue
         # the exons are not guaranteed to be in order
@@ -126,7 +128,12 @@ def main():
     print "failure cases"
     print "\t no exons", no_exons
     print "\t no orthologues ", cases_with_no_orthos
-
+    
+    print
+    for gene_id in no_exon_ids:
+        print gene_id
+        for exon in gene2exon_list(cursor, gene_id)):
+            print "\t", exon.is_canonical, exon.is_coding
 
     cursor.close()
     db.close()
