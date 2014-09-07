@@ -97,7 +97,7 @@ def main():
     for gene_id in failed_afas:
 
         if ( (failed_afas.index(gene_id))%10 == 0 ): 
-            print gene_list.index(gene_id), "out of ", len(failed_afas)
+            print failed_afas.index(gene_id), "out of ", len(failed_afas)
 
         canonical_human_exons = get_canonical_coding_exons (cursor, gene_id, ensembl_db_name['homo_sapiens'])
 
