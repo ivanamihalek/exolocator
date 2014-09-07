@@ -1505,7 +1505,8 @@ def make_alignments ( gene_list, db_info):
         # mitochondrial?
         mitochondrial = is_mitochondrial(cursor, gene_id)
         # find all canonical coding  human exons 
-        canonical_human_exons = filter (lambda x:  x.is_canonical and x.is_coding, gene2exon_list(cursor, gene_id))
+        # get_canonical_coding_exons also sorts exons by the start in the gene
+        canonical_human_exons = get_canonical_coding_exons (cursor, gene_id, ensembl_db_name['homo_sapiens'])
         # bail out if there is a problem
         if not canonical_human_exons: continue
         # the exons are not guaranteed to be in order

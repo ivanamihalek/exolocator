@@ -95,14 +95,17 @@ def main():
     cases_with_no_orthos = 0
     no_exon_ids = []
     for gene_id in failed_afas:
+
+        if ( (failed_afas.index(gene_id))%10 == 0 ): 
+            print gene_list.index(gene_id), "out of ", len(failed_afas)
+
         canonical_human_exons = get_canonical_coding_exons (cursor, gene_id, ensembl_db_name['homo_sapiens'])
 
         if not canonical_human_exons: 
             no_exon_ids.append(gene_id)
             no_exons += 1
             continue
-        # the exons are not guaranteed to be in order
-        canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
+
         # reconstruct  per-exon alignments with orthologues
         mitochondrial = is_mitochondrial(cursor, gene_id)
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
