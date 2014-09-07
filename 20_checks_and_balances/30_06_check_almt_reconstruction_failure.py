@@ -95,7 +95,10 @@ def main():
     cases_with_no_orthos = 0
     no_exon_ids = []
     for gene_id in failed_afas:
-        canonical_human_exons = filter (lambda x:  x.is_canonical and x.is_coding, gene2exon_list(cursor, gene_id))
+        canonical_human_exons = get_canonical_coding_exonss (cursor, gene_id, ensembl_db_name['homo_sapiens']):
+
+        
+
         if not canonical_human_exons: 
             no_exon_ids.append(gene_id)
             no_exons += 1
