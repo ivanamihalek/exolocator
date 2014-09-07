@@ -22,7 +22,7 @@ from el_utils.special_gene_sets  import *
 from el_utils.processes import parallelize
 from el_utils.exon_boundary_hacks import *
 from bitstring import Bits
-from   random  import choice
+from random  import choice
 # BioPython
 from Bio          import  SeqIO
 from Bio.Seq      import Seq
@@ -32,7 +32,23 @@ import pdb
 
 verbose = True
 
-from reconstruct_ortho_alnmts import *
+#########################################
+def make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
+                         mitochondrial, min_similarity, flank_length):
+    alnmt_pep = {}
+    alnmt_dna = {}
+    first_human_exon = True
+    for human_exon in canonical_human_exons:
+        # make_exon_alignment defined in el_utils/el_specific.py
+        # we need the info about the first human exon
+        # to get a bit more lenient whent the first exon consists of M only
+        # (I'll have to take a look at one point what's up with that)
+        [alnmt_pep[human_exon], alnmt_dna[human_exon]]  =   make_exon_alignment(cursor, ensembl_db_name,  human_exon.exon_id, 
+                                                                                human_exon.is_known,  mitochondrial, min_similarity, 
+                                                                                flank_length, first_human_exon)   
+        first_human_exon = False
+
+    return [alnmt_pep, alnmt_dna] 
 
 
 #########################################
@@ -79,7 +95,7 @@ def main():
     print "ancient afas", ancient_afas
 
     no_exons  = 0
-    no_orthos = 0
+    cases_with_no_orthos = 0
     for gene_id in failed_afas:
         canonical_human_exons = filter (lambda x:  x.is_canonical and x.is_coding, gene2exon_list(cursor, gene_id))
         if not canonical_human_exons: 
@@ -91,31 +107,21 @@ def main():
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
 
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        # we want to be able to retrieve the info starting from whichever end, so we construct the following maps:
-        # to find all exons from an ortohologue, that map to a given human exon:
-        #      human_exon_to_ortho_exon:  human_exon_to_ortho_exon[concat_seq_name][human_exon].append(exon_seq_name)
-        # given a sequence name, retrieve all exons that belong to it
-        #     sequence_to_exon: sequence_name_to_exon_names[concat_seq_name].append(exon_seq_name)
-        # in the other direction - to find all human exons that a given exon  from orthologous sequence maps to
-        #      ortho_exon_to_human_exon:  ortho_exon_to_human_exon[exon_seq_name].append(human_exon)
-        # finally, collect in one place info about maps between human and orthologue that are not one-to-one
-        #      overlapping_maps: overlapping_maps[concat_seq_name].append([human_exons, ortho_exons])
-        [human_exon_to_ortho_exon, sequence_name_to_exon_names, 
-         ortho_exon_to_human_exon, overlapping_maps] = make_atlas(cursor, ensembl_db_name, canonical_human_exons, 
-                                                                  alnmt_pep, trivial_name)
-        # the alignment always has human sequence, but if it is the only one
-        # (see for example RPL41, ENSG00000229117, a 25 residue peptide,  for which NCBI REfseq
-        # reports a single  confirmed  homologue in mouse, but Ensembl reports no orthologues at all)
-        if ( len(sequence_name_to_exon_names) <= 1):
-            no_orthos += 1
+        no_orthos = True
+        for human_exon, almt in alnmt_pep.iteritems():
+            if ( len(almt.keys()) >= 1): 
+                no_orthos = False
+                break
+
+        if no_orthos:
+            cases_with_no_orthos += 1
             continue
          
     
     print
     print "failure cases"
     print "\t no exons", no_exons
-    print "\t no orthologues ", no_orthos
+    print "\t no orthologues ", cases_with_no_orthos
 
 
     cursor.close()
