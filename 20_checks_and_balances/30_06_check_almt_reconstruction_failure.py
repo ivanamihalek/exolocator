@@ -107,10 +107,7 @@ def main():
 
         no_orthos = True
         for human_exon, almt in alnmt_pep.iteritems():
-            if ( type(almt) is str):
-                print almt
-                
-            elif ( len(almt.keys()) >= 1): 
+            if ( type(almt) is str or len(almt.keys()) >= 1): 
                 no_orthos = False
                 break
 
