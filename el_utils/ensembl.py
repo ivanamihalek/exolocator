@@ -1208,7 +1208,33 @@ def stable2exon (cursor, stable_id, db_name=None):
 
 
 ########
-def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None):
+def is_reference (cursor, gene_id,  non_ref_id, db_name=None):
+
+    if  (db_name):
+        qry  = "use %s " % db_name
+        rows = search_db (cursor, qry)
+        if (rows):
+            rows = search_db (cursor, qry, verbose = True)
+            print rows
+            exit (1)
+    qry = 'select seq_region_id from gene where gene_id=%d' % int(gene_id)
+    rows = search_db (cursor, qry)
+    if not rows: return True
+
+    seq_region_id = rows[0]
+
+    qry = 'select attrib_type_id from  seq_region_attrib where seq_region_id=%s' % seq_region_id
+    rows = search_db (cursor, qry)
+    if not rows: return True
+    
+    for row in rows:
+        attrib_type_id=int(row[0])
+        if attrib_type_id == non_ref_id: return False
+
+    return True
+
+########
+def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_only = False):
 
     gene_ids = []
     
@@ -1245,11 +1271,23 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None):
             print rows[0]
             return []
 
+        # I don't want to hard code the id for the annotation "non_ref"
+        # and I do no know where else to do it, so qe do it here
+        if ref_only:
+            qry  = "select attrib_type_id from attrib_type where code='non_ref'"
+            rows = search_db (cursor, qry)
+            if not rows or not type(rows[0][0]) is int:
+                ref_only = False:
+            else:
+                non_ref_id = int (rows[0][0])
+                
         for row in rows:
             if ( not type(row[0]) is long ):
                 print row
                 exit(1)
-            gene_ids.append(int(row[0]))
+            gene_id = int(row[0])
+            if ref_only and not is_reference(cursor, gene_id, non_ref_id): continue
+            gene_ids.append(gene_id)
     
     return gene_ids
 

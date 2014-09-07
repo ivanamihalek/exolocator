@@ -69,7 +69,7 @@ def main():
     switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
     min_similarity = cfg.get_value('min_accptbl_exon_sim') 
     flank_length = 10
-    gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+    gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
         
     new_afas = 0
     old_afas = 0
