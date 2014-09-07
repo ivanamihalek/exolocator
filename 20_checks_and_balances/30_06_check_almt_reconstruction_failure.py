@@ -104,6 +104,7 @@ def main():
         # the exons are not guaranteed to be in order
         canonical_human_exons.sort(key=lambda exon: exon.start_in_gene)
         # reconstruct  per-exon alignments with orthologues
+        mitochondrial = is_mitochondrial(cursor, gene_id)
         [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,
                                                       mitochondrial, min_similarity, flank_length)
 
