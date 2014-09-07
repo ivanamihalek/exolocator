@@ -1275,11 +1275,11 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_onl
         # and I do no know where else to do it, so qe do it here
         if ref_only:
             qry  = "select attrib_type_id from attrib_type where code='non_ref'"
-            rows = search_db (cursor, qry)
-            if not rows or not type(rows[0][0]) is int:
+            rows2 = search_db (cursor, qry)
+            if not rows2 or not type(rows2[0][0]) is int:
                 ref_only = False
             else:
-                non_ref_id = int (rows[0][0])
+                non_ref_id = int (rows2[0][0])
                 
         for row in rows:
             if ( not type(row[0]) is long ):
