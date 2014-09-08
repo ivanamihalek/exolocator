@@ -107,7 +107,7 @@ def main():
             no_exons += 1
             continue
 
-        if True:
+        if False:
         # reconstruct  per-exon alignments with orthologues
             mitochondrial = is_mitochondrial(cursor, gene_id)
             [alnmt_pep, alnmt_dna] = make_exon_alignments(cursor, ensembl_db_name, canonical_human_exons,

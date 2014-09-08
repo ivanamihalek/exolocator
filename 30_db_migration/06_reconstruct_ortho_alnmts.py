@@ -1489,6 +1489,7 @@ def make_alignments ( gene_list, db_info):
 
     ##########################################################################
     # for each  gene in the provided list
+    gene_list.reverse()
     for gene_id in gene_list:
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
