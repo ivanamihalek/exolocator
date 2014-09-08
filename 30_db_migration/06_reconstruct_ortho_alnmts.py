@@ -1489,7 +1489,6 @@ def make_alignments ( gene_list, db_info):
 
     ##########################################################################
     # for each  gene in the provided list
-    gene_list.reverse()
     for gene_id in gene_list:
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -1714,8 +1713,18 @@ def main():
     else:
         print "using all protein coding genes"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
-        
+        gene_list_whole = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
+
+        #>>>> note here: we are filtering for the old or non-existent afas
+        switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
+        gene_list = []
+        for gene_id in gene_list_whole:
+            stable_id = gene2stable(cursor, gene_id)
+            # if we are running this pipe repeatedly we want to skip if
+            # the last time we worked on this gene was recently enough
+            if  check_afa_age (cfg, stable_id, max_days=30) == "new": continue                               
+            gene_list.append(gene_id)
+
     cursor.close()
     db.close()
 
