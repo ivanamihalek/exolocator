@@ -1487,16 +1487,15 @@ def make_alignments ( gene_list, db_info):
     switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
     min_similarity = cfg.get_value('min_accptbl_exon_sim') 
 
+
+
     ##########################################################################
     # for each  gene in the provided list
     for gene_id in gene_list:
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
-        # if we are running this pipe repeatedly we want to skip if
-        # the last time we worked on this gene was recently enough
-        if  check_afa_age (cfg, stable_id, max_days=30) == "new": continue                               
- 
+  
         if verbose: 
             print gene_id, stable_id, get_description (cursor, gene_id)
         elif ( (gene_list.index(gene_id))%100 == 0 ): 
@@ -1718,11 +1717,12 @@ def main():
         #>>>> note here: we are filtering for the old or non-existent afas
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         gene_list = []
+        directory = "{0}/dna".format(cfg.dir_path['afs_dumps'])
         for gene_id in gene_list_whole:
             stable_id = gene2stable(cursor, gene_id)
             # if we are running this pipe repeatedly we want to skip if
             # the last time we worked on this gene was recently enough
-            if  check_afa_age (cfg, stable_id, max_days=30) == "new": continue                               
+            if  check_afa_age (cfg, directory, stable_id, max_days=30) == "new": continue                               
             gene_list.append(gene_id)
 
     cursor.close()

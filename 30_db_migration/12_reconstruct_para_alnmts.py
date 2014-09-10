@@ -1213,6 +1213,18 @@ def make_alignments (species_list, db_info):
             print species, "no gene_ids"
             continue
 
+        fields = species.split("_")
+        if species == "astyanax_mexicanus": # clash with ailuropoda melanoleuca
+            species_id = "AMX";
+        elif species == "ictidomys_tridecemlineatus":
+            species_id = "STO";         # it used to be sperm-something or the other, but epople got too bashful
+        elif species == "mus_musculus": # clash with macaca mulatta
+            species_id = "MUS";
+        else:
+            species_id = fields[0][0]+fields[1][0:2]
+            species_id = species_id.upper()
+        directory = check_directory (cfg, species, "pep")
+  
           
         # for each human gene
         gene_ct = 0
@@ -1230,7 +1242,7 @@ def make_alignments (species_list, db_info):
                 print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
             # see if perhaps already resolved this one
-            if  check_afa_age (cfg, stable_id, max_days=30, paralogues=True, species=species) == "new": continue  
+            if  check_afa_age (cfg, directory, stable_id, max_days=30) == "new": continue  
 
 
             # get the paralogues - only the representative for  the family will have this 

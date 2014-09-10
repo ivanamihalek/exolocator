@@ -10,29 +10,11 @@ from  utils   import  *
 from  map     import  *
 
 #########################################
-def check_afa_age (cfg, stable_id, max_days=3, paralogues=False, species=None):
+def check_afa_age (cfg, directory, stable_id, max_days=3):
 
     afa_age = "old"
-    if (paralogues):
-        if species==None:
-            species='homo_sapiens'
 
-        fields = species.split("_")
-        if species == "astyanax_mexicanus": # clash with ailuropoda melanoleuca
-            species_id = "AMX";
-        elif species == "ictidomys_tridecemlineatus":
-            species_id = "STO";         # it used to be sperm-something or the other, but epople got too bashful
-        elif species == "mus_musculus": # clash with macaca mulatta
-            species_id = "MUS";
-        else:
-            species_id = fields[0][0]+fields[1][0:2]
-            species_id = species_id.upper()
-        directory = "{0}/para/{1}".format(cfg.dir_path['afs_dumps'], species_id)
-        directory = check_directory (cfg, species, "pep")
-        afa_fnm   = "{0}/pep/{1}.afa".format(directory, stable_id)
-
-    else:
-        afa_fnm  = "{0}/dna/{1}.afa".format(cfg.dir_path['afs_dumps'], stable_id)
+    afa_fnm  = "{0}/{1}.afa".format(directory, stable_id)
 
     if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0 ):
         time_modified = os.path.getmtime(afa_fnm)
