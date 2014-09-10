@@ -1196,36 +1196,22 @@ def make_alignments (species_list, db_info):
     [all_species, ensembl_db_name] = get_species (cursor)
 
     #species_list.reverse()
-    #hack_list = species_list[len(species_list)/2:]
-    #hack_list.reverse()
-    #species_list = ["ictidomys_tridecemlineatus"]
     for species in species_list:
 
         pep_produced = 0
         dna_produced = 0
         has_paralogues = 0
         switch_to_db (cursor,  ensembl_db_name[species])
-        gene_ids = get_gene_ids (cursor, biotype='protein_coding')
-        #gene_ids = get_theme_ids(cursor, cfg, 'wnt_pathway')
+        if species == 'homo_sapiens':
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
+        else:
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+
         if not gene_ids:
             print species, "no gene_ids"
             continue
 
-        fields = species.split("_")
-        if species == "astyanax_mexicanus": # clash with ailuropoda melanoleuca
-            species_id = "AMX";
-        elif species == "ictidomys_tridecemlineatus":
-            species_id = "STO";         # it used to be sperm-something or the other, but epople got too bashful
-        elif species == "mus_musculus": # clash with macaca mulatta
-            species_id = "MUS";
-        else:
-            species_id = fields[0][0]+fields[1][0:2]
-            species_id = species_id.upper()
-        directory = "{0}/para/{1}".format(cfg.dir_path['afs_dumps'], species_id)
-        directory = check_directory (cfg, species, "pep")
-  
-        print species, "number of genes: ", len(gene_ids),  directory
-        
+          
         # for each human gene
         gene_ct = 0
         #gene_list.reverse()
@@ -1242,15 +1228,7 @@ def make_alignments (species_list, db_info):
                 print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
 
             # see if perhaps already resolved this one
-            if (1):
-                afa_fnm   = "{0}/pep/{1}.afa".format(directory, stable_id)
-                if (os.path.exists(afa_fnm) and os.path.getsize(afa_fnm) > 0 ):
-                    time_modified = os.path.getmtime(afa_fnm)
-                    number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
-                    if number_of_days_since_modified < 30:
-                        print "\t %s last modified %s. Moving on." % (stable_id, time.ctime( os.path.getmtime(afa_fnm) ))
-                        continue
-
+            if  check_afa_age (cfg, stable_id, max_days=30, paralogues=True, species=species) == "new": continue  
 
 
             # get the paralogues - only the representative for  the family will have this 
