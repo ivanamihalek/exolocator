@@ -1220,6 +1220,8 @@ def make_alignments (species_list, db_info):
             species_id = "STO";         # it used to be sperm-something or the other, but epople got too bashful
         elif species == "mus_musculus": # clash with macaca mulatta
             species_id = "MUS";
+        elif species == "microcebus_murinus": # clash with macaca mulatta
+            species_id = "MIC";
         else:
             species_id = fields[0][0]+fields[1][0:2]
             species_id = species_id.upper()
