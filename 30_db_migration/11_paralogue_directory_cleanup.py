@@ -74,6 +74,8 @@ def make_alignments (species_list, db_info):
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
 
+    max_days = 60
+
     #species_list.reverse()
     for species in species_list:
 
@@ -81,15 +83,7 @@ def make_alignments (species_list, db_info):
         dna_produced = 0
         has_paralogues = 0
         switch_to_db (cursor,  ensembl_db_name[species])
-        if species == 'homo_sapiens':
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
-        else:
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
-
-        if not gene_ids:
-            print species, "no gene_ids"
-            continue
-
+ 
         fields = species.split("_")
         if species == "astyanax_mexicanus": # clash with ailuropoda melanoleuca
             species_id = "AMX";
@@ -102,12 +96,18 @@ def make_alignments (species_list, db_info):
             species_id = species_id.upper()
         directory = check_directory (cfg, species, "pep")
   
+        removed = 0
         for dirname, dirnames, filenames in os.walk(directory):
-            for filename in filenames[:10]:
-                print os.path.join(dirname, filename)
-       
-        
- 
+            for filename in filenames:
+                full_name =  os.path.join(dirname, filename)
+                time_modified = os.path.getmtime(full_name)
+                number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
+                if number_of_days_since_modified > max_days:
+                    print "removing", filename, "made", number_of_days_since_modified, "ago"
+                    os.remove(full_name)
+                    removed += 1
+        print species, "done, removed", removed, "files"
+        exit(1)
     
 
 #########################################
