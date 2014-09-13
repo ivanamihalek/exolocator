@@ -109,7 +109,6 @@ def make_alignments (species_list, db_info):
                 full_name =  os.path.join(dirname, filename)
                 time_modified = os.path.getmtime(full_name)
                 number_of_days_since_modified = (time.time() - time_modified)/(60*60*24)
-                total += 1
                 if number_of_days_since_modified > max_days:
                     #print "removing", filename, "made", number_of_days_since_modified, "ago"
                     os.remove(full_name)
