@@ -99,6 +99,7 @@ def make_alignments (species_list, db_info):
 
         print species, species_id
 
+
         directory = check_directory (cfg, species, "pep")
   
         removed = 0
