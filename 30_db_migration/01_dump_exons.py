@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 
 import MySQLdb
 import sys, commands, os
@@ -60,7 +60,7 @@ def dump_exons (species_list, db_info):
         switch_to_db (cursor,  ensembl_db_name[species])
 
         if (species=='homo_sapiens'):
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
@@ -107,6 +107,7 @@ def dump_exons (species_list, db_info):
 
 
         of.close()
+        print species, "done"
     
     cursor.close()
     db    .close()
