@@ -228,10 +228,10 @@ def  feed_name_shorthands (cursor, all_species):
 
     short = {}
     short['ailuropoda_melanoleuca'] = 'AME'
-    short['anas_platyrhynchos'] = 'APL'
-    short['anolis_carolinensis'] = 'ACA'
-    short['astyanax_mexicanus'] = 'AMX'
-    short['bos_taurus'] = 'BTA'
+    short['anas_platyrhynchos']     = 'APL'
+    short['anolis_carolinensis']    = 'ACA'
+    short['astyanax_mexicanus']     = 'AMX'
+    short['bos_taurus']             = 'BTA'
     short['callithrix_jacchus'] = 'CJA'
     short['canis_familiaris'] = 'CAF'
     short['cavia_porcellus'] = 'CPO'

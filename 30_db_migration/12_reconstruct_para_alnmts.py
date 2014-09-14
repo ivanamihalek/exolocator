@@ -1210,34 +1210,12 @@ def make_alignments (species_list, db_info):
             print species, "no gene_ids"
             continue
 
-        fields = species.split("_")
-        if species == "astyanax_mexicanus": # clash with ailuropoda melanoleuca
-            species_id = "AMX";
-        elif species == "ictidomys_tridecemlineatus":
-            species_id = "STO";         # it used to be sperm-something or the other, but epople got too bashful
-
-        elif species == "canis_familiaris":
-            species_id = "CAF";         # not following the rule: CAF, not CFA
-
-        elif species == "danio_rerio":
-            species_id = "DAR";         # not following the rule:  DAR, not DRE
-
-        elif species == "gallus_gallus":
-            species_id = "GAL";         # not following the rule:  GAL, not GGA
-
-        elif species == "latimeria_chalumnae":
-            species_id = "LAC";         # not following the rule
-
-
-
-        elif species == "mus_musculus": # clash with macaca mulatta
-            species_id = "MUS";
-        elif species == "microcebus_murinus": # clash with macaca mulatta
-            species_id = "MIC";
+        if species == 'homo_sapiens':
+            species_shorthand = 'HSA'
         else:
-            species_id = fields[0][0]+fields[1][0:2]
-            species_id = species_id.upper()
-        directory = check_directory (cfg, species, species_id, "pep")
+            species_shorthand = get_species_shorthand(cursor, species)
+        print species, species_shorthand
+        directory = check_directory (cfg, species, species_shorthand, "pep")
   
           
         # for each human gene
@@ -1421,7 +1399,7 @@ def make_alignments (species_list, db_info):
             # get rid of the ghost exons that do not correpond to anything in any other species
             #[output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
 
-            directory = check_directory ( cfg, species, species_id, "pep")
+            directory = check_directory ( cfg, species, species_shorthand, "pep")
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_pep)
             pep_produced += 1
@@ -1437,7 +1415,7 @@ def make_alignments (species_list, db_info):
 
             output_dna = strip_gaps(output_dna)
 
-            directory = check_directory ( cfg, species, species_id, "dna")
+            directory = check_directory ( cfg, species, species_shorthand, "dna")
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_dna)
             if verbose: print afa_fnm

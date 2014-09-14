@@ -64,14 +64,9 @@ def make_alignments (species_list, db_info):
 
     max_days = 60
 
-    #species_list.reverse()
     for species in species_list:
 
-        pep_produced = 0
-        dna_produced = 0
-        has_paralogues = 0
-
-        if species == 'homos_sapiens':
+        if species == 'homo_sapiens':
             species_shorthand = 'HSA'
         else:
             species_shorthand = get_species_shorthand(cursor, species)
