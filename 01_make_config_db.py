@@ -315,9 +315,8 @@ def  feed_name_shorthands (cursor, all_species):
         if short.has_key(species):
             fixed_fields  = {}
             update_fields = {}
-            fixed_fields ['species']    = species
-            update_fields ['shorthand']  = short[species]
-            update_fields['name_txt']   = trivial[species]
+            fixed_fields  ['species']   = species
+            update_fields ['shorthand'] = short[species]
             store_or_update (cursor, table, fixed_fields, update_fields)
         else:
             print "short for ", species, " not found "
