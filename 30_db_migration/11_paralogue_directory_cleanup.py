@@ -34,12 +34,8 @@ def check_directory (cfg, species, species_id, pep_or_dna):
     
     directory = "{0}/para/{1}/{2}".format(cfg.dir_path['afs_dumps'], species_id, pep_or_dna)
     if not os.path.exists(directory):
-        try:
-            os.makedirs(directory) 
-        except:
-            print "error making", directory
-            exit(1) # on error making the output directory
-
+        print "warning: ", directory, "not found"
+        return ""
     return directory
 
 #########################################
@@ -74,27 +70,14 @@ def make_alignments (species_list, db_info):
         pep_produced = 0
         dna_produced = 0
         has_paralogues = 0
-        switch_to_db (cursor,  ensembl_db_name[species])
- 
-        fields = species.split("_")
-        if species == "astyanax_mexicanus": # clash with ailuropoda melanoleuca
-            species_id = "AMX";
-        elif species == "ictidomys_tridecemlineatus":
-            species_id = "STO";         # it used to be sperm-something or the other, but epople got too bashful
-        elif species == "mus_musculus": # clash with macaca mulatta
-            species_id = "MUS";
-        elif species == "microcebus_murinus": # clash with macaca mulatta
-            species_id = "MIC";
-        else:
-            species_id = fields[0][0]+fields[1][0:2]
-            species_id = species_id.upper()
 
-        print species, species_id
+        species_shorthand = get_species_shorthand(cursor, species)
+        print species, species_shorthand
 
+        directory = check_directory (cfg, species, species_shorthand, "pep")
+        if not directory: continue
 
-        directory = check_directory (cfg, species, species_id, "pep")
-  
-        removed = 0
+        removed   = 0
         remaining = 0
         for dirname, dirnames, filenames in os.walk(directory):
             for filename in filenames:
