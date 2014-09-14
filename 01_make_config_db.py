@@ -191,6 +191,7 @@ def  feed_trivial_names (cursor, all_species):
     trivial['xiphophorus_maculatus']       = 'platyfish' 
 
 
+
     db_name = get_compara_name (cursor)
     if (not db_name):
         print "compara db not found"
@@ -220,12 +221,115 @@ def  feed_trivial_names (cursor, all_species):
             print "trivial for ", species, " not found "
             trivial[species] = ""
 
-
-
-
     return True
 
 #########################################
+def  feed_name_shorthands (cursor, all_species):
+
+    short = {}
+    short['ailuropoda_melanoleuca'] = 'AME'
+    short['anas_platyrhynchos'] = 'APL'
+    short['anolis_carolinensis'] = 'ACA'
+    short['astyanax_mexicanus'] = 'AMX'
+    short['bos_taurus'] = 'BTA'
+    short['callithrix_jacchus'] = 'CJA'
+    short['canis_familiaris'] = 'CAF'
+    short['cavia_porcellus'] = 'CPO'
+    short['choloepus_hoffmanni'] = 'CHO'
+    short['danio_rerio'] = 'DRE'
+    short['dasypus_novemcinctus'] = 'DNO'
+    short['dipodomys_ordii'] = 'DOR'
+    short['echinops_telfairi'] = 'ETE'
+    short['equus_caballus'] = 'ECA'
+    short['erinaceus_europaeus'] = 'EEU'
+    short['felis_catus'] = 'FCA'
+    short['ficedula_albicollis'] = 'FAL'
+    short['gadus_morhua'] = 'GMO'
+    short['gallus_gallus'] = 'GAL'
+    short['gasterosteus_aculeatus'] = 'GAC'
+    short['gorilla_gorilla'] = 'GGO'
+    short['homo_sapiens'] = ''
+    short['ictidomys_tridecemlineatus'] = 'STO'
+    short['latimeria_chalumnae'] = 'LAC'
+    short['lepisosteus_oculatus'] = 'LOC'
+    short['loxodonta_africana'] = 'LAF'
+    short['macaca_mulatta'] = 'MMU'
+    short['macropus_eugenii'] = 'MEU'
+    short['meleagris_gallopavo'] = 'MGA'
+    short['microcebus_murinus'] = 'MIC'
+    short['monodelphis_domestica'] = 'MOD'
+    short['mus_musculus'] = 'MUS'
+    short['mustela_putorius_furo'] = 'MPU'
+    short['myotis_lucifugus'] = 'MLU'
+    short['nomascus_leucogenys'] = 'NLE'
+    short['ochotona_princeps'] = 'OPR'
+    short['oreochromis_niloticus'] = 'ONI'
+    short['ornithorhynchus_anatinus'] = 'OAN'
+    short['oryctolagus_cuniculus'] = 'OCU'
+    short['oryzias_latipes'] = 'ORL'
+    short['ovis_aries'] = 'OAR'
+    short['otolemur_garnettii'] = 'OGA'
+    short['pan_troglodytes'] = 'PTR'
+    short['papio_anubis'] = 'PAN'
+    short['poecilia_formosa'] = 'PFO'
+    short['pelodiscus_sinensis'] = 'PSI'
+    short['petromyzon_marinus'] = 'PMA'
+    short['pongo_abelii'] = 'PPY'
+    short['procavia_capensis'] = 'PCA'
+    short['pteropus_vampyrus'] = 'PVA'
+    short['rattus_norvegicus'] = 'RNO'
+    short['sarcophilus_harrisii'] = 'SHA'
+    short['sorex_araneus'] = 'SAR'
+    short['sus_scrofa'] = 'SSC'
+    short['taeniopygia_guttata'] = 'TGU'
+    short['takifugu_rubripes'] = 'TRU'
+    short['tarsius_syrichta'] = 'TSY'
+    short['tetraodon_nigroviridis'] = 'TNI'
+    short['tupaia_belangeri'] = 'TBE'
+    short['tursiops_truncatus'] = 'TTR'
+    short['vicugna_pacos'] = 'VPA'
+    short['xenopus_tropicalis'] = 'XET'
+    short['xiphophorus_maculatus'] = 'XMA'
+
+
+    db_name = get_compara_name (cursor)
+    qry = "use %s " % db_name
+    search_db (cursor, qry)
+
+    table = 'species_name_shorthands'
+    # if the table does not exist, make it
+    if not check_table_exists (cursor, db_name, table):
+        qry  = "CREATE TABLE " + table + "  (id INT(10) PRIMARY KEY AUTO_INCREMENT)"
+        rows = search_db (cursor, qry)
+        if (rows): return False
+
+        qry = "ALTER TABLE %s  ADD %s VARCHAR(100)" % (table, 'species')
+        rows = search_db (cursor, qry)
+        if (rows): return False
+        qry = "ALTER TABLE %s  ADD %s VARCHAR(10)" % (table, 'shorthand')
+        rows = search_db (cursor, qry)
+        if (rows): return False
+
+
+    for species in all_species:
+        if short.has_key(species):
+            fixed_fields  = {}
+            update_fields = {}
+            fixed_fields ['species']    = species
+            update_fields ['shorthand']  = short[species]
+            update_fields['name_txt']   = trivial[species]
+            store_or_update (cursor, table, fixed_fields, update_fields)
+        else:
+            print "short for ", species, " not found "
+            short[species] = ""
+
+
+
+
+
+
+#########################################
+
 def main():
 
     parameter = {}
@@ -330,6 +434,9 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
     feed_trivial_names (cursor, all_species)
 
+    #######################################################
+    # add species shorthands (used in ENS* names formation(
+    feed_name_shorthands (cursor, all_species)
 
     cursor.close()
     db.close()
