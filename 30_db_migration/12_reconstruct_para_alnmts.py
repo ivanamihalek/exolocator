@@ -1215,6 +1215,21 @@ def make_alignments (species_list, db_info):
             species_id = "AMX";
         elif species == "ictidomys_tridecemlineatus":
             species_id = "STO";         # it used to be sperm-something or the other, but epople got too bashful
+
+        elif species == "canis_familiaris":
+            species_id = "CAF";         # not following the rule: CAF, not CFA
+
+        elif species == "danio_rerio":
+            species_id = "DAR";         # not following the rule:  DAR, not DRE
+
+        elif species == "gallus_gallus":
+            species_id = "GAL";         # not following the rule:  GAL, not GGA
+
+        elif species == "latimeria_chalumnae":
+            species_id = "LAC";         # not following the rule
+
+
+
         elif species == "mus_musculus": # clash with macaca mulatta
             species_id = "MUS";
         elif species == "microcebus_murinus": # clash with macaca mulatta

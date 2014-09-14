@@ -44,37 +44,42 @@ def make_exon_table (cursor, table):
 
 
 #########################################
-def check_exon_table(cursor, db_name, table, verbose = False):
+def check_exon_table(cursor, db_name, table, verbose = False, drop_old_table=False):
     
-    if 0:
-        if ( not check_table_exists (cursor, db_name, table)):
-            if verbose:  print 'table', table, 'in', db_name, 'does not exist'
+
+    table_exists = check_table_exists (cursor, db_name, table)
+
+    if table_exists:
+        if verbose:  print 'table', table, 'in', db_name, 'exists'
+        if (drop_old_table):
+             if verbose: print "\t ... will drop if old "
+             
+    if not table_exists or drop_old_table:
+        create_date = table_create_time (cursor, db_name, table)
+        if verbose: print create_date # already magically turned into datetime object by python (?)
+        yr  = create_date.year
+        mth = create_date.month
+
+        if yr<=2013 or yr<2014 and mth<8:
+            if verbose: 
+                print "old table %s (yr %d, mo %d) found in %s (will drop)" % (table, db_name, yr, mth)
+            qry = "drop table "+table
+            rows = search_db(cursor, qry)
+
         else:
-            create_date = table_create_time (cursor, db_name, table)
-            if verbose: print create_date # already magically turned into datetime object by python (?)
-            yr  = create_date.year
-            mth = create_date.month
+            if verbose: print 'new table', table, " found in ", db_name, ' -- moving on'
+            return 0 # skip this one
 
-            #if yr==2012 or yr==2013 and mth<10:
-            if yr<2014:
-                if verbose: print 'old table', table, " found in ", db_name, '(will drop)'
-                qry = "drop table "+table
-                rows = search_db(cursor, qry)
+    qry = "drop table "+table
+    rows = search_db(cursor, qry)
 
-            else:
-                if verbose: print 'new table', table, " found in ", db_name, ' -- moving on'
-                return 0 # skip this one
+    if verbose: print 'making new table', table
+    make_exon_table (cursor, table)
 
-        qry = "drop table "+table
-        rows = search_db(cursor, qry)
+    if verbose: print 'making index on', table
 
-        if verbose: print 'making new table', table
-        make_exon_table (cursor, table)
-
-        if verbose: print 'making index on', table
-
-        qry = "create index key_id on  " + table + " (exon_key)";
-        rows = search_db(cursor, qry)
+    qry = "create index key_id on  " + table + " (exon_key)";
+    rows = search_db(cursor, qry)
 
     return 1
 
@@ -192,7 +197,7 @@ def load_from_infiles (infiles, in_path):
 
         table =  'exon_' + species
         # note the table is also 'not ok' it it si new and we are nto willing to drop it
-        exon_table_ok =  check_exon_table (cursor, db_name, table, verbose = True)
+        exon_table_ok =  check_exon_table (cursor, db_name, table, verbose = True, drop_old_table=True)
         sys.stdout.flush()
         if not exon_table_ok: continue
         
