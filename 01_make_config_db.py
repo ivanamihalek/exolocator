@@ -236,7 +236,7 @@ def  feed_name_shorthands (cursor, all_species):
     short['canis_familiaris'] = 'CAF'
     short['cavia_porcellus'] = 'CPO'
     short['choloepus_hoffmanni'] = 'CHO'
-    short['danio_rerio'] = 'DRE'
+    short['danio_rerio'] = 'DAR'
     short['dasypus_novemcinctus'] = 'DNO'
     short['dipodomys_ordii'] = 'DOR'
     short['echinops_telfairi'] = 'ETE'

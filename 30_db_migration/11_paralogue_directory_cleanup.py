@@ -71,7 +71,10 @@ def make_alignments (species_list, db_info):
         dna_produced = 0
         has_paralogues = 0
 
-        species_shorthand = get_species_shorthand(cursor, species)
+        if species == 'homos_sapiens':
+            species_shorthand = 'HSA'
+        else:
+            species_shorthand = get_species_shorthand(cursor, species)
         print species, species_shorthand
 
         directory = check_directory (cfg, species, species_shorthand, "pep")
