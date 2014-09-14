@@ -4,6 +4,22 @@ import MySQLdb
 from   mysql import search_db, switch_to_db
 from   exon  import Exon
 import commands
+
+#########################################
+def get_species_shorthand(cursor, species):
+    
+   db_name = get_compara_name (cursor)
+   qry = "use %s " % db_name
+   search_db (cursor, qry)
+
+   qry = "select shorthand from species_name_shorthands where species='%s'" % species
+   rows = search_db (cursor, qry)
+   if not rows: return ""
+
+   return rows[0][0]
+   
+
+
 #########################################
 def canonical_transl_info (cursor, gene_id):
     

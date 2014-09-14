@@ -434,7 +434,8 @@ def main():
     feed_trivial_names (cursor, all_species)
 
     #######################################################
-    # add species shorthands (used in ENS* names formation(
+    # add species shorthands (used in ENS* names formation)
+    # though we will not needed unit the paralogue alignment reconstruction point)
     feed_name_shorthands (cursor, all_species)
 
     cursor.close()
