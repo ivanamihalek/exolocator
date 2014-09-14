@@ -51,35 +51,20 @@ def check_exon_table(cursor, db_name, table, verbose = False, drop_old_table=Fal
 
     if table_exists:
         if verbose:  print 'table', table, 'in', db_name, 'exists'
-        if (drop_old_table):
-             if verbose: print "\t ... will drop if old "
+        if drop_old_table:
+            if verbose: print "\t ... will drop"
              
     if not table_exists or drop_old_table:
-        create_date = table_create_time (cursor, db_name, table)
-        if verbose: print create_date # already magically turned into datetime object by python (?)
-        yr  = create_date.year
-        mth = create_date.month
+        qry = "drop table "+table
+        rows = search_db(cursor, qry)
 
-        if yr<=2013 or yr<2014 and mth<8:
-            if verbose: 
-                print "old table %s (yr %d, mo %d) found in %s (will drop)" % (table, db_name, yr, mth)
-            qry = "drop table "+table
-            rows = search_db(cursor, qry)
+        if verbose: print 'making new table', table
+        make_exon_table (cursor, table)
 
-        else:
-            if verbose: print 'new table', table, " found in ", db_name, ' -- moving on'
-            return 0 # skip this one
+        if verbose: print 'making index on', table
 
-    qry = "drop table "+table
-    rows = search_db(cursor, qry)
-
-    if verbose: print 'making new table', table
-    make_exon_table (cursor, table)
-
-    if verbose: print 'making index on', table
-
-    qry = "create index key_id on  " + table + " (exon_key)";
-    rows = search_db(cursor, qry)
+        qry = "create index key_id on  " + table + " (exon_key)";
+        rows = search_db(cursor, qry)
 
     return 1
 
