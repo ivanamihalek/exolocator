@@ -29,17 +29,9 @@ from Bio.Seq      import Seq
 from Bio.Alphabet import generic_dna
 
 
-
-
-
-
-
 #########################################
-def check_directory (cfg, species, pep_or_dna):
+def check_directory (cfg, species, species_id, pep_or_dna):
     
-    fields = species.split("_")
-    species_id = fields[0][0]+fields[1][0:2]
-    species_id = species_id.upper()
     directory = "{0}/para/{1}/{2}".format(cfg.dir_path['afs_dumps'], species_id, pep_or_dna)
     if not os.path.exists(directory):
         try:
@@ -100,7 +92,7 @@ def make_alignments (species_list, db_info):
         print species, species_id
 
 
-        directory = check_directory (cfg, species, "pep")
+        directory = check_directory (cfg, species, species_id, "pep")
   
         removed = 0
         remaining = 0

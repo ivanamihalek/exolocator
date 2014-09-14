@@ -1158,11 +1158,8 @@ def remove_ghosts (output_pep, names_of_exons):
 
 
 #########################################
-def check_directory (cfg, species, pep_or_dna):
+def check_directory (cfg, species, species_id, pep_or_dna):
     
-    fields = species.split("_")
-    species_id = fields[0][0]+fields[1][0:2]
-    species_id = species_id.upper()
     directory = "{0}/para/{1}/{2}".format(cfg.dir_path['afs_dumps'], species_id, pep_or_dna)
     if not os.path.exists(directory):
         try:
@@ -1225,7 +1222,7 @@ def make_alignments (species_list, db_info):
         else:
             species_id = fields[0][0]+fields[1][0:2]
             species_id = species_id.upper()
-        directory = check_directory (cfg, species, "pep")
+        directory = check_directory (cfg, species, species_id, "pep")
   
           
         # for each human gene
@@ -1409,7 +1406,7 @@ def make_alignments (species_list, db_info):
             # get rid of the ghost exons that do not correpond to anything in any other species
             #[output_pep, names_of_exons] = remove_ghosts(output_pep, names_of_exons)
 
-            directory = check_directory ( cfg, species, "pep")
+            directory = check_directory ( cfg, species, species_id, "pep")
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_pep)
             pep_produced += 1
@@ -1425,7 +1422,7 @@ def make_alignments (species_list, db_info):
 
             output_dna = strip_gaps(output_dna)
 
-            directory = check_directory ( cfg, species, "dna")
+            directory = check_directory ( cfg, species, species_id, "dna")
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_dna)
             if verbose: print afa_fnm
