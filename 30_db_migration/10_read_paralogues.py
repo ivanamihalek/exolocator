@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 
 import MySQLdb, glob
 import os, commands, sys
@@ -63,6 +63,7 @@ def main():
         qry = "alter table paralog  ADD gene_id2 varchar(30) " 
         search_db (cursor, qry)
         create_index (cursor, db_name,'gene_id_index', 'paralog', ['gene_id1', 'gene_id2'])
+        
 
     ###############
     os.chdir(in_path)
