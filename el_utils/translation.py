@@ -68,9 +68,6 @@ def  translate (dna_seq, phase, mitochondrial=False, strip_stop=True, verbose=Fa
     if phase < 0: phase = 0
     offset = phase2offset(phase)
 
-    # if the exon encodes only a piece of a codon, there is no translation
-    if (len(dna_seq[offset:]) < 3):
-        return [offset, '']
 
     dnaseq = Seq (dna_seq[offset:], generic_dna)
 
@@ -88,6 +85,10 @@ def  translate (dna_seq, phase, mitochondrial=False, strip_stop=True, verbose=Fa
     if strip_stop: 
         if pepseq and pepseq[-1]=='*':
             pepseq = pepseq[:-1]
+            # the case when we have only an ending piece of codon
+            if not pepseq:
+                # offset is 0 - we are reading only one or 2 nucleotides from the left
+                return [0, pepseq]
         if not '*' in pepseq:
             return [offset, pepseq]
     elif not '*' in pepseq[:-1]:
