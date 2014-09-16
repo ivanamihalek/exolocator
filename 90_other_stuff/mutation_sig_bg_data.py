@@ -92,9 +92,8 @@ def main():
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate().tostring()
             
         print full_reconstituted_seq, "\n"
-        codons = iter(map(''.join, zip(*[iter(full_reconstituted_seq)]*3)))
-        for codon in codons:
-            i = codons.index(codon)
+        codons = map(''.join, zip(*[iter(full_reconstituted_seq)]*3))
+        for i in range(len(codons)):
             print i, full_reconstituted_seq[i], codons[i]
 
 
