@@ -1,7 +1,6 @@
 #!/usr/bin/python -u
 
-import MySQLdb
-import commands, sys
+import sys
 from   random           import choice
 from   el_utils.mysql   import connect_to_mysql, search_db, switch_to_db, check_null
 from   el_utils.mysql   import store_or_update
@@ -44,10 +43,8 @@ def pep_exon_seqs(species_list, db_info):
     [local_db, ensembl_db_name] = db_info
     if local_db:
         db     = connect_to_mysql()
-        acg    = AlignmentCommandGenerator()
     else:
         db     = connect_to_mysql          (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg    = AlignmentCommandGenerator (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     species_list = ['homo_sapiens']
@@ -68,8 +65,6 @@ def pep_exon_seqs(species_list, db_info):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
         tot         = 0
-        gene_ct     = 0
-        no_pepseq   = 0
         pepseq_ok   = 0
         short_dna   = 0
         no_exon_seq = 0
@@ -77,7 +72,6 @@ def pep_exon_seqs(species_list, db_info):
 
         #for all protein coding genes in a species
         for gene_id in [10093176]:
-
         #for gene_id in gene_ids:
 
             # for all exons in the gene
@@ -108,7 +102,6 @@ def pep_exon_seqs(species_list, db_info):
                     print exon.exon_id,  "short dna"
                                         
                     continue
-
                 #####################################                
                 mitochondrial        = is_mitochondrial(cursor, gene_id)
                 [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id, verbose=True)
@@ -151,7 +144,7 @@ def pep_exon_seqs(species_list, db_info):
 
                 if True:
                     qry  = "update exon_seq "
-                    qry += "set protein_seq   = '%s',  "  %  pepseq
+                    qry += " set protein_seq   = '%s',  "  %  pepseq
                     qry += " pepseq_transl_start =  %d, " %  start
                     qry += " pepseq_transl_end   =  %d  " %  end
                     qry += " where exon_seq_id =  %d  "   %  exon_seq_id
@@ -172,23 +165,17 @@ def pep_exon_seqs(species_list, db_info):
         print "transl failure     ", translation_fail
         print "pepseq ok          ", pepseq_ok
         sys.stdout.flush()
-
-
 ########################################
 def pep_exon_seqs_special (gene_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
     if local_db:
         db     = connect_to_mysql()
-        acg    = AlignmentCommandGenerator()
     else:
-        db     = connect_to_mysql          (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg    = AlignmentCommandGenerator (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     tot         = 0
-    gene_ct     = 0
-    no_pepseq   = 0
     pepseq_ok   = 0
     short_dna   = 0
     no_exon_seq = 0
@@ -215,7 +202,6 @@ def pep_exon_seqs_special (gene_list, db_info):
                 continue
 
             for exon in exons:
-
                 #####################################                
                 if (not exon.is_coding or  exon.covering_exon > 0):
                     continue 
@@ -229,7 +215,6 @@ def pep_exon_seqs_special (gene_list, db_info):
                 if len(dna_seq)<3:
                     short_dna += 1
                     continue
-
                 #####################################                
                 mitochondrial        = is_mitochondrial(cursor, ortho_gene_id)
                 [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id)
@@ -272,9 +257,6 @@ def pep_exon_seqs_special (gene_list, db_info):
         if not gene_list.index(gene_id)%1000:
             print "%5.1f%% " %  (100*(float( gene_list.index(gene_id) +1 )/len(gene_list))  )
             sys.stdout.flush()
-       
-                 
-
 #########################################
 def main():
 

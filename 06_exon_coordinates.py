@@ -1,14 +1,11 @@
 #!/usr/bin/python -u
 
-import MySQLdb
-import commands, pdb
 from   el_utils.mysql   import  *  
 from   el_utils.ensembl import  * 
 from   el_utils.utils   import  *
 from   el_utils.exon    import  Exon
 from   el_utils.processes import  *
 from   el_utils.special_gene_sets  import  *
-from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 
 #########################################
@@ -34,11 +31,9 @@ def  mark_canonical (cursor, gene_id, exons):
         if (exon.exon_id == canonical_start_exon_id):
             start_found = True
             exon.canon_transl_start = canonical_start_in_exon-1
-            canonical_start_in_gene = exon.start_in_gene+exon.canon_transl_start
         if (exon.exon_id == canonical_end_exon_id):
             end_found = True
             exon.canon_transl_end = canonical_end_in_exon-1
-            canonical_end_in_gene = exon.start_in_gene+exon.canon_transl_end
 
     # can somehting be canonical if we do not know where it starts
     if ( not start_found ):
@@ -47,7 +42,6 @@ def  mark_canonical (cursor, gene_id, exons):
     if ( not end_found ):
         print "canonical translation end not found for ", gene_id
         return
-
     # for each exon in canonical 
     qry = "select exon_id  from exon_transcript where transcript_id= %d" % canonical_transcript_id
     rows = search_db (cursor, qry)
@@ -60,8 +54,8 @@ def  mark_canonical (cursor, gene_id, exons):
         canonical_ids.append(row[0])
 
     for exon in exons:
-       exon.is_canonical = 0 # default
-       if ( not exon.is_known):
+       exon.is_canonical = 0  # default
+       if (not exon.is_known):
            continue
        if (exon.exon_id in canonical_ids):
            exon.is_canonical = 1
@@ -114,8 +108,6 @@ def fill_in_annotation_info (cursor, gene_id, exons):
 # just go by the version in ensembl.py,
 # that simply returns all transcript ids for a gene 
 # (presumably we have cheked elsehwere that the gene is protein coding)
-
-
 #########################################
 def get_exon_start(cursor, exon_id):
 
@@ -314,9 +306,9 @@ def sort_out_covering_exons (cursor, exons):
         master_exon.covering_exon_known = -1 # formal
         for covered_exon in covered_list:
             covered_exon.covering_exon       = master_exon.exon_id;
-            covered_exon.covering_exon_known = master_exon.is_known;
-           
+            covered_exon.covering_exon_known = master_exon.is_know           
 #########################################
+# check which exons are coding
 def mark_coding (cursor, gene_id, species, exons):
 
     ret = get_translated_region(cursor, gene_id, species)
@@ -367,22 +359,19 @@ def mark_coding (cursor, gene_id, species, exons):
 
 
 #########################################
-def find_exons (cursor, gene_id, species):
-
-    coding_region_start = -1
-    coding_region_end   = -1
-    exons               = []
+# fetch all exons for a given gene,
+# and figure out whether they are canonical and/or coding
+# which ones cover others, and what is the source of the annotation
+def find_exon_info (cursor, gene_id, species):
 
     # get all exons from the 'exon' table
     exons = get_exons (cursor, gene_id, species, 'exon')
-
 
     # get all exons from the 'predicted_exon' table
     if (not species == 'homo_sapiens'):
         exons += get_exons  (cursor, gene_id, species, 'prediction_exon')
         exons += get_exons  (cursor, gene_id, species, 'sw_exon')
         exons += get_exons  (cursor, gene_id, species, 'usearch_exon')
-
 
     # mark the exons belonging to canonical transcript
     mark_canonical          (cursor, gene_id, exons)
@@ -397,6 +386,7 @@ def find_exons (cursor, gene_id, species):
     return exons
 
 #########################################
+# store into gene2exon table
 def store_exon (cursor, exon):
 
     fixed_fields  = {}
@@ -443,17 +433,13 @@ def gene2exon_all(species_list, db_info):
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
-        number_of_genes = len(gene_ids)
-
         for gene_id in gene_ids:
-
             #print gene_id, get_description(cursor, gene_id)
             # find all exons associated with the gene id 
-            exons = find_exons (cursor, gene_id, species)
+            exons = find_exon_info (cursor, gene_id, species)
             if (not exons):
                 print gene2stable (cursor, gene_id = gene_id), " no exons found (%s)" % species
-                continue  # if I got to here in the pipeline this shouldn't happen
-   
+                continue  # if I got to here in the pipeline this shouldn't happen  
             # store into gene2exon table
             for exon in exons:
                 store_exon (cursor, exon)
@@ -488,7 +474,7 @@ def gene2exon_orthologues(gene_list, db_info):
             switch_to_db (cursor, ensembl_db_name[ortho_species])
 
             # find all exons associated with the gene id 
-            exons = find_exons (cursor, ortho_gene_id, ortho_species)
+            exons = find_exon_info (cursor, ortho_gene_id, ortho_species)
             if (not exons):
                 print gene2stable (cursor, gene_id = ortho_gene_id), " no exons found for", ortho_species
                 print 

@@ -1,7 +1,5 @@
 #!/usr/bin/python -u
 
-import MySQLdb
-import commands
 from   el_utils.mysql   import  *
 from   el_utils.ensembl import  *
 from   el_utils.el_specific import  *
@@ -15,12 +13,10 @@ from   el_utils.special_gene_sets  import get_theme_ids
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 
-#def is_mitochondrial (cursor, seq_region_id):
-
 verbose = True
     
 ########################################
-def  get_canonical_exons (cursor, gene_id):
+def get_canonical_exons (cursor, gene_id):
 
     exons = gene2exon_list (cursor, gene_id)
     if (not exons):
@@ -35,7 +31,7 @@ def  get_canonical_exons (cursor, gene_id):
     reading = False
     for exon in exons:        
         if (not exon.is_canonical or  not exon.is_coding): 
-             continue
+            continue
         if (not exon.canon_transl_start is None):
             reading = True
         if (reading):
@@ -65,19 +61,16 @@ def reconstruct_exon_seqs (gene_seq, exons):
         left_flank[exon_id]  = gene_seq[start-15:start]
         exon_seq[exon_id]    = gene_seq[start:end+1]
         right_flank[exon_id] = gene_seq[end+1:end+16]
-    
 
     return [exon_seq, left_flank, right_flank]
             
 #########################################
-def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq):
-    
+def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq):    
     """
     Calls store_or_update() from el_utils.mysql.py:
     It sets the fixed fields to be exon_id, is_known, and is_sw;
     The rest of the exon info is updateable.
     """
-
     for exon in exons:
         exon_id = exon.exon_id
         #####
@@ -96,9 +89,6 @@ def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_peps
             update_fields['protein_seq'] = canonical_exon_pepseq[exon_id]
         #####
         store_or_update (cursor, 'exon_seq', fixed_fields, update_fields)
-
-
-
 #########################################
 def store_exon_seqs(species_list, db_info):
 
@@ -121,11 +111,9 @@ def store_exon_seqs(species_list, db_info):
     if local_db:
         db     = connect_to_mysql()
         acg    = AlignmentCommandGenerator()
-        cfg    = ConfigurationReader()
     else:
         db     = connect_to_mysql          (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         acg    = AlignmentCommandGenerator (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg    = ConfigurationReader       (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     for species in species_list:
@@ -148,8 +136,7 @@ def store_exon_seqs(species_list, db_info):
         for gene_id in gene_ids:
             tot += 1
             if (not  tot%1000):
-                print species, "tot genes:", tot, " fail:", ct
-               
+                print species, "tot genes:", tot, " fail:", ct           
             # extract raw gene  region - bonus return from checking whether the 
             # sequence is correct: translation of canonical exons
             ret = get_gene_seq(acg, cursor, gene_id, species, verbose=verbose)

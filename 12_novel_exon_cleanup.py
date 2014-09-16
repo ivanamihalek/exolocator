@@ -101,7 +101,7 @@ def check_left_flank (acg, left_flank, dna_seq, template_dna_seq):
     # 1) we should not get out of range - in particular, are we hitting NNNN?
     # 2) how big is the difference in length between the template an the proposed exon
     # 3) splicing model for fish 
-    # 4) are we lloking at U12 splice site by any chance
+    # 4) are we looking at U12 splice site by any chance
 
     if len(dna_seq) < len(template_dna_seq):
         shift_range_left  = 10 + abs(len(dna_seq)-len(template_dna_seq))

@@ -33,11 +33,9 @@ def main():
 
     if local_db:
         db     = connect_to_mysql()
-        cfg    = ConfigurationReader()
         acg    = AlignmentCommandGenerator()
     else:
         db     = connect_to_mysql         (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
         acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
@@ -69,7 +67,7 @@ def main():
         if not canonical_human_exons: continue
 
         full_reconstituted_cDNA = ""
-        prev_right_flank = ""
+        prev_codon_piece_plus_right_flank = ""
         for human_exon in canonical_human_exons:
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, nucseq] = \
                     get_exon_seqs(cursor, human_exon.exon_id, human_exon.is_known)
@@ -79,14 +77,17 @@ def main():
             # add the split codon
             phase = get_exon_phase (cursor, human_exon.exon_id, human_exon.is_known)
             split_codon = ""
-            if phase > 0 and prev_right_flank and left_flank:
+            if phase > 0 and prev_codon_piece_plus_right_flank and left_flank:
                 offset      = (3-phase)%3
-                split_codon = prev_right_flank[:phase] + left_flank[-offset:]
+                # hedge against the possibility that the translation starts
+                # right at the start of the exon, but there is supposed to be a phase
+                left_flank_plus_codon_piece   = left_flank + nucseq[:pepseq_transl_start]
+                split_codon = prev_codon_piece_plus_right_flank[:phase] + left_flank_plus_codon_piece[-offset:]
 
             full_reconstituted_cDNA += split_codon + nucseq[pepseq_transl_start:pepseq_transl_end]
-            prev_right_flank = right_flank
-
-        
+            prev_codon_piece_plus_right_flank = nucseq[:pepseq_transl_end:] + right_flank
+            
+            
         if ( is_mitochondrial(cursor, gene_id)):
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate(table="Vertebrate Mitochondrial").tostring()
         else:

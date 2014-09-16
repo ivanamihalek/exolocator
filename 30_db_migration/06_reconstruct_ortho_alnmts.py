@@ -896,7 +896,7 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
  
         prev_local_pos   = -3
         exon_ct          = -1
-        prev_right_flank = ""
+        prev_codon_piece_plus_right_flank = ""
         for local_pos in local_bdry_position[name]+[len(full_aligned_pepseq)]:
 
             
@@ -906,7 +906,7 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
             exon_ct    += 1
             name_ct     = exon_ct2name_ct[name][exon_ct]
             if (name_ct < 0):
-                prev_right_flank = None
+                prev_codon_piece_plus_right_flank = None
                 continue
 
             exon_seq_name = sequence_name_to_exon_names[name][name_ct]
@@ -914,7 +914,7 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
             exon_seqs     = get_exon_seqs(cursor, exon_id, exon_known, ensembl_db_name[species])[1:]
 
             if not exon_seqs:
-                prev_right_flank = None
+                prev_codon_piece_plus_right_flank = None
                 continue
 
             [exon_pep_seq, trsl_from, trsl_to, exon_left_flank,
@@ -924,12 +924,15 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
             phase = get_exon_phase (cursor, exon_id, exon_known)
 
 
-            if phase > 0 and prev_right_flank:
+            if phase > 0 and prev_codon_piece_plus_right_flank:
 
                 offset    = (3-phase)%3
-                cary      = prev_right_flank[:phase]
-                tmp_patch = exon_left_flank.lower() + exon_dna_seq[:trsl_from]
-                flanking_nucleotides   = tmp_patch [-offset:]
+                cary      = prev_codon_piece_plus_right_flank[:phase]
+                # the manouvering here comes because if the exon is predicted,
+                # the translation beings right at the start of the exon
+                # otherwise we know that a piece of codon might be included in the xon already
+                left_flank_plus_codon_piece = exon_left_flank.lower() + exon_dna_seq[:trsl_from]
+                flanking_nucleotides   = left_flank_plus_codon_piece [-offset:]
                 codon                  = cary + flanking_nucleotides
                 [phase_suggested, res] = translate (codon, 0, mitochondrial, strip_stop = False)
 
@@ -940,7 +943,7 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
 
             # so here are the ad-hoc rules we will use: we will say that we have a valid previous flank
             # 1) the previous exon maps to previous human exon
-            #        we are mkaing sure that this is the case by setting prev_right_flank to None
+            #        we are mkaing sure that this is the case by setting prev_codon_piece_plus_right_flank to None
             #        if there is no mapping
             # 2) the end of the previous exon agrees with the end of the previous human exon
             # now check that the right ends of the exon match:
@@ -953,8 +956,8 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
                     end_match = True
                 break
             if end_match:
-                prev_right_flank  = exon_dna_seq [trsl_to:]
-                prev_right_flank += exon_right_flank.lower()
+                prev_codon_piece_plus_right_flank  = exon_dna_seq [trsl_to:]
+                prev_codon_piece_plus_right_flank += exon_right_flank.lower()
             else:
                 pass
 
