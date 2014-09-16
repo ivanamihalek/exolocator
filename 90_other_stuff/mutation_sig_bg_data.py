@@ -45,6 +45,7 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
     
     logf = erropen("error.log", "w") 
+    if not logf: exit(1)
 
     switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
     gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
