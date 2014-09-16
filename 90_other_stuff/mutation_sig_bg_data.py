@@ -13,6 +13,7 @@ from   el_utils.ncbi    import  taxid2trivial
 from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
 from   el_utils.config_reader      import ConfigurationReader
 
+from Bio.Seq      import Seq
 from bitstring import Bits
 
 #########################################
@@ -65,7 +66,7 @@ def main():
         # bail out if there is a problem
         if not canonical_human_exons: continue
 
-        full_reconstituted_seq = ""
+        full_reconstituted_cDNA = ""
         prev_right_flank = ""
         for human_exon in canonical_human_exons:
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, nucseq] = \
@@ -74,18 +75,27 @@ def main():
             print "lengths:  %4d  %4d " % (len(pepseq)*3, len(nucseq[pepseq_transl_start:pepseq_transl_end]))
             # add the split codon
             phase = get_exon_phase (cursor, human_exon.exon_id, human_exon.is_known)
-            codon = ""
+            split_codon = ""
             if phase > 0 and prev_right_flank and left_flank:
-                offset    = (3-phase)%3
-                codon     =  prev_right_flank[:phase] + left_flank[-offset:]
+                offset      = (3-phase)%3
+                split_codon = prev_right_flank[:phase] + left_flank[-offset:]
 
-            full_reconstituted_seq += codon + nucseq[pepseq_transl_start:pepseq_transl_end]
+            full_reconstituted_cDNA += split_codon + nucseq[pepseq_transl_start:pepseq_transl_end]
             prev_right_flank = right_flank
 
         canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
-        print full_reconstituted_seq
-        print canonical
- 
+        print canonical, "\n"
+        
+        if ( is_mitochodnrial(cursor, gene_id)):
+            full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate(table="Vertebrate Mitochondrial").tostring()
+        else:
+            full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate().tostring()
+            
+        print full_reconstituted_seq, "\n"
+        codons = iter(map(''.join, zip(*[iter(full_reconstituted_seq)]*3)))
+        for i in range(len(codons)):
+            print i, full_reconstituted_seq[i], codons[i]
+
 
 #########################################
 if __name__ == '__main__':
