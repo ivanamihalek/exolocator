@@ -61,7 +61,7 @@ def main():
 
     for species in all_species:
 
-        #if not species=='homo_sapiens': continue
+        if not species=='homo_sapiens': continue
 
         print
         print species
@@ -81,9 +81,9 @@ def main():
         stored_incorrect = 0
         translation_fail = 0
         #####################################
-        #for gene_id in [727840]:
-        for tot in range(1000):
-            gene_id = choice(gene_ids)
+        for gene_id in [10093176]:
+        #for tot in range(1000):
+            #gene_id = choice(gene_ids)
 
             # get _all_ exons
             exons = gene2exon_list(cursor, gene_id)
@@ -125,7 +125,7 @@ def main():
                 else:
                     pepseq2 = dnaseq.translate().tostring()
 
-                if False:
+                if True:
                     print exon.exon_id
                     print "pep stored:", pepseq
                     print "dna transl:", pepseq2
