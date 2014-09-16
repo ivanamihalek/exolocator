@@ -45,11 +45,12 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
     switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
+    #gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
 
     # for each human gene
+    gene_ids = [10092907]
     gene_ct = 0
-    for gene_id in gene_ids[:3]:
+    for gene_id in gene_ids:
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
@@ -67,9 +68,9 @@ def main():
 
         for human_exon in canonical_human_exons:
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, nucseq] = \
-                    get_exon_seqs(cursor, human_exon.exon_id, human_exon.exon_known)
+                    get_exon_seqs(cursor, human_exon.exon_id, human_exon.is_known)
             print " %10d  %s " % (human_exon.exon_id, pepseq)
-            print "lebgths:  %4d  %4d " % (len(pepseq)*3, len(nucseq[pepseq_transl_start:pepseq_transl_end]))
+            print "lengths:  %4d  %4d " % (len(pepseq)*3, len(nucseq[pepseq_transl_start:pepseq_transl_end]))
 
 
 
