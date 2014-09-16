@@ -51,7 +51,7 @@ def main():
     #gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
 
     # for each human gene
-    gene_ids = [10093176]
+    gene_ids = [10093176 ]
     gene_ct = 0
     for gene_id in gene_ids[:100]:
        

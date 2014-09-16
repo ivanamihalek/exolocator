@@ -61,6 +61,8 @@ def pep_exon_seqs(species_list, db_info):
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False
 
+        if (species!='homo_sapiens'): continue
+
         if (species=='homo_sapiens'):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
         else:
@@ -75,7 +77,9 @@ def pep_exon_seqs(species_list, db_info):
         translation_fail = 0
 
         #for all protein coding genes in a species
-        for gene_id in gene_ids:
+        for gene_id in [10093176]:
+
+        #for gene_id in gene_ids:
 
             # for all exons in the gene
             exons = gene2exon_list(cursor, gene_id)
@@ -127,15 +131,23 @@ def pep_exon_seqs(species_list, db_info):
                 else:
                     pepseq_ok += 1
 
-                qry  = "update exon_seq "
-                qry += "set protein_seq   = '%s',  "  %  pepseq
-                qry += " pepseq_transl_start =  %d, " %  start
-                qry += " pepseq_transl_end   =  %d  " %  end
-                qry += " where exon_seq_id =  %d  "   %  exon_seq_id
-                rows = search_db (cursor, qry)
-                if (rows):
-                    rows = search_db (cursor, qry, verbose = True)
-                    continue
+                print exon.exon_id
+                print "pep stored:", pepseq
+                print "dna transl:", pepseq2
+                print "start:" , pepseq_transl_start, 
+                print "end:",  pepseq_transl_end
+                print
+
+                if False:
+                    qry  = "update exon_seq "
+                    qry += "set protein_seq   = '%s',  "  %  pepseq
+                    qry += " pepseq_transl_start =  %d, " %  start
+                    qry += " pepseq_transl_end   =  %d  " %  end
+                    qry += " where exon_seq_id =  %d  "   %  exon_seq_id
+                    rows = search_db (cursor, qry)
+                    if (rows):
+                        rows = search_db (cursor, qry, verbose = True)
+                        continue
             ####################################
             if not gene_ids.index(gene_id)%1000:
                 print "%50s:  %5.1f%% " %  (species, 100*(float( gene_ids.index(gene_id) +1 )/len(gene_ids))  )
