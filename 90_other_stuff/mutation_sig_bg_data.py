@@ -66,12 +66,23 @@ def main():
         # bail out if there is a problem
         if not canonical_human_exons: continue
 
+        prev_right_flank = ""
         for human_exon in canonical_human_exons:
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, nucseq] = \
                     get_exon_seqs(cursor, human_exon.exon_id, human_exon.is_known)
             print " %10d  %s " % (human_exon.exon_id, pepseq)
             print "lengths:  %4d  %4d " % (len(pepseq)*3, len(nucseq[pepseq_transl_start:pepseq_transl_end]))
+            # add the split codon
+            phase = get_exon_phase (cursor, human_exon.exon_id, human_exon.is_known)
 
+            if phase > 0 and prev_right_flank and left_flank:
+                offset    = (3-phase)%3
+                codon     =  prev_right_flank[:phase] + left_flank[-offset:]
+
+            full_reconstituted_seq += codon + nucseq[pepseq_transl_start:pepseq_transl_end]
+            print full_reconstituted_seq
+
+            prev_right_flank = right_flank
 
 
 #########################################
