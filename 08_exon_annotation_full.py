@@ -149,7 +149,7 @@ def pep_exon_seqs(species_list, db_info):
                 print "end:",  pepseq_transl_end
                 print
 
-                if False:
+                if True:
                     qry  = "update exon_seq "
                     qry += "set protein_seq   = '%s',  "  %  pepseq
                     qry += " pepseq_transl_start =  %d, " %  start
