@@ -86,7 +86,7 @@ def main():
         canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
         print canonical, "\n"
         
-        if ( is_mitochodnrial(cursor, gene_id)):
+        if ( is_mitochondrial(cursor, gene_id)):
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate(table="Vertebrate Mitochondrial").tostring()
         else:
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate().tostring()
