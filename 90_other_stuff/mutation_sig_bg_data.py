@@ -28,7 +28,7 @@ def align_nucseq_by_pepseq(aligned_pepseq, nucseq):
 #########################################
 def main():
 
-    verbose  = False
+    verbose  = True
     local_db = False
 
     if local_db:
@@ -69,6 +69,7 @@ def main():
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, nucseq] = \
                     get_exon_seqs(cursor, human_exon.exon_id, human_exon.exon_known)
             print " %10d  %s " % (human_exon.exon_id, pepseq)
+            print "lebgths:  %4d  %4d " % (len(pepseq)*3, len(nucseq[pepseq_transl_start:pepseq_transl_end]))
 
 
 
