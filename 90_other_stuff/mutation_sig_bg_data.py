@@ -1,6 +1,5 @@
-#!/usr/bin/python
-# make the best alignment we can using the maps
-# we currently have at hand
+#!/usr/bin/python -u
+# extract all info one needs to estimate the background mutation rate when analyzing tumors
 
 import MySQLdb, commands, re
 
@@ -49,11 +48,11 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
     switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_seq_only=True)
 
     # for each human gene
     gene_ct = 0
-    for gene_id in gene_ids:
+    for gene_id in gene_ids[:3]:
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
@@ -62,21 +61,18 @@ def main():
         if (not gene_ct%100): print gene_ct, "out of ", len(gene_ids)
         if verbose: print gene_id, stable_id, get_description (cursor, gene_id)
 
-        # find all exons we are tracking in the database
-        human_exons = gene2exon_list(cursor, gene_id)
-        canonical_exons = []
-        for human_exon in human_exons:
-            if not human_exon.is_canonical:
-                continue
-            canonical_exons.append(human_exon)
-        # the exons are not guaranteed to be in order
-        canonical_exons.sort(key=lambda exon: exon.start_in_gene)
+
+        # find all canonical coding  human exons 
+        # get_canonical_coding_exons also sorts exons by the start in the gene
+        canonical_human_exons = get_canonical_coding_exons (cursor, gene_id, ensembl_db_name['homo_sapiens'])
+        # bail out if there is a problem
+        if not canonical_human_exons: continue
 
         # reconstruct the alignment with orthologues
         sequence  = {}
         seq_name  = {}
         has_a_map = False
-        for human_exon in canonical_exons:
+        for human_exon in canonical_human_exons:
 
             maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
             if not maps:
@@ -103,10 +99,9 @@ def main():
                     reconstructed_nucseq   = align_nucseq_by_pepseq(reconstructed_sequence, nucseq)
 
                     print unaligned_sequence
-                    #print nucseq
-                    #print reconstructed_nucseq
+                    print nucseq
+                    print reconstructed_nucseq
                     print
-                    #exit(1)
                 else:
                     print fail
                     continue
