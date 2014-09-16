@@ -87,7 +87,7 @@ def pep_exon_seqs(species_list, db_info):
                 continue
 
             for exon in exons:
-
+                if exon.exon_id != 28553228: continue
                 #####################################                
                 if (not exon.is_coding):
                     print exon.exon_id,  "is not coding "
@@ -118,6 +118,8 @@ def pep_exon_seqs(species_list, db_info):
                 if ( not pepseq): # usually some short pieces (end in pos 4 and such)
                     translation_fail += 1
                     print exon.exon_id,  "translation failure"
+                    print "mitochondrial:", mitochondrial
+                    print seq_start, seq_end
                     continue
  
                 if seq_start is None: seq_start = 1
