@@ -91,7 +91,11 @@ def main():
             
         canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
         if ( len(full_reconstituted_seq) != len(canonical) ):
-            print "error reassembling ", gene_id, stable_id, get_description (cursor, gene_id)
+            print "error reassembling,  len(full_reconstituted_seq) != len(canonical) ",  len(full_reconstituted_seq) , len(canonical) 
+            print "canonical:"
+            print canonical
+            print "reconstituted:"
+            print full_reconstituted_seq
             exit(1)
 
         codons = map(''.join, zip(*[iter(full_reconstituted_cDNA)]*3))
