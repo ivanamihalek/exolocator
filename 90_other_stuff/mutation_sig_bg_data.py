@@ -93,7 +93,8 @@ def main():
             
         print full_reconstituted_seq, "\n"
         codons = iter(map(''.join, zip(*[iter(full_reconstituted_seq)]*3)))
-        for i in range(len(codons)):
+        for codon in codons:
+            i = codons.index(codon)
             print i, full_reconstituted_seq[i], codons[i]
 
 
