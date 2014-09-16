@@ -40,7 +40,7 @@ def crop_dna (seq_start, seq_end, dna_seq):
     return dna_cropped
 
 #########################################
-def translation_bounds(cursor, exon_id):
+def translation_bounds(cursor, exon_id, verbose=False):
 
     seq_start = None
     seq_end   = None
@@ -48,14 +48,14 @@ def translation_bounds(cursor, exon_id):
     qry  = "select seq_start, start_exon_id"
     qry += " from translation "
     qry += " where start_exon_id = %d"  % exon_id
-    rows = search_db(cursor, qry, verbose=False)
+    rows = search_db(cursor, qry, verbose)
     if rows:
         [seq_start, start_exon_id] = rows[0]
 
     qry  = "select seq_end, end_exon_id"
     qry += " from translation "
     qry += " where end_exon_id = %d"  % exon_id
-    rows = search_db(cursor, qry, verbose=False)
+    rows = search_db(cursor, qry, verbose)
     if rows:
         [seq_end, end_exon_id] = rows[0]
 

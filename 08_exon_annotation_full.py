@@ -111,7 +111,7 @@ def pep_exon_seqs(species_list, db_info):
 
                 #####################################                
                 mitochondrial        = is_mitochondrial(cursor, gene_id)
-                [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id)
+                [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id, verbose=True)
                 print " ** ", seq_start, seq_end
                 dna_cropped          = crop_dna (seq_start, seq_end, dna_seq)
                 [offset, pepseq]     = translate (dna_cropped, exon.phase, mitochondrial)
