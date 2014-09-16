@@ -67,11 +67,18 @@ def  translate (dna_seq, phase, mitochondrial=False, strip_stop=True, verbose=Fa
     pepseq = ""
     if phase < 0: phase = 0
     offset = phase2offset(phase)
+
+    # if the exon encodes only a piece of a codon, there is no translation
+    if (len(dna_seq[offset:]) < 3):
+        return [offset, '']
+
     dnaseq = Seq (dna_seq[offset:], generic_dna)
+
     if mitochondrial:
         pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
     else:
         pepseq = dnaseq.translate().tostring()
+
 
     if verbose:
         print " ** translation for:", dnaseq

@@ -103,7 +103,7 @@ def pep_exon_seqs(species_list, db_info):
                     continue                   
                 [exon_seq_id, pepseq, pepseq_transl_start, 
                  pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs
-                if len(dna_seq)<3:
+                if len(dna_seq)<4:
                     short_dna += 1
                     print exon.exon_id,  "short dna"
                                         
@@ -117,7 +117,7 @@ def pep_exon_seqs(species_list, db_info):
                 print " ** ", dna_cropped
                 [offset, pepseq]     = translate (dna_cropped, exon.phase, mitochondrial, verbose=True)
 
-                if ( not pepseq): # usually some short pieces (end in pos 4 and such)
+                if ( offset < 0): #  translation failure; usually some short pieces (end in pos 4 and such)
                     translation_fail += 1
                     print exon.exon_id,  "translation failure"
                     print "mitochondrial:", mitochondrial
