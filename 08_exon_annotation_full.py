@@ -50,6 +50,7 @@ def pep_exon_seqs(species_list, db_info):
         acg    = AlignmentCommandGenerator (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
+    species_list = ['homo_sapiens']
     #####################################
     for species in species_list:
 
@@ -60,8 +61,6 @@ def pep_exon_seqs(species_list, db_info):
 
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False
-
-        if (species!='homo_sapiens'): continue
 
         if (species=='homo_sapiens'):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
@@ -90,17 +89,24 @@ def pep_exon_seqs(species_list, db_info):
             for exon in exons:
 
                 #####################################                
-                if (not exon.is_coding or  exon.covering_exon > 0):
+                if (not exon.is_coding):
+                    print exon.exon_id,  "is not coding "
+                    continue
+                if (exon.covering_exon > 0):
+                    print exon.exon_id,  "has covering exon"
                     continue 
                 tot += 1
                 exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     no_exon_seq += 1
+                    print exon.exon_id,  "no exon_seqs"
                     continue                   
                 [exon_seq_id, pepseq, pepseq_transl_start, 
                  pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs
                 if len(dna_seq)<3:
                     short_dna += 1
+                    print exon.exon_id,  "short dna"
+                                        
                     continue
 
                 #####################################                
@@ -111,6 +117,7 @@ def pep_exon_seqs(species_list, db_info):
 
                 if ( not pepseq): # usually some short pieces (end in pos 4 and such)
                     translation_fail += 1
+                    print exon.exon_id,  "translation failure"
                     continue
  
                 if seq_start is None: seq_start = 1
