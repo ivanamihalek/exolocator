@@ -82,7 +82,7 @@ def main():
             full_reconstituted_seq += codon + nucseq[pepseq_transl_start:pepseq_transl_end]
             prev_right_flank = right_flank
 
-        canonical = get_canonical_transl (acg, cursor, gene_id, species, strip_X = False)
+        canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
         print full_reconstituted_seq
         print canonical
  
