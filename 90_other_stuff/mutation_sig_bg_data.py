@@ -16,7 +16,6 @@ from   el_utils.config_reader      import ConfigurationReader
 
 from bitstring import Bits
 
-
 #########################################
 def align_nucseq_by_pepseq(aligned_pepseq, nucseq):
     if (not len(aligned_pepseq.replace('-',''))*3 == len(nucseq)):
@@ -45,7 +44,7 @@ def main():
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
 
-    switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
+    switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
     gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
 
     # for each human gene
@@ -58,7 +57,6 @@ def main():
         gene_ct += 1
         if (not gene_ct%100): print gene_ct, "out of ", len(gene_ids)
         if verbose: print gene_id, stable_id, get_description (cursor, gene_id)
-
 
         # find all canonical coding  human exons 
         # get_canonical_coding_exons also sorts exons by the start in the gene
@@ -81,7 +79,7 @@ def main():
             for map in maps:
                 species = map.species_2
                 # get the raw (unaligned) sequence for the exon that maps onto human
-                [exon_seq_id, unaligned_sequence, left_flank, right_flank, nucseq] = \
+                [exon_seq_id, unaligned_sequence, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, nucseq] = \
                     get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
                 # inflate the compressed sequence
                 if map.bitmap and unaligned_sequence:
@@ -105,17 +103,7 @@ def main():
                     continue
  
 
-
-        #exit (1)
-
-
-
 #########################################
 if __name__ == '__main__':
     main()
 
-'''
-    #for gene_id in [412667]: #  wls
-    #for gene_id in [378768]: #  p53
-    #for gene_id in [378766]: #  dynein
-'''
