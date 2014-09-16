@@ -45,12 +45,12 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
     switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-    #gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
+    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
 
     # for each human gene
-    gene_ids = [10092907]
+    #gene_ids = [10092907]
     gene_ct = 0
-    for gene_id in gene_ids:
+    for gene_id in gene_ids[:100]:
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
@@ -71,8 +71,8 @@ def main():
         for human_exon in canonical_human_exons:
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, nucseq] = \
                     get_exon_seqs(cursor, human_exon.exon_id, human_exon.is_known)
-            print " %10d  %s " % (human_exon.exon_id, pepseq)
-            print "lengths:  %4d  %4d " % (len(pepseq)*3, len(nucseq[pepseq_transl_start:pepseq_transl_end]))
+            #print " %10d  %s " % (human_exon.exon_id, pepseq)
+            #print "lengths:  %4d  %4d " % (len(pepseq)*3, len(nucseq[pepseq_transl_start:pepseq_transl_end]))
             # add the split codon
             phase = get_exon_phase (cursor, human_exon.exon_id, human_exon.is_known)
             split_codon = ""
@@ -83,18 +83,20 @@ def main():
             full_reconstituted_cDNA += split_codon + nucseq[pepseq_transl_start:pepseq_transl_end]
             prev_right_flank = right_flank
 
-        canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
-        print canonical, "\n"
         
         if ( is_mitochondrial(cursor, gene_id)):
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate(table="Vertebrate Mitochondrial").tostring()
         else:
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate().tostring()
             
-        print full_reconstituted_seq, "\n"
-        codons = map(''.join, zip(*[iter(full_reconstituted_seq)]*3))
+        canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
+        if ( len(full_reconstituted_seq) != len(canonical) ):
+            print "error reassembling ", gene_id, stable_id, get_description (cursor, gene_id)
+            exit(1)
+
+        codons = map(''.join, zip(*[iter(full_reconstituted_cDNA)]*3))
         for i in range(len(codons)):
-            print i, full_reconstituted_seq[i], codons[i]
+            print " %5d  %s  %s " % (i, full_reconstituted_seq[i], codons[i])
 
 
 #########################################
