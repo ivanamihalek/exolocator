@@ -3,10 +3,9 @@
 
 import MySQLdb, commands, re
 
-from   el_utils.mysql   import  connect_to_mysql, connect_to_db
-from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
-
-from   el_utils.ensembl import  *
+from   el_utils.mysql       import  *
+from   el_utils.ensembl     import  *
+from   el_utils.el_specific import  *
 from   el_utils.utils   import  erropen, output_fasta
 from   el_utils.map     import  Map, get_maps
 from   el_utils.tree    import  species_sort
