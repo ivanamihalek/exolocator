@@ -76,14 +76,14 @@ def main():
             print "pepseq_transl_start pepseq_transl_end ",  pepseq_transl_start, pepseq_transl_end, " exon len", len(nucseq)
             # add the split codon
             phase = get_exon_phase (cursor, human_exon.exon_id, human_exon.is_known)
+            left_flank_plus_codon_piece = left_flank + nucseq[:pepseq_transl_start]
             split_codon = ""
             if phase > 0 and prev_codon_piece_plus_right_flank and left_flank:
                 offset      = (3-phase)%3
                 # hedge against the possibility that the translation starts
                 # right at the start of the exon, but there is supposed to be a phase
-                left_flank_plus_codon_piece   = left_flank + nucseq[:pepseq_transl_start]
                 split_codon = prev_codon_piece_plus_right_flank[:phase] + left_flank_plus_codon_piece[-offset:]
-
+            print "split_codon:", split_codon            
             full_reconstituted_cDNA += split_codon + nucseq[pepseq_transl_start:pepseq_transl_end]
             prev_codon_piece_plus_right_flank = nucseq[:pepseq_transl_end:] + right_flank
             
