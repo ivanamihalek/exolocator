@@ -46,7 +46,7 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
     switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_seq_only=True)
+    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
 
     # for each human gene
     gene_ct = 0
