@@ -66,6 +66,7 @@ def main():
         # bail out if there is a problem
         if not canonical_human_exons: continue
 
+        full_reconstituted_seq = ""
         prev_right_flank = ""
         for human_exon in canonical_human_exons:
             [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, nucseq] = \
@@ -80,10 +81,12 @@ def main():
                 codon     =  prev_right_flank[:phase] + left_flank[-offset:]
 
             full_reconstituted_seq += codon + nucseq[pepseq_transl_start:pepseq_transl_end]
-            print full_reconstituted_seq
-
             prev_right_flank = right_flank
 
+        canonical = get_canonical_transl (acg, cursor, gene_id, species, strip_X = False)
+        print full_reconstituted_seq
+        print canonical
+ 
 
 #########################################
 if __name__ == '__main__':
