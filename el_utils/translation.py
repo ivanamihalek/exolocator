@@ -62,7 +62,7 @@ def translation_bounds(cursor, exon_id, verbose=False):
     return [seq_start, seq_end]
 
 #########################################
-def  translate (dna_seq, phase, mitochondrial=False, strip_stop=True):
+def  translate (dna_seq, phase, mitochondrial=False, strip_stop=True, verbose=False):
 
     pepseq = ""
     if phase < 0: phase = 0
@@ -72,6 +72,10 @@ def  translate (dna_seq, phase, mitochondrial=False, strip_stop=True):
         pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
     else:
         pepseq = dnaseq.translate().tostring()
+
+    if verbose:
+        print " ** translation for:", dna_seq
+        print " ** ", pepseq
 
     if strip_stop: 
         if pepseq and pepseq[-1]=='*':

@@ -114,7 +114,8 @@ def pep_exon_seqs(species_list, db_info):
                 [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id, verbose=True)
                 print " ** ", seq_start, seq_end
                 dna_cropped          = crop_dna (seq_start, seq_end, dna_seq)
-                [offset, pepseq]     = translate (dna_cropped, exon.phase, mitochondrial)
+                print " ** ", dna_cropped
+                [offset, pepseq]     = translate (dna_cropped, exon.phase, mitochondrial, verbose=True)
 
                 if ( not pepseq): # usually some short pieces (end in pos 4 and such)
                     translation_fail += 1
