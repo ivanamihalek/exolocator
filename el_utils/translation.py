@@ -75,6 +75,7 @@ def  translate (dna_seq, phase, mitochondrial=False, strip_stop=True, verbose=Fa
 
     if verbose:
         print " ** translation for:", dnaseq
+        print " ** phase:", phase
         print " ** ", pepseq
 
     if strip_stop: 
