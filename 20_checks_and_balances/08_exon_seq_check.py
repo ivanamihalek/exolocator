@@ -129,6 +129,7 @@ def main():
                     print exon.exon_id
                     print "pep stored:", pepseq
                     print "dna transl:", pepseq2
+                    print "dna begin:", dna_seq[:12]
                     print "start:" , pepseq_transl_start, 
                     print "end:",  pepseq_transl_end
                     print
