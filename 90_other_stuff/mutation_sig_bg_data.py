@@ -6,7 +6,7 @@ import MySQLdb, commands, re
 from   el_utils.mysql       import  *
 from   el_utils.ensembl     import  *
 from   el_utils.el_specific import  *
-from   el_utils.utils   import  erropen, output_fasta
+from   el_utils.utils   import  erropen
 from   el_utils.map     import  Map, get_maps
 from   el_utils.tree    import  species_sort
 from   el_utils.ncbi    import  taxid2trivial
@@ -52,7 +52,6 @@ def main():
 
     # for each human gene
     #gene_ids = [10092907]
-    logf = erropen("error.log", "r")
     gene_ct = 0
     for gene_id in gene_ids[:100]:
        
