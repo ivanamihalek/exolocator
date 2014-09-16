@@ -17,8 +17,6 @@ from   el_utils.config_reader      import ConfigurationReader
 from bitstring import Bits
 
 
-
-
 #########################################
 def align_nucseq_by_pepseq(aligned_pepseq, nucseq):
     if (not len(aligned_pepseq.replace('-',''))*3 == len(nucseq)):
