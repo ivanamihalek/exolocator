@@ -61,47 +61,16 @@ def main():
         # find all canonical coding  human exons 
         # get_canonical_coding_exons also sorts exons by the start in the gene
         canonical_human_exons = get_canonical_coding_exons (cursor, gene_id, ensembl_db_name['homo_sapiens'])
+
         # bail out if there is a problem
         if not canonical_human_exons: continue
 
-        # reconstruct the alignment with orthologues
-        sequence  = {}
-        seq_name  = {}
-        has_a_map = False
         for human_exon in canonical_human_exons:
+            [exon_seq_id, pepseq, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, nucseq] = \
+                    get_exon_seqs(cursor, human_exon.exon_id, human_exon.exon_known)
+            print " %10d  %s " % (human_exon.exon_id, pepseq)
 
-            maps = get_maps(cursor, ensembl_db_name, human_exon.exon_id, human_exon.is_known)
-            if not maps:
-                continue
-            else:
-                has_a_map = True
 
-            for map in maps:
-                species = map.species_2
-                # get the raw (unaligned) sequence for the exon that maps onto human
-                [exon_seq_id, unaligned_sequence, pepseq_transl_start, pepseq_transl_end, left_flank, right_flank, nucseq] = \
-                    get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2, ensembl_db_name[map.species_2])
-                # inflate the compressed sequence
-                if map.bitmap and unaligned_sequence:
-                    bs = Bits(bytes=map.bitmap)
-                    # check bitmap has correct number of 1s
-                    if ( not bs.count(1) == len(unaligned_sequence)):
-                        print "bitmap check fails (?)"
-                        continue
-                    # rebuild aligned sequence
-                    usi = iter(unaligned_sequence)
-                    reconstructed_sequence = "".join(('-' if c=='0' else next(usi) for c in bs.bin))
-                    # rebuild aligned dna sequence, while we are at that
-                    reconstructed_nucseq   = align_nucseq_by_pepseq(reconstructed_sequence, nucseq)
-
-                    print unaligned_sequence
-                    print nucseq
-                    print reconstructed_nucseq
-                    print
-                else:
-                    print fail
-                    continue
- 
 
 #########################################
 if __name__ == '__main__':
