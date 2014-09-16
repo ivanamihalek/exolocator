@@ -87,7 +87,7 @@ def pep_exon_seqs(species_list, db_info):
                 continue
 
             for exon in exons:
-                if exon.exon_id != 28553228: continue
+                if exon.exon_id != 28553189: continue
                 #####################################                
                 if (not exon.is_coding):
                     print exon.exon_id,  "is not coding "
