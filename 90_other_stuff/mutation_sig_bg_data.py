@@ -49,6 +49,7 @@ def main():
 
     # for each human gene
     #gene_ids = [10092907]
+    logf = erropen("error.log", "r")
     gene_ct = 0
     for gene_id in gene_ids[:100]:
        
@@ -57,7 +58,6 @@ def main():
 
         gene_ct += 1
         if (not gene_ct%100): print gene_ct, "out of ", len(gene_ids)
-        if verbose: print gene_id, stable_id, get_description (cursor, gene_id)
 
         # find all canonical coding  human exons 
         # get_canonical_coding_exons also sorts exons by the start in the gene
@@ -91,17 +91,21 @@ def main():
             
         canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
         if ( len(full_reconstituted_seq) != len(canonical) ):
-            print "error reassembling,  len(full_reconstituted_seq) != len(canonical) ",  len(full_reconstituted_seq) , len(canonical) 
-            print "canonical:"
-            print canonical
-            print "reconstituted:"
-            print full_reconstituted_seq
-            exit(1)
+            
+            print >> logf, gene_id, stable_id, get_description (cursor, gene_id)
+            print >> logf, "error reassembling,  len(full_reconstituted_seq) != len(canonical) ",  len(full_reconstituted_seq) , len(canonical) 
+            print >> logf, "canonical:"
+            print >> logf, canonical
+            print >> logf, "reconstituted:"
+            print >> logf, full_reconstituted_seq
+            continue
 
+        print gene_id, stable_id, get_description (cursor, gene_id)
         codons = map(''.join, zip(*[iter(full_reconstituted_cDNA)]*3))
         for i in range(len(codons)):
             print " %5d  %s  %s " % (i, full_reconstituted_seq[i], codons[i])
 
+    logf.close()
 
 #########################################
 if __name__ == '__main__':
