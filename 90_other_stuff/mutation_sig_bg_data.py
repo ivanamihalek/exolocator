@@ -214,6 +214,7 @@ def main():
                         mutated_aa = Seq(mutated_codon).translate().tostring()
                     cg = category_dict[codon[j]][new_nt][is_CpG[nt_position]];
                     print codon, mutated_codon, j, codon[j], new_nt, is_CpG[nt_position], cg
+                    print i, j, nt_position, nt
                     if (mutated_aa == aa):
                         silent[cg] += 1
                     elif (mutated_aa == "*"):
