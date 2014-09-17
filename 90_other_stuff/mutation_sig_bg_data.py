@@ -86,7 +86,7 @@ def main():
                 split_codon = prev_codon_piece_plus_right_flank[:phase] + left_flank_plus_codon_piece[-offset:]
             print "split_codon:", split_codon            
             full_reconstituted_cDNA += split_codon + nucseq[pepseq_transl_start:pepseq_transl_end]
-            prev_codon_piece_plus_right_flank = nucseq[:pepseq_transl_end:] + right_flank
+            prev_codon_piece_plus_right_flank = nucseq[pepseq_transl_end:] + right_flank
             
             
         if ( is_mitochondrial(cursor, gene_id)):
