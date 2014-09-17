@@ -151,6 +151,9 @@ def main():
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate(table="Vertebrate Mitochondrial").tostring()
         else:
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate().tostring()
+        if full_reconstituted_seq[-1] == '*':
+            full_reconstituted_seq  = full_reconstituted_seq[:-1]
+            full_reconstituted_cDNA = full_reconstituted_cDNA[:-3]
             
         canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
         if ( len(full_reconstituted_seq) != len(canonical)  or  full_reconstituted_seq != canonical):
