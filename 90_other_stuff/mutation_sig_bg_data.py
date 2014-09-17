@@ -16,15 +16,6 @@ from   el_utils.config_reader      import ConfigurationReader
 from Bio.Seq      import Seq
 from bitstring import Bits
 
-#########################################
-def align_nucseq_by_pepseq(aligned_pepseq, nucseq):
-    if (not len(aligned_pepseq.replace('-',''))*3 == len(nucseq)):
-        print "length mismatch:", len(aligned_pepseq.replace('-',''))*3,  len(nucseq)
-        return " -xxxx- "
-    codons = iter(map(''.join, zip(*[iter(nucseq)]*3)))
-    aligned_nucseq = ''.join(('---' if c=='-' else next(codons) for c in aligned_pepseq))
-    return aligned_nucseq
-
 
 
 
@@ -115,7 +106,7 @@ def main():
     # for each human gene
     #gene_ids = [10093176 ]
     gene_ct = 0
-    for gene_id in gene_ids[:100]:
+    for gene_id in gene_ids[:1000]:
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
@@ -152,11 +143,10 @@ def main():
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate(table="Vertebrate Mitochondrial").tostring()
         else:
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate().tostring()
-        if full_reconstituted_seq[-1] == '*':
-            full_reconstituted_seq  = full_reconstituted_seq[:-1]
-            full_reconstituted_cDNA = full_reconstituted_cDNA[:-3]
             
         canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
+        if full_reconstituted_seq[-1] == '*' and canonical[-1] != '*':
+            canonical += '*'
         if ( len(full_reconstituted_seq) != len(canonical)  or  full_reconstituted_seq != canonical):
             
             print >> logf, gene_id, stable_id, get_description (cursor, gene_id)
@@ -200,7 +190,6 @@ def main():
             silent[cg] = 0
             missense[cg] = 0
             nonsense[cg] = 0
-            print cg, missense[cg]
         for i in range(len(codons)):
             codon = codons[i]
             aa = full_reconstituted_seq[i]
