@@ -156,7 +156,7 @@ def main():
             
         canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
         if canonical[0] == 'X': #that's some crap apparently wrong transcript is annotated as canonical
-            print >> logf,   "warning", gene_id, stable_id,  get_description (cursor, gene_id)
+            print >> logf, "warning", gene_id, stable_id,  get_description (cursor, gene_id)
             print >> logf, "the deposited canonical sequence starts with X - is there an alternative (?)"
             canonical = canonical[1:]
             
@@ -166,8 +166,8 @@ def main():
             
             if ( len(canonical) - len(full_reconstituted_seq) < 3 and  full_reconstituted_seq in canonical):
                 # go with it  - I do not have that much of that crap anyway
-                print >> logf,   "warning", gene_id, stable_id,  get_description (cursor, gene_id)
-                print >> logf, "missing a couple of amino acids in beginning or the end"
+                print >> logf, "warning", gene_id, stable_id,  get_description (cursor, gene_id)
+                print >> logf, "missing a couple of amino acids in beginning or in the end"
             else:   
                 print >> logf, "error" , gene_id, stable_id, get_description (cursor, gene_id)
                 print >> logf, "error reassembling,  len(full_reconstituted_seq) != len(canonical) ", len(full_reconstituted_seq) , len(canonical) 
