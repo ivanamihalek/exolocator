@@ -122,8 +122,6 @@ def one_species_all_genes_loop(gene_ids, db_info):
         db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
     
-    print local_db, ensembl_db_name, species, ensembl_db_name[species]
-    
     switch_to_db (cursor, ensembl_db_name[species])
 
     for gene_id in gene_ids:
@@ -253,6 +251,7 @@ def main():
     print sys.argv[0]
     if species:
         print species, "only"
+        switch_to_db (cursor, ensembl_db_name[species])
         if (species=='homo_sapiens'):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
         else:
