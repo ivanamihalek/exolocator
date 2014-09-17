@@ -123,7 +123,6 @@ def one_species_all_genes_loop(gene_ids, db_info):
     cursor = db.cursor()
     
     switch_to_db (cursor, ensembl_db_name[species])
-
     for gene_id in gene_ids:
         # for all exons in the gene
         exons = gene2exon_list(cursor, gene_id)
@@ -134,7 +133,8 @@ def one_species_all_genes_loop(gene_ids, db_info):
         pep_seqs(cursor, gene_id, exons)
         ####################################
         if not gene_ids.index(gene_id) % 1000:
-            print "\t %5.1f%% " % (100 * (float(gene_ids.index(gene_id) + 1) / len(gene_ids)))
+            print "\t done with  %d out of %d (%5.1f%%) " % (gene_ids.index(gene_id) + 1, len(gene_ids), 
+                                             100 * (float(gene_ids.index(gene_id) + 1) / len(gene_ids)))
             sys.stdout.flush()      
                                       
     cursor.close()
