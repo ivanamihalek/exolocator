@@ -204,7 +204,7 @@ def main():
             aa = full_reconstituted_seq[i]
             for j in range(3):
                 nt_position = i*3 + j
-                nt = full_reconstituted_seq[nt_position]
+                nt = full_reconstituted_cDNA[nt_position]
                 for new_nt in ['A', 'C', 'T', 'G']:
                     if new_nt == nt: continue
                     mutated_codon = mutate(codon, j, new_nt)
