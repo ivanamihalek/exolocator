@@ -115,12 +115,14 @@ def pep_seqs (cursor, gene_id, exons):
 # the reason that we have so many ways to loop is
 # parallelization
 def one_species_all_genes_loop(gene_ids, db_info):
-    [local_db, ensembl_db_name] = db_info
+    [local_db, ensembl_db_name, species] = db_info
     if local_db:
         db     = connect_to_mysql()
     else:
         db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
+    switch_to_db (cursor, ensembl_db_name[species])
+
     for gene_id in gene_ids:
     # for all exons in the gene
         exons = gene2exon_list(cursor, gene_id)
@@ -148,7 +150,6 @@ def all_species_all_genes_loop(species_list, db_info):
         db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
-    species_list = ['homo_sapiens']
     #####################################
     for species in species_list:
 
@@ -259,7 +260,7 @@ def main():
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
-        parallelize_args = [no_threads, one_species_all_genes_loop, gene_ids,  [local_db, ensembl_db_name]]
+        parallelize_args = [no_threads, one_species_all_genes_loop, gene_ids,  [local_db, ensembl_db_name, species]]
     elif special:
         print "using", special, "set"
         gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
