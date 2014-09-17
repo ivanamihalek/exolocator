@@ -107,8 +107,7 @@ def main():
                 exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
                 if (not exon_seqs):
                     no_exon_seq += 1
-                    #print "no exon seqs for  ", gene_id, exon.exon_id
-                    #print exon
+                    print "no exon seqs for  ", gene_id, exon.exon_id
                     #exit(1)
                     continue                   
 
@@ -117,10 +116,12 @@ def main():
 
                 if len(dna_seq)<3:
                     short_dna += 1
+                    print "short_dna:", dna_seq
                     continue
 
                 if (pepseq_transl_start == -10): # ??? what is this shit? adn what happens downstream if the pepseq_transl_start is None?
                     translation_fail += 1
+                    print "pepseq_transl_start:", pepseq_transl_start
                     continue
 
                 mitochondrial        = is_mitochondrial(cursor, gene_id)
