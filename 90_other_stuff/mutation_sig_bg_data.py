@@ -115,7 +115,7 @@ def main():
     # for each human gene
     #gene_ids = [10093176 ]
     gene_ct = 0
-    for gene_id in gene_ids[:3]:
+    for gene_id in gene_ids[:100]:
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
