@@ -38,8 +38,8 @@ def fill_category ():
         category_dict[from_nt] = {}
         for to_nt in ['A', 'C', 'G', 'T']:
            category_dict[from_nt][to_nt] = {}
-           category_dict[from_nt][to_nt][True]= ""
-           category_dict[from_nt][to_nt][False]= ""
+           category_dict[from_nt][to_nt][True]  = ""
+           category_dict[from_nt][to_nt][False] = ""
     
     category_dict['A']['A'][False] = ""
     category_dict['A']['T'][False] = "AT_tsvn"
@@ -70,6 +70,8 @@ def fill_category ():
     category_dict['G']['T'][True] = "CpG_tsvn"
     category_dict['G']['C'][True] = "CpG_tsvn"
     category_dict['G']['G'][True] = ""
+    
+    
 #########################################
 def mutate(codon, mutation_position, new_nt):
     mutated_codon = ""
