@@ -145,7 +145,7 @@ def get_translated_region(cursor, gene_id, species):
         [gene_seq_id,gene_region_start, gene_region_end, 
          gene_region_strand] = ret
     else:
-        print "region not retrived for ", species, gene_id, species
+        print "region not retrieved for ", species, gene_id, species
         return []
 
     transcript_ids = get_transcript_ids(cursor, gene_id)

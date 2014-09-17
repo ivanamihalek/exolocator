@@ -73,6 +73,7 @@ def main():
                     get_exon_seqs(cursor, human_exon.exon_id, human_exon.is_known)
             print " %10d  %s " % (human_exon.exon_id, pepseq)
             print "lengths:  %4d  %4d " % (len(pepseq)*3, len(nucseq[pepseq_transl_start:pepseq_transl_end]))
+            # HERE: IN MY CASE pepseq_transl_end should be 1, not 0
             print "pepseq_transl_start pepseq_transl_end ",  pepseq_transl_start, pepseq_transl_end, " exon len", len(nucseq)
             # add the split codon
             phase = get_exon_phase (cursor, human_exon.exon_id, human_exon.is_known)

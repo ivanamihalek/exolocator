@@ -66,70 +66,33 @@ def  translate (dna_seq, phase, mitochondrial=False, strip_stop=True, verbose=Fa
 
     pepseq = ""
     if phase < 0: phase = 0
-    offset = phase2offset(phase)
-
-
-    dnaseq = Seq (dna_seq[offset:], generic_dna)
-
-    if mitochondrial:
-        pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
-    else:
-        pepseq = dnaseq.translate().tostring()
-
-
-    if verbose:
-        print " ** translation for:", dnaseq
-        print " ** phase:", phase
-        print " ** ", pepseq
-
-    if strip_stop: 
-        if pepseq and pepseq[-1]=='*':
-            pepseq = pepseq[:-1]
-            # the case when we have only an ending piece of codon
-            if not pepseq:
-                # offset is 0 - we are reading only one or 2 nucleotides from the left
-                return [0, pepseq]
-        if not '*' in pepseq:
-            return [offset, pepseq]
-    elif not '*' in pepseq[:-1]:
-        return [offset, pepseq]
-
-
-    phase = (phase+1)%3
-    offset = phase2offset(phase)
-    dnaseq = Seq (dna_seq[offset:], generic_dna)
-    if mitochondrial:
-        pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
-    else:
-        pepseq = dnaseq.translate().tostring()
     
-    if strip_stop: 
-        if pepseq and pepseq[-1]=='*':
-            pepseq = pepseq[:-1]
-        if not '*' in pepseq:
-            return [offset, pepseq]
-    elif not '*' in pepseq[:-1]:
-        return [offset, pepseq]
-
-
-    phase = (phase+1)%3
-    offset = phase2offset(phase)
-    dnaseq = Seq (dna_seq[offset:], generic_dna)
-    if mitochondrial:
-        pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
-    else:
-        pepseq = dnaseq.translate().tostring()
+    for phase_adjustment in range(3): # in case the phase assigned by ensembl is wrong
+        phase = (phase+phase_adjustment)%3
+        offset = phase2offset(phase)
+        dnaseq = Seq (dna_seq[offset:], generic_dna)
+        if mitochondrial:
+            pepseq = dnaseq.translate(table="Vertebrate Mitochondrial").tostring()
+        else:
+            pepseq = dnaseq.translate().tostring()
     
+        if verbose:
+            print " ** translation for:", dnaseq
+            print " ** phase:", phase
+            print " ** ", pepseq
+    
+        if strip_stop: 
+            if pepseq and pepseq[-1]=='*':
+                pepseq = pepseq[:-1]
+                # the case when we have only an ending piece of codon
+                if not pepseq:
+                    # offset is 0 - we are reading only one or two nucleotides from the left
+                    length_translated = len(dna_seq) - 3
+                    return [0, length_translated, pepseq, phase]
+            if not '*' in pepseq:
+                return [offset, len(pepseq), pepseq, phase]
+        elif not '*' in pepseq[:-1]:
+            return [offset, len(pepseq), pepseq, phase]
 
-    if strip_stop: 
-        if pepseq and pepseq[-1]=='*':
-            pepseq = pepseq[:-1]
-        if not '*' in pepseq:
-            return [offset, pepseq]
-    elif not '*' in pepseq[:-1]:
-        return [offset, pepseq]
-    if not '*' in pepseq:
-        return [offset, pepseq]
-
-    return [-1, ""]
+    return [-1, 0, "", 0]
 
