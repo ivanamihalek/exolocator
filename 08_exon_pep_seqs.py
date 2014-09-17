@@ -99,7 +99,7 @@ def pep_seqs (cursor, gene_id, exons):
             print "end:",  end
             print
 
-        if False:
+        if True:
             qry  = "update exon_seq "
             qry += " set protein_seq   = '%s',  " %  pepseq
             qry += " pepseq_transl_start =  %d, " %  start
