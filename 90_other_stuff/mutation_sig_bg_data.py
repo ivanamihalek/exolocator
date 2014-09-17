@@ -100,19 +100,29 @@ def main():
 
 
     switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
+    #gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
+    gene_ids = [10093770, 10096272, 10096345, 10096675, 10099748, 10100334, 10102321,
+                 10107648, 10109042, 10110817, 10110942, 10112233, 10113096, 10113985,
+                 10114644, 10116865, 10116871, 10116960, 10117020, 10117806, 10118088,
+                 10118560, 10119226, 10119621, 10119795, 10120755, 10120798, 10122731,
+                 10124106, 10124118, 10124151, 10124517, 10124564, 10126667, 10127014,
+                 10127114, 10127801, 10127963, 10127980, 10128472, 10128786, 10128793, 10131147, 10132254,
+                 10132706, 10132994, 10133724, 10134243, 10135990, 10136396, 10136634, 10136887, 10137107,
+                 10137840, 10137951, 10138257, 10140899, 10142006, 10142667, 10142688, 10142698, 10143238,
+                 10143462, 10143600, 10143804, 10143858, 10143974, 10144456, 10145879, 10146358, 10147626,
+                 10148092, 10149428, 10149492, 10149569, 10150429, 10150941, 10152510, 10152784, 10153063,
+                 10153305, 10153773, 10155884]
+    
+    
     # the categories of mutations for which we will be collecting statistics
     fill_category ()    
     # for each human gene
     #gene_ids = [10093176 ]
-    gene_ct = 0
     for gene_id in gene_ids:
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
 
-        gene_ct += 1
-        if (not gene_ct%100): print gene_ct, "out of ", len(gene_ids)
 
         # find all canonical coding  human exons 
         # get_canonical_coding_exons also sorts exons by the start in the gene
@@ -146,13 +156,15 @@ def main():
             
         canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
         if canonical[0] == 'X': #that's some crap apparently wrong transcript is annotated as canonical
+            print >> logf,   "warning", gene_id, stable_id,  get_description (cursor, gene_id)
+            print >> logf, "the deposited canonical sequence starts with X - is there an alternative (?)"
             canonical = canonical[1:]
             
         if full_reconstituted_seq[-1] == '*' and canonical[-1] != '*':
             canonical += '*'
         if ( len(full_reconstituted_seq) != len(canonical)  or  full_reconstituted_seq != canonical):
             
-            print >> logf, gene_id, stable_id, get_description (cursor, gene_id)
+            print >> logf, "error" , gene_id, stable_id, get_description (cursor, gene_id)
             print >> logf, "error reassembling,  len(full_reconstituted_seq) != len(canonical) ",  len(full_reconstituted_seq) , len(canonical) 
             print >> logf, "canonical:"
             print >> logf, canonical
