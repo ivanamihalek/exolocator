@@ -134,8 +134,8 @@ def all_species_all_genes_loop(species_list, db_info):
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         #for all protein coding genes in a species
-        for gene_id in [10093105]:
-        #for gene_id in gene_ids:
+        #for gene_id in [10093105]:
+        for gene_id in gene_ids:
 
             # for all exons in the gene
             exons = gene2exon_list(cursor, gene_id)
@@ -149,9 +149,7 @@ def all_species_all_genes_loop(species_list, db_info):
             ####################################
             if not gene_ids.index(gene_id)%1000:
                 print "%50s:  %5.1f%% " %  (species, 100*(float( gene_ids.index(gene_id) +1 )/len(gene_ids))  )
-                sys.stdout.flush()
-       
-                         
+                sys.stdout.flush()                                
 ########################################
 def ortologues_for_given_genes_loop (gene_list, db_info):
 

@@ -94,8 +94,13 @@ def main():
             for exon in exons:
 
                 #####################################                
-                if (not exon.is_coding or  exon.covering_exon > 0):
-                     continue 
+                if not exon.is_coding:
+                    print exon.exon_id, " not coding "
+                    continue
+                if exon.covering_exon >0:
+                    print exon.exon_id, " is covered by ", exon.covering_exon 
+                    continue
+                    
 
                 tot_exons += 1
                 # exons seqs are its aa translation, left_flank, right_flank, and dna_seq
