@@ -145,6 +145,9 @@ def main():
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate().tostring()
             
         canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
+        if canonical[0] == 'X': #that's some crap apparently wrong transcript is annotated as canonical
+            canonical = canonical[1:]
+            
         if full_reconstituted_seq[-1] == '*' and canonical[-1] != '*':
             canonical += '*'
         if ( len(full_reconstituted_seq) != len(canonical)  or  full_reconstituted_seq != canonical):
