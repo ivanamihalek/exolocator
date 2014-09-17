@@ -256,7 +256,7 @@ def main():
     if species:
         print species, "only"
         if (species=='homo_sapiens'):
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         parallelize_args = [no_threads, one_species_all_genes_loop, gene_ids,  [local_db, ensembl_db_name]]
