@@ -42,7 +42,6 @@ def pep_seqs (cursor, gene_id, exons):
     
 
     for exon in exons:
-        if exon.exon_id != 28553189: continue
         #####################################                
         if (not exon.is_coding):
             print exon.exon_id,  "is not coding "
@@ -135,7 +134,7 @@ def all_species_all_genes_loop(species_list, db_info):
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         #for all protein coding genes in a species
-        for gene_id in [10093176]:
+        for gene_id in [10093021]:
         #for gene_id in gene_ids:
 
             # for all exons in the gene
