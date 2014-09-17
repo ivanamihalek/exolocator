@@ -132,7 +132,7 @@ def one_species_all_genes_loop(gene_ids, db_info):
         ####################################
         pep_seqs(cursor, gene_id, exons)
         ####################################
-        if not gene_ids.index(gene_id) % 1000:
+        if not gene_ids.index(gene_id) % 100:
             print "\t done with  %d out of %d (%5.1f%%) " % (gene_ids.index(gene_id) + 1, len(gene_ids), 
                                              100 * (float(gene_ids.index(gene_id) + 1) / len(gene_ids)))
             sys.stdout.flush()      
