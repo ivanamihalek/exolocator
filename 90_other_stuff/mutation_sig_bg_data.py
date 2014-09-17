@@ -164,13 +164,18 @@ def main():
             canonical += '*'
         if ( len(full_reconstituted_seq) != len(canonical)  or  full_reconstituted_seq != canonical):
             
-            print >> logf, "error" , gene_id, stable_id, get_description (cursor, gene_id)
-            print >> logf, "error reassembling,  len(full_reconstituted_seq) != len(canonical) ",  len(full_reconstituted_seq) , len(canonical) 
-            print >> logf, "canonical:"
-            print >> logf, canonical
-            print >> logf, "reconstituted:"
-            print >> logf, full_reconstituted_seq
-            continue
+            if ( len(canonical) - len(full_reconstituted_seq) < 3 and  full_reconstituted_seq in canonical):
+                # go with it  - I do not have that much of that crap anyway
+                print >> logf,   "warning", gene_id, stable_id,  get_description (cursor, gene_id)
+                print >> logf, "missing a couple of amino acids in beginning or the end"
+            else:   
+                print >> logf, "error" , gene_id, stable_id, get_description (cursor, gene_id)
+                print >> logf, "error reassembling,  len(full_reconstituted_seq) != len(canonical) ", len(full_reconstituted_seq) , len(canonical) 
+                print >> logf, "canonical:"
+                print >> logf, canonical
+                print >> logf, "reconstituted:"
+                print >> logf, full_reconstituted_seq
+                continue
 
         # nucleotide stats
         count = {'A':0, 'C':0, 'C-CpG':0, 'T':0, 'G':0, 'G-CpG':0} 
