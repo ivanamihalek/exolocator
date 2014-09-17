@@ -90,9 +90,9 @@ def  translate (dna_seq, phase, mitochondrial=False, strip_stop=True, verbose=Fa
                     length_translated = len(dna_seq) - 3
                     return [0, length_translated, pepseq, phase]
             if not '*' in pepseq:
-                return [offset, len(pepseq), pepseq, phase]
+                return [offset, 3*len(pepseq), pepseq, phase]
         elif not '*' in pepseq[:-1]:
-            return [offset, len(pepseq), pepseq, phase]
+            return [offset, 3*len(pepseq), pepseq, phase]
 
     return [-1, 0, "", 0]
 
