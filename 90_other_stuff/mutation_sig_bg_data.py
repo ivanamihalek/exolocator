@@ -215,9 +215,12 @@ def main():
                     else:
                         mutated_aa = Seq(mutated_codon).translate().tostring()
                     cg = category_dict[codon[j]][new_nt][is_CpG[nt_position]];
-                    print codon, mutated_codon, j, codon[j], new_nt, is_CpG[nt_position], cg
-                    print i, j, nt_position, nt
-                    print aa, mutated_aa
+                    if not cg or not cg in categories:
+                        print >> logf, "category problem in ", gene_id, stable_id, get_description (cursor, gene_id)
+                        print >> logf, codon, mutated_codon, j, codon[j], new_nt, is_CpG[nt_position], cg
+                        print >> logf, i, j, nt_position, nt
+                        print >> logf, aa, mutated_aa
+                        continue
                     if (mutated_aa == aa):
                         silent[cg] += 1
                     elif (mutated_aa == "*"):
@@ -225,14 +228,15 @@ def main():
                     else:
                         missense[cg] += 1
                 
-        print stable_id, get_description (cursor, gene_id)
+        print >> outf, stable_id, get_description (cursor, gene_id)
+        print >> outf, "CpG nucleotides"
         for i in range(len(codons)):
             if (is_CpG[i]):
-                print " %5d  %s  %s " % (i, full_reconstituted_seq[i], codons[i])
-        print "%10s  %5s  %5s  %5s" % ("category", "silent", "nonsense", "missense")
+                print >> outf," %5d  %s  %s " % (i, full_reconstituted_cDNA[i], codons[i])
+        print >> outf,"%10s  %5s  %5s  %5s" % ("category", "silent", "nonsense", "missense")
         for cg in categories:
-            print "%10s  %5d  %5d  %5d" %(cg, silent[cg], nonsense[cg], missense[cg])
-        print "done", stable_id
+            print >> outf,"%10s  %5d  %5d  %5d" % (cg, silent[cg], nonsense[cg], missense[cg])
+        print >> outf, "done", stable_id
         #print  "canonical:"
         #print canonical
         #print "reconstituted:"
