@@ -34,6 +34,13 @@ def fill_category ():
     
     categories = ["AT_tsvn", "AT_tstn", "CG_tsvn", "CG_tstn", "CpG_tsvn", "CpG_tstn"]
     
+    for from_nt in ['A', 'C', 'G', 'T']:
+        category_dict[from_nt] = {}
+        for to_nt in ['A', 'C', 'G', 'T']:
+           category_dict[from_nt][to_nt] = {}
+           category_dict[from_nt][to_nt][True]= ""
+           category_dict[from_nt][to_nt][False]= ""
+    
     category_dict['A']['A'][False] = ""
     category_dict['A']['T'][False] = "AT_tsvn"
     category_dict['A']['C'][False] = "AT_tsvn"
