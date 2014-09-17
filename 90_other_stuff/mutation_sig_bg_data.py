@@ -30,9 +30,10 @@ def align_nucseq_by_pepseq(aligned_pepseq, nucseq):
 
 category_dict = {}
 categories = []
+
 def fill_category ():
     
-    categories = ["AT_tsvn", "AT_tstn", "CG_tsvn", "CG_tstn", "CpG_tsvn", "CpG_tstn"]
+    categories.append(["AT_tsvn", "AT_tstn", "CG_tsvn", "CG_tstn", "CpG_tsvn", "CpG_tstn"])
     
     for from_nt in ['A', 'C', 'G', 'T']:
         category_dict[from_nt] = {}
