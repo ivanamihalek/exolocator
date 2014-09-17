@@ -14,7 +14,7 @@ from   el_utils.special_gene_sets  import get_theme_ids
 from Bio.Seq      import Seq
 from Bio.Alphabet import generic_dna
 
-verbose = True
+verbose = False
 
 #########################################
 def get_phase(cursor, exon_id):
@@ -123,8 +123,8 @@ def one_species_all_genes_loop(gene_ids, db_info):
     cursor = db.cursor()
     
     switch_to_db (cursor, ensembl_db_name[species])
-    for gene_id in [10092907]:
-    #for gene_id in gene_ids:
+    #for gene_id in [10092907]:
+    for gene_id in gene_ids:
         # for all exons in the gene
         exons = gene2exon_list(cursor, gene_id)
         if (not exons):

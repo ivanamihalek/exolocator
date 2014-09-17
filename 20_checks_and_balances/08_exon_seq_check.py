@@ -16,35 +16,6 @@ from   el_utils.translation   import  crop_dna, translation_bounds, translate, p
 from Bio.Seq      import Seq
 from Bio.Alphabet import generic_dna
 
-###########################################
-def test1 ():
-    mismatch += 1
-    mitochondrial        = is_mitochondrial(cursor, gene_id)
-    [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id)
-    dna_cropped          = crop_dna (seq_start, seq_end, dna_seq)
-    if ( len(protein_seq)*3 >= len(dna_cropped)-3):
-        return ""
-
-    mismatch += 1
-
-    if (1):
-        [phase, pepseq]      = translate (dna_cropped, exon.phase, mitochondrial)
-
-        print "gene id ", gene_id, gene2stable(cursor, gene_id), " exon_id ", exon.exon_id
-        print "is known: ", exon.is_known
-        print "phase:  ", exon.phase
-        print "mitochondrial: ", mitochondrial
-        print len(protein_seq)*3, len(dna_cropped), len(dna_seq)
-
-        print "phase suggested: ", phase
-        print " ** ", pepseq
-        offset = phase2offset(exon.phase)
-        dnaseq = Seq (dna_cropped[offset:], generic_dna)
-        print " ** ", dnaseq.translate()
-
-        print
-        print
-        exit (1)
  
 ###########################################
 def main():
@@ -81,7 +52,8 @@ def main():
         stored_incorrect = 0
         translation_fail = 0
         #####################################
-        for gene_id in [10092907]:
+        #for gene_id in [10092907]:
+        for gene_id in gene_ids:
         #for tot in range(1000):
             #gene_id = choice(gene_ids)
 
