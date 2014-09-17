@@ -134,7 +134,7 @@ def all_species_all_genes_loop(species_list, db_info):
         else:
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         #for all protein coding genes in a species
-        for gene_id in [10093021]:
+        for gene_id in [10093105]:
         #for gene_id in gene_ids:
 
             # for all exons in the gene
