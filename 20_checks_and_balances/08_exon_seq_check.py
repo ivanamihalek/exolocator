@@ -81,7 +81,7 @@ def main():
         stored_incorrect = 0
         translation_fail = 0
         #####################################
-        for gene_id in [10093176]:
+        for gene_id in [10093105]:
         #for tot in range(1000):
             #gene_id = choice(gene_ids)
 
