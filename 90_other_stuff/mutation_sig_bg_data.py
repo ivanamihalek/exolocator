@@ -199,6 +199,7 @@ def main():
             silent[cg] = 0
             missense[cg] = 0
             nonsense[cg] = 0
+            print cg, missense[cg]
         for i in range(len(codons)):
             codon = codons[i]
             aa = full_reconstituted_seq[i]
@@ -215,6 +216,7 @@ def main():
                     cg = category_dict[codon[j]][new_nt][is_CpG[nt_position]];
                     print codon, mutated_codon, j, codon[j], new_nt, is_CpG[nt_position], cg
                     print i, j, nt_position, nt
+                    print aa, mutated_aa
                     if (mutated_aa == aa):
                         silent[cg] += 1
                     elif (mutated_aa == "*"):
