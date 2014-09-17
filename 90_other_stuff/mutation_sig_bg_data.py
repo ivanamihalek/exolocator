@@ -46,10 +46,10 @@ def main():
     if not logf: exit(1)
 
     switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-    #gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
+    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
 
     # for each human gene
-    gene_ids = [10093176 ]
+    #gene_ids = [10093176 ]
     gene_ct = 0
     for gene_id in gene_ids[:100]:
        
@@ -95,7 +95,7 @@ def main():
             full_reconstituted_seq = Seq(full_reconstituted_cDNA).translate().tostring()
             
         canonical = get_canonical_transl (acg, cursor, gene_id, 'homo_sapiens', strip_X = False)
-        if ( len(full_reconstituted_seq) != len(canonical) ):
+        if ( len(full_reconstituted_seq) != len(canonical)  or  full_reconstituted_seq != canonical):
             
             print >> logf, gene_id, stable_id, get_description (cursor, gene_id)
             print >> logf, "error reassembling,  len(full_reconstituted_seq) != len(canonical) ",  len(full_reconstituted_seq) , len(canonical) 
