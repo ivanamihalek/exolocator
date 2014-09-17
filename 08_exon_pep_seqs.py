@@ -14,6 +14,8 @@ from   el_utils.special_gene_sets  import get_theme_ids
 from Bio.Seq      import Seq
 from Bio.Alphabet import generic_dna
 
+verbose = False
+
 #########################################
 def get_phase(cursor, exon_id):
 
@@ -44,33 +46,34 @@ def pep_seqs (cursor, gene_id, exons):
     for exon in exons:
         #####################################                
         if (not exon.is_coding):
-            print exon.exon_id,  "is not coding "
+            if verbose: print exon.exon_id,  "is not coding "
             continue
         if (exon.covering_exon > 0):
-            print exon.exon_id,  "has covering exon"
+            if verbose: print exon.exon_id,  "has covering exon"
             continue 
         exon_seqs = get_exon_seqs(cursor, exon.exon_id, exon.is_known)
         if (not exon_seqs):
-            print exon.exon_id,  "no exon_seqs"
+            if verbose: print exon.exon_id,  "no exon_seqs"
             continue                   
         [exon_seq_id, pepseq, pepseq_transl_start, 
          pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs
         if len(dna_seq)<4:
-            print exon.exon_id,  "short dna"
+            if verbose: print exon.exon_id,  "short dna"
             continue
 
         #####################################                
         mitochondrial        = is_mitochondrial(cursor, gene_id)
-        [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id, verbose=True)
-        print " ** ", seq_start, seq_end
+        [seq_start, seq_end] = translation_bounds (cursor, exon.exon_id, verbose)
+        if verbose: print " ** ", seq_start, seq_end
         dna_cropped          = crop_dna (seq_start, seq_end, dna_seq)
-        print " ** ", dna_cropped
-        [offset, length_translated, pepseq, phase_corrected] = translate (dna_cropped, exon.phase, mitochondrial, verbose=True)
+        if verbose: print " ** ", dna_cropped
+        [offset, length_translated, pepseq, phase_corrected] = translate (dna_cropped, exon.phase, mitochondrial, verbose)
 
         if ( offset < 0): #  translation failure; usually some short pieces (end in pos 4 and such)
-            print exon.exon_id,  "translation failure"
-            print "mitochondrial:", mitochondrial
-            print seq_start, seq_end
+            if verbose: 
+                print exon.exon_id,  "translation failure"
+                print "mitochondrial:", mitochondrial
+                print seq_start, seq_end
             continue
 
         if seq_start is None: seq_start = 1
@@ -87,13 +90,14 @@ def pep_seqs (cursor, gene_id, exons):
         if (not pepseq == pepseq2):
             start = -10
             end   = -10
-
-        print exon.exon_id
-        print "pep stored:", pepseq
-        print "dna transl:", pepseq2
-        print "start:" , start
-        print "end:",  end
-        print
+            
+        if verbose: 
+            print exon.exon_id
+            print "pep stored:", pepseq
+            print "dna transl:", pepseq2
+            print "start:" , start
+            print "end:",  end
+            print
 
         if True:
             qry  = "update exon_seq "
@@ -108,13 +112,40 @@ def pep_seqs (cursor, gene_id, exons):
             
             
 #########################################
+# the reason that we have so many ways to loop is
+# parallelization
+def one_species_all_genes_loop(gene_ids, db_info):
+    [local_db, ensembl_db_name] = db_info
+    if local_db:
+        db     = connect_to_mysql()
+    else:
+        db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    cursor = db.cursor()
+    for gene_id in gene_ids:
+    # for all exons in the gene
+        exons = gene2exon_list(cursor, gene_id)
+        if (not exons):
+            print 'no exons for gene', gene_id
+            continue
+        ####################################
+        pep_seqs(cursor, gene_id, exons)
+        ####################################
+        if not gene_ids.index(gene_id) % 1000:
+            print "\t %5.1f%% " % (100 * (float(gene_ids.index(gene_id) + 1) / len(gene_ids)))
+            sys.stdout.flush()      
+                                      
+    cursor.close()
+    db.close()
+    
+
+#########################################
 def all_species_all_genes_loop(species_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
     if local_db:
         db     = connect_to_mysql()
     else:
-        db     = connect_to_mysql          (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
 
     species_list = ['homo_sapiens']
@@ -149,7 +180,10 @@ def all_species_all_genes_loop(species_list, db_info):
             ####################################
             if not gene_ids.index(gene_id)%1000:
                 print "%50s:  %5.1f%% " %  (species, 100*(float( gene_ids.index(gene_id) +1 )/len(gene_ids))  )
-                sys.stdout.flush()                                
+                sys.stdout.flush()    
+    cursor.close()
+    db.close()
+                                            
 ########################################
 def ortologues_for_given_genes_loop (gene_list, db_info):
 
@@ -186,44 +220,57 @@ def ortologues_for_given_genes_loop (gene_list, db_info):
         if not gene_list.index(gene_id)%1000:
             print "%5.1f%% " %  (100*(float( gene_list.index(gene_id) +1 )/len(gene_list))  )
             sys.stdout.flush()
+            
+    cursor.close()
+    db.close()
+
 #########################################
 def main():
 
     no_threads = 1
     special    = ''
     local_db = False
-
-    if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
-        print "usage: %s <set name> <number of threads>" % sys.argv[0]
-        exit(1) # after usage statment
-    elif len(sys.argv)==3:
-        special = sys.argv[1].lower()
-        if special == 'none': special = None
-        no_threads = int(sys.argv[2])
-
-
     if local_db:
         db     = connect_to_mysql()
         cfg    = ConfigurationReader()
     else:
         db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg    = ConfigurationReader       (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+        cfg    = ConfigurationReader(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
-
     [all_species, ensembl_db_name] = get_species (cursor)
+
+    species = ''
+    if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
+        print "usage: %s <set name/species> <number of processes>" % sys.argv[0]
+        exit(1) # after usage statement
+    elif len(sys.argv)==3:
+        special = sys.argv[1].lower()
+        if special == 'none': 
+            special = None
+        elif special in all_species:
+            species = special
+        no_threads = int(sys.argv[2])
+        
     print '======================================='
     print sys.argv[0]
-    if special:
+    if species:
+        print species, "only"
+        if (species=='homo_sapiens'):
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
+        else:
+            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+        parallelize_args = [no_threads, one_species_all_genes_loop, gene_ids,  [local_db, ensembl_db_name]]
+    elif special:
         print "using", special, "set"
         gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
- 
+        parallelize_args = [no_threads, ortologues_for_given_genes_loop, gene_list,  [local_db, ensembl_db_name]]
+    else:
+        parallelize_args = [no_threads, all_species_all_genes_loop, all_species, [local_db, ensembl_db_name]]
+        
     cursor.close()
     db    .close()
 
-    if not special:
-        parallelize (no_threads, all_species_all_genes_loop, all_species, [local_db, ensembl_db_name] )
-    else:
-        parallelize (no_threads, ortologues_for_given_genes_loop, gene_list,  [local_db, ensembl_db_name])
+    parallelize (*parallelize_args)
 
 
 
