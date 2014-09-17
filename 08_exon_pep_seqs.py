@@ -149,10 +149,8 @@ def all_species_all_genes_loop(species_list, db_info):
     else:
         db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
-
     #####################################
     for species in species_list:
-
         print
         print "############################"
         print  species
@@ -160,7 +158,6 @@ def all_species_all_genes_loop(species_list, db_info):
 
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False
-
         if (species=='homo_sapiens'):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
         else:
@@ -168,16 +165,13 @@ def all_species_all_genes_loop(species_list, db_info):
         #for all protein coding genes in a species
         #for gene_id in [10093105]:
         for gene_id in gene_ids:
-
             # for all exons in the gene
             exons = gene2exon_list(cursor, gene_id)
             if (not exons):
                 print 'no exons for gene', gene_id
-                continue
-            
+                continue            
             ####################################
             pep_seqs(cursor, gene_id, exons)
-
             ####################################
             if not gene_ids.index(gene_id)%1000:
                 print "%50s:  %5.1f%% " %  (species, 100*(float( gene_ids.index(gene_id) +1 )/len(gene_ids))  )
@@ -215,7 +209,7 @@ def ortologues_for_given_genes_loop (gene_list, db_info):
                 print 'no exons for gene', ortho_gene_id
                 continue
             ##############################
-            pep_seqs(cursor, gene_id, exons)
+            pep_seqs(cursor, ortho_gene_id, exons)
             
         ####################################
         if not gene_list.index(gene_id)%1000:
