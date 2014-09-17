@@ -109,6 +109,11 @@ def main():
         codons = map(''.join, zip(*[iter(full_reconstituted_cDNA)]*3))
         for i in range(len(codons)):
             print " %5d  %s  %s " % (i, full_reconstituted_seq[i], codons[i])
+        print  "canonical:"
+        print canonical
+        print "reconstituted:"
+        print full_reconstituted_seq
+        
 
     logf.close()
 
