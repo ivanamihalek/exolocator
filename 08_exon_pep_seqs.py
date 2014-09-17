@@ -121,13 +121,16 @@ def one_species_all_genes_loop(gene_ids, db_info):
     else:
         db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
     cursor = db.cursor()
+    
+    print local_db, ensembl_db_name, species, ensembl_db_name[species]
+    
     switch_to_db (cursor, ensembl_db_name[species])
 
     for gene_id in gene_ids:
-    # for all exons in the gene
+        # for all exons in the gene
         exons = gene2exon_list(cursor, gene_id)
         if (not exons):
-            print 'no exons for gene', gene_id
+            if verbose: print 'no exons for gene', gene_id
             continue
         ####################################
         pep_seqs(cursor, gene_id, exons)
@@ -206,7 +209,7 @@ def ortologues_for_given_genes_loop (gene_list, db_info):
             # for all exons in the gene
             exons = gene2exon_list(cursor, ortho_gene_id)
             if (not exons):
-                print 'no exons for gene', ortho_gene_id
+                if verbose: print 'no exons for gene', ortho_gene_id
                 continue
             ##############################
             pep_seqs(cursor, ortho_gene_id, exons)
