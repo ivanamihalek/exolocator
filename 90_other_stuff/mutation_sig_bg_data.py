@@ -33,7 +33,7 @@ categories = []
 
 def fill_category ():
     
-    categories.append(["AT_tsvn", "AT_tstn", "CG_tsvn", "CG_tstn", "CpG_tsvn", "CpG_tstn"])
+    categories.extend(["AT_tsvn", "AT_tstn", "CG_tsvn", "CG_tstn", "CpG_tsvn", "CpG_tstn"])
     
     for from_nt in ['A', 'C', 'G', 'T']:
         category_dict[from_nt] = {}
