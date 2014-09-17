@@ -167,7 +167,7 @@ def main():
         count = {'A':0, 'C':0, 'C-CpG':0, 'T':0, 'G':0, 'G-CpG':0} 
         codons = map(''.join, zip(*[iter(full_reconstituted_cDNA)]*3))
         L = len(full_reconstituted_cDNA)
-        is_CpG = []
+        is_CpG = {}
         for i in range(L):
             is_CpG[i] = False
             if full_reconstituted_cDNA[i] == 'A':
