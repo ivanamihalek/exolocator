@@ -77,9 +77,9 @@ def mutate(codon, mutation_position, new_nt):
     mutated_codon = ""
     for k in range(3):
         if k==mutation_position:
-            mutated_codon.append(new_nt)
+            mutated_codon += new_nt
         else:
-            mutated_codon.append(codon[k])
+            mutated_codon += codon[k]
     return mutated_codon
    
     
