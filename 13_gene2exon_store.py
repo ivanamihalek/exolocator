@@ -305,8 +305,10 @@ def sort_out_covering_exons (cursor, exons):
         master_exon.covering_exon       = -1 # nobody's covering this guy
         master_exon.covering_exon_known = -1 # formal
         for covered_exon in covered_list:
-            covered_exon.covering_exon       = master_exon.exon_id;
-            covered_exon.covering_exon_known = master_exon.is_know           
+            covered_exon.covering_exon       = master_exon.exon_id
+            covered_exon.covering_exon_known = master_exon.is_known
+
+           
 #########################################
 # check which exons are coding
 def mark_coding (cursor, gene_id, species, exons):
