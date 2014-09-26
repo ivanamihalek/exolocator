@@ -58,12 +58,12 @@ def main():
  	human_stable      = gene2stable    (cursor, human_gene_id)
         human_description = get_description(cursor, human_gene_id)
         tot_count += 1
-	print human_gene_id, human_stable, human_description
+	#print human_gene_id, human_stable, human_description
    
   	human_exons = [e for e in gene2exon_list(cursor, human_gene_id, verbose=True) 
                        if e.covering_exon < 0 and e.is_canonical and e.is_known]
         if not human_exons: 
-            print "\t\t", human_stable, "no exons found"
+            #print "\t\t", human_stable, "no exons found"
             continue
 
 	human_exons.sort(key=lambda exon: exon.start_in_gene)
@@ -83,7 +83,7 @@ def main():
                                         maps_for_exon[he])
 
             if not maps_for_exon[he]: 
-                print "\t\t", human_stable,  "no maps found"
+                #print "\t\t", human_stable,  "no maps found"
                 continue
 
             sw_count += len(maps_for_exon[he])
