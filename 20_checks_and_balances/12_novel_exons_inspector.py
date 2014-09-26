@@ -86,9 +86,25 @@ def main():
                 print "\t\t", human_stable,  "no maps found"
                 continue
 
-            sw_count += 1
-            break
+            sw_count += len(maps_for_exon[he])
+            #break
 
+        print "tot count: ", tot_count
+        print "sw count: ", sw_count
+
+
+    #print "tot count: ", tot_count
+    #print "sw count: ", sw_count
+    
+    cursor.close()
+    db.close()
+
+
+#########################################
+if __name__ == '__main__':
+    main()
+
+'''
             print
             print "======================================"
             print he.exon_id, he.stable_id 
@@ -107,14 +123,4 @@ def main():
                     [seq1, seq2] = unfold_cigar_line (he.pepseq, protein_seq, m.cigar_line)
                     print seq1
                     print seq2
-
-    print "tot count: ", tot_count
-    print "sw count: ", sw_count
-    
-    cursor.close()
-    db.close()
-
-
-#########################################
-if __name__ == '__main__':
-    main()
+'''
