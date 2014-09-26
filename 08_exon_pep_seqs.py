@@ -178,6 +178,7 @@ def all_species_all_genes_loop(species_list, db_info):
             if not gene_ids.index(gene_id)%1000:
                 print "%50s:  %5.1f%% " %  (species, 100*(float( gene_ids.index(gene_id) +1 )/len(gene_ids))  )
                 sys.stdout.flush()    
+        print species, "done"
     cursor.close()
     db.close()
                                             

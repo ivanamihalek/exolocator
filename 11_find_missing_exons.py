@@ -1041,7 +1041,10 @@ def find_missing_exons(human_gene_list, db_info):
                     found += 1
                     prev_seq_region = matching_region
                     
-                
+    print "gene list done"
+    cursor.close()
+    db.close()
+               
 
 #########################################
 def main():
@@ -1092,7 +1095,6 @@ def main():
             gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
         else:
             gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
-
     else:
         print "using all protein coding genes"
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])

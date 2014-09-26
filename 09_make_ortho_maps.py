@@ -139,7 +139,7 @@ def maps_for_gene_list(gene_list, db_info):
             print >> datastring, "processed ", ct, "genes,  out of ", len(gene_list), "  ",
             print >> datastring, no_maps, " maps;  no_exon_info: ", missing_exon_info, "no_seq_info:", missing_seq_info 
             print datastring.getvalue()
-
+    print "gene list done"
     cursor.close()
     db.close()
 
