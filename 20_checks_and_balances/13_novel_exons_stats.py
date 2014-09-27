@@ -23,14 +23,17 @@ def main():
 
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
-
+    total = 0
     for species in all_species:
         print species
         switch_to_db (cursor, ensembl_db_name[species])
         qry  = "select count(1) from usearch_exon"
         rows = search_db (cursor, qry)
-        print "\t usearch exons: ", rows[0]
-
+        count = int(rows[0][0])
+        print "\t usearch exons: ", count 
+        total += count
+    print
+    print 'total: ', total
     cursor.close()
     db.close()
 
