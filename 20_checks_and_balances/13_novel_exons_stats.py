@@ -32,6 +32,11 @@ def main():
         count = int(rows[0][0])
         print "\t usearch exons: ", count 
         total += count
+        qry  = "select count(1) from sw_exon"
+        rows = search_db (cursor, qry)
+        count = int(rows[0][0])
+        print "\t sw exons: ", count 
+        total += count
     print
     print 'total: ', total
     cursor.close()
