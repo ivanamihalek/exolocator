@@ -403,7 +403,7 @@ def exon_cleanup(gene_list, db_info):
              
                          exon_seqs =  get_exon_seq_by_db_id (cursor, exon_seq_id, ensembl_db_name[species])
                          if not exon_seqs: 
-                             print "exon seq not stored "
+                             print "exon seqs not found"
                              continue
 
                          [exon_seq_id, protein_seq, pepseq_transl_start, pepseq_transl_end, 
@@ -466,9 +466,7 @@ def exon_cleanup(gene_list, db_info):
                          # see if the right splice site is ok
                          [right_flank_ok, end_correction, end_phase, end_max_score] = \
                              check_right_flank(acg, right_flank, dna_seq, templ_dna_seq)
-                         print "** ", left_flank_ok, correction, right_flank_ok, end_correction
 
-                         #if not left_flank_ok and not right_flank_ok: continue
 
                          pepseq_corrected = ""
                          new_left_flank   = ""
@@ -642,6 +640,7 @@ def exon_cleanup(gene_list, db_info):
                          # gene2exon --> have to go back to 07_gene2exon for that
                          tot_ok += 1
 
+    print "gene list done"
     
     cursor.close()
     db.close()
