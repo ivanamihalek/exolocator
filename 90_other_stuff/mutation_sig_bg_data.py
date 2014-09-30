@@ -235,7 +235,7 @@ def main():
             print >> outf,"%10s  %5d  %5d  %5d" % (cg, silent[cg], nonsense[cg], missense[cg])
         print   >> outf, "canonical sequence (codon by codon):"
         for i in range(len(codons)):
-            print   >> outf, "%3s  %s" % (codon[i], full_reconstituted_seq[i])
+            print   >> outf, "%3s  %s" % (codons[i], full_reconstituted_seq[i])
         print >> outf, "done", stable_id
         exit(1)
 
