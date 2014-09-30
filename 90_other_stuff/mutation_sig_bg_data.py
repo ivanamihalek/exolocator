@@ -100,18 +100,7 @@ def main():
 
 
     switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-    #gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
-    gene_ids = [10093770, 10096272, 10096345, 10096675, 10099748, 10100334, 10102321,
-                 10107648, 10109042, 10110817, 10110942, 10112233, 10113096, 10113985,
-                 10114644, 10116865, 10116871, 10116960, 10117020, 10117806, 10118088,
-                 10118560, 10119226, 10119621, 10119795, 10120755, 10120798, 10122731,
-                 10124106, 10124118, 10124151, 10124517, 10124564, 10126667, 10127014,
-                 10127114, 10127801, 10127963, 10127980, 10128472, 10128786, 10128793, 10131147, 10132254,
-                 10132706, 10132994, 10133724, 10134243, 10135990, 10136396, 10136634, 10136887, 10137107,
-                 10137840, 10137951, 10138257, 10140899, 10142006, 10142667, 10142688, 10142698, 10143238,
-                 10143462, 10143600, 10143804, 10143858, 10143974, 10144456, 10145879, 10146358, 10147626,
-                 10148092, 10149428, 10149492, 10149569, 10150429, 10150941, 10152510, 10152784, 10153063,
-                 10153305, 10153773, 10155884]
+    gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1, ref_only=True)
     
     
     # the categories of mutations for which we will be collecting statistics
@@ -179,17 +168,15 @@ def main():
 
         # nucleotide stats
         count = {'A':0, 'C':0, 'C-CpG':0, 'T':0, 'G':0, 'G-CpG':0} 
-        codons = map(''.join, zip(*[iter(full_reconstituted_cDNA)]*3))
-        L = len(full_reconstituted_cDNA)
         is_CpG = {}
-        for i in range(L):
+        for i in range( len(full_reconstituted_cDNA) ):
             is_CpG[i] = False
             if full_reconstituted_cDNA[i] == 'A':
                 count['A'] += 1
             elif full_reconstituted_cDNA[i] == 'T':
                 count['T'] += 1
             elif full_reconstituted_cDNA[i] == 'C':
-                if i + 1 < L and full_reconstituted_cDNA[i + 1] == 'G':
+                if i + 1 < len(full_reconstituted_cDNA) and full_reconstituted_cDNA[i + 1] == 'G':
                     count['C-CpG'] += 1
                     is_CpG[i] = True
                 else:
@@ -203,11 +190,12 @@ def main():
                     
         # in each category_dict (AT transt, AT transv, CG trans, CG transv, Cpg trans, cpGtransv, how many missense, 
         #  how many nonsense, how many silent  possible    
+        codons = map(''.join, zip(*[iter(full_reconstituted_cDNA)]*3))
         silent   = {}
         missense = {}
         nonsense = {}
         for cg in categories:
-            silent[cg] = 0
+            silent[cg]   = 0
             missense[cg] = 0
             nonsense[cg] = 0
         for i in range(len(codons)):
@@ -239,18 +227,17 @@ def main():
                 
         print >> outf, stable_id, get_description (cursor, gene_id)
         print >> outf, "CpG nucleotides"
-        for i in range(len(codons)):
+        for i in range(len(full_reconstituted_cDNA)):
             if (is_CpG[i]):
-                print >> outf," %5d  %s  %s " % (i, full_reconstituted_cDNA[i], codons[i])
+                print >> outf," %5d  %s  %s " % (i, full_reconstituted_cDNA[i], codons[i/3])
         print >> outf,"%10s  %5s  %5s  %5s" % ("category", "silent", "nonsense", "missense")
         for cg in categories:
             print >> outf,"%10s  %5d  %5d  %5d" % (cg, silent[cg], nonsense[cg], missense[cg])
+        print   >> outf, "canonical sequence (codon by codon):"
+        for i in range(len(codons)):
+            print   >> outf, "%3s  %s" % (codon[i], full_reconstituted_seq[i])
         print >> outf, "done", stable_id
-        #print  "canonical:"
-        #print canonical
-        #print "reconstituted:"
-        #print full_reconstituted_seq
-        
+        exit(1)
 
     logf.close()
 
