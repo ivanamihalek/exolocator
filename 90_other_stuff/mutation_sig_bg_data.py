@@ -107,7 +107,7 @@ def main():
     fill_category ()    
     # for each human gene
     #gene_ids = [10093176 ]
-    for gene_id in gene_ids
+    for gene_id in gene_ids:
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
