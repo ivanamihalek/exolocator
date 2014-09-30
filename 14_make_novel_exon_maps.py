@@ -132,7 +132,8 @@ def maps_for_gene_list(gene_list, db_info):
 
             switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
             store (cursor, maps, ensembl_db_name)
-                
+
+    print "gene list done"
     cursor.close()
     db.close()
 
