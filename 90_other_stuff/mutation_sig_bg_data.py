@@ -107,11 +107,11 @@ def main():
     fill_category ()    
     # for each human gene
     #gene_ids = [10093176 ]
-    for gene_id in gene_ids [:3]:
+    for gene_id in gene_ids
        
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         stable_id = gene2stable(cursor, gene_id)
-
+ 
 
         # find all canonical coding  human exons 
         # get_canonical_coding_exons also sorts exons by the start in the gene
@@ -240,7 +240,7 @@ def main():
             else:
                 codon_transl = Seq(codons[i]).translate().tostring()
 
-            print   >> outf, "%3s  %s" % (codons[i], full_reconstituted_seq[i] ),
+            print   >> outf, "%10d   %3s  %s" % (i, codons[i], full_reconstituted_seq[i] ),
             if ( codon_transl != full_reconstituted_seq[i] ) :
                 print  >> outf, "  warning: transl mismatch %s" % codon_transl
             else:
