@@ -242,11 +242,10 @@ def main():
 
             print   >> outf, "%3s  %s" % (codons[i], full_reconstituted_seq[i] ),
             if ( codon_transl != full_reconstituted_seq[i] ) :
-                print "  warning: transl mismatch %s" % codon_transl
+                print  >> outf, "  warning: transl mismatch %s" % codon_transl
             else:
-                print
+                print  >> outf 
         print >> outf, "done", stable_id
-        exit(1)
 
     logf.close()
 
