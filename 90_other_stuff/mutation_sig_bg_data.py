@@ -232,9 +232,9 @@ def main():
             if (is_CpG[i]):
                 context = ""
                 if i>0: context += full_reconstituted_cDNA[i-1]
-                context += ull_reconstituted_cDNA[i]
+                context += full_reconstituted_cDNA[i]
                 if i<len(full_reconstituted_cDNA)-1: context += full_reconstituted_cDNA[i+1]
-                print >> outf," %5d  %s  %s " % (i+1, full_reconstituted_cDNA[i], codons[i/3])
+                print >> outf," %5d  %s  %s   %s" % (i+1, full_reconstituted_cDNA[i], codons[i/3], context)
                 
         print >> outf,"# mutations possible (in principle)"
         print >> outf,"# %10s  %5s  %5s  %5s" % ("category", "silent", "nonsense", "missense")
