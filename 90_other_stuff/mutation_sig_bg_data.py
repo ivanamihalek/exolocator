@@ -226,26 +226,34 @@ def main():
                         missense[cg] += 1
                 
         print >> outf, stable_id, get_description (cursor, gene_id)
-        print >> outf, "CpG nucleotides"
+        print >> outf, "# CpG nucleotides ('context' contains one nucleotide before and one after the CpG nucleotide)"
+        print >> outf, "#  %5s    %s    %s   %s" % ("cDNA_position",  "nucleotide", "codon", "context")
         for i in range(len(full_reconstituted_cDNA)):
             if (is_CpG[i]):
-                print >> outf," %5d  %s  %s " % (i, full_reconstituted_cDNA[i], codons[i/3])
-        print >> outf,"%10s  %5s  %5s  %5s" % ("category", "silent", "nonsense", "missense")
+                context = ""
+                if i>0: context += full_reconstituted_cDNA[i-1]
+                context += ull_reconstituted_cDNA[i]
+                if i<len(full_reconstituted_cDNA)-1: context += full_reconstituted_cDNA[i+1]
+                print >> outf," %5d  %s  %s " % (i+1, full_reconstituted_cDNA[i], codons[i/3])
+                
+        print >> outf,"# mutations possible (in principle)"
+        print >> outf,"# %10s  %5s  %5s  %5s" % ("category", "silent", "nonsense", "missense")
         for cg in categories:
             print >> outf,"%10s  %5d  %5d  %5d" % (cg, silent[cg], nonsense[cg], missense[cg])
-        print   >> outf, "canonical sequence (codon by codon):"
+        print >> outf, "# canonical sequence (format: codon|position_on_peptide_chain|amino_acid;):"
         for i in range(len(codons)):
             if (mitochondrial):
                 codon_transl = Seq(codons[i]).translate(table="Vertebrate Mitochondrial").tostring()
             else:
                 codon_transl = Seq(codons[i]).translate().tostring()
 
-            print   >> outf, "%10d   %3s  %s" % (i, codons[i], full_reconstituted_seq[i] ),
-            if ( codon_transl != full_reconstituted_seq[i] ) :
-                print  >> outf, "  warning: transl mismatch %s" % codon_transl
-            else:
-                print  >> outf 
-        print >> outf, "done", stable_id
+            print   >> outf, "%s|%d|%s;" % (codons[i], i+1, full_reconstituted_seq[i] ),
+            #if ( codon_transl != full_reconstituted_seq[i] ) :
+            #    print  >> outf, "  warning: transl mismatch %s" % codon_transl
+            #else:
+            #    print  >> outf 
+        print >> outf
+        print >> outf, stable_id,  "done"
 
     logf.close()
 
