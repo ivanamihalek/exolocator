@@ -236,7 +236,7 @@ def main():
                 if i>0: context += full_reconstituted_cDNA[i-1]
                 context += full_reconstituted_cDNA[i]
                 if i<len(full_reconstituted_cDNA)-1: context += full_reconstituted_cDNA[i+1]
-        outstr += "%d|%s|%s|%s;" % (i+1, full_reconstituted_cDNA[i], codons[i/3], context)
+                outstr += "%d|%s|%s|%s;" % (i+1, full_reconstituted_cDNA[i], codons[i/3], context)
         print >> outf, outstr
                
 
