@@ -934,6 +934,7 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
                 left_flank_plus_codon_piece = exon_left_flank.lower() + exon_dna_seq[:trsl_from]
                 flanking_nucleotides   = left_flank_plus_codon_piece [-offset:]
                 codon                  = cary + flanking_nucleotides
+                print carry, flanking_nucleotides, codon
                 [phase_suggested, res] = translate (codon, 0, mitochondrial, strip_stop = False)
 
                 if res: # we are going to have an insert here
