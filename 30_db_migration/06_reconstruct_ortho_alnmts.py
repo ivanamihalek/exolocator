@@ -935,7 +935,11 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
                 flanking_nucleotides   = left_flank_plus_codon_piece [-offset:]
                 codon                  = cary + flanking_nucleotides
                 print cary, flanking_nucleotides, codon
-                [phase_suggested, res] = translate (codon, 0, mitochondrial, strip_stop = False)
+                retval = translate (codon, 0, mitochondrial, strip_stop = False)
+
+                print cary, flanking_nucleotides, codon, retval
+
+                [phase_suggested, res] = retval
 
                 if res: # we are going to have an insert here
                     insert [name][prev_local_pos+3] = res
