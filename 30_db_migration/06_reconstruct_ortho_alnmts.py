@@ -934,7 +934,7 @@ def fix_split_codons (cursor, ensembl_db_name, cfg, acg, sorted_seq_names,
                 left_flank_plus_codon_piece = exon_left_flank.lower() + exon_dna_seq[:trsl_from]
                 flanking_nucleotides   = left_flank_plus_codon_piece [-offset:]
                 codon                  = cary + flanking_nucleotides
-                print carry, flanking_nucleotides, codon
+                print cary, flanking_nucleotides, codon
                 [phase_suggested, res] = translate (codon, 0, mitochondrial, strip_stop = False)
 
                 if res: # we are going to have an insert here
@@ -1720,14 +1720,17 @@ def main():
 
         #>>>> note here: we are filtering for the old or non-existent afas
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        gene_list = []
-        directory = "{0}/dna".format(cfg.dir_path['afs_dumps'])
-        for gene_id in gene_list_whole:
-            stable_id = gene2stable(cursor, gene_id)
-            # if we are running this pipe repeatedly we want to skip if
-            # the last time we worked on this gene was recently enough
-            if  check_afa_age (cfg, directory, stable_id, max_days=30) == "new": continue                               
-            gene_list.append(gene_id)
+        if True:
+            gene_list = gene_list_whole
+        else:
+            gene_list = []
+            directory = "{0}/dna".format(cfg.dir_path['afs_dumps'])
+            for gene_id in gene_list_whole:
+                stable_id = gene2stable(cursor, gene_id)
+                # if we are running this pipe repeatedly we want to skip if
+                # the last time we worked on this gene was recently enough
+                if  check_afa_age (cfg, directory, stable_id, max_days=30) == "new": continue                               
+                gene_list.append(gene_id)
 
     cursor.close()
     db.close()
