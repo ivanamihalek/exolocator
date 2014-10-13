@@ -1218,19 +1218,12 @@ def make_alignments (species_list, db_info):
         print species, species_shorthand
         directory = check_directory (cfg, species, species_shorthand, "pep")
   
-        for gene_id in gene_ids:
-            print " ** ", gene_id
-            switch_to_db (cursor,  ensembl_db_name[species])
-            print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
-            stable_id = gene2stable(cursor, gene_id)
-        exit(1)
-      
         # for each human gene
         gene_ct = 0
         #gene_list.reverse()
         for gene_id in gene_ids:
-            print " ** ", gene_id
-            exit(1)
+
+            switch_to_db (cursor,  ensembl_db_name[species])
             stable_id = gene2stable(cursor, gene_id)
 
             gene_ct += 1

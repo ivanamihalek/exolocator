@@ -1276,11 +1276,6 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_onl
          else:
             qry += "status!='known'"
                 
-   print " ********************* "
-   print db_name,  biotype, is_known, ref_only
-   print qry
-   print " ********************* "
-
    rows = search_db (cursor, qry, verbose = False)
     
    if (not rows):
