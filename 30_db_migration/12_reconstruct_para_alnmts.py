@@ -1220,6 +1220,7 @@ def make_alignments (species_list, db_info):
   
         for gene_id in gene_ids:
             print " ** ", gene_id
+            print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
             stable_id = gene2stable(cursor, gene_id)
         exit(1)
       
