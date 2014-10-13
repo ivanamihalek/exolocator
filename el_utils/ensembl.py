@@ -1277,7 +1277,7 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_onl
             qry += "status!='known'"
                 
    print " ********************* "
-   print db_name. biotype, is_known, ref_only
+   print db_name,  biotype, is_known, ref_only
    print qry
    print " ********************* "
 
