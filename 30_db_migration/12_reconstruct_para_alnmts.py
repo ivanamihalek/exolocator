@@ -1223,7 +1223,8 @@ def make_alignments (species_list, db_info):
         gene_ct = 0
         #gene_list.reverse()
         for gene_id in gene_ids:
-
+            print " ** ", gene_id
+            exit(1)
             stable_id = gene2stable(cursor, gene_id)
 
             gene_ct += 1
