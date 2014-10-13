@@ -1265,10 +1265,10 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_onl
     qry = "select gene_id from gene"
 
     if ( biotype or not is_known is None):
-        qry +=  " where "
-        if ( biotype):
-           qry += "biotype='%s'" % biotype
-        if (biotype and not is_known is None):
+       qry +=  " where "
+       if ( biotype):
+          qry += "biotype='%s'" % biotype
+      if (biotype and not is_known is None):
             qry += " and "
         if (not is_known is None):
             if is_known:
@@ -1276,13 +1276,14 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_onl
             else:
                 qry += "status!='known'"
                 
+   print " *** ", qry
 
-    rows = search_db (cursor, qry, verbose = False)
+   rows = search_db (cursor, qry, verbose = False)
     
-    if (not rows):
+   if (not rows):
         rows = search_db (cursor, qry, verbose = True)
         return []
-    else:
+   else:
         if ('Error' in rows[0]):
             print rows[0]
             return []
