@@ -72,10 +72,7 @@ def get_maps(cursor, ensembl_db_name, exon_id, is_known, species = 'homo_sapiens
     maps = []
 
     switch_to_db (cursor,  ensembl_db_name[species])
-    if not isinstance(exon_id, int):
-        print ">>>>>>>>>>>   exon_id ", exon_id
-        exit(1)
-    qry  = "select * from %s where exon_id = %d " % (table, exon_id)
+    qry  = "select * from %s where exon_id = %d " % (table, int(exon_id))
     qry += " and exon_known = %d " % is_known
     rows = search_db (cursor, qry)
     if not rows or "ERROR" in rows[0]:
