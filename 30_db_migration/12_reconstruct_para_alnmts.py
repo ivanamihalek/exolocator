@@ -1178,7 +1178,7 @@ def make_alignments (species_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
 
-    verbose      = True
+    verbose      = False
     flank_length = 10
 
     if local_db:
@@ -1250,7 +1250,7 @@ def make_alignments (species_list, db_info):
                 for para in paralogues:
                     print gene2stable(cursor, para), get_description (cursor, para)
             # get _all_ exons
-            template_exons = gene2exon_list(cursor, gene_id, verbose=True)
+            template_exons = gene2exon_list(cursor, gene_id)
             if (not template_exons):
                 if verbose: print 'no exons for ', gene_id
                 continue
@@ -1440,7 +1440,7 @@ def make_alignments (species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 1
+    no_threads = 10
     species    = None
 
     if len(sys.argv)==1:
