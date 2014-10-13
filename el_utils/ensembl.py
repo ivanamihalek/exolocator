@@ -1255,58 +1255,58 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_onl
    gene_ids = []
     
    if  (db_name):
-        qry  = "use %s " % db_name
-        rows = search_db (cursor, qry)
-        if (rows):
-            rows = search_db (cursor, qry, verbose = True)
-            print rows
-            exit (1)
+      qry  = "use %s " % db_name
+      rows = search_db (cursor, qry)
+      if (rows):
+         rows = search_db (cursor, qry, verbose = True)
+         print rows
+         exit (1)
 
    qry = "select gene_id from gene"
 
    if ( biotype or not is_known is None):
-       qry +=  " where "
-       if ( biotype):
-          qry += "biotype='%s'" % biotype
+      qry +=  " where "
+      if ( biotype):
+         qry += "biotype='%s'" % biotype
       if (biotype and not is_known is None):
-            qry += " and "
-        if (not is_known is None):
-            if is_known:
-                qry += "status='known'"
-            else:
-                qry += "status!='known'"
+         qry += " and "
+      if (not is_known is None):
+         if is_known:
+            qry += "status='known'"
+         else:
+            qry += "status!='known'"
                 
    print " *** ", qry
 
    rows = search_db (cursor, qry, verbose = False)
     
    if (not rows):
-        rows = search_db (cursor, qry, verbose = True)
-        return []
+      rows = search_db (cursor, qry, verbose = True)
+      return []
    else:
-        if ('Error' in rows[0]):
-            print rows[0]
-            return []
+      if ('Error' in rows[0]):
+         print rows[0]
+         return []
 
-        # I don't want to hard code the id for the annotation "non_ref"
-        # and I do no know where else to do it, so qe do it here
-        if ref_only:
-            qry  = "select attrib_type_id from attrib_type where code='non_ref'"
-            rows2 = search_db (cursor, qry)
-            if not rows2 or not type(rows2[0][0]) is int:
-                ref_only = False
-            else:
-                non_ref_id = int (rows2[0][0])
+      # I don't want to hard code the id for the annotation "non_ref"
+      # and I do no know where else to do it, so qe do it here
+      if ref_only:
+         qry  = "select attrib_type_id from attrib_type where code='non_ref'"
+         rows2 = search_db (cursor, qry)
+         if not rows2 or not type(rows2[0][0]) is int:
+            ref_only = False
+         else:
+            non_ref_id = int (rows2[0][0])
                 
-        for row in rows:
-            if ( not type(row[0]) is long ):
-                print row
-                exit(1)
-            gene_id = int(row[0])
-            if ref_only and not is_reference(cursor, gene_id, non_ref_id): continue
-            gene_ids.append(gene_id)
+      for row in rows:
+         if ( not type(row[0]) is long ):
+            print row
+            exit(1)
+         gene_id = int(row[0])
+         if ref_only and not is_reference(cursor, gene_id, non_ref_id): continue
+         gene_ids.append(gene_id)
     
-    return gene_ids
+   return gene_ids
 
 
 
