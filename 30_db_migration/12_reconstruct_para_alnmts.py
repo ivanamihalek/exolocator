@@ -1256,10 +1256,6 @@ def make_alignments (species_list, db_info):
                 if verbose: print 'no exons for ', gene_id
                 continue
 
-            print gene_id
-            for template_exon in template_exons:
-               print "templ:\n", template_exon
-            exit(1)
 
             # >>>>>>>>>>>>>>>>>>
             # reconstruct the per-exon alignment with orthologues
