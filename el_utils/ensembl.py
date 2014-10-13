@@ -1252,9 +1252,9 @@ def is_reference (cursor, gene_id,  non_ref_id, db_name=None):
 ########
 def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_only = False):
 
-    gene_ids = []
+   gene_ids = []
     
-    if  (db_name):
+   if  (db_name):
         qry  = "use %s " % db_name
         rows = search_db (cursor, qry)
         if (rows):
@@ -1262,9 +1262,9 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_onl
             print rows
             exit (1)
 
-    qry = "select gene_id from gene"
+   qry = "select gene_id from gene"
 
-    if ( biotype or not is_known is None):
+   if ( biotype or not is_known is None):
        qry +=  " where "
        if ( biotype):
           qry += "biotype='%s'" % biotype
