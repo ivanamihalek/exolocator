@@ -270,6 +270,7 @@ def make_exon_alignment(cursor, species, ensembl_db_name, template_exon, mitocho
     pep_aln_length = 0
     dna_aln_length = 0
     # find all other exons that map to the template exon
+print "template:", taemplate
     maps = get_maps(cursor, ensembl_db_name, template_exon.exon_id, 
                     template_exon.is_known, species, 'para_exon_map')
     for map in maps:
@@ -1439,7 +1440,7 @@ def make_alignments (species_list, db_info):
 #########################################
 def main():
     
-    no_threads = 10
+    no_threads = 1
     species    = None
 
     if len(sys.argv)==1:
