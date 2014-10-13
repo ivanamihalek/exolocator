@@ -270,7 +270,7 @@ def make_exon_alignment(cursor, species, ensembl_db_name, template_exon, mitocho
     pep_aln_length = 0
     dna_aln_length = 0
     # find all other exons that map to the template exon
-    print "template:", template_exon
+    print "template:\n", template_exon
     maps = get_maps(cursor, ensembl_db_name, template_exon.exon_id, 
                     template_exon.is_known, species, 'para_exon_map')
     for map in maps:
@@ -1198,8 +1198,8 @@ def make_alignments (species_list, db_info):
     #species_list.reverse()
     for species in species_list:
 
-        pep_produced = 0
-        dna_produced = 0
+        pep_produced   = 0
+        dna_produced   = 0
         has_paralogues = 0
         switch_to_db (cursor,  ensembl_db_name[species])
         if species == 'homo_sapiens':
@@ -1255,6 +1255,10 @@ def make_alignments (species_list, db_info):
             if (not template_exons):
                 if verbose: print 'no exons for ', gene_id
                 continue
+
+            for template_exon in template_exons:
+               print "templ:\n", template_exon
+            exit(1)
 
             # >>>>>>>>>>>>>>>>>>
             # reconstruct the per-exon alignment with orthologues
