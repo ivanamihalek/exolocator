@@ -1458,7 +1458,9 @@ def main():
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
-    if user_specified_species: all_species = user_specified_species
+    if user_specified_species: 
+        all_species = user_specified_species
+        if len(user_specified_species)<10:   no_threads = len(user_specified_species)
     cursor.close()
     db    .close()
 
