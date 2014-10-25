@@ -26,7 +26,7 @@ for $spec_dir( @species_dirs ) {
 	for $donkey_full_path ( split "\n", `ls $from_dir/$spec_dir/$seq_type/*.afa`) {
 	    @aux = split "/", $donkey_full_path;
 	    $afa = pop @aux;
-	    $afa || next; # move onif it is an empty string
+	    $afa || next; # move on if it is an empty string
 	    $reindeer_full_path = "$to_dir/$spec_dir/$seq_type/$afa"; 
 	    $afa_exists = (  -e  $reindeer_full_path ) ? 1 : 0 ;
 

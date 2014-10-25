@@ -1441,12 +1441,12 @@ def make_alignments (species_list, db_info):
 def main():
     
     no_threads = 10
-    species    = None
+    user_specified_species = None
 
     if len(sys.argv)==1:
-        print "note the alternative usage: %s <species>" %  sys.argv[0]
+        print "note the alternative usage: %s <species> [<species> <species> ...]" %  sys.argv[0]
     else:
-        species = sys.argv[1]
+        user_specified_species = sys.argv[1:]
         no_threads = 1
  
     local_db = False
@@ -1458,7 +1458,7 @@ def main():
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
-    if species: all_species = [species]
+    if user_specified_species: all_species = user_specified_species
     cursor.close()
     db    .close()
 
