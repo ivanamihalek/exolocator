@@ -2,10 +2,11 @@
 
 use strict;
 use Net::FTP;
-my $release_num = 76;
+my $release_num = 75;
 
-my $local_repository = 
-    "/mnt/ensembl-mirror/release-".$release_num."/mysql";
+#my $local_repository = 
+#    "/mnt/ensembl-mirror/release-".$release_num."/mysql";
+my $local_repository    = "/Users/ivana/databases/ensembl-$release_num/mysql";
 
 (-e  $local_repository) ||
     die "$local_repository not found.\n";
@@ -36,6 +37,7 @@ my @dirs_I_need = ();
 my $compara_dir = "ensembl_compara_".$release_num; # take care of it separately
 
 foreach $dir ( @farm ) {
+    #$dir =~ /homo_sapiens/ || next;
     ($dir =~ /core/) || next;
     ($dir =~ /expression/) && next;
     my @aux    = split "_", $dir;
@@ -44,6 +46,8 @@ foreach $dir ( @farm ) {
     
     push @dirs_I_need, $dir;
 }
+
+print join (" ", @dirs_I_need), "\n";
 
 
 open (LOG, ">ensembl_mysql_download.log") || die "error opening log: $!\n";
@@ -109,7 +113,7 @@ foreach $dir ( @dirs_I_need) {
 }
 
 
-
+=pod
 #################################################################################
 # now take care of compara db
 $dir       = $compara_dir;

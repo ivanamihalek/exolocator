@@ -1,9 +1,15 @@
 #! /usr/bin/perl -w 
 
-$release_num = 76;
+$release_num = 75;
 
- $local_repository = 
-    "/mnt/ensembl-mirror/release-$release_num/fasta";
+#$local_repository = "/mnt/ensembl-mirror/release-$release_num/fasta";
+$local_repository    = "/Users/ivana/databases/ensembl-$release_num/fasta";
+$db_formatting_tool  = "/usr/local/ncbi/blast/bin/makeblastdb";
+# makeblastdb allows for Maximum file size: 1000000000B
+# note this is not enough for 'toplevel' files
+for ( $local_repository,  $db_formatting_tool) {
+    ( -e $_) ||  die "$_ not found\n";
+}
 
 chdir $local_repository;
 
@@ -22,6 +28,7 @@ foreach $animal (@farm) {
     print $animal, "\n";
 
 
+
     foreach $dir  ( "pep",  "dna" ){
 
 	chdir $local_repository;
@@ -30,11 +37,13 @@ foreach $animal (@farm) {
 	@fastas = split "\n",  `ls *.fa`;
 	for $fasta (@fastas) {
 	    print "\t $fasta\n";
-	    $cmd = "formatdb -i $fasta -o T";
-	    ( $dir eq "dna") && ( $cmd .= " -p F");
+	    if ( $dir eq "dna") {
+		$cmd = "$db_formatting_tool -in $fasta -dbtype nucl";
+	     } else {
+		$cmd = "$db_formatting_tool -in $fasta -dbtype prot";
+	     }
 	    (system $cmd) &&
 		die  " error running $cmd\n";
 	}
     }
 }
-   
