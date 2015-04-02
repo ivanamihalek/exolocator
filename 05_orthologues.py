@@ -43,29 +43,19 @@ def collect_orthologues(gene_list, db_info):
     
     [local_db, ensembl_db_name] = db_info
 
-    if local_db:
-        db     = connect_to_mysql()
-    else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 
-
-    if local_db:
-        db_human  = connect_to_mysql()
-    else:
-        db_human  = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db_human  = connect_to_mysql()
     cursor_human = db_human.cursor()
-    switch_to_db (cursor_human,  ensembl_db_name['homo_sapiens'])
+    switch_to_db (cursor_human, ensembl_db_name['homo_sapiens'])
 
     ensembl_compara_name = get_compara_name(cursor)
     print ensembl_compara_name
  
-    if local_db:
-        db_compara     = connect_to_mysql()
-    else:
-        db_compara     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-    cursor_compara     = db_compara.cursor()
+    db_compara     = connect_to_mysql()
+    cursor_compara = db_compara.cursor()
     switch_to_db (cursor_compara, ensembl_compara_name)
 
 
@@ -108,16 +98,12 @@ def collect_orthologues(gene_list, db_info):
 def main():
     
     no_threads = 10
-    local_db = False
-
-    if local_db:
-        db     = connect_to_mysql()
-    else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
     cursor = db.cursor()
+
     [all_species, ensembl_db_name] = get_species (cursor)
     species                        = 'homo_sapiens'
-    switch_to_db (cursor,  ensembl_db_name[species])
+    switch_to_db (cursor, ensembl_db_name[species])
     gene_list                      = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
     cursor.close()
     db.close()

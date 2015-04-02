@@ -68,14 +68,9 @@ def maps_for_gene_list(gene_list, db_info):
     
 
     [local_db, ensembl_db_name] = db_info
-    if local_db:
-        db     = connect_to_mysql()
-        cfg    = ConfigurationReader()
-        acg    = AlignmentCommandGenerator()
-    else:
-        db     = connect_to_mysql         (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
+    cfg    = ConfigurationReader()
+    acg    = AlignmentCommandGenerator()
     cursor = db.cursor()
 
     missing_exon_info = 0
@@ -163,14 +158,8 @@ def main():
 
         no_threads = int(sys.argv[2])
 
-    local_db = False
-
-    if local_db:
-        db  = connect_to_mysql()
-        cfg = ConfigurationReader()
-    else:
-        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db  = connect_to_mysql()
+    cfg = ConfigurationReader()
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)

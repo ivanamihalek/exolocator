@@ -1,7 +1,7 @@
 
 import os
 from el_utils.utils   import  erropen
-from el_utils.mysql   import  connect_to_mysql, connect_to_db
+from el_utils.mysql   import  connect_to_mysql
 from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 
 #########################################

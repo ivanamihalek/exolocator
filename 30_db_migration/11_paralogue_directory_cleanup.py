@@ -7,7 +7,7 @@ import pdb
 
 import MySQLdb, commands, re, os, sys
 
-from el_utils.mysql   import  connect_to_mysql, connect_to_db
+from el_utils.mysql   import  connect_to_mysql
 from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from el_utils.ensembl import  *
 from el_utils.el_specific   import  *
@@ -49,14 +49,9 @@ def make_alignments (species_list, db_info):
     verbose      = False
     flank_length = 10
 
-    if local_db:
-        db     = connect_to_mysql()
-        cfg    = ConfigurationReader()
-        acg    = AlignmentCommandGenerator()
-    else:
-        db     = connect_to_mysql         (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
+    cfg    = ConfigurationReader()
+    acg    = AlignmentCommandGenerator()
     cursor = db.cursor()
 
     # find db ids adn common names for each species db
@@ -96,12 +91,7 @@ def main():
     
     no_threads = 1
 
-    local_db = False
-
-    if local_db:
-        db = connect_to_mysql()
-    else:
-        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db = connect_to_mysql()
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)

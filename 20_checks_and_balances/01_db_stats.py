@@ -39,8 +39,7 @@ def check_table_sizes (cursor, all_species, ensembl_db_name):
 #########################################
 def main():
     
-    #db    = connect_to_mysql()
-    db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db    = connect_to_mysql()
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 

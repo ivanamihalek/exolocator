@@ -36,6 +36,8 @@ sys_tfm
 *.aln
 *to_*.pdb
 *seqs_not_found
+.creds
+
 
 # OS generated files #
 ######################

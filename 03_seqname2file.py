@@ -20,15 +20,8 @@ def store_seq_filenames (cursor, name, file_names):
 ####################################################
 def main():
 
-
-    local_db = False
-
-    if local_db:
-        db     = connect_to_mysql()
-        cr     = ConfigurationReader()
-    else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cr     = ConfigurationReader(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db = connect_to_mysql()
+    cr = ConfigurationReader()
 
     cursor = db.cursor()
     fasta_path = cr.get_path('ensembl_fasta')

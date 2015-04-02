@@ -420,10 +420,7 @@ def store_exon (cursor, exon):
 def gene2exon_all(species_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
-    if local_db:
-        db = connect_to_mysql()
-    else:
-        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db = connect_to_mysql()
     cursor = db.cursor()
 
     for species in species_list:
@@ -458,10 +455,7 @@ def gene2exon_all(species_list, db_info):
 def gene2exon_orthologues(gene_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
-    if local_db:
-        db = connect_to_mysql()
-    else:
-        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db = connect_to_mysql()
     cursor = db.cursor()
 
     for gene_id in gene_list:
@@ -502,7 +496,6 @@ def main():
 
     no_threads = 5
     special    = 'one'
-    local_db   = False
 
     if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
         print "usage: %s <set name> <number of threads>" % sys.argv[0]
@@ -515,12 +508,8 @@ def main():
 
         no_threads = int(sys.argv[2])
 
-    if local_db:
-        db  = connect_to_mysql()
-        cfg = ConfigurationReader()
-    else:
-        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db  = connect_to_mysql()
+    cfg = ConfigurationReader()
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)

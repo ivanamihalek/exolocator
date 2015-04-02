@@ -30,21 +30,14 @@ def collect_paralogues(species_list, db_info):
     
     [local_db, ensembl_db_name] = db_info
 
-
-    if local_db:
-        db_species  = connect_to_mysql()
-    else:
-        db_species  = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db_species  = connect_to_mysql()
     cursor_species = db_species.cursor()
 
     ensembl_compara_name = get_compara_name(cursor_species)
     print ensembl_compara_name
  
-    if local_db:
-        db_compara     = connect_to_mysql()
-    else:
-        db_compara     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-    cursor_compara     = db_compara.cursor()
+    db_compara     = connect_to_mysql()
+    cursor_compara = db_compara.cursor()
     switch_to_db (cursor_compara, ensembl_compara_name)
 
     for species in species_list:
@@ -78,12 +71,8 @@ def collect_paralogues(species_list, db_info):
 def main():
     
     no_threads = 10
-    local_db = False
 
-    if local_db:
-        db     = connect_to_mysql()
-    else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
     cursor.close()

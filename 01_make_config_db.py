@@ -376,7 +376,7 @@ def main():
                 print dir, " is not a directory "
                 sys.exit (1)
             
-    db      = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
     cursor = db.cursor()
 
 

@@ -33,12 +33,7 @@ def search_description (cursor, gene_name):
 #########################################
 def main():
 
-    local_db   = False
-
-    if local_db:
-        db     = connect_to_mysql()
-    else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 

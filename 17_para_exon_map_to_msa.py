@@ -30,14 +30,9 @@ def multiple_exon_alnmt(species_list, db_info):
 
     verbose  = False
 
-    if local_db:
-        db     = connect_to_mysql()
-        cfg    = ConfigurationReader()
-        acg    = AlignmentCommandGenerator()
-    else:
-        db     = connect_to_mysql         (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
+    cfg    = ConfigurationReader()
+    acg    = AlignmentCommandGenerator()
     cursor = db.cursor()
 
 
@@ -175,12 +170,7 @@ def multiple_exon_alnmt(species_list, db_info):
 def main():
     no_threads = 10
 
-    local_db = False
-
-    if local_db:
-        db = connect_to_mysql()
-    else:
-        db = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db = connect_to_mysql()
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)

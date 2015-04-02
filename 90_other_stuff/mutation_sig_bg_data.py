@@ -79,15 +79,9 @@ def mutate(codon, mutation_position, new_nt):
 def main():
 
     verbose  = True
-    local_db = False
-
-    if local_db:
-        db     = connect_to_mysql()
-        acg    = AlignmentCommandGenerator()
-    else:
-        db     = connect_to_mysql         (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg    = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-    cursor = db.cursor()
+    db       = connect_to_mysql()
+    acg      = AlignmentCommandGenerator()
+    cursor   = db.cursor()
 
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)

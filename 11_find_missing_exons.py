@@ -801,14 +801,9 @@ def find_missing_exons(human_gene_list, db_info):
 
     # 
     [local_db, ensembl_db_name, method] = db_info
-    if local_db:
-        db  = connect_to_mysql()
-        cfg = ConfigurationReader()
-        acg = AlignmentCommandGenerator()
-    else:
-        db  = connect_to_mysql         (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db  = connect_to_mysql()
+    cfg = ConfigurationReader()
+    acg = AlignmentCommandGenerator()
     cursor = db.cursor()
 
     # find db ids and common names for each species db
@@ -1074,14 +1069,8 @@ def main():
     # sw_sharps chokes if there is only one graphics card
     if method=='sw_sharp': no_threads = 1
 
-    local_db   = False
-
-    if local_db:
-        db  = connect_to_mysql()
-        cfg = ConfigurationReader()
-    else:
-        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db  = connect_to_mysql()
+    cfg = ConfigurationReader()
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)

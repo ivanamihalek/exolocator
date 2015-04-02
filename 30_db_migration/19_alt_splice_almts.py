@@ -345,17 +345,9 @@ def alt_splice_almt (cursor, cfg, acg, species, ensembl_db_name):
 #########################################
 def main():
 
-    local_db = False
-
-    if local_db:
-        db  = connect_to_mysql()
-        acg = AlignmentCommandGenerator()
-        cfg = ConfigurationReader()
-    else:
-        db  = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-
+    db  = connect_to_mysql()
+    acg = AlignmentCommandGenerator()
+    cfg = ConfigurationReader()
   
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)

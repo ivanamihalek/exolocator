@@ -5,7 +5,7 @@
 import sys, MySQLdb, commands, re
 from bitstring import Bits
 from   random           import  choice
-from   el_utils.mysql   import  connect_to_mysql, connect_to_db
+from   el_utils.mysql   import  connect_to_mysql
 from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
 from   el_utils.ensembl import  *
 from   el_utils.utils   import  erropen, output_fasta
@@ -37,15 +37,10 @@ def main():
 
         no_threads = int(sys.argv[2])
 
-    local_db = False
-
-    if local_db:
-        db  = connect_to_mysql()
-        cfg = ConfigurationReader()
-    else:
-        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db  = connect_to_mysql()
+    cfg = ConfigurationReader()
     cursor = db.cursor()
+
     # find db ids adn common names for each species db
     [all_species, ensembl_db_name] = get_species (cursor)
     species                        = 'homo_sapiens'

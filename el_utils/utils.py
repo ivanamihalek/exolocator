@@ -4,6 +4,7 @@ from subprocess import Popen, PIPE, STDOUT
 from tempfile   import NamedTemporaryFile
 from math       import sqrt
 
+
 ###########
 def isinteger(x):
     try:

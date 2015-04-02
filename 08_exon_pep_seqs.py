@@ -116,10 +116,7 @@ def pep_seqs (cursor, gene_id, exons):
 # parallelization
 def one_species_all_genes_loop(gene_ids, db_info):
     [local_db, ensembl_db_name, species] = db_info
-    if local_db:
-        db     = connect_to_mysql()
-    else:
-        db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
     cursor = db.cursor()
     
     switch_to_db (cursor, ensembl_db_name[species])
@@ -146,10 +143,7 @@ def one_species_all_genes_loop(gene_ids, db_info):
 def all_species_all_genes_loop(species_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
-    if local_db:
-        db     = connect_to_mysql()
-    else:
-        db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
     cursor = db.cursor()
     #####################################
     for species in species_list:
@@ -186,10 +180,7 @@ def all_species_all_genes_loop(species_list, db_info):
 def ortologues_for_given_genes_loop (gene_list, db_info):
 
     [local_db, ensembl_db_name] = db_info
-    if local_db:
-        db     = connect_to_mysql()
-    else:
-        db     = connect_to_mysql (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
     cursor = db.cursor()
 
     #####################################
@@ -227,13 +218,9 @@ def main():
 
     no_threads = 1
     special    = ''
-    local_db = False
-    if local_db:
-        db     = connect_to_mysql()
-        cfg    = ConfigurationReader()
-    else:
-        db     = connect_to_mysql(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg    = ConfigurationReader(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db     = connect_to_mysql()
+    cfg    = ConfigurationReader()
+
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
 

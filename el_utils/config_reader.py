@@ -8,29 +8,24 @@ Created on Apr 15, 2012
 import os, sys, re
 from mysql import connect_to_mysql, search_db, switch_to_db
 
-       
 class ConfigurationReader:
     '''
     Loads configuration files from the cfg database - which is assumend to be named '%exoloc%config%'
     '''
 
-    def __init__ (self, user=None, passwd=None, host=None, port =None, check=True):
+    def __init__ (self, check=True):
         
         self.util_path        = {}
         self.dir_path         = {}
         self.parameter_value  = {}
         self.cfg_db_name      = ""
-        self.user             = user
-        self.passwd           = passwd
-        self.host             = host
-        self.port             = port
         self.check            = check
         self.get_cfg_db()
         self.load_cfg()
         
         
     def get_cfg_db(self):
-        db     = connect_to_mysql(self.user, self.passwd, self.host, self.port)
+        db     = connect_to_mysql()
         cursor = db.cursor()
         qry    = "show databases like'%exoloc%config%'" 
         rows   = search_db (cursor, qry, verbose=False)
@@ -134,10 +129,6 @@ class ConfigurationReader:
 ##############################################        
 if __name__ == '__main__':
 
-    local_db = False
-    if local_db:
-        cfg    = ConfigurationReader()
-    else:
-        cfg    = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    cfg    = ConfigurationReader()
     cfg.spill_all()
     print " ** ", cfg.get_path('mafft')

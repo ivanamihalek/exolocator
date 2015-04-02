@@ -88,14 +88,9 @@ def find_annotation (cursor, ensembl_db_name, species_list, gene_id):
 def annotate(gene_list, db_info):
     # 
     [local_db, all_species, ensembl_db_name, species] = db_info
-    if local_db:
-        db  = connect_to_mysql()
-        cfg = ConfigurationReader()
-        acg = AlignmentCommandGenerator()
-    else:
-        db  = connect_to_mysql         (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg = ConfigurationReader      (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        acg = AlignmentCommandGenerator(user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db  = connect_to_mysql()
+    cfg = ConfigurationReader()
+    acg = AlignmentCommandGenerator()
     cursor = db.cursor()
 
     if verbose: print "thread %s annotating %s "% (get_thread_name(), species)
@@ -161,12 +156,8 @@ def main():
 
     local_db   = False
 
-    if local_db:
-        db  = connect_to_mysql()
-        cfg = ConfigurationReader()
-    else:
-        db  = connect_to_mysql    (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
-        cfg = ConfigurationReader (user="root", passwd="sqljupitersql", host="jupiter.private.bii", port=3307)
+    db  = connect_to_mysql()
+    cfg = ConfigurationReader()
     cursor = db.cursor()
 
     [all_species, ensembl_db_name] = get_species (cursor)
