@@ -28,7 +28,12 @@ def main ():
         mkdir_p(outdir)
 
     outfile  = "{0}/exon_map.sql".format(outdir)
-    credentials = " -h jupiter.private.bii -P 3307 -u root -psqljupitersql"
+    if os.path.exists('.creds'):
+        [user, passwd, host, port] = read_creds()
+    else:
+        print "creds not found"
+        exit(1)
+    credentials = " -h {0} -P {1} -u {2}  -p{3}".format(host, port, user, password)
     cmd = "mysqldump {0} {1} exon_map > {2}".format (credentials, ensembl_db_name['homo_sapiens'], outfile)
 
     print cmd

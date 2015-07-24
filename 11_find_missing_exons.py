@@ -835,8 +835,8 @@ def find_missing_exons(human_gene_list, db_info):
 	# progress counter 
 	gene_ct += 1
 	if (not gene_ct%10): 
-            print "processed ",   gene_ct, " out of ", len(human_gene_list), "genes; ",
-            print "exons found: ",  found, " out of ", sought, "sought"
+        print "processed ",   gene_ct, " out of ", len(human_gene_list), "genes; ",
+        print "exons found: ",  found, " out of ", sought, "sought"
 
 	# find all human exons for this gene that we are tracking in the database 
 	human_exons = [e for e in gene2exon_list(cursor, human_gene_id) 
@@ -849,8 +849,8 @@ def find_missing_exons(human_gene_list, db_info):
         for he in human_exons:
             he.stable_id = exon2stable (cursor, he.exon_id)
 
-        ##################################################################################
-        ##################################################################################
+    ##################################################################################
+    ##################################################################################
 	# make 'table' of maps, which is either pointer to the map if it exists, or None
 	map_table = {}
         for species in all_species:
