@@ -2,10 +2,8 @@
 
 use strict;
 use Net::FTP;
-my $release_num = 75;
-#my $local_repository = "/mnt/ensembl-mirror/release-$release_num/fasta";
-#my $local_repository = "/afs/bii.a-star.edu.sg/dept/biomodel_design/Group/ivana/ensembl-$release_num/fasta";
-my $local_repository = "/Users/ivana/databases/ensembl-$release_num/fasta";
+my $release_num = 86;
+my $local_repository = "/databases/ensembl-$release_num/fasta";
 
 -e $local_repository ||
     die "local repository:\n$local_repository\nnot found\n";
