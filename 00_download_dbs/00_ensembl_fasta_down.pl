@@ -26,8 +26,7 @@ my $animal;
 
 
 my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
-	    "ciona_intestinalis",  
-	    "ciona_savignyi", "drosophila_melanogaster",
+	    "ciona_intestinalis",  "ciona_savignyi", "drosophila_melanogaster",
 	    "saccharomyces_cerevisiae");
 
 my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
@@ -43,52 +42,52 @@ foreach $animal ( @farm ) {
     print $ct, "  ", $animal, "\n";
 
     next if ( grep {/$animal/} @skip);
-
+	# there is a bunch of mouse genomes that I do not want to deal with now
+	next if ($animal=~/mus_musculus_/);
 
 
     foreach $dir  ( "pep",  "dna" ){
-    #foreach $dir  ( "dna"){
-    
-	$local_dir = "$local_repository/$animal/$dir" ;
-	( -e $local_dir )  || `mkdir -p $local_dir`;
 
-	$foreign_dir = "$topdir/$animal/$dir";
+		$local_dir = "$local_repository/$animal/$dir" ;
+		( -e $local_dir )  || `mkdir -p $local_dir`;
 
-	$ftp->cwd($foreign_dir)
-	    or die "Cannot cwd to $foreign_dir: ", $ftp->message;
+		$foreign_dir = "$topdir/$animal/$dir";
+
+		$ftp->cwd($foreign_dir)
+		    or die "Cannot cwd to $foreign_dir: ", $ftp->message;
 	
-	my @contents =  $ftp->ls;
-	my $item;
+		my @contents =  $ftp->ls;
+		my $item;
 
-	foreach $item (@contents) {
+		foreach $item (@contents) {
 
-	    next if ($item !~ /\.gz$/);
-	    next if ($item =~ /\.dna_sm\./);
-	    next if ($item =~ /\.dna_rm\./);
-	    print LOG "\t$item\n";
+		    next if ($item !~ /\.gz$/);
+		    next if ($item =~ /\.dna_sm\./);
+		    next if ($item =~ /\.dna_rm\./);
+		    print LOG "\t$item\n";
 
-	    $unzipped = $item;
-	    $unzipped =~ s/\.gz$//;
+		    $unzipped = $item;
+		    $unzipped =~ s/\.gz$//;
 
-	    if ( -e "$local_dir/$unzipped" ) {
-		print  LOG  "\t\t $unzipped found in $local_dir\n";
-		next;
-	    }
+		    if ( -e "$local_dir/$unzipped" ) {
+				print  LOG  "\t\t $unzipped found in $local_dir\n";
+				next;
+		    }
 
-	    $ftp->get($item)
-		or die "getting $item  failed ", $ftp->message;
+		    $ftp->get($item)
+				or die "getting $item  failed ", $ftp->message;
 
-	    `mv  $item  $local_dir`;
+		    `mv  $item  $local_dir`;
 	    
-	    print  LOG "\t\t $item moved to $local_dir\n";
+		    print  LOG "\t\t $item moved to $local_dir\n";
 
-	    if (system ( "gunzip $local_dir/$item" )) {
-		print LOG "error uncompressing $local_dir/$item.\n";
-		#print     "\t\terror uncompressing $local_dir/$item.\n";
-	    } else {
-		#print "\t\t $item unzipped \n";
-	    }
-	}
+		    if (system ( "gunzip $local_dir/$item" )) {
+				print LOG "error uncompressing $local_dir/$item.\n";
+				#print     "\t\terror uncompressing $local_dir/$item.\n";
+		    } else {
+				#print "\t\t $item unzipped \n";
+		    }
+		}
     }
 }
    
