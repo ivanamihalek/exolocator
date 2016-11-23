@@ -1,10 +1,10 @@
 #! /usr/bin/perl -w 
 
-$release_num = 75;
+$release_num = 86;
 
 #$local_repository = "/mnt/ensembl-mirror/release-$release_num/fasta";
-$local_repository    = "/Users/ivana/databases/ensembl-$release_num/fasta";
-$db_formatting_tool  = "/usr/local/ncbi/blast/bin/makeblastdb";
+$local_repository    = "/home/ivana/databases/ensembl-$release_num/fasta";
+$db_formatting_tool  = "/home/ivana/third/ncbi-blast/bin/makeblastdb";
 # makeblastdb allows for Maximum file size: 1000000000B
 # note this is not enough for 'toplevel' files
 for ( $local_repository,  $db_formatting_tool) {
