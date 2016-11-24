@@ -109,11 +109,11 @@ foreach $dir ( @dirs_I_need) {
 	} else {
 	    print "\t\t $item unzipped \n";
 	}
-    }
+
 }
 
 
-=pod
+#=pod
 #################################################################################
 # now take care of compara db
 $dir       = $compara_dir;
@@ -137,13 +137,13 @@ foreach $item ('homology.txt.gz', 'homology_member.txt.gz',
     $unzipped = $item;
     $unzipped =~ s/\.gz$//;
     if ( -e "$local_dir/$unzipped" ) {
-	print "\t\t $unzipped found in $local_dir\n";
-	next;
+    	print "\t\t $unzipped found in $local_dir\n";
+    	next;
     }
 
     if ( ! $ftp->get($item) ) {
-	print LOG   "getting $item  failed ", $ftp->message;
-	next;
+    	print LOG   "getting $item  failed ", $ftp->message;
+    	next;
     }
 
     `mv  $item  $local_dir`;
@@ -151,10 +151,10 @@ foreach $item ('homology.txt.gz', 'homology_member.txt.gz',
     print "\t\t $item moved to $local_dir\n";
 
     if (system ( "gunzip $local_dir/$item" )) {
-	print LOG "error uncompressing $local_dir/$item.\n";
-	print     "\t\terror uncompressing $local_dir/$item.\n";
+    	print LOG "error uncompressing $local_dir/$item.\n";
+    	print     "\t\terror uncompressing $local_dir/$item.\n";
     } else {
-	print "\t\t $item unzipped \n";
+    	print "\t\t $item unzipped \n";
     }
 
 
