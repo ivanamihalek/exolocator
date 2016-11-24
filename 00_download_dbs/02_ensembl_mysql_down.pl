@@ -73,45 +73,45 @@ foreach $dir ( @dirs_I_need) {
 
     foreach $item (@contents) {
 
-	next if ($item !~ /\.gz$/);
-	next if ($item eq 'assembly.txt.gz');
-	next if ($item eq 'dna.txt.gz');
-	next if ($item eq 'protein_align_feature.txt.gz');
-	next if ($item eq 'repeat_feature.txt.gz');
-	next if ($item eq 'ditag_feature.txt.gz'); # see below for ditag definition
-	next if ($item eq 'ditag.txt.gz');
-	# CCDS info, contained in dna_align_feature.txt.gz  covers confirmed alt splices,
-	# but only for human and mouse
-	if ($item eq 'dna_align_feature.txt.gz') {
-	    next if ($dir !~ 'homo_sapiens' && $dir !~ 'mus_musculus');
-	}
-	print "\t$item\n";
+        next if ($item !~ /\.gz$/);
+        next if ($item eq 'assembly.txt.gz');
+        next if ($item eq 'dna.txt.gz');
+        next if ($item eq 'protein_align_feature.txt.gz');
+        next if ($item eq 'repeat_feature.txt.gz');
+        next if ($item eq 'ditag_feature.txt.gz'); # see below for ditag definition
+        next if ($item eq 'ditag.txt.gz');
+        # CCDS info, contained in dna_align_feature.txt.gz  covers confirmed alt splices,
+        # but only for human and mouse
+        if ($item eq 'dna_align_feature.txt.gz') {
+            next if ($dir !~ 'homo_sapiens' && $dir !~ 'mus_musculus');
+        }
+        print "\t$item\n";
 
-	$unzipped = $item;
-	$unzipped =~ s/\.gz$//;
-	if ( -e "$local_dir/$unzipped" ) {
-	    print "\t\t $unzipped found in $local_dir\n";
-	    next;
-	}
+        $unzipped = $item;
+        $unzipped =~ s/\.gz$//;
+        if ( -e "$local_dir/$unzipped" ) {
+            print "\t\t $unzipped found in $local_dir\n";
+            next;
+        }
 
-	if ( ! $ftp->get($item) ) {
-	    print LOG   "getting $item  failed ", $ftp->message;
-	    next;
-	}
+        if ( ! $ftp->get($item) ) {
+            print LOG   "getting $item  failed ", $ftp->message;
+            next;
+        }
 
-	`mv  $item  $local_dir`;
-	    
-	print "\t\t $item moved to $local_dir\n";
+        `mv  $item  $local_dir`;
 
-	if (system ( "gunzip $local_dir/$item" )) {
-	    print LOG "error uncompressing $local_dir/$item.\n";
-	    print     "\t\terror uncompressing $local_dir/$item.\n";
-	} else {
-	    print "\t\t $item unzipped \n";
-	}
+        print "\t\t $item moved to $local_dir\n";
 
+        if (system ( "gunzip $local_dir/$item" )) {
+            print LOG "error uncompressing $local_dir/$item.\n";
+            print     "\t\terror uncompressing $local_dir/$item.\n";
+        } else {
+            print "\t\t $item unzipped \n";
+        }
+
+    }
 }
-
 
 #=pod
 #################################################################################
@@ -166,5 +166,7 @@ close LOG;
 
 
 ###################################
-# Paired-end tags (PET) (sometimes "Paired-End diTags", or simply "ditags") are the short sequences at the 5’ and 3’ ends of a DNA fragment which are unique enough that they (theoretically) exist together only once in a genome, therefore making the sequence of the DNA in between them available upon search
+# Paired-end tags (PET) (sometimes "Paired-End diTags", or simply "ditags") are the short sequences
+#at the 5’ and 3’ ends of a DNA fragment which are unique enough that they (theoretically)
+#exist together only once in a genome, therefore making the sequence of the DNA in between them available upon search
 #  - we are not using that feature (should or could we?)
