@@ -2,11 +2,11 @@
 
 use strict;
 use Net::FTP;
-my $release_num = 75;
+my $release_num = 86;
 
 #my $local_repository = 
 #    "/mnt/ensembl-mirror/release-".$release_num."/mysql";
-my $local_repository    = "/Users/ivana/databases/ensembl-$release_num/mysql";
+my $local_repository    = "/databases/ensembl-$release_num/mysql";
 
 (-e  $local_repository) ||
     die "$local_repository not found.\n";
@@ -43,7 +43,7 @@ foreach $dir ( @farm ) {
     my @aux    = split "_", $dir;
     $animal    = join  "_", @aux[0..1];
     (grep {/$animal/} @skip)  && next;
-    
+    next if ($animal=~/mus_musculus_/);
     push @dirs_I_need, $dir;
 }
 
