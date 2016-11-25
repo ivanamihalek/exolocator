@@ -31,9 +31,13 @@ foreach $db (@dbs) {
     print $db, "\n";
     chdir "$path_to_db/$db";
 
+
     print "making db  ... \n";
     $cmd = "mysqladmin --login-path=client  create $db";
     (system $cmd) && warn "error running $cmd\n";
+
+    # accomodate change between mysql versions 5.8 and later in allowed default datetime  values:
+    `sed 's/0000-00-00/1000-01-01/g'  $db.sql -i`;
 
     $cmd = "mysql --login-path=client $db < $db.sql";
     (system $cmd) && warn "error running $cmd\n";
