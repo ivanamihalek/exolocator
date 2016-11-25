@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" afterPath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" afterPath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" />
     </list>
     <ignored path="exolocator.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -42,11 +43,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="02_ensembl_mysql_down.pl" pinned="false" current-in-tab="true">
+      <file leaf-file-name="02_ensembl_mysql_down.pl" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="63" column="45" lean-forward="true" selection-start-line="63" selection-start-column="45" selection-end-line="63" selection-end-column="45" />
+            <state relative-caret-position="2268">
+              <caret line="63" column="45" lean-forward="false" selection-start-line="63" selection-start-column="45" selection-end-line="63" selection-end-column="45" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="03_make_ensembl_dbs.pl" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1413">
+              <caret line="40" column="43" lean-forward="false" selection-start-line="40" selection-start-column="43" selection-end-line="40" selection-end-column="43" />
               <folding />
             </state>
           </provider>
@@ -60,7 +71,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/el_utils/custom.py" />
         <option value="$PROJECT_DIR$/el_utils/config_reader.py" />
         <option value="$PROJECT_DIR$/el_utils/utils.py" />
         <option value="$PROJECT_DIR$/el_utils/mysql.py" />
@@ -111,14 +121,15 @@
         <option value="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" />
         <option value="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" />
         <option value="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" />
+        <option value="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="189" />
-    <option name="y" value="122" />
+    <option name="x" value="461" />
+    <option name="y" value="123" />
     <option name="width" value="3136" />
-    <option name="height" value="1955" />
+    <option name="height" value="1990" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -166,8 +177,8 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -341,10 +352,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="189" y="122" width="3136" height="1955" extended-state="0" />
-    <editor active="true" />
+    <frame x="461" y="123" width="3136" height="1990" extended-state="0" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25478315" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25478315" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296643" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -386,13 +397,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/30_db_migration/10_read_paralogues.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/30_db_migration/19_alt_splice_almts.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -734,8 +738,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="63" column="45" lean-forward="true" selection-start-line="63" selection-start-column="45" selection-end-line="63" selection-end-column="45" />
+        <state relative-caret-position="2268">
+          <caret line="63" column="45" lean-forward="false" selection-start-line="63" selection-start-column="45" selection-end-line="63" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1413">
+          <caret line="40" column="43" lean-forward="false" selection-start-line="40" selection-start-column="43" selection-end-line="40" selection-end-column="43" />
           <folding />
         </state>
       </provider>
