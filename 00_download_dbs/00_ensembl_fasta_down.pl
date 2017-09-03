@@ -2,7 +2,7 @@
 
 use strict;
 use Net::FTP;
-my $release_num = 86;
+my $release_num = 90;
 my $local_repository = "/databases/ensembl-$release_num/fasta";
 
 -e $local_repository ||
