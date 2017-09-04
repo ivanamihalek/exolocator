@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" afterPath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" />
-    </list>
+    <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="" />
     <ignored path="exolocator.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
