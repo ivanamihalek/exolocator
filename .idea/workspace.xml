@@ -24,8 +24,8 @@
       <file leaf-file-name="01_ensembl_fasta_format.pl" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3">
-              <caret line="2" column="17" lean-forward="false" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
+            <state relative-caret-position="42">
+              <caret line="5" column="25" lean-forward="false" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -717,8 +717,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3">
-          <caret line="2" column="17" lean-forward="false" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
+        <state relative-caret-position="42">
+          <caret line="5" column="25" lean-forward="false" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
           <folding />
         </state>
       </provider>

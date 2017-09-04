@@ -3,7 +3,7 @@
 $release_num = 90;
 
 #$local_repository = "/mnt/ensembl-mirror/release-$release_num/fasta";
-$local_repository    = "/home/ivana/databases/ensembl-$release_num/fasta";
+$local_repository    = "/databases/ensembl-$release_num/fasta";
 $db_formatting_tool  = "/usr/bin/makeblastdb";
 # makeblastdb allows for Maximum file size: 1000000000B
 # note this is not enough for 'toplevel' files
