@@ -8,7 +8,7 @@
 # the sql script needs to be hacked (or does it - just leave the tables empty)
 
 
-$release_no = 86;
+$release_no = 90;
 
 $path_to_db  = "/databases/ensembl-$release_no/mysql";
 $credentials = "";
@@ -24,8 +24,8 @@ chdir $path_to_db;
 
 foreach $db (@dbs) {
 
-    next if ( $db =~ /core/); # <<<<< uncomment this to format compara database (it takes very long time)
-    #next if ($db =~ /compara/);
+    #next if ( $db =~ /core/); # <<<<< uncomment this to format compara database (it takes very long time)
+    next if ($db =~ /compara/);
 
     print "************************\n";
     print $db, "\n";
@@ -33,7 +33,7 @@ foreach $db (@dbs) {
 
 
     print "making db  ... \n";
-    $cmd = "mysqladmin --login-path=client  create $db";
+    $cmd = "mysqladmin --login-path=ivana  create $db";
     (system $cmd) && warn "error running $cmd\n";
 
     # accomodate change between mysql versions 5.8 and later in allowed default datetime  values:
