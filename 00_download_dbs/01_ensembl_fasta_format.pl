@@ -1,6 +1,6 @@
 #! /usr/bin/perl -w 
 
-$release_num = 86;
+$release_num = 90;
 
 #$local_repository = "/mnt/ensembl-mirror/release-$release_num/fasta";
 $local_repository    = "/home/ivana/databases/ensembl-$release_num/fasta";
