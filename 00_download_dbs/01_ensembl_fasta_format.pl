@@ -4,7 +4,7 @@ $release_num = 86;
 
 #$local_repository = "/mnt/ensembl-mirror/release-$release_num/fasta";
 $local_repository    = "/home/ivana/databases/ensembl-$release_num/fasta";
-$db_formatting_tool  = "/home/ivana/third/ncbi-blast/bin/makeblastdb";
+$db_formatting_tool  = "/usr/bin/makeblastdb";
 # makeblastdb allows for Maximum file size: 1000000000B
 # note this is not enough for 'toplevel' files
 for ( $local_repository,  $db_formatting_tool) {
@@ -38,10 +38,10 @@ foreach $animal (@farm) {
 	for $fasta (@fastas) {
 	    print "\t $fasta\n";
 	    if ( $dir eq "dna") {
-		$cmd = "$db_formatting_tool -in $fasta -dbtype nucl";
-	     } else {
-		$cmd = "$db_formatting_tool -in $fasta -dbtype prot";
-	     }
+		    $cmd = "$db_formatting_tool -in $fasta -dbtype nucl -parse_seqids";
+	    } else {
+		    $cmd = "$db_formatting_tool -in $fasta -dbtype prot -parse_seqids";
+	    }
 	    (system $cmd) &&
 		die  " error running $cmd\n";
 	}
