@@ -39,10 +39,10 @@ foreach $db (@dbs) {
     # accomodate change between mysql versions 5.8 and later in allowed default datetime  values:
     `sed 's/0000-00-00/1000-01-01/g'  $db.sql -i`;
 
-    $cmd = "mysql --login-path=client $db < $db.sql";
+    $cmd = "mysql --login-path=ivana $db < $db.sql";
     (system $cmd) && warn "error running $cmd\n";
 
-    $cmd = "mysqlimport --login-path=client --fields_escaped_by=\\\\ $db -L *.txt";
+    $cmd = "mysqlimport --login-path=ivana --fields_escaped_by=\\\\ $db -L *.txt";
     (system $cmd) && die "error running $cmd\n";
 
     print "\n";	
