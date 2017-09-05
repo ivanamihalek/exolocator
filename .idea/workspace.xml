@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" afterPath="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" afterPath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" />
     </list>
     <ignored path="exolocator.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -21,11 +21,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="01_ensembl_fasta_format.pl" pinned="false" current-in-tab="true">
+      <file leaf-file-name="01_ensembl_fasta_format.pl" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="42">
-              <caret line="5" column="25" lean-forward="false" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
+            <state relative-caret-position="95">
+              <caret line="24" column="0" lean-forward="true" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="03_make_ensembl_dbs.pl" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="201">
+              <caret line="27" column="5" lean-forward="false" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -88,8 +98,8 @@
         <option value="$PROJECT_DIR$/00_download_dbs/04_make_ncbi_tax_db.pl" />
         <option value="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" />
         <option value="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" />
-        <option value="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" />
         <option value="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" />
+        <option value="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" />
       </list>
     </option>
   </component>
@@ -699,14 +709,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="44" column="42" lean-forward="false" selection-start-line="44" selection-start-column="42" selection-end-line="44" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
@@ -717,8 +719,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="42">
-          <caret line="5" column="25" lean-forward="false" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
+        <state relative-caret-position="95">
+          <caret line="24" column="0" lean-forward="true" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="27" column="5" lean-forward="false" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
           <folding />
         </state>
       </provider>

@@ -24,8 +24,8 @@ chdir $path_to_db;
 
 foreach $db (@dbs) {
 
-    #next if ( $db =~ /core/); # <<<<< uncomment this to format compara database (it takes very long time)
-    next if ($db =~ /compara/);
+    next if ( $db =~ /core/); # <<<<< uncomment this to format compara database (it takes very long time)
+    #next if ($db =~ /compara/);
 
     print "************************\n";
     print $db, "\n";
