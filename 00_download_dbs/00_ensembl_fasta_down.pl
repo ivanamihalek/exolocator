@@ -2,8 +2,9 @@
 
 use strict;
 use Net::FTP;
-my $release_num = 90;
-my $local_repository = "/databases/ensembl-$release_num/fasta";
+my $release_num = 91;
+my $local_repository = "/data/ensembl-$release_num/fasta";
+$| = 1; # flush stdout
 
 -e $local_repository ||
     die "local repository:\n$local_repository\nnot found\n";
@@ -42,7 +43,7 @@ foreach $animal ( @farm ) {
     print $ct, "  ", $animal, "\n";
 
     next if ( grep {/$animal/} @skip);
-	# there is a bunch of mouse genomes that I do not want to deal with now
+  	# there is a bunch of mouse genomes that I do not want to deal with now
 	next if ($animal=~/mus_musculus_/);
 
 
@@ -62,6 +63,7 @@ foreach $animal ( @farm ) {
 		foreach $item (@contents) {
 
 		    next if ($item !~ /\.gz$/);
+		    next if ($item =~ /\.toplevel\./);
 		    next if ($item =~ /\.dna_sm\./);
 		    next if ($item =~ /\.dna_rm\./);
 		    print LOG "\t$item\n";
