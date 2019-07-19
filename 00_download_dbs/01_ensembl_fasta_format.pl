@@ -1,6 +1,8 @@
 #! /usr/bin/perl -w 
 
-$release_num = 91;
+use warnings;
+use strict;
+my $release_num = 97;
 
 #$local_repository = "/mnt/ensembl-mirror/release-$release_num/fasta";
 $local_repository    = "/data/ensembl-$release_num/fasta";

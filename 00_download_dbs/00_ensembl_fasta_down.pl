@@ -1,9 +1,23 @@
 #! /usr/bin/perl -w
 
+# notes:
+# *pep.all.fa vs *pep.abinitio.fa
+# not clear if there is any overlap. Genes are labeled with GENSCAN rather than ENS.
+# THese files, however are 10 to 20 times smaller than dna files, so it is not clear
+# if there is mauch gain in not downloading them/
+
+# Dna seqeunces: go for rm toplevel versions:
+# rm stands for repat masked, and toplevel stands for "all sequence regions flagged as toplevel in an Ensembl
+# schema. This includes chromsomes, regions not assembled into chromosomes and
+# N padded haplotype/patch regions."
+
+
+
 use strict;
+use warnings FATAL => 'all';
 use Net::FTP;
-my $release_num = 91;
-my $local_repository = "/data/ensembl-$release_num/fasta";
+my $release_num = 97;
+my $local_repository = "/storage/databases/ensembl-$release_num/fasta";
 $| = 1; # flush stdout
 
 -e $local_repository ||
@@ -25,7 +39,6 @@ $ftp->binary;
 my @farm = $ftp->ls;
 my $animal;
 
-
 my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
 	    "ciona_intestinalis",  "ciona_savignyi", "drosophila_melanogaster",
 	    "saccharomyces_cerevisiae");
@@ -39,12 +52,13 @@ my $ct = 0;
 #@farm = ('homo_sapiens');
 foreach $animal ( @farm ) {
 
-    $ct += 1;
-    print $ct, "  ", $animal, "\n";
-
+	#print("$animal\n");
     next if ( grep {/$animal/} @skip);
   	# there is a bunch of mouse genomes that I do not want to deal with now
-	next if ($animal=~/mus_musculus_/);
+	next if ($animal=~/mus_musculus_/ || $animal=~/hybrid/ || $animal=~/oryzias_latipes_/ || $animal=~/sus_scrofa_/);
+
+    $ct += 1;
+    print $ct, "  ", $animal, "\n";
 
 
     foreach $dir  ( "pep",  "dna" ){
@@ -56,28 +70,32 @@ foreach $animal ( @farm ) {
 
 		$ftp->cwd($foreign_dir)
 		    or die "Cannot cwd to $foreign_dir: ", $ftp->message;
-	
-		my @contents =  $ftp->ls;
-		my $item;
 
+		# download checksums
+		my $checksums= "CHECKSUMS";
+		$ftp->get($checksums) || die "getting $checksums  failed:", $ftp->message;
+
+		@contents =  $ftp->ls;
 		foreach $item (@contents) {
 
-		    next if ($item !~ /\.gz$/);
-		    next if ($item =~ /\.toplevel\./);
-		    next if ($item =~ /\.dna_sm\./);
-		    next if ($item =~ /\.dna_rm\./);
+		    next if ($item!~/\.dna_rm\.toplevel.*gz$/ && $item!~/.*pep.*gz$/ );
+
 		    print LOG "\t$item\n";
+			print "\t$item\n";
 
 		    $unzipped = $item;
 		    $unzipped =~ s/\.gz$//;
-
 		    if ( -e "$local_dir/$unzipped" ) {
 				print  LOG  "\t\t $unzipped found in $local_dir\n";
 				next;
 		    }
 
-		    $ftp->get($item)
-				or die "getting $item  failed ", $ftp->message;
+		    $ftp->get($item) || die "getting $item  failed ", $ftp->message;
+			# do the checsum
+			my $sum_reported = `grep $item $checksums | awk '{print \$1, \$2}'`; chomp $sum_reported;
+			print "\t\t$item downloaded, running checksum\n";
+			my $sum = `sum $item | awk '{print \$1, \$2}'`; chomp $sum;
+			($sum_reported eq $sum) || die " checksum mismatch\n";
 
 		    `mv  $item  $local_dir`;
 	    
@@ -85,11 +103,14 @@ foreach $animal ( @farm ) {
 
 		    if (system ( "gunzip $local_dir/$item" )) {
 				print LOG "error uncompressing $local_dir/$item.\n";
-				#print     "\t\terror uncompressing $local_dir/$item.\n";
+				die  "\t\terror uncompressing $local_dir/$item.\n";
 		    } else {
-				#print "\t\t $item unzipped \n";
+				print "\t\t $item unzipped \n";
 		    }
 		}
+
+		# remove the old checksums file
+		`rm -f $checksums`;
     }
 }
    

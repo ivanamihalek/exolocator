@@ -22,9 +22,11 @@ struct
 *.rar
 *.tar
 *.zip
+*.bz2
 
 # Logs and databases #
 ######################
+*.tar
 *.log
 *.sql
 *.sqlite
