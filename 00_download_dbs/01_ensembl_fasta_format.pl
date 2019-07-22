@@ -4,9 +4,8 @@ use warnings;
 use strict;
 my $release_num = 97;
 
-#$local_repository = "/mnt/ensembl-mirror/release-$release_num/fasta";
-$local_repository    = "/data/ensembl-$release_num/fasta";
-$db_formatting_tool  = "/usr/bin/makeblastdb";
+my $local_repository    = "/storage/databases/ensembl-$release_num/fasta";
+my $db_formatting_tool  = "/usr/bin/makeblastdb";
 # makeblastdb allows for Maximum file size: 1000000000B
 # note this is not enough for 'toplevel' files
 for ( $local_repository,  $db_formatting_tool) {
@@ -15,37 +14,30 @@ for ( $local_repository,  $db_formatting_tool) {
 
 chdir $local_repository;
 
-@farm =  split "\n", `ls -d *_*`;
-
-$ct = 0;
-foreach $animal (@farm) {
-    $ct ++;
-    print "$ct   $animal \n";
-}
-print "----------------------------\n";
-print " ... formating ... \n\n";
-
-foreach $animal (@farm) {
-
-    print $animal, "\n";
+my @farm =  split "\n", `ls -d *_*`;
 
 
 
-    foreach $dir  ( "pep",  "dna" ){
+foreach my $animal (@farm) {
 
-	chdir $local_repository;
-	chdir "$animal/$dir";
-	
-	@fastas = split "\n",  `ls *.fa`;
-	for $fasta (@fastas) {
-	    print "\t $fasta\n";
-	    if ( $dir eq "dna") {
-		    $cmd = "$db_formatting_tool -in $fasta -dbtype nucl -parse_seqids";
-	    } else {
-		    $cmd = "$db_formatting_tool -in $fasta -dbtype prot -parse_seqids";
-	    }
-	    (system $cmd) &&
-		die  " error running $cmd\n";
-	}
+	print "----------------------------\n";
+	print " ... formating  $animal... \n\n";
+
+    foreach my $dir  ( "pep",  "dna" ){
+
+		chdir $local_repository;
+		chdir "$animal/$dir";
+
+		my @fastas = split "\n",  `ls *.fa`;
+		for my $fasta (@fastas) {
+			print "\t $fasta\n";
+			my $cmd;
+			if ( $dir eq "dna") {
+				$cmd = "$db_formatting_tool -in $fasta -dbtype nucl -parse_seqids";
+			} else {
+				$cmd = "$db_formatting_tool -in $fasta -dbtype prot -parse_seqids";
+			}
+			(system $cmd) && die  " error running $cmd\n";
+		}
     }
 }

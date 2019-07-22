@@ -1,12 +1,13 @@
 #! /usr/bin/perl -w
 
 use strict;
+use warnings FATAL => 'all';
 use Net::FTP;
-my $release_num = 90;
+my $release_num = 97;
 
 #my $local_repository = 
 #    "/mnt/ensembl-mirror/release-".$release_num."/mysql";
-my $local_repository    = "/databases/ensembl-$release_num/mysql";
+my $local_repository    = "/storage/databases/ensembl-$release_num/mysql";
 
 (-e  $local_repository) ||
     die "$local_repository not found.\n";
@@ -19,7 +20,7 @@ my $ftp = Net::FTP->new( $ftp_address , Debug => 0, Passive=> 1)
 $ftp->login("anonymous",'-anonymous@')
     or die "Cannot login ", $ftp->message;
 
-my $topdir = "/pub/release-".$release_num."/mysql";
+my $topdir = "/pub/release-$release_num/mysql";
 
 $ftp->cwd($topdir)
     or die "Cannot cwd to $topdir: ", $ftp->message;
@@ -29,9 +30,9 @@ my @farm = $ftp->ls;
 my $animal;
 my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 
-
-my @skip = ("ancestral_alleles", "caenorhabditis_elegans", "ciona_intestinalis",  
-	    "ciona_savignyi", "drosophila_melanogaster", "saccharomyces_cerevisiae");
+my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
+	    "ciona_intestinalis",  "ciona_savignyi", "drosophila_melanogaster",
+	    "saccharomyces_cerevisiae");
 
 my @dirs_I_need = ();
 my $compara_dir = "ensembl_compara_".$release_num; # take care of it separately
@@ -39,15 +40,12 @@ my $compara_dir = "ensembl_compara_".$release_num; # take care of it separately
 foreach $dir ( @farm ) {
     #$dir =~ /homo_sapiens/ || next;
     ($dir =~ /core/) || next;
-    ($dir =~ /expression/) && next;
-    my @aux    = split "_", $dir;
-    $animal    = join  "_", @aux[0..1];
+    my @aux    = split "_core_", $dir;
+    $animal    = $aux[0];
     (grep {/$animal/} @skip)  && next;
-    next if ($animal=~/mus_musculus_/);
+    next if ($animal=~/mus_musculus_/ || $animal=~/hybrid/ || $animal=~/oryzias_latipes_/ || $animal=~/sus_scrofa_/);
     push @dirs_I_need, $dir;
 }
-
-print join (" ", @dirs_I_need), "\n";
 
 
 open (LOG, ">ensembl_mysql_download.log") || die "error opening log: $!\n";
@@ -68,8 +66,7 @@ foreach $dir ( @dirs_I_need) {
     $ftp->cwd($foreign_dir)
 	or die "Cannot cwd to $foreign_dir: ", $ftp->message;
 	
-    my @contents =  $ftp->ls;
-    my $item;
+    @contents =  $ftp->ls;
 
     foreach $item (@contents) {
 
@@ -95,7 +92,7 @@ foreach $dir ( @dirs_I_need) {
         }
 
         if ( ! $ftp->get($item) ) {
-            print LOG   "getting $item  failed ", $ftp->message;
+            print LOG   "getting $item  failed ", $ftp->message, "\n";
             next;
         }
 
@@ -142,7 +139,7 @@ foreach $item ('homology.txt.gz', 'homology_member.txt.gz',
     }
 
     if ( ! $ftp->get($item) ) {
-    	print LOG   "getting $item  failed ", $ftp->message;
+    	print LOG   "getting $item  failed ", $ftp->message, "\n";
     	next;
     }
 
