@@ -24,18 +24,21 @@ foreach my $db (@dbs) {
     print $db, "\n";
     chdir "$path_to_db/$db";
 
-
+    # setting longpath: mysql_config_ed
+    # https://dev.mysql.com/doc/refman/5.6/en/mysql-config-editor.html
+    # in mysql shell: SET GLOBAL show_compatibility_56 = ON;
+    # see: http://mysql-tools.com/home/1-mysql/125-showcompatibility56-mysql-57-connection-problem.html
     print "making db  ... \n";
-    my $cmd = "mysqladmin --login-path=ivana  create $db";
+    my $cmd = "mysqladmin --login-path=tcga  create $db";
     (system $cmd) && warn "error running $cmd\n";
 
     # accomodate change between mysql versions 5.8 and later in allowed default datetime  values:
     `sed 's/0000-00-00/1000-01-01/g'  $db.sql -i`;
 
-    $cmd = "mysql --login-path=ivana $db < $db.sql";
+    $cmd = "mysql --login-path=tcga $db < $db.sql";
     (system $cmd) && warn "error running $cmd\n";
 
-    $cmd = "mysqlimport --login-path=ivana --fields_escaped_by=\\\\ $db -L *.txt";
+    $cmd = "mysqlimport --login-path=tcga --fields_escaped_by=\\\\ $db -L *.txt";
     (system $cmd) && die "error running $cmd\n";
 
     print "\n";	
