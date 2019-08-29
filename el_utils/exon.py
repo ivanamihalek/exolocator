@@ -66,8 +66,8 @@ class Exon:
     def load_from_gene2exon (self, gene2exon_row):
 
         if ( len(gene2exon_row) < 17):
-            print "error loading exon: the in list must be",
-            print " at least 17 elements long"
+            print("error loading exon: the in list must be", end=' ')
+            print(" at least 17 elements long")
             return False
         
         self.gene_id             = gene2exon_row [1]
@@ -94,8 +94,8 @@ class Exon:
     def load_from_novel_exon (self, table_row, table):
 
         if ( len(table_row) < 11):
-            print "error loading exon: the in list must be",
-            print " at least 10 elements long"
+            print("error loading exon: the in list must be", end=' ')
+            print(" at least 10 elements long")
             return False
         
         self.exon_id               = table_row[0]
@@ -132,7 +132,7 @@ class Exon:
 
         printstr = ""
 
-        for attr, value in self.__dict__.iteritems():
+        for attr, value in self.__dict__.items():
             if ( not value is None):
                 printstr += " %-20s    %s" % (attr,  str(value))
             else:

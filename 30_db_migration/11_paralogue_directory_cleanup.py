@@ -5,7 +5,7 @@
 import pdb
 #pdb.set_trace()
 
-import MySQLdb, commands, re, os, sys
+import MySQLdb, subprocess, re, os, sys
 
 from el_utils.mysql   import  connect_to_mysql
 from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
@@ -34,7 +34,7 @@ def check_directory (cfg, species, species_id, pep_or_dna):
     
     directory = "{0}/para/{1}/{2}".format(cfg.dir_path['afs_dumps'], species_id, pep_or_dna)
     if not os.path.exists(directory):
-        print "warning: ", directory, "not found"
+        print("warning: ", directory, "not found")
         return ""
     return directory
 
@@ -61,11 +61,8 @@ def make_alignments (species_list, db_info):
 
     for species in species_list:
 
-        if species == 'homo_sapiens':
-            species_shorthand = 'HSA'
-        else:
-            species_shorthand = get_species_shorthand(cursor, species)
-        print species, species_shorthand
+        species_shorthand = get_species_shorthand(cursor, species)
+        print(species, species_shorthand)
 
         directory = check_directory (cfg, species, species_shorthand, "pep")
         if not directory: continue
@@ -82,7 +79,7 @@ def make_alignments (species_list, db_info):
                     os.remove(full_name)
                 else:
                     remaining += 1
-        print species, "done, removed", removed, "files, remaining", remaining
+        print(species, "done, removed", removed, "files, remaining", remaining)
         
     
 

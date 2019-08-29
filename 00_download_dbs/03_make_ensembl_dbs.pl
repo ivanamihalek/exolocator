@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
-#
+#  useful here:
+#  https://www.digitalocean.com/community/tutorials/how-to-move-a-mysql-data-directory-to-a-new-location-on-ubuntu-18-04
 
 use strict;
 use warnings;
@@ -18,7 +19,7 @@ foreach my $db (@dbs) {
 
     #next if ( $db =~ /core/);
     # comment this to format compara database (it takes very long time)
-    next if ($db =~ /compara/);
+    next if ($db !~ /compara/);
 
     print "************************\n";
     print $db, "\n";

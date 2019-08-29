@@ -1,18 +1,16 @@
 #!/usr/bin/python
 
 import MySQLdb
-from   mysql import search_db, switch_to_db
-from   exon  import Exon
-import commands
+from   el_utils.mysql import search_db, switch_to_db
+from   el_utils.exon  import Exon
+import subprocess
 
 #########################################
 def get_species_shorthand(cursor, species):
     
-   db_name = get_compara_name (cursor)
-   qry = "use %s " % db_name
-   search_db (cursor, qry)
+   switch_to_db(cursor, 'ensembl_meta')
 
-   qry = "select shorthand from species_name_shorthands where species='%s'" % species
+   qry = "select shorthand from species_names where species='%s'" % species
    rows = search_db (cursor, qry)
    if not rows: return ""
 
@@ -132,7 +130,7 @@ def get_canonical_transcript_id (cursor, gene_id, db_name=None):
         rows    = search_db (cursor, qry, verbose=True)
         return ""
     elif ( 'Error' in rows[0]):
-        print  rows[0]
+        print(rows[0])
         return ""
 
     return rows[0][0]
@@ -146,7 +144,7 @@ def get_canonical_coding_exons (cursor, gene_id, db_name=None):
     all_exons =  gene2exon_list (cursor, gene_id)
     if not all_exons:  return []
 
-    exons = filter (lambda x: x.is_coding and x.is_canonical, all_exons)
+    exons = [x for x in all_exons if x.is_coding and x.is_canonical]
     if not exons:   return []
     # now, the problem is that an exon can be coding, 
     # but not in the canonical version of the transcript
@@ -189,7 +187,7 @@ def get_gene_region (cursor, gene_id, is_known=None):
         rows = search_db (cursor, qry, verbose=True)
         return []
     elif ( 'Error' in rows[0]):
-        print  rows[0]
+        print(rows[0])
         return []
 
     return rows[0]
@@ -217,7 +215,7 @@ def get_known_exons (cursor, gene_id, species):
         [gene_seq_id, gene_region_start, gene_region_end, 
          gene_region_strand] = ret
     else:
-        print "region not retrived for ", species, gene_id
+        print("region not retrived for ", species, gene_id)
         return []
 
     exon_ids = []
@@ -249,7 +247,7 @@ def get_predicted_exons (cursor, gene_id, species):
         [gene_seq_id, gene_region_start, gene_region_end, 
          gene_region_strand] = ret
     else:
-        print "region not retrived for ", species, gene_id
+        print("region not retrived for ", species, gene_id)
         return []
 
     qry    = "SELECT  * FROM  prediction_exon  WHERE seq_region_id = %d "  %  gene_seq_id
@@ -373,8 +371,8 @@ def extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,
         fasta_db_file = second_choice
 
     if not fasta_db_file:
-        print "failed to decide on fasta_db_file:"
-        print file_names
+        print("failed to decide on fasta_db_file:")
+        print(file_names)
         exit(1)
 
 
@@ -382,17 +380,17 @@ def extract_gene_seq (acg, species, seq_name, file_names, seq_region_strand,
     fastacmd = acg.generate_fastacmd_gene_command(species, seq_name, fasta_db_file,
                                                   seq_region_strand,  seq_region_start,    
                                                   seq_region_end)
-    ret = commands.getoutput(fastacmd)
+    ret = subprocess.getoutput(fastacmd)
     if not ret:
-        print "no refturn for fastacmd for", species, gene_id
-        print "fastacmd: ", fastacmd
+        print("no refturn for fastacmd for", species, gene_id)
+        print("fastacmd: ", fastacmd)
         exit (1)
     if ('ERROR' in ret):
-        print "Error running fastacmd: ", fastacmd
-        print ret
+        print("Error running fastacmd: ", fastacmd)
+        print(ret)
         if 'Ignoring sequence location' in ret:
-            print 'will ignore'
-            print
+            print('will ignore')
+            print()
         else:
             exit (1)
     gene_seq = ""
@@ -457,7 +455,7 @@ def  get_analysis_dict(cursor):
     qry  = "select analysis_id, logic_name  from analysis"
     rows = search_db (cursor, qry)
     if (not rows):
-        print "blah?"
+        print("blah?")
         return False
     for row in rows:
         source[row[0]] = row[1]
@@ -683,7 +681,7 @@ def get_exon_pepseq (cursor, exon, db_name=None, verbose=False):
     if (not rows):
         if verbose:
             rows = search_db(cursor, qry, verbose = True)
-            print rows
+            print(rows)
         return ""
 
 
@@ -896,9 +894,9 @@ def gene2exon_list (cursor, gene_id, db_name=None, verbose=False):
     if (not rows):
         rows = search_db(cursor, 'select database()')
         if verbose:
-            print "database ", rows[0][0]
+            print("database ", rows[0][0])
             rows = search_db(cursor, qry, verbose = True)
-            print rows
+            print(rows)
         return []
 
     for row in rows:
@@ -914,7 +912,7 @@ def get_canonical_exons (cursor, gene_id):
 
     exons = gene2exon_list (cursor, gene_id)
     if (not exons):
-        print " no exons found for ",  gene2stable (cursor, gene_id = gene_id) 
+        print(" no exons found for ",  gene2stable (cursor, gene_id = gene_id)) 
         exit(1) # shouldn't happen at this point
 
     # sorting exons in place by their start in gene:
@@ -1042,8 +1040,8 @@ def get_orthologues(cursor, ortho_type, gene_member_id, verbose=False):
     rows = search_db (cursor, qry)
 
     if verbose:
-        print qry
-        print rows
+        print(qry)
+        print(rows)
 
     if (not rows):
         return [] # no orthologs here
@@ -1130,7 +1128,7 @@ def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, gene_membe
             orthos.append(ortho_stable)
     if orthos:    
         switch_to_db (cursor, ensembl_db_name [species])
-        orthos = map  (lambda gene_id:  stable2gene(cursor, gene_id), orthos)
+        orthos = [stable2gene(cursor, gene_id) for gene_id in orthos]
     #print 'orthos:', orthos
     return orthos
         
@@ -1166,7 +1164,7 @@ def gene2stable (cursor, gene_id=None, db_name=None):
         rows = search_db (cursor, qry)
         if (rows):
             rows = search_db (cursor, qry, verbose = True)
-            print rows
+            print(rows)
             exit (1)
 
 
@@ -1190,7 +1188,7 @@ def exon2stable (cursor, exon_id=None, db_name=None):
         rows = search_db (cursor, qry)
         if (rows):
             rows = search_db (cursor, qry, verbose = True)
-            print rows
+            print(rows)
             exit (1)
 
     qry = "select stable_id from exon where exon_id=%d" % exon_id
@@ -1211,7 +1209,7 @@ def stable2exon (cursor, stable_id, db_name=None):
         rows = search_db (cursor, qry)
         if (rows):
             rows = search_db (cursor, qry, verbose = True)
-            print rows
+            print(rows)
             exit (1)
 
     qry  = "select exon_id from exon where stable_id='%s'" % stable_id
@@ -1231,7 +1229,7 @@ def is_reference (cursor, gene_id,  non_ref_id, db_name=None):
         rows = search_db (cursor, qry)
         if (rows):
             rows = search_db (cursor, qry, verbose = True)
-            print rows
+            print(rows)
             exit (1)
     qry = 'select seq_region_id from gene where gene_id=%d' % int(gene_id)
     rows = search_db (cursor, qry)
@@ -1259,7 +1257,7 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_onl
       rows = search_db (cursor, qry)
       if (rows):
          rows = search_db (cursor, qry, verbose = True)
-         print rows
+         print(rows)
          exit (1)
 
    qry = "select gene_id from gene"
@@ -1283,7 +1281,7 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_onl
       return []
    else:
       if ('Error' in rows[0]):
-         print rows[0]
+         print(rows[0])
          return []
 
       # I don't want to hard code the id for the annotation "non_ref"
@@ -1297,8 +1295,8 @@ def get_gene_ids (cursor, db_name=None, biotype = None, is_known = None, ref_onl
             non_ref_id = int (rows2[0][0])
                 
       for row in rows:
-         if ( not type(row[0]) is long ):
-            print row
+         if ( not type(row[0]) is int ):
+            print(row)
             exit(1)
          gene_id = int(row[0])
          if ref_only and not is_reference(cursor, gene_id, non_ref_id): continue
@@ -1316,10 +1314,10 @@ def get_species (cursor):
     all_species     = []
 
     # find the release number
-    qry  = "select value from exolocator_config.parameter where name = 'ensembl_release_number'"
+    qry  = "select value from exolocator_meta.parameters where name = 'ensembl_release_number'"
     rows = search_db(cursor, qry)
     if not rows or 'error' in rows[0][0].lower():
-        print 'ensembl_release_number not set in exolocator_config'
+        print('ensembl_release_number not set in exolocator_meta')
         exit(1)
     release_number = rows[0][0]
 
@@ -1327,7 +1325,7 @@ def get_species (cursor):
     qry  = "show databases like '%core_{0}%'".format(release_number)
     rows = search_db(cursor, qry)
     if (not rows):
-        print "No databases with 'core_{0}' in the name found".format(release_number)
+        print("No databases with 'core_{0}' in the name found".format(release_number))
         exit(1)
 
     for row in rows:
@@ -1337,7 +1335,7 @@ def get_species (cursor):
         i = 1
         while not name_token[i] == 'core':
             species += "_"+ name_token[i]
-            i       += 1
+            i += 1
         ensembl_db_name[species] = db_name
         all_species.append(species)
 
@@ -1347,10 +1345,10 @@ def get_species (cursor):
 def get_compara_name (cursor):
 
     # find the release number
-    qry  = "select value from exolocator_config.parameter where name = 'ensembl_release_number'"
+    qry  = "select value from exolocator_meta.parameters where name = 'ensembl_release_number'"
     rows = search_db(cursor, qry)
     if not rows or 'error' in rows[0][0].lower():
-        print 'ensembl_release_number not set in exolocator_config'
+        print('ensembl_release_number not set in exolocator_meta')
         exit(1)
     release_number = rows[0][0]
 

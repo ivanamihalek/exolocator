@@ -5,10 +5,9 @@
 import pdb
 #pdb.set_trace()
 
-import MySQLdb, commands, re, os, sys
+import MySQLdb, subprocess, re, os, sys
 
-from el_utils.mysql   import  connect_to_mysql
-from el_utils.mysql   import  switch_to_db,  search_db, store_or_update
+from el_utils.mysql   import  *
 from el_utils.ensembl import  *
 from el_utils.el_specific   import  *
 
@@ -54,18 +53,18 @@ def fract_identity (seq1, seq2):
 #########################################
 def check_seq_length(sequence, msg):
 
-    if not sequence.values():
+    if not list(sequence.values()):
         return False
-    aln_length = len(sequence.values()[0])
+    aln_length = len(list(sequence.values())[0])
     if not aln_length:
         return False
-    for name, seq in sequence.iteritems():
+    for name, seq in sequence.items():
         if not len(seq) == aln_length:
-            print msg, 
-            print "seq length check failure ",  name, len(seq),  aln_length
+            print(msg, end=' ') 
+            print("seq length check failure ",  name, len(seq),  aln_length)
             afa_fnm = msg+'.afa'
-            output_fasta (afa_fnm, sequence.keys(), sequence)
-            print afa_fnm
+            output_fasta (afa_fnm, list(sequence.keys()), sequence)
+            print(afa_fnm)
             return False
     return True
 
@@ -123,15 +122,15 @@ def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_names_of
     for i in to_delete:
         seq_names_to_remove.append(pep_seq_names[i])
         
-    new_names_of_exons = filter (lambda exon: exon not in seq_names_to_remove, new_names_of_exons)
+    new_names_of_exons = [exon for exon in new_names_of_exons if exon not in seq_names_to_remove]
 
-    remaining_names    = filter (lambda exon: exon not in seq_names_to_remove, pep_seq_names)
+    remaining_names    = [exon for exon in pep_seq_names if exon not in seq_names_to_remove]
     # what is the order in which these sequences map to human?
     if len(remaining_names) > 1:
         # sort the names of the remaininig pieces by their initial position in the map to human exon(s)
-        remaining_indices = filter (lambda idx: not idx in to_delete, range(len(pep_seq_names)))
+        remaining_indices = [idx for idx in range(len(pep_seq_names)) if not idx in to_delete]
         initial_pos       = find_initial_pos(pep_seq_pieces, remaining_indices) # for ex [57, 25, 12]
-        a                 = range(len(initial_pos))    # for example    [0, 1, 2]
+        a                 = list(range(len(initial_pos)))    # for example    [0, 1, 2]
         a.sort (lambda i,j: cmp(initial_pos[i], initial_pos[j]) ) # for example  [2, 1, 0]
         to_reorder = []
         for idx in  range(len(new_names_of_exons)):
@@ -153,10 +152,10 @@ def check_seq_overlap (template_seq, pep_seq_pieces, pep_seq_names, new_names_of
 #########################################
 def align_nucseq_by_pepseq(aligned_pepseq, nucseq):
     if (not len(aligned_pepseq.replace('-',''))*3 == len(nucseq)):
-        print aligned_pepseq.replace('-','')
-        print "length mismatch: ", len(aligned_pepseq.replace('-',''))*3, len(nucseq)
+        print(aligned_pepseq.replace('-',''))
+        print("length mismatch: ", len(aligned_pepseq.replace('-',''))*3, len(nucseq))
         return ""
-    codon = iter(map(''.join, zip(*[iter(nucseq)]*3)))
+    codon = iter(map(''.join, list(zip(*[iter(nucseq)]*3))))
     aligned_nucseq = ''.join(('---' if c=='-' else next(codon) for c in aligned_pepseq))
     return aligned_nucseq
 
@@ -179,9 +178,9 @@ def expand_pepseq (aligned_pep_sequence, exon_seqs, flank_length):
 
     aligned_nucseq  = align_nucseq_by_pepseq(aligned_pep_sequence, cds)
     if not aligned_nucseq: 
-        print aligned_pep_sequence
-        print cds
-        print pepseq_transl_start, pepseq_transl_end," reconstruction failed"
+        print(aligned_pep_sequence)
+        print(cds)
+        print(pepseq_transl_start, pepseq_transl_end," reconstruction failed")
         return ""
 
     effective_left_flank  = ""
@@ -223,19 +222,19 @@ def strip_gaps (sequence):
     if not check_seq_length(sequence, 'strip gaps:'): 
         return sequence
     
-    aln_length = len(sequence.itervalues().next())
+    aln_length = len(next(iter(sequence.values())))
 
     if aln_length is None or aln_length==0:
         return sequence
     
-    for name, seq in sequence.iteritems():
+    for name, seq in sequence.items():
         if not len(seq): 
             continue
         sequence[name] = seq.replace("-Z-", "BZB")
 
     for pos in range(aln_length):
         all_gaps[pos] = True
-        for name, seq in sequence.iteritems():
+        for name, seq in sequence.items():
             if not len(seq): 
                 continue
             if (not seq[pos]=='-'):
@@ -243,7 +242,7 @@ def strip_gaps (sequence):
                 break
 
 
-    for name, seq in sequence.iteritems():
+    for name, seq in sequence.items():
         if not len(seq): 
             continue
         seq_stripped[name] = ""
@@ -252,7 +251,7 @@ def strip_gaps (sequence):
             seq_stripped[name] += seq[pos]
 
 
-    for name, seq in seq_stripped.iteritems():
+    for name, seq in seq_stripped.items():
         if not len(seq): 
             continue
         seq_stripped[name] = seq_stripped[name].replace("BZB", "-Z-")
@@ -276,7 +275,7 @@ def make_exon_alignment(cursor, species, ensembl_db_name, template_exon, mitocho
         # get the raw (unaligned) sequence for the exon that maps onto template
         exon_seqs = get_exon_seqs(cursor, map.exon_id_2, map.exon_known_2)
         if (not exon_seqs):
-            print map
+            print(map)
             continue
         [pepseq, pepseq_transl_start, 
          pepseq_transl_end, left_flank, right_flank, dna_seq] = exon_seqs[1:]
@@ -357,7 +356,7 @@ def print_notes (notes_fnm, orthologues, exons, sorted_species, specid2name, hum
         out_string += "%% exon %3d\n" % i
         out_string += "%% %7s  %15s %15s  %40s\n" % ('name_short', 'gene_from', 'gene_to', 'source')
         for species in sorted_species:
-            if ( used_exons.has_key(species) and i < len(used_exons[species])):
+            if ( species in used_exons and i < len(used_exons[species])):
                 ret =  used_exons[species][i]
                 if ret:
                     [exon_id, is_known,  is_canonical, start_in_gene, end_in_gene, protein_seq, analysis_id] = ret
@@ -370,7 +369,7 @@ def print_notes (notes_fnm, orthologues, exons, sorted_species, specid2name, hum
                 out_string += "%7s  %15s %15s  %40s \n" % (species, "-",  "-",  "-")
                 
     of = open (notes_fnm, "w")
-    print >> of, out_string
+    print(out_string, file=of)
     of.close()
 
     return True
@@ -380,17 +379,17 @@ def print_notes (notes_fnm, orthologues, exons, sorted_species, specid2name, hum
 def get_name (seq_name, species, ortho_gene_id):
     sequence_name = ""
 
-    if ( not seq_name.has_key(species)): # we see this species for the first time
+    if ( species not in seq_name): # we see this species for the first time
         sequence_name = species
         seq_name[species] = {ortho_gene_id:sequence_name}
     else:
         # we have seen an exon from this species and it came from the same gene
-        if seq_name[species].has_key(ortho_gene_id):
+        if ortho_gene_id in seq_name[species]:
             sequence_name = seq_name[species][ortho_gene_id]
         else:
             # if sequence for the species exists,
             # but not for this gene, mangle the name
-            number_of_genes = len(seq_name[species].keys()) + 1
+            number_of_genes = len(list(seq_name[species].keys())) + 1
             sequence_name = species + "_" + str(number_of_genes)
             seq_name[species][ortho_gene_id] = sequence_name
     return sequence_name
@@ -401,7 +400,7 @@ def sort_names (sorted_species, alignment):
 
     sorted_names = []
     for species in sorted_species:
-        for seq_name  in alignment.keys():
+        for seq_name  in list(alignment.keys()):
 
             if seq_name[-1].isdigit():
                 aux = seq_name.split("_")
@@ -420,7 +419,7 @@ def sort_names (sorted_species, alignment):
 def move_Z (peptide_alnmt, global_bdry_position, template_name):
 
     # see which boundaries can be re-aligned with human
-    for name, seq in peptide_alnmt.iteritems():
+    for name, seq in peptide_alnmt.items():
         if name==template_name: continue
         pep_exons = peptide_alnmt[name].split ('-Z-')
         
@@ -475,7 +474,7 @@ def correct_overlap_Z(peptide_alnmt, name, pos, global_bdry_position):
             insert = '--'
             insert_start = pos+1
 
-        for name2, seq2 in peptide_alnmt.iteritems():
+        for name2, seq2 in peptide_alnmt.items():
             if peptide_alnmt[name2][pos:pos+3] == '-Z-':
                 pepseq  = seq2[:pos+3]
                 pepseq += insert
@@ -505,7 +504,7 @@ def correct_overlap_Z(peptide_alnmt, name, pos, global_bdry_position):
             insert_start = pos+2
 
 
-        for name2, seq2 in peptide_alnmt.iteritems():
+        for name2, seq2 in peptide_alnmt.items():
             if peptide_alnmt[name2][pos:pos+3] == '-Z-':
                 pepseq  = seq2[:pos]
                 pepseq += insert
@@ -531,7 +530,7 @@ def splice_gaps(alnmt, to_splice):
         pos_corrected = pos + number_of_previous_splices
 
         number_of_previous_splices += 1
-        for name in alnmt.keys():
+        for name in list(alnmt.keys()):
             temp = alnmt[name]
             alnmt[name] = temp[:pos_corrected]+'-'+temp[pos_corrected:]
 
@@ -540,14 +539,14 @@ def splice_gaps(alnmt, to_splice):
 # what I really need is the alignment program that enforces boundaries ...
 def boundary_cleanup(peptide_alnmt, sorted_seq_names): 
 
-    sorted_seq_names = filter (lambda name: name in peptide_alnmt.keys(), sorted_seq_names)
+    sorted_seq_names = [name for name in sorted_seq_names if name in list(peptide_alnmt.keys())]
 
     global_bdry_position = []
 
     # check that no boundary marker is missing one '-'
     delimiter = re.compile("Z")
     
-    for name, seq in peptide_alnmt.iteritems():
+    for name, seq in peptide_alnmt.items():
         to_splice = []
         for match in delimiter.finditer(seq):
             if not match: continue
@@ -573,7 +572,7 @@ def boundary_cleanup(peptide_alnmt, sorted_seq_names):
 
         # find sequences that have amino acid overlapping with the 
         # exon boundary marker for our "anchor" sequence
-        for name, seq in peptide_alnmt.iteritems():
+        for name, seq in peptide_alnmt.items():
             if name==sorted_seq_name: continue  # this is the anchor
 
             for pos in global_bdry_position:
@@ -596,7 +595,7 @@ def find_exon_boundaries (peptide_alignment):
     local_bdry_position  = {}
 
     delimiter = re.compile("-Z-")
-    for name, seq in peptide_alignment.iteritems():
+    for name, seq in peptide_alignment.items():
         local_bdry_position[name] = []
         for match in delimiter.finditer(seq):
             if not match: continue
@@ -616,7 +615,7 @@ def name2count (output_pep, names_of_exons):
     name_ct2exon_ct = {}
     exon_ct2name_ct = {}
 
-    for name, seq in output_pep.iteritems():
+    for name, seq in output_pep.items():
         pep_exons = seq.split ('-Z-')
         exon_ct            = 0
         nonempty_exon_ct   = 0
@@ -650,12 +649,12 @@ def exon_seq_check(exon_seqs, pep_aligned, name,  exon_name, verbose=True):
         return True
 
     if verbose:
-        print " foul "
-        print name
-        print exon_name
-        print "in db:   ", exon_pep_seq
-        print "in almt: ", pep_aligned.replace ('-', '')
-        print
+        print(" foul ")
+        print(name)
+        print(exon_name)
+        print("in db:   ", exon_pep_seq)
+        print("in almt: ", pep_aligned.replace ('-', ''))
+        print()
 
     return False
 
@@ -664,9 +663,9 @@ def check_exon_order (cursor, ensembl_db_name, output_pep, names_of_exons):
 
     order_ok = True
 
-    for name, seq in output_pep.iteritems():
+    for name, seq in output_pep.items():
         
-        pepseqs = map (lambda pep: pep.replace('-', ''), seq.split('Z'))
+        pepseqs = [pep.replace('-', '') for pep in seq.split('Z')]
 
         exon_name_ct = -1
         for pepseq in pepseqs:
@@ -701,7 +700,7 @@ def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_seq_n
     # 4) recalculate the position of the boundary in this exon's frame
     # 5) add extra space for the flanks
     output_dna = {}
-    for name, full_aligned_pepseq in output_pep.iteritems():
+    for name, full_aligned_pepseq in output_pep.items():
 
         output_dna[name] = ""
 
@@ -734,7 +733,7 @@ def expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, sorted_seq_n
                     
             # recalculate the insert position in the dna version
             if inserts:
-                inserts_relative = map(lambda pos: flank_length + 3*(pos - prev_local_pos-3), inserts)
+                inserts_relative = [flank_length + 3*(pos - prev_local_pos-3) for pos in inserts]
 
             # put in the gaps if/where needed
             prev_ins = 0
@@ -838,7 +837,7 @@ def realign_slice (pep_slice, template_seq, seq_to_fix, pep_seq_pieces):
     # put the gaps into the remaining sequences
     new_pep_slice = {}
     new_pep_slice[seq_to_fix] = aligned_para
-    for name in pep_slice.keys():            
+    for name in list(pep_slice.keys()):            
         if (name== seq_to_fix or name == template_seq):
             pass
         else:
@@ -846,7 +845,7 @@ def realign_slice (pep_slice, template_seq, seq_to_fix, pep_seq_pieces):
 
     for pos in range(len(aligned_template)):
         if not aligned_template[pos] == '#': continue
-        for name in pep_slice.keys():            
+        for name in list(pep_slice.keys()):            
             if (name== seq_to_fix or name == template_seq):
                 pass
             else:
@@ -866,7 +865,7 @@ def find_template (alignment):
     template_name = ""
     template_seq  = ""
 
-    for name, seq in alignment.iteritems():
+    for name, seq in alignment.items():
         if 'template' in name:
             template_name = name
             template_seq  = seq
@@ -882,7 +881,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, template_
 
     count = 0
     if not overlapping_maps:                      return [output_pep, names_of_exons]
-    if not output_pep.has_key(template_seq_name): return [output_pep, names_of_exons]
+    if template_seq_name not in output_pep: return [output_pep, names_of_exons]
 
 
     # 
@@ -891,7 +890,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, template_
     for template_exon in template_exons:
         has_map = False
         for para_exon in names_of_exons[seq_to_fix]:
-            if alnmt_pep[template_exon].has_key(para_exon):
+            if para_exon in alnmt_pep[template_exon]:
                 if not para_exon in new_names_of_exons:
                     new_names_of_exons.append(para_exon)
                 has_map = True
@@ -909,7 +908,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, template_
     # for each unresolved "map"  cut out the slice and re-align
     for  [template_exons, para_exons] in overlapping_maps:
 
-        exon_numbers = sorted(map (lambda ex: seqid[ex], template_exons))
+        exon_numbers = sorted([seqid[ex] for ex in template_exons])
         
         smallest_id  = exon_numbers[0]
         largest_id   = exon_numbers[-1]
@@ -923,7 +922,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, template_
             sequence_pieces = []
             seq_piece_names = []
             for exon_seq_name in para_exons:
-                if not alnmt_pep[template_exon].has_key(exon_seq_name): continue
+                if exon_seq_name not in alnmt_pep[template_exon]: continue
                 sequence_pieces.append(alnmt_pep[template_exon][exon_seq_name])
                 seq_piece_names.append(exon_seq_name)
                 new_names_of_exons = check_seq_overlap(template_exon_seq, sequence_pieces,
@@ -933,7 +932,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, template_
         pep_seq_pieces = [] 
         for para_exon in new_names_of_exons:
             for template_exon in template_exons:
-                if alnmt_pep[template_exon].has_key(para_exon):
+                if para_exon in alnmt_pep[template_exon]:
                     pep_seq_pieces.append (alnmt_pep[template_exon][para_exon].replace("-", ""))
                     break
      
@@ -961,7 +960,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, template_
         exon_aln_end_pep.append(end)
 
         if len(exon_aln_start_pep) <= smallest_id or  len(exon_aln_start_pep) <= largest_id:
-            print  len(exon_aln_start_pep), smallest_id, len(exon_aln_start_pep), largest_id
+            print(len(exon_aln_start_pep), smallest_id, len(exon_aln_start_pep), largest_id)
             return [output_pep, names_of_exons]
 
         ####################################
@@ -983,7 +982,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, template_
         ####################################
         # cut out the slice
         pep_slice = {}
-        for name in current_pep.keys():            
+        for name in list(current_pep.keys()):            
             pep_slice[name] = current_pep[name][pep_slice_start:pep_slice_end]
 
         # slice realign
@@ -999,7 +998,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, template_
         #################################### 
         # replace the slice with the re-aligned one
         new_alignment_pep = {}
-        for name, pepseq in current_pep.iteritems():
+        for name, pepseq in current_pep.items():
             new_alignment_pep[name]  = pepseq[:pep_slice_start]
             new_alignment_pep[name] += new_pep_slice[name]
             new_alignment_pep[name] += pepseq[pep_slice_end:] 
@@ -1008,7 +1007,7 @@ def fix_one2many (cursor, ensembl_db_name, cfg, acg, sorted_seq_names, template_
             del output_pep[seq_to_fix]
             return [output_pep, names_of_exons]
 
-        boundary_cleanup(new_alignment_pep, new_alignment_pep.keys())
+        boundary_cleanup(new_alignment_pep, list(new_alignment_pep.keys()))
         new_alignment_pep = strip_gaps(new_alignment_pep)
         
         current_pep = new_alignment_pep
@@ -1090,7 +1089,7 @@ def remove_ghosts (output_pep, names_of_exons):
     delimiter      = re.compile("Z")
 
     #find positions that are all-gaps-but-one
-    for name, seq in output_pep.iteritems():
+    for name, seq in output_pep.items():
         if name=='human': continue
 
         # find Z positions
@@ -1111,7 +1110,7 @@ def remove_ghosts (output_pep, names_of_exons):
             # are perhaps all other seqs gap in that range?
             is_ghost = True
             for pos in range(start,end):
-                for name2, seq2 in output_pep.iteritems():
+                for name2, seq2 in output_pep.items():
                     if name2==name: continue
                     if not seq2[pos] == '-':
                         is_ghost = False
@@ -1123,7 +1122,7 @@ def remove_ghosts (output_pep, names_of_exons):
             # check the Z itself
             if start:
                 remove_start = True
-                for name2, seq2 in output_pep.iteritems():
+                for name2, seq2 in output_pep.items():
                     if name2==name: continue
                     if not seq2[start-1] == '-':
                         remove_start = False
@@ -1132,7 +1131,7 @@ def remove_ghosts (output_pep, names_of_exons):
 
             if end < len(seq):
                 remove_end = True
-                for name2, seq2 in output_pep.iteritems():
+                for name2, seq2 in output_pep.items():
                     if name2==name: continue
                     if not seq2[end] == '-':
                         remove_end = False
@@ -1165,7 +1164,7 @@ def check_directory (cfg, species, species_id, pep_or_dna):
         try:
             os.makedirs(directory) 
         except:
-            print "error making", directory
+            print("error making", directory)
             exit(1) # on error making the output directory
 
     return directory
@@ -1202,14 +1201,11 @@ def make_alignments (species_list, db_info):
             gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
         if not gene_ids:
-            print species, "no gene_ids"
+            print(species, "no gene_ids")
             continue
 
-        if species == 'homo_sapiens':
-            species_shorthand = 'HSA'
-        else:
-            species_shorthand = get_species_shorthand(cursor, species)
-        print species, species_shorthand
+        species_shorthand = get_species_shorthand(cursor, species)
+        print(species, species_shorthand)
         directory = check_directory (cfg, species, species_shorthand, "pep")
   
         # for each human gene
@@ -1222,11 +1218,11 @@ def make_alignments (species_list, db_info):
 
             gene_ct += 1
             if not gene_ct%1000: 
-                print species, gene_ct, "genes out of", len(gene_ids)
+                print(species, gene_ct, "genes out of", len(gene_ids))
                 sys.stdout.flush()
             if verbose: 
-                print
-                print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+                print()
+                print(gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id))
 
             # see if perhaps already resolved this one
             if  check_afa_age (cfg, directory, stable_id, max_days=30) == "new": continue  
@@ -1235,19 +1231,19 @@ def make_alignments (species_list, db_info):
             # get the paralogues - only the representative for  the family will have this 
             paralogues = get_paras (cursor, gene_id)  
             if not paralogues:
-                if verbose:  print "\t not a template or no paralogues"
+                if verbose:  print("\t not a template or no paralogues")
                 continue
 
             has_paralogues += 1
 
             if verbose:  
-                print "paralogues: ", paralogues
+                print("paralogues: ", paralogues)
                 for para in paralogues:
-                    print gene2stable(cursor, para), get_description (cursor, para)
+                    print(gene2stable(cursor, para), get_description (cursor, para))
             # get _all_ exons
             template_exons = gene2exon_list(cursor, gene_id)
             if (not template_exons):
-                if verbose: print 'no exons for ', gene_id
+                if verbose: print('no exons for ', gene_id)
                 continue
 
 
@@ -1267,7 +1263,7 @@ def make_alignments (species_list, db_info):
                 if not alnmt_pep[template_exon]: 
                     bad_exons.append(template_exon)
 
-            template_exons = filter (lambda x: not x in bad_exons, template_exons)
+            template_exons = [x for x in template_exons if not x in bad_exons]
             template_exons.sort(key=lambda exon: exon.start_in_gene)
 
             # >>>>>>>>>>>>>>>>>>
@@ -1281,8 +1277,8 @@ def make_alignments (species_list, db_info):
             # do we have a sequence mapping to multiple template exons?
             para_exon_to_template_exon = {}
             for template_exon in template_exons:
-                for exon_seq_name in alnmt_pep[template_exon].keys():
-                    if not para_exon_to_template_exon.has_key(exon_seq_name):
+                for exon_seq_name in list(alnmt_pep[template_exon].keys()):
+                    if exon_seq_name not in para_exon_to_template_exon:
                         para_exon_to_template_exon[exon_seq_name] = [template_exon]
                     else:
                         para_exon_to_template_exon[exon_seq_name].append(template_exon)
@@ -1294,7 +1290,7 @@ def make_alignments (species_list, db_info):
             overlapping_maps   = {}
             parent_seq_name    = {}
             for template_exon in template_exons:
-                for exon_seq_name, exon_seq in alnmt_pep[template_exon].iteritems():
+                for exon_seq_name, exon_seq in alnmt_pep[template_exon].items():
                     [filler, exon_id, exon_known, exon_start]  = parse_aln_name(exon_seq_name)
                     para_gene_id                   = exon_id2gene_id(cursor, ensembl_db_name[species], 
                                                                      exon_id, exon_known)
@@ -1303,21 +1299,21 @@ def make_alignments (species_list, db_info):
             names_of_exons     = {}
             template_exon_map  = {}
             for template_exon in template_exons:
-                for exon_seq_name in alnmt_pep[template_exon].keys():
+                for exon_seq_name in list(alnmt_pep[template_exon].keys()):
                     concat_seq_name = parent_seq_name[exon_seq_name]
 
-                    if not names_of_exons.has_key(concat_seq_name): names_of_exons[concat_seq_name] = []
+                    if concat_seq_name not in names_of_exons: names_of_exons[concat_seq_name] = []
                     if not exon_seq_name in  names_of_exons[concat_seq_name]:
                         names_of_exons[concat_seq_name].append(exon_seq_name)
 
-                    if not template_exon_map.has_key(concat_seq_name): template_exon_map[concat_seq_name] = {}
-                    if not template_exon_map[concat_seq_name].has_key(template_exon): 
+                    if concat_seq_name not in template_exon_map: template_exon_map[concat_seq_name] = {}
+                    if template_exon not in template_exon_map[concat_seq_name]: 
                         template_exon_map[concat_seq_name][template_exon] = []
                     template_exon_map[concat_seq_name][template_exon].append(exon_seq_name)
 
             # >>>>>>>>>>>>>>>>>>
             # flag the cases when one paralogue exon maps to many template (and vice versa) for later
-            for concat_seq_name, concat_exons in names_of_exons.iteritems():
+            for concat_seq_name, concat_exons in names_of_exons.items():
                 overlapping_maps[concat_seq_name] = find_overlapping_maps (para_exon_to_template_exon, 
                                                                            concat_exons, alnmt_pep)
 
@@ -1329,26 +1325,26 @@ def make_alignments (species_list, db_info):
             output_dna  = {}
 
             # >>>>>>>>>>>>>>>>>>
-            for  concat_seq_name  in  template_exon_map.keys():
+            for  concat_seq_name  in  list(template_exon_map.keys()):
 
                 output_pep[concat_seq_name] = ""
 
                 # single out one para to mult template cases
                 flagged_template_exons = []
-                if overlapping_maps.has_key(concat_seq_name):
+                if concat_seq_name in overlapping_maps:
                     for  [templ_exons, para_exons] in overlapping_maps[concat_seq_name]:
                         if len(templ_exons) == 1 and len(para_exons) == 1: continue 
                         flagged_template_exons = flagged_template_exons + templ_exons
 
                 for template_exon in template_exons:
 
-                    aln_length = len(alnmt_pep[template_exon].itervalues().next())
+                    aln_length = len(next(iter(alnmt_pep[template_exon].values())))
                     pep = '-'*aln_length
                     if template_exon in flagged_template_exons:
                         # one para seq maps to multiple template exons
                         pep = '-'*aln_length
 
-                    elif template_exon_map[concat_seq_name].has_key(template_exon):
+                    elif template_exon in template_exon_map[concat_seq_name]:
                         # we have a neat one-to-one mapping
                         exon_seq_name = template_exon_map[concat_seq_name][template_exon][0]
                         pep = alnmt_pep[template_exon][exon_seq_name]
@@ -1365,14 +1361,14 @@ def make_alignments (species_list, db_info):
 
             #########################################################
             # >>>>>>>>>>>>>>>>>>
-            sorted_seq_names = [stable_id]+ filter (lambda name: not name==stable_id, output_pep.keys())
+            sorted_seq_names = [stable_id]+ [name for name in list(output_pep.keys()) if not name==stable_id]
             boundary_cleanup(output_pep, sorted_seq_names)
             output_pep = strip_gaps(output_pep)
             #afa_fnm   = 'tmp.afa'
             #output_fasta (afa_fnm, sorted_seq_names, output_pep)
             #print afa_fnm
 
-            for seq_to_fix in overlapping_maps.keys():
+            for seq_to_fix in list(overlapping_maps.keys()):
                 if not overlapping_maps[seq_to_fix]: continue
                 #fix_one2many changes both output_pep and names_of_exons
                 template_sequence_name = stable_id
@@ -1383,12 +1379,12 @@ def make_alignments (species_list, db_info):
                                                              alnmt_pep, output_pep)
  
             if not check_seq_length (output_pep, "ouput_pep"): 
-                print " +++ length check failure"
+                print(" +++ length check failure")
                 continue
 
 
             # >>>>>>>>>>>>>>>>>>
-            sorted_seq_names = [stable_id] + filter (lambda name: not name==stable_id, output_pep.keys())
+            sorted_seq_names = [stable_id] + [name for name in list(output_pep.keys()) if not name==stable_id]
             boundary_cleanup(output_pep, sorted_seq_names)
             output_pep = strip_gaps(output_pep)
 
@@ -1399,7 +1395,7 @@ def make_alignments (species_list, db_info):
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_pep)
             pep_produced += 1
-            if verbose: print afa_fnm
+            if verbose: print(afa_fnm)
 
             # >>>>>>>>>>>>>>>>>>
             output_dna = expand_protein_to_dna_alnmt (cursor, ensembl_db_name, cfg, acg, 
@@ -1414,21 +1410,21 @@ def make_alignments (species_list, db_info):
             directory = check_directory ( cfg, species, species_shorthand, "dna")
             afa_fnm   = "{0}/{1}.afa".format(directory, stable_id)
             output_fasta (afa_fnm, sorted_seq_names, output_dna)
-            if verbose: print afa_fnm
+            if verbose: print(afa_fnm)
             dna_produced += 1
 
             continue
 
             # notes to accompany the alignment:
             notes_fnm  = "{0}/notes/{1}.txt".format(cfg.dir_path['afs_dumps'], stable_id)
-            print notes_fnm
+            print(notes_fnm)
             print_notes (notes_fnm, paralogues, exons, sorted_species, specid2name, template_stable_id, source)
 
 
-        print species, " has_paralogues = ", has_paralogues
-        print species, " pep produced   = ", pep_produced
-        print species, " dna produced   = ", dna_produced
-        print species, " done "
+        print(species, " has_paralogues = ", has_paralogues)
+        print(species, " pep produced   = ", pep_produced)
+        print(species, " dna produced   = ", dna_produced)
+        print(species, " done ")
         sys.stdout.flush()
 
 
@@ -1439,7 +1435,7 @@ def main():
     user_specified_species = None
 
     if len(sys.argv)==1:
-        print "note the alternative usage: %s <species> [<species> <species> ...]" %  sys.argv[0]
+        print("note the alternative usage: %s <species> [<species> <species> ...]" %  sys.argv[0])
     else:
         user_specified_species = sys.argv[1:]
         no_threads = 1

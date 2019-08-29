@@ -1,5 +1,5 @@
-from mysql   import search_db, switch_to_db
-from ensembl import species2taxid, get_compara_name
+from el_utils.mysql   import search_db, switch_to_db
+from el_utils.ensembl import species2taxid, get_compara_name
 
 
 ########
