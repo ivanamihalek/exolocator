@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import MySQLdb
-from   el_utils.mysql import search_db, switch_to_db
+from   el_utils.mysql import *
 from   el_utils.exon  import Exon
 import subprocess
 
@@ -1364,17 +1364,9 @@ def get_compara_name (cursor):
 def species2taxid (cursor, species):
 
     switch_to_db (cursor, get_compara_name (cursor))
-    qry  = "select taxon_id from genome_db where name = '%s'" % species
-    rows = search_db (cursor, qry)
-    if (not rows):
-        search_db (cursor, qry, verbose = True)
-        return ""
-    
-    try:
-        retval = int(rows[0][0])
-    except:
-        retval = ""
-    return retval
+    qry  = "select tax_id from exolocator_meta.species_names where species = '%s'" % species
+    tax_id = hard_landing_search(cursor, qry)[0][0]
+    return tax_id
 
 
 ########

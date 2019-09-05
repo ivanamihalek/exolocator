@@ -2,17 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/perl5local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/perl5local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/01_make_config_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/01_make_meta_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/11_paralogue_directory_cleanup.py" beforeDir="false" afterPath="$PROJECT_DIR$/30_db_migration/11_paralogue_directory_cleanup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/12_reconstruct_para_alnmts.py" beforeDir="false" afterPath="$PROJECT_DIR$/30_db_migration/12_reconstruct_para_alnmts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/30_db_migration/.__afs06E8" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/60_meta/02_split_gene_list.py" beforeDir="false" afterPath="$PROJECT_DIR$/60_meta/02_split_gene_list.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/60_meta/41_make_tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/60_meta/41_make_tree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/60_meta/42_find_superstars.py" beforeDir="false" afterPath="$PROJECT_DIR$/60_meta/42_find_superstars.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/60_meta/48_count_unsequenced.py" beforeDir="false" afterPath="$PROJECT_DIR$/60_meta/48_count_unsequenced.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/60_meta/51_compare_alnmt_implementations.py" beforeDir="false" afterPath="$PROJECT_DIR$/60_meta/51_compare_alnmt_implementations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/60_meta/60_get_cDNA.py" beforeDir="false" afterPath="$PROJECT_DIR$/60_meta/60_get_cDNA.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/exon.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/exon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/mysql.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/mysql.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/el_utils/ncbi.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ncbi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/el_utils/tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/tree.py" afterDir="false" />
     </list>
     <ignored path="exolocator.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -31,14 +31,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="01_make_meta_db.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="01_make_meta_db.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/01_make_meta_db.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
-              <caret line="163" column="44" lean-forward="true" selection-start-line="163" selection-start-column="44" selection-end-line="163" selection-end-column="44" />
+            <state relative-caret-position="186">
+              <caret line="316" column="40" lean-forward="true" selection-start-line="316" selection-start-column="40" selection-end-line="316" selection-end-column="40" />
               <folding>
                 <element signature="e#1025#1055#0" expanded="true" />
-                <element signature="e#7220#8339#0" />
               </folding>
             </state>
           </provider>
@@ -47,8 +46,8 @@
       <file leaf-file-name="ensembl.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="1310" column="4" selection-start-line="1310" selection-start-column="4" selection-end-line="1310" selection-end-column="4" />
+            <state relative-caret-position="334">
+              <caret line="1368" column="17" lean-forward="true" selection-start-line="1368" selection-start-column="17" selection-end-line="1368" selection-end-column="17" />
               <folding>
                 <element signature="e#19#33#0" expanded="true" />
               </folding>
@@ -56,32 +55,38 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mysql.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/00_download_dbs/el_utils/mysql.py">
+      <file leaf-file-name="ncbi.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/el_utils/ncbi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="14" selection-start-line="14" selection-end-line="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="12_reconstruct_para_alnmts.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/30_db_migration/12_reconstruct_para_alnmts.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="672">
-              <caret line="1212" column="28" lean-forward="true" selection-start-line="1212" selection-start-column="28" selection-end-line="1212" selection-end-column="28" />
+            <state relative-caret-position="360">
+              <caret line="20" column="21" lean-forward="true" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
               <folding>
-                <element signature="e#98#108#0" expanded="true" />
+                <element signature="e#0#30#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="11_paralogue_directory_cleanup.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/30_db_migration/11_paralogue_directory_cleanup.py">
+      <file leaf-file-name="41_make_tree.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/60_meta/41_make_tree.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
-              <caret line="67" column="34" lean-forward="true" selection-start-line="67" selection-start-column="34" selection-end-line="67" selection-end-column="34" />
+            <state relative-caret-position="270">
+              <caret line="15" selection-start-line="15" selection-end-line="15" />
+              <folding>
+                <element signature="e#21#66#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tree.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/el_utils/tree.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-216">
+              <caret line="102" selection-start-line="102" selection-end-line="102" />
+              <folding>
+                <element signature="e#20#29#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -100,6 +105,7 @@
       <find>exolocator_config</find>
       <find>species_shorthand</find>
       <find>donkey</find>
+      <find>hard</find>
     </findStrings>
     <replaceStrings>
       <replace>exolocator_meta</replace>
@@ -111,7 +117,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/20_checks_and_balances/12_novel_exons_inspector.py" />
         <option value="$PROJECT_DIR$/20_checks_and_balances/13_novel_exons_stats.py" />
         <option value="$PROJECT_DIR$/20_checks_and_balances/15_inspect_individual_gene.py" />
         <option value="$PROJECT_DIR$/20_checks_and_balances/30_06_check_almt_reconstruction_failure.py" />
@@ -141,7 +146,6 @@
         <option value="$PROJECT_DIR$/60_meta/48_count_unsequenced.py" />
         <option value="$PROJECT_DIR$/60_meta/60_get_cDNA.py" />
         <option value="$PROJECT_DIR$/60_meta/mammals_test.py" />
-        <option value="$PROJECT_DIR$/el_utils/tree.py" />
         <option value="$PROJECT_DIR$/11_find_missing_exons.py" />
         <option value="$PROJECT_DIR$/14_make_novel_exon_maps.py" />
         <option value="$PROJECT_DIR$/30_db_migration/07_dump_exon_map.py" />
@@ -155,13 +159,15 @@
         <option value="$PROJECT_DIR$/00_download_dbs/04_make_ncbi_tax_db.pl" />
         <option value="$PROJECT_DIR$/01_make_config_db.py" />
         <option value="$PROJECT_DIR$/el_utils/mysql.py" />
-        <option value="$PROJECT_DIR$/el_utils/ncbi.py" />
         <option value="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" />
         <option value="$PROJECT_DIR$/00_download_dbs/el_utils/mysql.py" />
         <option value="$PROJECT_DIR$/30_db_migration/12_reconstruct_para_alnmts.py" />
         <option value="$PROJECT_DIR$/30_db_migration/11_paralogue_directory_cleanup.py" />
-        <option value="$PROJECT_DIR$/el_utils/ensembl.py" />
         <option value="$PROJECT_DIR$/01_make_meta_db.py" />
+        <option value="$PROJECT_DIR$/60_meta/41_make_tree.py" />
+        <option value="$PROJECT_DIR$/el_utils/ensembl.py" />
+        <option value="$PROJECT_DIR$/el_utils/tree.py" />
+        <option value="$PROJECT_DIR$/el_utils/ncbi.py" />
       </list>
     </option>
   </component>
@@ -178,6 +184,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -188,7 +195,12 @@
             <path>
               <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
               <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-              <item name="30_db_migration" type="462c0819:PsiDirectoryNode" />
+              <item name="40_workflows" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
+              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
+              <item name="60_meta" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
@@ -199,7 +211,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -280,15 +291,15 @@
       <window_info id="DB Browser" order="2" />
       <window_info anchor="bottom" id="DB Execution Console" order="7" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.3296643" />
-      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
+      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.29309437" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.29309437" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.24574468" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -320,9 +331,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/el_utils/el_specific.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/04_paralogues.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -463,13 +471,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/el_utils/tree.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="224" selection-start-line="224" selection-end-line="224" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/el_utils/map.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -576,13 +577,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/el_utils/ncbi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/lib/python3/dist-packages/pymol/wizard/stereodemo.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1836">
@@ -590,34 +584,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/02_add_tables.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5940" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
           <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="e#275#301#0#Perl5" expanded="true" />
-            <element signature="e#502#537#0#Perl5" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/30_db_migration/11_paralogue_directory_cleanup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="67" column="34" lean-forward="true" selection-start-line="67" selection-start-column="34" selection-end-line="67" selection-end-column="34" />
+        <state relative-caret-position="774">
+          <caret line="67" column="34" selection-start-line="67" selection-start-column="34" selection-end-line="67" selection-end-column="34" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/30_db_migration/12_reconstruct_para_alnmts.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="672">
-          <caret line="1212" column="28" lean-forward="true" selection-start-line="1212" selection-start-column="28" selection-end-line="1212" selection-end-column="28" />
+        <state relative-caret-position="21402">
+          <caret line="1212" column="28" selection-start-line="1212" selection-start-column="28" selection-end-line="1212" selection-end-column="28" />
           <folding>
             <element signature="e#98#108#0" expanded="true" />
           </folding>
@@ -631,23 +615,57 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/02_add_tables.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1026" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/01_make_meta_db.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="186">
+          <caret line="316" column="40" lean-forward="true" selection-start-line="316" selection-start-column="40" selection-end-line="316" selection-end-column="40" />
+          <folding>
+            <element signature="e#1025#1055#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
-          <caret line="1310" column="4" selection-start-line="1310" selection-start-column="4" selection-end-line="1310" selection-end-column="4" />
+        <state relative-caret-position="334">
+          <caret line="1368" column="17" lean-forward="true" selection-start-line="1368" selection-start-column="17" selection-end-line="1368" selection-end-column="17" />
           <folding>
             <element signature="e#19#33#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/01_make_meta_db.py">
+    <entry file="file://$PROJECT_DIR$/el_utils/tree.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="163" column="44" lean-forward="true" selection-start-line="163" selection-start-column="44" selection-end-line="163" selection-end-column="44" />
+        <state relative-caret-position="-216">
+          <caret line="102" selection-start-line="102" selection-end-line="102" />
           <folding>
-            <element signature="e#1025#1055#0" expanded="true" />
-            <element signature="e#7220#8339#0" />
+            <element signature="e#20#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/el_utils/ncbi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="20" column="21" lean-forward="true" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/60_meta/41_make_tree.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
+          <folding>
+            <element signature="e#21#66#0" expanded="true" />
           </folding>
         </state>
       </provider>

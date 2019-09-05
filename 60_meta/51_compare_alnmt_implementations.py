@@ -2,7 +2,7 @@
 # make the best alignment we can using the maps
 # we currently have at hand
 
-import MySQLdb, commands, re
+import MySQLdb, subprocess, re
 
 from ctypes    import *
 from alignment import *
@@ -22,10 +22,10 @@ def main():
     [aligned_seq1, aligned_seq2] = smith_waterman_context(seq1, seq2, -5, -3)
     #print "   C time: %8.3f\n" % ( time()-start);
 
-    print ">seq1"
-    print aligned_seq1
-    print ">seq2"
-    print aligned_seq2
+    print(">seq1")
+    print(aligned_seq1)
+    print(">seq2")
+    print(aligned_seq2)
 
 
 #########################################

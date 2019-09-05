@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import MySQLdb, subprocess, re, commands
+import MySQLdb, subprocess, re, subprocess
 import copy, pdb
 from tempfile     import NamedTemporaryFile
 from bisect       import bisect
@@ -54,7 +54,7 @@ def get_gene_start_end(cursor, ensembl_db_name, gene_id):
     rows = search_db(cursor, qry)
     if not rows: 
         return None
-    return  map(int, rows[0])
+    return  list(map(int, rows[0]))
 
 #########################################
 def get_seq_region(cursor, ensembl_db_name,  gene_coords, exon_id, exon_known):
@@ -71,8 +71,8 @@ def get_seq_region(cursor, ensembl_db_name,  gene_coords, exon_id, exon_known):
         elif exon_known == 0:
             qry += "from prediction_exon "
         else:
-            print "exon_known", exon_known
-            print "get_seq_region() from sw and usearch exon not implemented"
+            print("exon_known", exon_known)
+            print("get_seq_region() from sw and usearch exon not implemented")
             return None
 
         qry += "join seq_region on exon.seq_region_id = seq_region.seq_region_id "
@@ -80,7 +80,7 @@ def get_seq_region(cursor, ensembl_db_name,  gene_coords, exon_id, exon_known):
         rows = search_db(cursor, qry)
         if not rows:   return False
         if not len(rows[0]) ==5:
-            print rows[0]
+            print(rows[0])
             return False
         [name, file_names, strand, start, end] = rows[0]
 
@@ -120,10 +120,10 @@ def get_alt_seq_region(cursor,ensembl_db_name, exon_id, exon_known):
     elif exon_known == 0:
         qry += "from prediction_exon "
     elif exon_known == 2:
-        print "get_alt_seq_region() from sw exon not implemented - need to fishi it up from the gene region "
+        print("get_alt_seq_region() from sw exon not implemented - need to fishi it up from the gene region ")
         return None
     else:
-        print "error in get_alt_seq_region() "
+        print("error in get_alt_seq_region() ")
         return None
     
     qry += "join assembly_exception as ae on ae.seq_region_id=exon.seq_region_id "
@@ -232,7 +232,7 @@ def store_novel_exon (cursor, db_name, human_exon_id, gene_id, start_in_gene,
     elif method == 'usearch':
         qry  = "update usearch_exon set exon_seq_id = {0} where exon_id = {1}".format(exon_seq_id, novel_exon_id)
     else:
-        print "unrecognized method: ", method
+        print("unrecognized method: ", method)
         exit(1)
     cursor.execute(qry)
 
@@ -252,8 +252,8 @@ def translate(searchseq, search_start, search_end, mitochondrial):
         try:
             pepseq = str(Seq(dnaseq,generic_dna).translate())
         except:
-            print dnaseq
-            print Seq(dnaseq,generic_dna).translate()
+            print(dnaseq)
+            print(Seq(dnaseq,generic_dna).translate())
             pepseq = ""
   
     return pepseq
@@ -310,10 +310,10 @@ def find_the_most_similar_frame (cursor, mitochondrial, template_pepseq, searchs
 
     if "*" in pepseq and len(pepseq) > len(template_pepseq): # if the stop is outside of the matching region with template, 
                                                              # return only the matching region
-        print 'resolving a stop codon'
+        print('resolving a stop codon')
         s      = SequenceMatcher(None, pepseq, template_pepseq)
         blocks = s.get_matching_blocks()
-        blocks = filter( lambda (i,j,n): n>0, blocks)
+        blocks = [i_j_n for i_j_n in blocks if i_j_n[2]>0]
         if len(blocks)==1:
             (i, j, n) = blocks[0]
             if n == len(template_pepseq):
@@ -353,7 +353,7 @@ def get_template (cursor, ensembl_db_name, map_table, species, he):
     template_species = None
     template_seq     = None
 
-    nearest_species = species_sort(cursor, map_table.keys(), species)[1:]
+    nearest_species = species_sort(cursor, list(map_table.keys()), species)[1:]
     # I have a problem with the lamprey - it is an outlayer to everything else
     if species=='petromyzon_marinus':
         nearest_species.reverse()
@@ -480,9 +480,9 @@ def patch_aligned_seq (aligned_target_seq, aligned_template_seq,  template_start
 #########################################
 def translation_check ( searchseq, match_start, match_end, mitochondrial, pepseq):
     if not pepseq == translate(searchseq, match_start, match_end, mitochondrial):
-        print " ! "
-        print pepseq
-        print translate(searchseq, match_start, match_end, mitochondrial)
+        print(" ! ")
+        print(pepseq)
+        print(translate(searchseq, match_start, match_end, mitochondrial))
         return False
     return True
 
@@ -492,7 +492,7 @@ def find_search_region (acg, species,  prev_seq_region, next_seq_region, extensi
 
     # determine the search region, and extract it using fastacmd
     if not next_seq_region and not prev_seq_region:
-        print "no regions specified in sw_search()"
+        print("no regions specified in sw_search()")
         return []
     
     if not prev_seq_region:
@@ -522,25 +522,25 @@ def find_search_region (acg, species,  prev_seq_region, next_seq_region, extensi
         if prev_seq_region.name == next_seq_region.name:
             searchname =  prev_seq_region.name
         else:
-            print "prev_seq_region.name != next_seq_region.name ",  
-            print prev_seq_region.name,  next_seq_region.name
-            print "(cannot handle such cases yet)"
+            print("prev_seq_region.name != next_seq_region.name ", end=' ')  
+            print(prev_seq_region.name,  next_seq_region.name)
+            print("(cannot handle such cases yet)")
             return []
 
         if prev_seq_region.filename == next_seq_region.filename:
             searchfile =  prev_seq_region.filename
         else:
-            print "prev_seq_region.filename != next_seq_region.filename ",  
-            print prev_seq_region.filename,  next_seq_region.filename
-            print "(cannot handle such cases yet)"
+            print("prev_seq_region.filename != next_seq_region.filename ", end=' ')  
+            print(prev_seq_region.filename,  next_seq_region.filename)
+            print("(cannot handle such cases yet)")
             return []
 
         if prev_seq_region.strand == next_seq_region.strand:
             searchstrand = prev_seq_region.strand
         else:
-            print "prev_seq_region.strand != next_seq_region.strand ",  
-            print prev_seq_region.strand,  next_seq_region.strand
-            print "(cannot handle such cases yet)"
+            print("prev_seq_region.strand != next_seq_region.strand ", end=' ')  
+            print(prev_seq_region.strand,  next_seq_region.strand)
+            print("(cannot handle such cases yet)")
             return []
 
         searchstart = prev_seq_region.end
@@ -577,7 +577,7 @@ def organize_and_store_sw_exon (cursor, acg, ensembl_db_name, species, gene_id,
     # if we patched the translation will not work out
     if not patched:
         if not translation_check (searchseq, match_start, match_end, mitochondrial, pepseq):
-            print "failed translation check"
+            print("failed translation check")
             return None
                 
     # flanking seqeunces
@@ -600,10 +600,10 @@ def organize_and_store_sw_exon (cursor, acg, ensembl_db_name, species, gene_id,
         end_in_gene   = match_end   - (region_end - gene_end) + 1
       
 
-    print "region:", region_start, region_end
-    print " match:", match_start,  match_end
-    print "  gene:", gene_start, gene_end, gene_strand
-    print "in gene:", start_in_gene, end_in_gene
+    print("region:", region_start, region_end)
+    print(" match:", match_start,  match_end)
+    print("  gene:", gene_start, gene_end, gene_strand)
+    print("in gene:", start_in_gene, end_in_gene)
 
 
     sw_exon_id  = None
@@ -612,7 +612,7 @@ def organize_and_store_sw_exon (cursor, acg, ensembl_db_name, species, gene_id,
                                  has_NNN, has_stop, template_exon_seq_id, template_species, method)
     
     if not sw_exon_id: 
-        print "no sw exon id"
+        print("no sw exon id")
         return None
 
 
@@ -630,7 +630,7 @@ def brute_force_search(cfg, acg, query_seq, target_seq, method):
         resultstr = usearch (cfg, acg, query_seq, target_seq, delete=True)
         match = parse_usearch_output(resultstr)
     else:
-        print "unrecognized search method: ", method
+        print("unrecognized search method: ", method)
 
 
     return match
@@ -671,11 +671,11 @@ def find_NNN (cursor, ensembl_db_name, cfg, acg, human_exon, old_maps,  species,
     extension = MAX_SEARCH_LENGTH if method=='usearch' else 2*MAX_SEARCH_LENGTH
     ret = find_search_region (acg, species,  prev_seq_region, next_seq_region, extension)
     if not ret: 
-        print "no search region "
+        print("no search region ")
         return matching_region
     [region_name, region_file, region_start, region_end, fasta] = ret
     if not fasta: 
-        print "no search region (fasta empty)"
+        print("no search region (fasta empty)")
         return matching_region
 
     # give me that sequence,  now that you have it    
@@ -738,19 +738,19 @@ def find_missing_exons(human_gene_list, db_info):
 	# Get stable id and description of this gene -- DEBUG
 	human_stable      = gene2stable    (cursor, human_gene_id)
         human_description = get_description(cursor, human_gene_id)
-	if verbose:  print human_gene_id, human_stable, human_description
+	if verbose:  print(human_gene_id, human_stable, human_description)
 
 	# progress counter 
 	gene_ct += 1
 	if (not gene_ct%10): 
-            print "processed ",   gene_ct, " out of ", len(human_gene_list), "genes"
-            print "exons found: ",  found, " out of ", sought, "sought"
+            print("processed ",   gene_ct, " out of ", len(human_gene_list), "genes")
+            print("exons found: ",  found, " out of ", sought, "sought")
 
 	# find all human exons for this gene that we are tracking in the database 
 	human_exons = [e for e in gene2exon_list(cursor, human_gene_id) 
                        if e.covering_exon < 0 and e.is_canonical and e.is_known]
         if not human_exons: 
-            print "\t\t no exons found"
+            print("\t\t no exons found")
             continue
 
 	human_exons.sort(key=lambda exon: exon.start_in_gene)
@@ -803,14 +803,14 @@ def find_missing_exons(human_gene_list, db_info):
             if len (he.pepseq) < 3:  # can I ever get rid of all the nonsense I find in Ensembl?
                 bad_he.append(he)
                 continue
-            for species in  map_table.keys(): 
+            for species in  list(map_table.keys()): 
                 if species =='homo_sapiens': continue
                 if map_table[species][he]:
                     one_species_found = True
                     break
             if not one_species_found:
                 bad_he.append(he)
-        human_exons = filter (lambda he: not he in bad_he, human_exons)
+        human_exons = [he for he in human_exons if not he in bad_he]
 
  
   
@@ -825,13 +825,13 @@ def find_missing_exons(human_gene_list, db_info):
         next[he] = None
 
         # fill,  starting from the species that are nearest to the human
-        if not map_table.keys():
+        if not list(map_table.keys()):
             continue # whatever
 
-        species_sorted_from_human = species_sort(cursor,map_table.keys(),species)[1:]
+        species_sorted_from_human = species_sort(cursor,list(map_table.keys()),species)[1:]
 
         for species in species_sorted_from_human:
-            print species
+            print(species)
             # see which exons have which neighbors
             #if verbose: print he.exon_id, species
             no_left  = []
@@ -949,7 +949,7 @@ def find_missing_exons(human_gene_list, db_info):
                 if reply=='NNN':
                     unsequenced += 1
                     
-            print species, "sought", sought, " unseq", unsequenced
+            print(species, "sought", sought, " unseq", unsequenced)
                 
 
 #########################################
@@ -961,7 +961,7 @@ def main():
 
 
     if len(sys.argv) > 1 and  len(sys.argv)<4:
-        print "usage: %s <set name> <number of threads> <method>" % sys.argv[0]
+        print("usage: %s <set name> <number of threads> <method>" % sys.argv[0])
         exit(1)
     elif len(sys.argv)==4:
 
@@ -973,7 +973,7 @@ def main():
         
         method = sys.argv[3]
         if not (method =='usearch' or method=='sw_sharp'):
-            print "unrecognized method: ", method
+            print("unrecognized method: ", method)
             exit(1)
 
     # sw_sharps chokes if there is only one graphics card
@@ -986,17 +986,17 @@ def main():
     [all_species, ensembl_db_name] = get_species (cursor)
 
 
-    print '======================================='
-    print sys.argv[0]
+    print('=======================================')
+    print(sys.argv[0])
     if special:
-        print "using", special, "set"
+        print("using", special, "set")
         if special == 'complement':
             gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
         else:
             gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
 
     else:
-        print "using all protein coding genes"
+        print("using all protein coding genes")
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
 

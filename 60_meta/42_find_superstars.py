@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import MySQLdb
-import commands
+import subprocess
 from   el_utils.mysql   import  connect_to_mysql, search_db, store_or_update
 from   el_utils.ensembl import  *
 
@@ -50,7 +50,7 @@ def main():
             [gene_id, description] = search_description (cursor, gene_name)
         if (not gene_id): continue
 
-        print gene_name, " ** ",  gene_id, description
+        print(gene_name, " ** ",  gene_id, description)
 
 
     cursor.close()

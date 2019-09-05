@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import MySQLdb
-import commands
+import subprocess
 from   random               import choice
 from   el_utils.mysql       import  connect_to_mysql, search_db
 from   el_utils.ensembl     import  *
@@ -26,19 +26,19 @@ def main():
 
     for gene_id in gene_ids:
         
-        print gene2stable (cursor, gene_id = gene_id),
+        print(gene2stable (cursor, gene_id = gene_id), end=' ')
 
         # what is the length of the canonical transcript according to Ensembl
         canonical_translation = get_canonical_transl (acg, cursor, gene_id, species, strip_X=False)
         if ( not canonical_translation):
-            print "no canonical transl found for ", gene2stable (cursor, gene_id = gene_id)
+            print("no canonical transl found for ", gene2stable (cursor, gene_id = gene_id))
             continue
 
         # find all canonical coding exons associated with the gene id
         exons = get_canonical_coding_exons (cursor, gene_id)
         if (not exons):
             ct +=1
-            print gene_id, gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
+            print(gene_id, gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot)
 
         exit(1)
 

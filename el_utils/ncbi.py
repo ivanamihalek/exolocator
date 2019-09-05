@@ -1,17 +1,13 @@
-from el_utils.mysql   import search_db, switch_to_db
+from el_utils.mysql   import *
 from el_utils.ensembl import species2taxid, get_compara_name
 
 
 ########
-def taxid2name (cursor, tax_id):
-    switch_to_db (cursor, get_ncbi_tax_name (cursor))
-    qry  = "select name_txt from names where tax_id= %d " % int(tax_id)
-    qry += " and name_class = 'scientific name'";
-    rows = search_db (cursor, qry)
-    if (not rows):
-        rows = search_db (cursor, qry, verbose = True)
-        return ""
-    return rows[0][0]
+def taxid2sciname (cursor, tax_id):
+    qry  = "select name  from ncbi_taxonomy.ncbi_taxa_name where taxon_id= %d " % int(tax_id)
+    qry += "and name_class='scientific name'"
+    name = hard_landing_search(cursor,qry)[0][0]
+    return name
 
 ########
 def taxid2trivial (cursor, tax_id):
@@ -39,16 +35,9 @@ def trivial2taxid (cursor, trivial_name):
 ########
 def taxid2parentid (cursor, tax_id):
     switch_to_db (cursor, get_ncbi_tax_name (cursor))
-    qry = "select parent_tax_id from nodes where tax_id= %d " % int(tax_id)
-    rows = search_db (cursor, qry)
-    if (not rows):
-        rows = search_db (cursor, qry, verbose = True)
-        return ""
-    try:
-        retval = int(rows[0][0])
-    except:
-        retval = ""
-    return retval
+    qry = "select parent_id from  ncbi_taxa_node where taxon_id= %d " % int(tax_id)
+    parent_id = hard_landing_search(cursor, qry)[0][0]
+    return parent_id
 
 ########
 def get_ncbi_tax_name (cursor):
@@ -96,7 +85,7 @@ def trivial2scientific (cursor, trivial):
                 tax_id = int(rows[0][0])
             except:
                 return ""
-            sciname = taxid2name(cursor, tax_id).lower().replace(" ", "_")
+            sciname = taxid2sciname(cursor, tax_id).lower().replace(" ", "_")
             #canis_lupus_familiaris - don't know what to do with it
             sciname = sciname.replace("_familiaris", "")
             return sciname

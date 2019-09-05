@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import MySQLdb
-import commands, pdb
+import subprocess, pdb
 from   el_utils.mysql   import  *  
 from   el_utils.ensembl import  * 
 from   el_utils.utils   import  *
@@ -31,7 +31,7 @@ def main():
     for n in range(number_of_lists):
         outf = open ("stable_ids_"+str(n)+".txt", "w")
         for stable_id in gene_list[n]:
-            print >> outf, stable_id
+            print(stable_id, file=outf)
         outf.close()
 
     cursor.close()
