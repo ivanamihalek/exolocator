@@ -48,24 +48,30 @@ def val2mysqlval(value):
 
 ########
 def store_or_update(cursor, table, fixed_fields, update_fields, verbose=False, primary_key='id'):
+	# the update heuristics below expect that the type us either in or str
 
-	conditions = " and ".join(["{}={}".format(k,val2mysqlval(v)) for k,v in fixed_fields.items()])
+	primary_keys = []
 
 	# check if the row exists
+	conditions = " and ".join(["{}={}".format(k,val2mysqlval(v)) for k,v in fixed_fields.items()])
 	qry = "select %s from %s  where %s "  % (primary_key, table, conditions)
-	rows   = search_db (cursor, qry, verbose)
-	exists = rows and (type(rows[0][0]) is int)
+	rows   = error_intolerant_search (cursor, qry)
+	exists = rows and len(rows)>0
 
-	row_id = -1
-	if exists: row_id = rows[0][0]
-	if verbose: print("\n".join(["", qry, "exists? {}".format(exists), str(row_id)]))
-	if exists and not update_fields: return row_id
+	if exists:
+		primary_keys = [row[0] for row in rows]
+		if type(primary_keys[0])== int:
+			row_id_string = ",".join(["{}".format(row_id) for row_id in primary_keys])
+		else:
+			row_id_string = ",".join(["'{}'".format(row_id) for row_id in primary_keys])
 
-	if exists: # if it exists, update
+		if verbose: print("\nqry + exists? {} {}".format(exists, row_id_string))
+		if not update_fields: return primary_keys
+
 		if verbose: print("exists; updating")
 		qry  = "update %s set " % table
 		qry += ",".join(["{}={}".format(k,val2mysqlval(v)) for k,v in update_fields.items()])
-		qry += " where %s " % conditions
+		qry += " where {} in ({})".format(primary_key, row_id_string)
 
 	else: # if not, make a new one
 		if verbose: print("does not exist; making new one")
@@ -86,15 +92,16 @@ def store_or_update(cursor, table, fixed_fields, update_fields, verbose=False, p
 	if rows:
 		rows   = search_db (cursor, qry, verbose=True)
 		print(rows[0])
-		return -1
+		return False
 
-	if row_id==-1:
+	if not exists:
 		rows = search_db (cursor, "select last_insert_id()" )
 		try:
-			row_id = int(rows[0][0])
+			primary_keys =  rows[0]
 		except:
-			row_id = -1
-	return row_id
+			return False
+
+	return primary_keys
 
 
 #########################################

@@ -1,10 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
+import os
 
-import MySQLdb
-import commands, os
-from   el_utils.mysql         import  connect_to_mysql, search_db, store_or_update
-from   el_utils.config_reader import  ConfigurationReader
+from config import Config
+
 from   el_utils.ensembl       import  *
 
 
@@ -14,26 +13,24 @@ def store_seq_filenames (cursor, name, file_names):
     update_fields = {}
     fixed_fields ['name']      = name
     update_fields['file_name'] = file_names
-    retval = store_or_update (cursor, "seq_region", fixed_fields, update_fields)
+    retval = store_or_update (cursor, "seq_region", fixed_fields, update_fields, primary_key='seq_region_id')
     return retval
 
 ####################################################
 def main():
 
-    db = connect_to_mysql()
-    cr = ConfigurationReader()
+    db = connect_to_mysql(Config.mysql_conf_file)
 
     cursor = db.cursor()
-    fasta_path = cr.get_path('ensembl_fasta')
+    fasta_path = "/storage/databases/ensembl-{}/fasta".format(Config.release_number)
 
     [all_species, ensembl_db_name] = get_species (cursor)
 
     for species in all_species:
-    #for species in ['danio_rerio']:
-        print species
+        print(species)
         dna_path = "{0}/{1}/dna".format(fasta_path, species)
         if (not os.path.exists(dna_path)):
-            print "problem:", dna_path, "not found"
+            print("problem:", dna_path, "not found")
             exit(1)
 
         fasta_files = []
@@ -45,16 +42,16 @@ def main():
         
         name2file = {}
         for file in fasta_files:
-            print dna_path, file
+            #print(dna_path, file)
             cmd = "grep '>' {0}/{1}".format(dna_path, file)
-            ret = commands.getoutput(cmd)
+            ret = subprocess.getoutput(cmd)
             headers = ret.split("\n")
-            print "number of headers: ", len(headers)
+            #print("number of headers: ", len(headers))
             for hdr in headers:
                 fields = hdr.split(" ")
                 name = fields[0].replace (">", "")
                 #print name
-                if (not name2file.has_key(name)):
+                if (name not in name2file):
                     name2file[name] = []
                 name2file[name].append(file)
 
@@ -62,13 +59,10 @@ def main():
         search_db (cursor, qry)
 
         for name in name2file.keys():
-            file_names = ""
-            for file in  name2file[name]:
-                if file_names:
-                    file_names += " "
-                file_names += file
+            file_names = " ".join(name2file[name])
+            #print(name, file_names)
             store_seq_filenames (cursor, name, file_names)
- 
+
     cursor.close()
     db    .close()
     

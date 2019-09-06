@@ -1,16 +1,14 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
+from config import Config
 
-import MySQLdb
-from   el_utils.mysql   import  *
-from   el_utils.ensembl import  *
-from   el_utils.ncbi    import  *
-
+from el_utils.ensembl import get_species
+from el_utils.ncbi    import *
 
 
 #########################################
 def make_novel_exon_table (cursor, table):
-
+    # this is a silly way to create tables - needs rewrite
 
     # if maps_to_human_exon_id is 0
     # the region was searched, but nothing was found
@@ -18,13 +16,12 @@ def make_novel_exon_table (cursor, table):
     #     indicating that the exon might not have been sequenced
     # 5p_ss and 3p_ss refer to canonical splice sites -r' and t'  refer to the intron
 
-
     qry  = "CREATE TABLE " + table + "  (exon_id INT(10) PRIMARY KEY AUTO_INCREMENT)"
     rows = search_db (cursor, qry)
     if (rows):
         return False
 
-    for column_name in ['gene_id', 'start_in_gene', 
+    for column_name in ['gene_id', 'start_in_gene',
                         'end_in_gene', 'maps_to_human_exon_id', 'exon_seq_id', 'template_exon_seq_id']:
         qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
         rows = search_db (cursor, qry)
@@ -48,9 +45,9 @@ def make_novel_exon_table (cursor, table):
         if (rows):
             return False
 
+
 #########################################
 def make_gene2exon_table (cursor):
-
 
     table = 'gene2exon'
 
@@ -59,15 +56,14 @@ def make_gene2exon_table (cursor):
     if (rows):
         return False
 
-    for column_name in ['gene_id', 'exon_id', 'start_in_gene', 'end_in_gene', 
+    for column_name in ['gene_id', 'exon_id', 'start_in_gene', 'end_in_gene',
                         'canon_transl_start', 'canon_transl_end', 'exon_seq_id']:
         qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
         rows = search_db (cursor, qry)
         if (rows):
             return False
 
-    
-    for column_name in ['strand', 'phase',  'is_known', 
+    for column_name in ['strand', 'phase',  'is_known',
                         'is_coding', 'is_canonical', 'is_constitutive']:
         qry = "ALTER TABLE %s  ADD %s tinyint" % (table, column_name)
         rows = search_db (cursor, qry)
@@ -109,7 +105,7 @@ def make_exon_seq_table (cursor):
         if (rows):
             return False
 
-    
+
     for column_name in ['is_known', 'is_sw']:
         qry = "ALTER TABLE %s  ADD %s tinyint" %  (table, column_name)
         rows = search_db (cursor, qry)
@@ -152,11 +148,11 @@ def make_coding_region_table(cursor):
         rows = search_db (cursor, qry)
         if (rows):
             return False
-     
+
 
 #########################################
 def make_orthologue_table (cursor, table):
-    
+
 
     # if congate_gene_id is 0, and source is 'rbh'
     # means that the reciprocal-best-hit was attempted but nothing was found
@@ -178,7 +174,7 @@ def make_orthologue_table (cursor, table):
         if (rows):
             return False
 
-    
+
     for column_name in ['source']:
         qry = "ALTER TABLE %s  ADD %s VARCHAR(20)" % (table, column_name)
         rows = search_db (cursor, qry)
@@ -196,10 +192,10 @@ def modify_exon_map_table (cursor):
         if (rows):
             return False
 
-    
+
 #########################################
 def make_exon_map_table (cursor):
-    
+
     table = 'exon_map'
 
     qry  = "CREATE TABLE " + table + "  (exon_map_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
@@ -230,13 +226,13 @@ def make_exon_map_table (cursor):
         rows = search_db (cursor, qry)
         if (rows):
             return False
-    
+
     for column_name in ['similarity']:
         qry = "ALTER TABLE %s add %s float" % (table, column_name)
         rows = search_db (cursor, qry)
         if (rows):
             return False
-    
+
     for column_name in ['source']:
         qry = "ALTER TABLE %s add %s VARCHAR(20)" % (table, column_name)
         rows = search_db (cursor, qry)
@@ -258,7 +254,7 @@ def make_exon_map_table (cursor):
 
 #########################################
 def make_para_exon_map_table (cursor):
-    
+
     table = 'para_exon_map'
 
     qry  = "CREATE TABLE " + table + "  (exon_map_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
@@ -283,13 +279,13 @@ def make_para_exon_map_table (cursor):
         rows = search_db (cursor, qry)
         if (rows):
             return False
-    
+
     for column_name in ['similarity']:
         qry = "ALTER TABLE %s add %s float" % (table, column_name)
         rows = search_db (cursor, qry)
         if (rows):
             return False
-    
+
     for column_name in ['source']:
         qry = "ALTER TABLE %s add %s VARCHAR(20)" % (table, column_name)
         rows = search_db (cursor, qry)
@@ -305,13 +301,11 @@ def make_para_exon_map_table (cursor):
 
 #########################################
 def make_table (cursor, db_name, table):
-    
 
     qry = "use %s" % db_name
     rows = search_db (cursor, qry, verbose=False)
     if (rows):
         return False
-
 
     if   table == 'gene2exon':
         make_gene2exon_table (cursor)
@@ -331,97 +325,90 @@ def make_table (cursor, db_name, table):
         make_para_exon_map_table (cursor)
 
     else:
-        print "I don't know how to make table '%s'" % table
+        print("I don't know how to make table '%s'" % table)
 
 
-    
+
 #########################################
 def add_filename_column (cursor, db_name):
-    
+
     qry = "alter table seq_region add file_name blob"
     rows = search_db (cursor, qry)
     if (rows):
         return False
-  
+
     return True
-   
-    
+
+
 #########################################
 def modify_filename_column (cursor, db_name):
-    
+
     qry = "alter table seq_region modify column  file_name blob"
     rows = search_db (cursor, qry)
     if (rows):
         return False
-  
+
     return True
-   
+
 
 #########################################
 def main():
-    
-    db     = connect_to_mysql()
-    cursor = db.cursor()
-    [all_species, ensembl_db_name] = get_species (cursor)
 
-    # one index I need on ncbi
-    print "making name_index on ncbi ..."
-    db_name = get_ncbi_tax_name(cursor)
-    create_index (cursor, db_name, 'name_index',    'names', ['tax_id', 'name_class'])
+    db     = connect_to_mysql(Config.mysql_conf_file)
+    cursor = db.cursor()
+    [all_species, ensembl_db_name] = get_species(cursor)
 
     # add exon tables to all species
     for species in all_species:
 
         db_name = ensembl_db_name[species]
         switch_to_db (cursor, ensembl_db_name[species])
-        
+
         for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region']:
-           if ( check_table_exists (cursor, db_name, table)):
-                print table, " found in ", db_name
-           else:
-                print table, " not found in ", db_name
+            if check_table_exists(cursor, db_name, table):
+                print(table, " found in ", db_name)
+            else:
+                print(table, " not found in ", db_name)
                 make_table (cursor, db_name, table)
-                
-        print "optimizing gene2exon"
+
+        print("optimizing gene2exon")
         qry = "optimize table gene2exon"
-        print search_db(cursor, qry)
+        print(search_db(cursor, qry))
         create_index (cursor, db_name, 'eg_index',    'gene2exon', ['exon_id', 'gene_id'])
         create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
         create_index (cursor, db_name, 'ek_index',    'exon_seq',  ['exon_id', 'is_known'])
         create_index (cursor, db_name, 'seq_index',   'exon_seq',  ['exon_seq_id'])
-        print "optimizing exon_seq"
+        print("optimizing exon_seq")
         qry = "optimize table exon_seq"
-        print search_db(cursor, qry)
-        
+        print(search_db(cursor, qry))
 
     # add file_name column to seq_region table (seq_region table  already exists in ensembl schema)
     for species in all_species:
-        print species
+        print(species)
         db_name = ensembl_db_name[species]
 
-        if ( check_column_exists (cursor, db_name, "seq_region", "file_name")):
-            print "file_name found in seq_region, ", db_name
-            #modify_filename_column (cursor, db_name)
-        else:
-            print "file_name  not found in seq_region, ", db_name, "(making the column)"
-            add_filename_column (cursor, db_name)
+        if check_column_exists(cursor, db_name, "seq_region", "file_name"):
+            print("file_name found in seq_region, ", db_name)
 
+        else:  # modify_filename_column (cursor, db_name)
+            print("file_name  not found in seq_region, ", db_name, "(making the column)")
+            add_filename_column (cursor, db_name)
 
     # add orthologue table to human - we are human-centered here
     # ditto for map (which exons from other species map onto human exons)
-    print "adding orthologue to human"
+    print("adding orthologue to human")
     species = 'homo_sapiens'
     db_name = ensembl_db_name[species]
     for table in ['orthologue', 'unresolved_ortho', 'paralogue', 'exon_map']:
-        if ( check_table_exists (cursor, db_name, table)):
-            print table, " found in ", db_name
+        if check_table_exists(cursor, db_name, table):
+            print(table, " found in ", db_name)
         else:
-            print table, " not found in ", db_name
+            print(table, " not found in ", db_name)
             make_table (cursor, db_name, table)
         if table == 'exon_map':
-            create_index (cursor, db_name,'gene_index', table, ['exon_id'])
-            create_index (cursor, db_name,'exon_index', table, ['exon_id', 'exon_known'])
-            create_index (cursor, db_name,'cognate_exon_index', table, ['cognate_exon_id', 'cognate_exon_known', 'cognate_genome_db_id'])
+            create_index(cursor, db_name,'gene_index', table, ['exon_id'])
+            create_index(cursor, db_name,'exon_index', table, ['exon_id', 'exon_known'])
+            create_index(cursor, db_name,'cognate_exon_index', table, ['cognate_exon_id', 'cognate_exon_known', 'cognate_genome_db_id'])
         else:
             create_index (cursor, db_name,'gene_index', table, ['gene_id'])
 
@@ -429,17 +416,16 @@ def main():
     for species in all_species:
         db_name = ensembl_db_name[species]
         for table in ['paralogue', 'para_exon_map']:
-            if ( check_table_exists (cursor, db_name, table)):
-                print table, " found in ", db_name
+            if check_table_exists(cursor, db_name, table):
+                print(table, " found in ", db_name)
             else:
-                print table, " not found in ", db_name
-                make_table (cursor, db_name, table)
+                print(table, " not found in ", db_name)
+                make_table(cursor, db_name, table)
             if table == 'para_exon_map':
-                create_index (cursor, db_name,'gene_index', table, ['exon_id'])
+                create_index(cursor, db_name,'gene_index', table, ['exon_id'])
             else:
-                create_index (cursor, db_name,'gene_index', table, ['gene_id'])
+                create_index(cursor, db_name,'gene_index', table, ['gene_id'])
 
- 
     cursor.close()
     db.close()
 
