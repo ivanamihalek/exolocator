@@ -4,21 +4,21 @@
 from el_utils.ensembl   import *
 from el_utils.processes import parallelize
 from config import Config
+from time import time
+
 
 #########################################
-def store_paralogues (cursor_species, gene_id, paralogues):
+def store_paralogues (cursor, ensembl_db_name, paralogues):
 
-	for para in paralogues:
-		[para_stable_id, species, cognate_genome_db_id] = para
-		para_gene_id = stable2gene (cursor_species, para_stable_id)
+	id_string = ",".join(paralogues)
+	print(id_string)
+	exit()
+	group_id = store_without_checking(cursor, 'paralogue_groups', {'stable_ids':id_string}, database=ensembl_db_name)
+	if group_id<0: exit()
+	for stable_id in paralogues:
+		qry = "update gene set paralogue_group_id=%d where stable_id='%s'"%(group_id,stable_id)
+		error_intolerant_search(cursor, qry)
 
-		fixed_fields  = {'gene_id': gene_id,
-						 'cognate_genome_db_id': cognate_genome_db_id,
-						 'cognate_gene_id': para_gene_id}
-
-		update_fields = {'source': 'ensembl'}
-
-		store_or_update(cursor_species, 'paralogue', fixed_fields, update_fields, primary_key='orth_pair_id')
 
 #########################################
 def collect_paralogues(species_list, db_info):
@@ -35,14 +35,18 @@ def collect_paralogues(species_list, db_info):
 	switch_to_db (cursor_compara, ensembl_compara_name)
 
 	for species in species_list:
+		time_species_started = time()
 		print(species)
 		switch_to_db (cursor_species,  ensembl_db_name[species])
 		# it looks I cannot demand that the gene is known, because for many species
 		# most of the genes still have 'predicted' status
-		gene_list = get_gene_ids(cursor_species, biotype='protein_coding')
+		gene_ids = get_gene_ids(cursor_species, biotype='protein_coding')
+		gene_list = dict([(gene_id,False) for gene_id in gene_ids])
 		ct = 0
-		for gene_id in gene_list:
+		time0 = time()
+		for gene_id, seen in gene_list.items():
 			ct += 1
+			if seen: continue
 			# find stable
 			stable_id = gene2stable(cursor_species, gene_id=gene_id)
 			# memebr id refers to entries in compara db
@@ -50,13 +54,15 @@ def collect_paralogues(species_list, db_info):
 
 			#print gene_id, stable_id, member_id
 			if not ct%100:
-				print("\t", species, ct , "out of ", len(gene_list))
+				time1 = time()
+				print("\t", species, ct , "out of", len(gene_list), "in %.1f min"%((time1-time0)/60))
+				time0 = time1
 			# find all paralogue pairs suggested for this gene
 			ortho_type = 'within_species_paralog'
 			paralogues = get_orthologues(cursor_compara, ortho_type, member_id)
 			if not paralogues: continue
-			store_paralogues (cursor_species, gene_id, paralogues)
-		print(species, 'done')
+			store_paralogues (cursor_species, gene_id, [p[0] for p in paralogues])
+		print(species, "done in %.1f min"%((time()-time_species_started)/60))
 
 	cursor_species.close()
 	db_species.close()
@@ -66,7 +72,7 @@ def collect_paralogues(species_list, db_info):
 #########################################
 def main():
 
-	number_of_chunks = 10
+	number_of_chunks = 1 # this is not working (deadlock?)
 
 	db     = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()

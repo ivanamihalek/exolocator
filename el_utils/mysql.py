@@ -45,8 +45,39 @@ def val2mysqlval(value):
 		return "\'%s\'" % value
 	return "{}".format(value)
 
+#########################################
+def store_without_checking(cursor, table, fields, verbose=False, database=None, ignore=False):
 
-########
+	qry = "insert "
+	# if we use INSERT IGNORE, the duplication attempt is ignored
+	if ignore: qry += "ignore "
+	qry += "%s.%s "%(database,table) if database else "%s "%table
+
+	qry += "("
+	qry += ",".join(fields.keys())
+	qry += ")"
+
+	qry += " values "
+	qry += "("
+	qry += ",".join([val2mysqlval(v) for v in fields.values()])
+	qry += ")"
+
+	rows  = search_db (cursor, qry, verbose)
+	if verbose: print("qry:",qry,"\n", "rows:", rows)
+
+	if rows:
+		rows   = search_db (cursor, qry, verbose=True)
+		print(rows)
+		return -1
+
+	rows = search_db (cursor, "select last_insert_id()" )
+	try:
+		row_id = int(rows[0][0])
+	except:
+		row_id = -1
+	return row_id
+
+#########################################
 def store_or_update(cursor, table, fixed_fields, update_fields, verbose=False, primary_key='id'):
 	# the update heuristics below expect that the type us either in or str
 
@@ -106,31 +137,17 @@ def store_or_update(cursor, table, fixed_fields, update_fields, verbose=False, p
 
 #########################################
 def create_index(cursor, db_name, index_name, table, columns):
-	if not switch_to_db(cursor, db_name):
-		return False
+
+	error_intolerant_search(cursor, "use %s"%db_name)
 
 	# check whether this index exists already
 	qry = "show index from %s where key_name like '%s'" % ( table, index_name)
-	rows = search_db(cursor, qry, verbose=True)
-	if (rows):
-		print(rows)
-		return True
+	rows = search_db(cursor, qry, verbose=False)
+	if rows: return True
 
 	# columns is a list of columns that we want to have indexed
-	qry = "create index %s  on %s " % (index_name, table)
-	qry += " ("
-	first = True
-	for column in columns:
-		if (not first):
-			qry += ", "
-		qry += column
-		first = False
-	qry += ")"
-
-	rows = search_db(cursor, qry, verbose=True)
-	if (rows):
-		print(rows)
-		return False
+	qry = "create index %s on %s (%s)" % (index_name, table, ",".join(columns))
+	error_intolerant_search(cursor, qry)
 
 	return True
 
@@ -150,6 +167,14 @@ def check_column_exists(cursor, db_name, table_name, column_name):
 	else:
 		return False
 
+#########################################
+def add_column(cursor, db_name, table_name, column_name, col_type, default=None, after_col=None):
+	if not column_exists (cursor, db_name, table_name, column_name):
+		qry = "alter table  %s.%s add  %s %s  " %(db_name, table_name, column_name, col_type)
+		if default: qry += "default %s " % default
+		if after_col: qry += "after %s" % after_col
+		error_intolerant_search(cursor,qry)
+	return
 
 #########################################
 def check_table_exists(cursor, db_name, table_name):

@@ -2,13 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/60_meta/10_genes_with_multiple_paralogue_groups.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/02_add_tables.py" beforeDir="false" afterPath="$PROJECT_DIR$/02_add_tables.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03_seqname2file.py" beforeDir="false" afterPath="$PROJECT_DIR$/03_seqname2file.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/04_paralogues.py" beforeDir="false" afterPath="$PROJECT_DIR$/04_paralogues.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/exon.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/exon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/05_orthologues.py" beforeDir="false" afterPath="$PROJECT_DIR$/05_orthologues.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/60_meta/02_split_gene_list.py" beforeDir="false" afterPath="$PROJECT_DIR$/60_meta/20_split_gene_list.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/el_utils/mysql.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/mysql.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/processes.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/processes.py" afterDir="false" />
     </list>
     <ignored path="exolocator.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,56 +29,55 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="01_make_meta_db.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/01_make_meta_db.py">
+      <file leaf-file-name="10_genes_with_multiple_paralogue_groups.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/60_meta/10_genes_with_multiple_paralogue_groups.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="463">
-              <caret line="317" lean-forward="true" selection-start-line="316" selection-end-line="317" />
+            <state relative-caret-position="546">
+              <caret line="63" lean-forward="true" selection-start-line="55" selection-end-line="63" />
               <folding>
-                <element signature="e#1025#1055#0" expanded="true" />
+                <element signature="e#23#48#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="03_seqname2file.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/03_seqname2file.py">
+      <file leaf-file-name="clique.py" pinned="false" current-in-tab="false">
+        <entry file="file:///usr/local/lib/python3.7/dist-packages/networkx/algorithms/clique.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1050">
-              <caret line="64" selection-start-line="64" selection-end-line="64" />
+            <state relative-caret-position="88">
+              <caret line="102" column="4" selection-start-line="102" selection-start-column="4" selection-end-line="102" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ensembl.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="44">
+              <caret line="595" column="54" lean-forward="true" selection-start-line="595" selection-start-column="54" selection-end-line="595" selection-end-column="54" />
               <folding>
-                <element signature="e#23#32#0" expanded="true" />
+                <element signature="e#19#33#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="04_paralogues.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/04_paralogues.py">
+      <file leaf-file-name="05_orthologues.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/05_orthologues.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
-              <caret line="60" column="26" lean-forward="true" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="26" />
+            <state relative-caret-position="301">
+              <caret line="38" column="57" lean-forward="true" selection-start-line="38" selection-start-column="1" selection-end-line="38" selection-end-column="57" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ncbi.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/60_meta/el_utils/ncbi.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
               <folding>
-                <element signature="e#82#117#0" expanded="true" />
+                <element signature="e#0#30#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="processes.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/el_utils/processes.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2106">
-              <caret line="208" lean-forward="true" selection-start-line="208" selection-end-line="208" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mysql.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/el_utils/mysql.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-120">
-              <caret line="53" selection-start-line="53" selection-end-line="53" />
             </state>
           </provider>
         </entry>
@@ -96,9 +97,13 @@
       <find>species_shorthand</find>
       <find>donkey</find>
       <find>hard</find>
+      <find>inde</find>
+      <find>without</find>
+      <find>cursor_species</find>
     </findStrings>
     <replaceStrings>
       <replace>exolocator_meta</replace>
+      <replace>cursor</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -107,12 +112,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/60_meta/02_split_gene_list.py" />
-        <option value="$PROJECT_DIR$/60_meta/42_find_superstars.py" />
         <option value="$PROJECT_DIR$/90_other_stuff/get_canonical_translations.py" />
         <option value="$PROJECT_DIR$/90_other_stuff/list_mitochondrial.py" />
         <option value="$PROJECT_DIR$/90_other_stuff/mutation_sig_bg_data.py" />
-        <option value="$PROJECT_DIR$/05_orthologues.py" />
         <option value="$PROJECT_DIR$/06_exon_coordinates.py" />
         <option value="$PROJECT_DIR$/07_exon_dna_seqs.py" />
         <option value="$PROJECT_DIR$/08_exon_pep_seqs.py" />
@@ -138,7 +140,6 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" />
         <option value="$PROJECT_DIR$/00_download_dbs/05_drop_old_databases.pl" />
-        <option value="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" />
         <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/00_download_dbs/05_drop_old_databases.py" />
         <option value="$PROJECT_DIR$/00_download_dbs/04_make_ncbi_tax_db.pl" />
@@ -148,16 +149,20 @@
         <option value="$PROJECT_DIR$/30_db_migration/12_reconstruct_para_alnmts.py" />
         <option value="$PROJECT_DIR$/30_db_migration/11_paralogue_directory_cleanup.py" />
         <option value="$PROJECT_DIR$/01_make_meta_db.py" />
-        <option value="$PROJECT_DIR$/el_utils/ensembl.py" />
         <option value="$PROJECT_DIR$/el_utils/tree.py" />
         <option value="$PROJECT_DIR$/el_utils/ncbi.py" />
         <option value="$PROJECT_DIR$/60_meta/41_make_tree.py" />
         <option value="$PROJECT_DIR$/el_utils/exon.py" />
-        <option value="$PROJECT_DIR$/02_add_tables.py" />
         <option value="$PROJECT_DIR$/03_seqname2file.py" />
         <option value="$PROJECT_DIR$/el_utils/processes.py" />
-        <option value="$PROJECT_DIR$/el_utils/mysql.py" />
+        <option value="$PROJECT_DIR$/05_orthologues.py" />
         <option value="$PROJECT_DIR$/04_paralogues.py" />
+        <option value="$PROJECT_DIR$/el_utils/mysql.py" />
+        <option value="$PROJECT_DIR$/02_add_tables.py" />
+        <option value="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" />
+        <option value="$PROJECT_DIR$/60_meta/el_utils/cliques.py" />
+        <option value="$PROJECT_DIR$/el_utils/ensembl.py" />
+        <option value="$PROJECT_DIR$/60_meta/10_genes_with_multiple_paralogue_groups.py" />
       </list>
     </option>
   </component>
@@ -185,12 +190,23 @@
             <path>
               <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
               <item name="exolocator" type="462c0819:PsiDirectoryNode" />
+              <item name="00_download_dbs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
+              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
               <item name="40_workflows" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
               <item name="exolocator" type="462c0819:PsiDirectoryNode" />
               <item name="60_meta" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
+              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
+              <item name="60_meta" type="462c0819:PsiDirectoryNode" />
+              <item name="el_utils" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
@@ -317,52 +333,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="3" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/08_exon_pep_seqs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="138" column="14" selection-start-line="138" selection-start-column="14" selection-end-line="138" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/09_make_ortho_maps.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="81" column="5" selection-start-line="81" selection-start-column="5" selection-end-line="81" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/10_ortho_exon_map_to_msa.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="115" column="44" selection-start-line="115" selection-start-column="44" selection-end-line="115" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/12_novel_exon_cleanup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="79" column="32" selection-start-line="79" selection-start-column="32" selection-end-line="79" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/13_gene2exon_store.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="423" selection-start-line="423" selection-end-line="423" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/15_ortho_exon_map_to_msa.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="217" column="1" selection-start-line="217" selection-start-column="1" selection-end-line="217" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/16_make_para_maps.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -501,13 +475,6 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="666">
-          <caret line="145" column="28" selection-start-line="145" selection-start-column="28" selection-end-line="145" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.shell_history" />
     <entry file="file://$PROJECT_DIR$/.pydevproject" />
     <entry file="file://$PROJECT_DIR$/.project" />
@@ -539,13 +506,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/30_db_migration/11_paralogue_directory_cleanup.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="774">
@@ -567,16 +527,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="14" selection-start-line="14" selection-end-line="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="1368" column="17" lean-forward="true" selection-start-line="1368" selection-start-column="17" selection-end-line="1368" selection-end-column="17" />
-          <folding>
-            <element signature="e#19#33#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -617,16 +567,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/02_add_tables.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6564">
-          <caret line="8" column="41" lean-forward="true" selection-start-line="8" selection-start-column="41" selection-end-line="8" selection-end-column="41" />
-          <folding>
-            <element signature="e#21#46#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/03_seqname2file.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1050">
@@ -644,13 +584,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/el_utils/mysql.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-120">
-          <caret line="53" selection-start-line="53" selection-end-line="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/01_make_meta_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="463">
@@ -661,12 +594,181 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/60_meta/20_split_gene_list.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/el_utils/mysql.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="170" column="66" selection-start-line="170" selection-start-column="4" selection-end-line="170" selection-end-column="66" />
+          <folding>
+            <element signature="e#116#288#0" />
+            <element signature="e#231#276#0" />
+            <element signature="e#371#532#0" />
+            <element signature="e#475#520#0" />
+            <element signature="e#572#689#0" />
+            <element signature="e#737#861#0" />
+            <element signature="e#822#848#0" />
+            <element signature="e#898#1013#0" />
+            <element signature="e#1124#2890#0" />
+            <element signature="e#1507#2093#0" />
+            <element signature="e#2129#2504#0" />
+            <element signature="e#2311#2385#0" />
+            <element signature="e#2657#2735#0" />
+            <element signature="e#2755#2868#0" />
+            <element signature="e#3001#3465#0" />
+            <element signature="e#3715#3985#0" />
+            <element signature="e#3899#3963#0" />
+            <element signature="e#4084#4328#0" />
+            <element signature="e#4242#4306#0" />
+            <element signature="e#4426#4742#0" />
+            <element signature="e#4667#4715#0" />
+            <element signature="e#4797#5897#0" />
+            <element signature="e#4915#5035#0" />
+            <element signature="e#5123#5247#0" />
+            <element signature="e#5312#5433#0" />
+            <element signature="e#5457#5526#0" />
+            <element signature="e#5529#5603#0" />
+            <element signature="e#5954#6287#0" />
+            <element signature="e#6333#6532#0" />
+            <element signature="e#6436#6506#0" />
+            <element signature="e#6599#6873#0" />
+            <element signature="e#6606#6745#0" />
+            <element signature="e#6777#6861#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/02_add_tables.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="870">
+          <caret line="452" column="14" selection-start-line="452" selection-start-column="14" selection-end-line="452" selection-end-column="14" />
+          <folding>
+            <element signature="e#210#1696#0" />
+            <element signature="e#210#264#0" />
+            <element signature="e#769#900#0" />
+            <element signature="e#910#1054#0" />
+            <element signature="e#1109#1258#0" />
+            <element signature="e#1349#1494#0" />
+            <element signature="e#1554#1696#0" />
+            <element signature="e#1781#3146#0" />
+            <element signature="e#1988#2123#0" />
+            <element signature="e#2133#2277#0" />
+            <element signature="e#2302#2406#0" />
+            <element signature="e#2416#2560#0" />
+            <element signature="e#2612#2756#0" />
+            <element signature="e#2812#2956#0" />
+            <element signature="e#3006#3146#0" />
+            <element signature="e#3230#4335#0" />
+            <element signature="e#3457#3601#0" />
+            <element signature="e#3658#3803#0" />
+            <element signature="e#3893#4035#0" />
+            <element signature="e#4424#4816#0" />
+            <element signature="e#4677#4816#0" />
+            <element signature="e#4910#5799#0" />
+            <element signature="e#4910#4956#0" />
+            <element signature="e#5262#5406#0" />
+            <element signature="e#5465#5605#0" />
+            <element signature="e#5651#5799#0" />
+            <element signature="e#5884#6088#0" />
+            <element signature="e#5948#6088#0" />
+            <element signature="e#6172#7934#0" />
+            <element signature="e#6418#6561#0" />
+            <element signature="e#6632#6775#0" />
+            <element signature="e#6834#6973#0" />
+            <element signature="e#7022#7162#0" />
+            <element signature="e#7211#7352#0" />
+            <element signature="e#7397#7544#0" />
+            <element signature="e#7596#7747#0" />
+            <element signature="e#7794#7934#0" />
+            <element signature="e#8022#9404#0" />
+            <element signature="e#8273#8416#0" />
+            <element signature="e#8487#8630#0" />
+            <element signature="e#8679#8819#0" />
+            <element signature="e#8868#9009#0" />
+            <element signature="e#9054#9201#0" />
+            <element signature="e#9253#9404#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/04_paralogues.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="60" column="26" lean-forward="true" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="26" />
+        <state relative-caret-position="198">
+          <caret line="35" lean-forward="true" selection-start-line="27" selection-end-line="35" />
           <folding>
-            <element signature="e#82#117#0" expanded="true" />
+            <element signature="e#81#113#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/60_meta/el_utils/ncbi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="128" column="78" selection-start-line="128" selection-start-column="78" selection-end-line="128" selection-end-column="78" />
+          <folding>
+            <element signature="e#3266#3271#0#Perl5" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="774">
+          <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="e#410#436#0#Perl5" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/60_meta/el_utils/cliques.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1188">
+          <caret line="66" lean-forward="true" selection-start-line="66" selection-end-line="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/05_orthologues.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="38" column="57" lean-forward="true" selection-start-line="38" selection-start-column="1" selection-end-line="38" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python3.7/dist-packages/networkx/algorithms/clique.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="102" column="4" selection-start-line="102" selection-start-column="4" selection-end-line="102" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="44">
+          <caret line="595" column="54" lean-forward="true" selection-start-line="595" selection-start-column="54" selection-end-line="595" selection-end-column="54" />
+          <folding>
+            <element signature="e#19#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/60_meta/10_genes_with_multiple_paralogue_groups.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="546">
+          <caret line="63" lean-forward="true" selection-start-line="55" selection-end-line="63" />
+          <folding>
+            <element signature="e#23#48#0" expanded="true" />
           </folding>
         </state>
       </provider>

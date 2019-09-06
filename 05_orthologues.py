@@ -1,9 +1,7 @@
-#!/usr/bin/python -u
+#!/usr/bin/python3 -u
 # we are collecting orthologues for human only
 # the possibility that "A is ortholog of B, and B is ortholog of C, but A is not ortholog of C"
 # is something we don't want to know about right now
-
-
 
 import MySQLdb
 from   el_utils.mysql   import  connect_to_mysql, connect_to_db, search_db
@@ -11,31 +9,24 @@ from   el_utils.mysql   import  store_or_update,  switch_to_db
 from   el_utils.ensembl import  *
 from   el_utils.threads import  parallelize
 
+
 #########################################
 def store_orthologues (cursor_human, ortho_table, cursor, all_species, 
                        ensembl_db_name,  gene_id, orthos):
 
     for ortho in orthos:
         [ortho_stable, species, cognate_genome_db_id] = ortho
-        if (not species in all_species):
-            continue
+        if species not in all_species: continue
         ortho_gene_id = stable2gene (cursor, ortho_stable, ensembl_db_name[species])
-        
-        fixed_fields  = {}
-        fixed_fields ['gene_id']              = gene_id
-        fixed_fields ['cognate_genome_db_id'] = cognate_genome_db_id
+        fixed_fields  = {'gene_id': gene_id, 'cognate_genome_db_id': cognate_genome_db_id}
+        update_fields = {'source': 'ensembl'}
 
-        update_fields = {}
-        update_fields['source']          = 'ensembl'
-        
-        if ( ortho_table == 'orthologue'):
+        if ortho_table == 'orthologue':
             update_fields['cognate_gene_id'] = ortho_gene_id
         else:
             fixed_fields['cognate_gene_id'] = ortho_gene_id
-            
 
         store_or_update (cursor_human, ortho_table, fixed_fields, update_fields)
-
 
 
 #########################################
@@ -52,12 +43,11 @@ def collect_orthologues(gene_list, db_info):
     switch_to_db (cursor_human, ensembl_db_name['homo_sapiens'])
 
     ensembl_compara_name = get_compara_name(cursor)
-    print ensembl_compara_name
+    print(ensembl_compara_name)
  
     db_compara     = connect_to_mysql()
     cursor_compara = db_compara.cursor()
     switch_to_db (cursor_compara, ensembl_compara_name)
-
 
     ortho_table = {}
     ortho_table ['ortholog_one2one']          = 'orthologue'
@@ -65,6 +55,7 @@ def collect_orthologues(gene_list, db_info):
     ortho_table ['possible_ortholog']         = 'unresolved_ortho'
     ortho_table ['ortholog_one2many']         = 'unresolved_ortho'
     ortho_table ['ortholog_many2many']        = 'unresolved_ortho'
+
     ct = 0
     for gene_id in gene_list:
         ct += 1
@@ -74,19 +65,18 @@ def collect_orthologues(gene_list, db_info):
         member_id = stable2member(cursor_compara, stable_id)
 
         #print gene_id, stable_id, member_id
-        if ( not ct%100): print ct , "out of ", len(gene_list)
+        if ( not ct%100): print(ct , "out of ", len(gene_list))
         # in compara table, get everything that homology has to say about
         # the possible orthologues
         # find all orthologous pairs suggested for this gene
         for ortho_type in ['ortholog_one2one','possible_ortholog', 'apparent_ortholog_one2one',
                            'ortholog_one2many','ortholog_many2many']:
             orthos = get_orthologues(cursor_compara, ortho_type, member_id)
+            if not orthos: continue
+            store_orthologues(cursor_human, ortho_table[ortho_type], cursor, all_species,
+                               ensembl_db_name, gene_id, orthos)
 
-            if ( orthos):
-                store_orthologues (cursor_human, ortho_table[ortho_type], cursor, all_species, 
-                                   ensembl_db_name, gene_id, orthos)
-        
- 
+
     cursor.close()
     db.close()
     cursor_human.close()
