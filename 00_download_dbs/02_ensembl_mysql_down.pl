@@ -126,7 +126,9 @@ $ftp->cwd($foreign_dir)
 my $compara_sql = 'ensembl_compara_'.$release_num.'.sql.gz';
  
 foreach $item ('homology.txt.gz', 'homology_member.txt.gz', 
-	       'gene_member.txt.gz', 'genome_db.txt.gz', 'species_tree_node.txt.gz', $compara_sql) {
+	       'gene_member.txt.gz', 'genome_db.txt.gz',
+            'species_set.txt.gz', 'method_link_species_set.txt.gz',
+            'species_tree_node.txt.gz', $compara_sql) {
 
     (grep {/$item/} @contents) || die "$item not found in $foreign_dir\n";
     

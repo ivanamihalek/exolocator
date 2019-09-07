@@ -340,7 +340,7 @@ def make_table (cursor, db_name, table):
 	elif table in ['orthologue', 'unresolved_ortho']:
 		make_orthologue_table (cursor, table)
 	elif table == 'paralogue_groups':
-		make_para_groups_table(cursor)
+		make_para_groups_table(cursor, db_name)
 	elif table == 'exon_map':
 		make_exon_map_table (cursor)
 	elif table == 'para_exon_map':
@@ -440,7 +440,7 @@ def main():
 		if check_table_exists(cursor, db_name, 'paralogue'):
 			search_db(cursor, "drop table %s.paralogue"%db_name)
 		# add_column checks whether column exists
-		add_column(cursor, db_name, 'gene', 'paralogue_group_id', "INT")
+		add_column(cursor, db_name, 'gene', 'paralogue_group_ids', "text")
 		#for table in ['paralogue_groups', 'para_exon_map']:
 		for table in ['paralogue_groups']:
 			if check_table_exists(cursor, db_name, table):
@@ -450,7 +450,8 @@ def main():
 				make_table(cursor, db_name, table)
 			if table == 'para_exon_map':
 				create_index(cursor, db_name,'gene_index', table, ['exon_id'])
-		exit()
+
+
 	cursor.close()
 	db.close()
 

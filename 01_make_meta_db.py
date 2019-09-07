@@ -52,9 +52,9 @@ def set_trivial_names():
 	trivial['gallus_gallus']          = 'chicken'
 	trivial['gasterosteus_aculeatus'] = 'stickleback'
 	trivial['gorilla_gorilla']        = 'gorilla'
-	trivial['heterocephalus_glaber_female']           = 'naked_mole_rat_female'
-	trivial['heterocephalus_glaber_male']           = 'naked_mole_rat_male'
-	trivial['homo_sapiens']           = 'human'
+	trivial['heterocephalus_glaber_female']  = 'naked_mole_rat_female'
+	trivial['heterocephalus_glaber_male']  = 'naked_mole_rat_male'
+	trivial['homo_sapiens']                = 'human'
 	trivial['ictidomys_tridecemlineatus']  = 'squirrel'
 	trivial['latimeria_chalumnae']         = 'coelacanth'
 	trivial['lepisosteus_oculatus']        = 'spotted_gar'
@@ -123,6 +123,30 @@ def  make_parameter_table (cursor, table):
 		if (rows):
 			return False
 	return False
+
+#########################################
+def  make_flags_table (cursor, db_name, table):
+	switch_to_db (cursor, db_name)
+	table = 'flags'
+	if check_table_exists(cursor, db_name, table):
+		qry = "drop table " + table
+		search_db(cursor, qry, verbose=True)
+
+	qry = ""
+	qry += "CREATE TABLE  %s (" % table
+	qry += "     id INT NOT NULL, "
+	qry += "  	 genome_db text NOT NULL, "
+	qry += "  	 flag VARCHAR(30) NOT NULL, "
+	qry += "  	 raised_by VARCHAR(50) NOT NULL, "
+	qry += "  	 comment text NOT NULL, "
+	qry += "	 PRIMARY KEY (id) "
+	qry += ") ENGINE=MyISAM"
+
+	rows = search_db(cursor, qry)
+	print(qry)
+	print(rows)
+
+
 
 
 #########################################
@@ -316,6 +340,7 @@ def main():
 	cursor = db.cursor()
 	search_db(cursor,"set autocommit=1")
 
+
 	#######################################################
 	# check if the config db exists -- if not, make it
 	exolocator_meta_db_name   = "exolocator_meta"
@@ -331,6 +356,10 @@ def main():
 		print(exolocator_meta_db_name, "database found")
 
 	switch_to_db(cursor, exolocator_meta_db_name)
+
+	#######################################################
+	# create flags database (for flagging arbitrary problems - to be filled as we go)
+	make_flags_table(cursor, exolocator_meta_db_name, 'flags')
 
 	#######################################################
 	# store parameters, to make sure we are consistent and reproducible

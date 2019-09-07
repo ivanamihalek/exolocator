@@ -153,7 +153,7 @@ def create_index(cursor, db_name, index_name, table, columns):
 
 
 #########################################
-def check_column_exists(cursor, db_name, table_name, column_name):
+def column_exists(cursor, db_name, table_name, column_name):
 	if not switch_to_db(cursor, db_name):
 		return False
 
