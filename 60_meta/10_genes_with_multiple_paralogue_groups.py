@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -u
 
+# prep work ofr writing 04_paralogues.py in the main directory
 from config import Config
 from el_utils.ensembl import *
 
@@ -46,10 +47,12 @@ def find_genome_db_id(cursor_compara, cursor_species):
 
 	return genome_db_id
 
+
 #########################################
 def find_paralogue_cliques(cursor_compara, cursor_species,  ensembl_db_name, species):
 	print("#"*20, "\n", species)
 	switch_to_db (cursor_species, ensembl_db_name[species])
+	gene_list = get_gene_ids (cursor_species, biotype='protein_coding', stable=True)
 	genome_db_id = find_genome_db_id(cursor_compara, cursor_species)
 
 	# get taxon_id for the species
@@ -75,20 +78,22 @@ def find_paralogue_cliques(cursor_compara, cursor_species,  ensembl_db_name, spe
 			qry2 += "where hom.homology_id=%d " % homology_id
 			# make sure we are in the same assembly because for some species there might be several
 			qry2 += "and hom.gene_member_id=gen.gene_member_id and gen.genome_db_id=%d" % genome_db_id
-			print("\r%s"%qry2, end='')
+			#print("\r%s"%qry2, end='')
 			ret = error_intolerant_search(cursor_compara,qry2)
 			if not ret or len(ret)==0:continue
 			if len(ret)!=2:
 				print("pair does not seem to be a pair")
 				print(homology_id, ret)
 				exit()
-
-			paralogous_pairs[homology_id] = [row[0] for row in ret]
-
+			pair = [gene_member2stable(cursor_compara,row[0]) for row in ret]
+			# we do not want some obscure pseudogenes and non-coding sequences
+			if pair[0] in gene_list and pair[1] in gene_list:
+				paralogous_pairs[homology_id] = pair
 
 		print("\t node id:", node_id, "number of pairs:", len(paralogous_pairs))
 		# networx can crash the whole system if the number of pairs is too big
 		if len(paralogous_pairs)>10000:
+			print("\t --> this will be flagged")
 			#flag_database(ensembl_db_name[species])
 			continue
 
@@ -103,7 +108,9 @@ def find_paralogue_cliques(cursor_compara, cursor_species,  ensembl_db_name, spe
 		print("\t number of cliques:",  len(list(cliques)))
 		if len(list(cliques))>2000:
 			#flag_database(ensembl_db_name[species])
+			print("\t --> this will be flagged")
 			continue
+
 		# print("\t largest cliques")
 		# for clk in cliques[:10]:
 		# 	print(clk)

@@ -6,6 +6,10 @@ from el_utils.ensembl import get_species
 from el_utils.ncbi    import *
 
 
+# for Incorrect datetime value: '0000-00-00 00:00:00' for column 'created_date' at row 1
+# when trying to do alter table, see https://stackoverflow.com/questions/35565128/mysql-incorrect-datetime-value-0000-00-00-000000/35565866
+
+
 #########################################
 def make_novel_exon_table (cursor, table):
 	# this is a silly way to create tables - needs rewrite
@@ -181,6 +185,7 @@ def make_orthologue_table (cursor, table):
 		if (rows):
 			return False
 
+
 #########################################
 def modify_exon_map_table (cursor):
 
@@ -252,6 +257,7 @@ def make_exon_map_table (cursor):
 		if (rows):
 			return False
 
+
 #########################################
 def make_para_exon_map_table (cursor):
 
@@ -299,6 +305,7 @@ def make_para_exon_map_table (cursor):
 			return False
 
 
+#########################################
 def make_para_groups_table(cursor, db_name):
 	switch_to_db (cursor, db_name)
 	table = 'paralogue_groups'
@@ -316,7 +323,6 @@ def make_para_groups_table(cursor, db_name):
 	rows = search_db(cursor, qry)
 	print(qry)
 	print(rows)
-
 
 
 #########################################
@@ -379,70 +385,70 @@ def main():
 	db     = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
+	# the 000 date problem
+	qry = " SET @@sql_mode :='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'"
+	error_intolerant_search(cursor,qry)
 
-	# # add exon tables to all species
-	# for species in all_species:
-	#
-	# 	db_name = ensembl_db_name[species]
-	# 	switch_to_db (cursor, ensembl_db_name[species])
-	#
-	# 	for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region']:
-	# 		if check_table_exists(cursor, db_name, table):
-	# 			print(table, " found in ", db_name)
-	# 		else:
-	# 			print(table, " not found in ", db_name)
-	# 			make_table (cursor, db_name, table)
-	#
-	# 	print("optimizing gene2exon")
-	# 	qry = "optimize table gene2exon"
-	# 	print(search_db(cursor, qry))
-	# 	create_index (cursor, db_name, 'eg_index',    'gene2exon', ['exon_id', 'gene_id'])
-	# 	create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
-	# 	create_index (cursor, db_name, 'ek_index',    'exon_seq',  ['exon_id', 'is_known'])
-	# 	create_index (cursor, db_name, 'seq_index',   'exon_seq',  ['exon_seq_id'])
-	# 	print("optimizing exon_seq")
-	# 	qry = "optimize table exon_seq"
-	# 	print(search_db(cursor, qry))
-	#
-	# # add file_name column to seq_region table (seq_region table  already exists in ensembl schema)
-	# for species in all_species:
-	# 	print(species)
-	# 	db_name = ensembl_db_name[species]
-	#
-	# 	if check_column_exists(cursor, db_name, "seq_region", "file_name"):
-	# 		print("file_name found in seq_region, ", db_name)
-	#
-	# 	else:  # modify_filename_column (cursor, db_name)
-	# 		print("file_name  not found in seq_region, ", db_name, "(making the column)")
-	# 		add_filename_column (cursor, db_name)
-	#
-	# # add orthologue table to human - we are human-centered here
-	# # ditto for map (which exons from other species map onto human exons)
-	# print("adding orthologue to human")
-	# species = 'homo_sapiens'
-	# db_name = ensembl_db_name[species]
-	# for table in ['orthologue', 'unresolved_ortho', 'paralogue', 'exon_map']:
-	# 	if check_table_exists(cursor, db_name, table):
-	# 		print(table, " found in ", db_name)
-	# 	else:
-	# 		print(table, " not found in ", db_name)
-	# 		make_table (cursor, db_name, table)
-	# 	if table == 'exon_map':
-	# 		create_index(cursor, db_name,'gene_index', table, ['exon_id'])
-	# 		create_index(cursor, db_name,'exon_index', table, ['exon_id', 'exon_known'])
-	#       create_index(cursor, db_name,'cognate_exon_index', table, ['cognate_exon_id', 'cognate_exon_known', 'cognate_genome_db_id'])
-	# 	else:
-	# 		create_index (cursor, db_name,'gene_index', table, ['gene_id'])
+	# add exon tables to all species
+	for species in all_species:
+
+		db_name = ensembl_db_name[species]
+		switch_to_db (cursor, ensembl_db_name[species])
+
+		for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region']:
+			if check_table_exists(cursor, db_name, table):
+				print(table, " found in ", db_name)
+			else:
+				print(table, " not found in ", db_name)
+				make_table (cursor, db_name, table)
+
+		print("optimizing gene2exon")
+		qry = "optimize table gene2exon"
+		print(search_db(cursor, qry))
+		create_index (cursor, db_name, 'eg_index',    'gene2exon', ['exon_id', 'gene_id'])
+		create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
+		create_index (cursor, db_name, 'ek_index',    'exon_seq',  ['exon_id', 'is_known'])
+		create_index (cursor, db_name, 'seq_index',   'exon_seq',  ['exon_seq_id'])
+		print("optimizing exon_seq")
+		qry = "optimize table exon_seq"
+		print(search_db(cursor, qry))
+
+	# add file_name column to seq_region table (seq_region table  already exists in ensembl schema)
+	for species in all_species:
+		print(species)
+		db_name = ensembl_db_name[species]
+
+		if column_exists(cursor, db_name, "seq_region", "file_name"):
+			print("file_name found in seq_region, ", db_name)
+
+		else:  # modify_filename_column (cursor, db_name)
+			print("file_name  not found in seq_region, ", db_name, "(making the column)")
+			add_filename_column (cursor, db_name)
+
+	# add orthologue table to human - we are human-centered here
+	# ditto for map (which exons from other species map onto human exons)
+	print("adding orthologue to human")
+	species = 'homo_sapiens'
+	db_name = ensembl_db_name[species]
+	for table in ['orthologue', 'unresolved_ortho', 'paralogue', 'exon_map']:
+		if check_table_exists(cursor, db_name, table):
+			print(table, " found in ", db_name)
+		else:
+			print(table, " not found in ", db_name)
+			make_table (cursor, db_name, table)
+		if table == 'exon_map':
+			create_index(cursor, db_name,'gene_index', table, ['exon_id'])
+			create_index(cursor, db_name,'exon_index', table, ['exon_id', 'exon_known'])
+			create_index(cursor, db_name,'cognate_exon_index', table, ['cognate_exon_id', 'cognate_exon_known', 'cognate_genome_db_id'])
+		else:
+			create_index (cursor, db_name,'gene_index', table, ['gene_id'])
 
 	# for other species, add paralogue map pnly
 	for species in all_species:
 		db_name = ensembl_db_name[species]
-		if check_table_exists(cursor, db_name, 'paralogue'):
-			search_db(cursor, "drop table %s.paralogue"%db_name)
 		# add_column checks whether column exists
 		add_column(cursor, db_name, 'gene', 'paralogue_group_ids', "text")
-		#for table in ['paralogue_groups', 'para_exon_map']:
-		for table in ['paralogue_groups']:
+		for table in ['paralogue_groups', 'para_exon_map']:
 			if check_table_exists(cursor, db_name, table):
 				print(table, " found in ", db_name)
 			else:
