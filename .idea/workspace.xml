@@ -2,65 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/03_canonical_peptide_sequences.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/05_all_vs_all_paralog_search.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/06_paralogue_test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/07_gene_level_paralogues.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/01_make_meta_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_make_meta_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02_add_tables.py" beforeDir="false" afterPath="$PROJECT_DIR$/01_add_tables.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03_seqname2file.py" beforeDir="false" afterPath="$PROJECT_DIR$/02_seqname2file.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/04_paralogues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/05_orthologues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/06_exon_coordinates.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/07_exon_dna_seqs.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/08_exon_pep_seqs.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/09_make_ortho_maps.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/10_ortho_exon_map_to_msa.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/11_find_missing_exons.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/12_novel_exon_cleanup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/13_gene2exon_store.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/14_make_novel_exon_maps.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_ortho_exon_map_to_msa.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/16_make_para_maps.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/17_para_exon_map_to_msa.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/01_db_stats.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/02_gene_stats.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/03_seqname2file_check.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/06_gene2exon_check.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/08_exon_seq_check.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/10_check_ortho_maps.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/11_spit_exon_almt.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/12_novel_exons_inspector.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/13_novel_exons_stats.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/15_inspect_individual_gene.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/20_checks_and_balances/30_06_check_almt_reconstruction_failure.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/21_check_alt_splices.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/22_find_missing_genes.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/01_dump_exons.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/02_read_exons.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/03_dump_orthologues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/04_read_orthos.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/06_reconstruct_ortho_alnmts.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/07_dump_exon_map.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/08_read_exon_map.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/09_dump_paralogues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/10_read_paralogues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/11_paralogue_directory_cleanup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/12_reconstruct_para_alnmts.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/19_alt_splice_almts.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/20_make_name_resolution_table.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/21_add_common_names_to_orthologues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/24_copy_orthos.pl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/25_copy_paras.pl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/26_remove_sw_exons.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/alignment.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/bzcustom" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/30_db_migration/el_utils" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/40_workflows/01_from_ortho_maps_to_migration.pl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/40_workflows/62_workflow_02.pl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/40_workflows/63_workflow_03.pl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/40_workflows/71_annotation_transfer.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/mysql.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/mysql.py" afterDir="false" />
     </list>
     <ignored path="exolocator.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -79,26 +25,52 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="01_add_tables.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/01_add_tables.py">
+      <file leaf-file-name="03_canonical_peptide_sequences.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/03_canonical_peptide_sequences.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="784">
-              <caret line="386" column="56" selection-start-line="386" selection-start-column="4" selection-end-line="386" selection-end-column="56" />
+            <state relative-caret-position="388">
+              <caret line="46" selection-start-line="43" selection-end-line="46" />
               <folding>
-                <element signature="e#121#209#0" />
+                <element signature="e#20#41#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="03_canonical_peptide_sequences.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/03_canonical_peptide_sequences.py">
+      <file leaf-file-name="05_all_vs_all_paralog_search.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/05_all_vs_all_paralog_search.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="784">
-              <caret line="68" selection-start-line="68" selection-end-line="68" />
+            <state relative-caret-position="468">
+              <caret line="77" column="57" selection-start-line="77" selection-start-column="57" selection-end-line="77" selection-end-column="57" />
               <folding>
-                <element signature="e#20#41#0" expanded="true" />
+                <element signature="e#151#172#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="06_paralogue_test.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/06_paralogue_test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="576">
+              <caret line="41" column="44" selection-start-line="41" selection-start-column="44" selection-end-line="41" selection-end-column="44" />
+              <folding>
+                <element signature="e#21#46#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="07_gene_level_paralogues.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/07_gene_level_paralogues.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file leaf-file-name="01_ensembl_fasta_format.pl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="648">
+              <caret line="37" column="81" selection-start-line="37" selection-start-column="55" selection-end-line="37" selection-end-column="81" />
             </state>
           </provider>
         </entry>
@@ -107,25 +79,7 @@
         <entry file="file://$PROJECT_DIR$/00_download_dbs/config.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="198">
-              <caret line="11" selection-start-line="11" selection-end-line="11" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="00_make_meta_db.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/00_make_meta_db.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2394">
-              <caret line="136" column="48" selection-start-line="136" selection-start-column="20" selection-end-line="136" selection-end-column="48" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ensembl.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17190">
-              <caret line="958" column="41" selection-start-line="958" selection-start-column="41" selection-end-line="958" selection-end-column="41" />
+              <caret line="11" column="28" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -165,10 +119,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/06_exon_coordinates.py" />
-        <option value="$PROJECT_DIR$/07_exon_dna_seqs.py" />
-        <option value="$PROJECT_DIR$/08_exon_pep_seqs.py" />
-        <option value="$PROJECT_DIR$/09_make_ortho_maps.py" />
         <option value="$PROJECT_DIR$/10_ortho_exon_map_to_msa.py" />
         <option value="$PROJECT_DIR$/12_novel_exon_cleanup.py" />
         <option value="$PROJECT_DIR$/13_gene2exon_store.py" />
@@ -213,14 +163,19 @@
         <option value="$PROJECT_DIR$/02_add_tables.py" />
         <option value="$PROJECT_DIR$/04_paralogues.py" />
         <option value="$PROJECT_DIR$/02_seqname2file.py" />
-        <option value="$PROJECT_DIR$/00_download_dbs/config.py" />
         <option value="$PROJECT_DIR$/el_utils/ensembl.py" />
         <option value="$PROJECT_DIR$/03_canonical_peptide_sequences.py" />
+        <option value="$PROJECT_DIR$/05_canonical_peptide_sequences.py" />
+        <option value="$PROJECT_DIR$/00_download_dbs/config.py" />
+        <option value="$PROJECT_DIR$/05_all_vs_all_paralog_search.py" />
+        <option value="$PROJECT_DIR$/06_paralogue_test.py" />
+        <option value="$PROJECT_DIR$/07_gene_level_paralogues.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2108" />
+    <option name="x" value="2089" />
+    <option name="y" value="29" />
     <option name="width" value="1689" />
     <option name="height" value="1012" />
   </component>
@@ -244,22 +199,6 @@
               <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
               <item name="exolocator" type="462c0819:PsiDirectoryNode" />
               <item name="00_download_dbs" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-              <item name="60_meta" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-              <item name="60_meta" type="462c0819:PsiDirectoryNode" />
-              <item name="el_utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-              <item name="el_utils" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -338,7 +277,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="2108" y="0" width="1689" height="1012" extended-state="0" />
+    <frame x="2089" y="29" width="1689" height="1012" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21788715" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -384,27 +324,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/30_db_migration/06_reconstruct_ortho_alnmts.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="1478" selection-start-line="1478" selection-end-line="1478" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/30_db_migration/09_dump_paralogues.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="88" selection-start-line="88" selection-end-line="88" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/40_workflows/71_annotation_transfer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="160" column="4" selection-start-line="160" selection-start-column="4" selection-end-line="160" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/60_meta/48_count_unsequenced.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -473,13 +392,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="661">
           <caret line="40" column="6" selection-start-line="40" selection-start-column="6" selection-end-line="40" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="756">
-          <caret line="43" selection-start-line="43" selection-end-line="43" />
         </state>
       </provider>
     </entry>
@@ -656,27 +568,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17190">
           <caret line="958" column="41" selection-start-line="958" selection-start-column="41" selection-end-line="958" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/03_canonical_peptide_sequences.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="784">
-          <caret line="68" selection-start-line="68" selection-end-line="68" />
-          <folding>
-            <element signature="e#20#41#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -699,6 +594,53 @@
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="648">
+          <caret line="37" column="81" selection-start-line="37" selection-start-column="55" selection-end-line="37" selection-end-column="81" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/00_download_dbs/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="28" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/03_canonical_peptide_sequences.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="388">
+          <caret line="46" selection-start-line="43" selection-end-line="46" />
+          <folding>
+            <element signature="e#20#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/05_all_vs_all_paralog_search.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="77" column="57" selection-start-line="77" selection-start-column="57" selection-end-line="77" selection-end-column="57" />
+          <folding>
+            <element signature="e#151#172#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/06_paralogue_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="41" column="44" selection-start-line="41" selection-start-column="44" selection-end-line="41" selection-end-column="44" />
+          <folding>
+            <element signature="e#21#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/07_gene_level_paralogues.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>

@@ -39,6 +39,9 @@ sys_tfm
 *to_*.pdb
 *seqs_not_found
 .creds
+*.blastp
+*.txt
+
 
 
 # OS generated files #
