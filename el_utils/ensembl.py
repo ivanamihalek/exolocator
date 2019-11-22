@@ -560,11 +560,11 @@ def get_gene_biotype(cursor, gene_id, db_name=None):
 	if (db_name):
 		if not switch_to_db(cursor, db_name):
 			return False
-
-	qry = "select biotype from gene where gene_id = %d " % int(gene_id)
-	rows = search_db(cursor, qry)
-	if (not rows):
-		return ""
+	if type(gene_id)==str and 'ENS' in gene_id:
+		qry = "select biotype from gene where stable_id = '%s' " % gene_id
+	else:
+		qry = "select biotype from gene where gene_id = %d " % int(gene_id)
+	rows = hard_landing_search(cursor, qry)
 
 	return rows[0][0]
 
@@ -957,11 +957,11 @@ def gene2stable_canon_transl(cursor, gene_id, db_name=None):
 
 
 #########################################
-def gene2canon_transl(cursor, gene_id, db_name=None, ):
+def gene2canon_transl(cursor, gene_id, db_name=None, stable=False):
 	if (db_name and not switch_to_db(cursor, db_name)):
 		return False
-
-	qry = "select translation.translation_id  from translation, gene "
+	field = "translation.stable_id" if stable else "translation.translation_id"
+	qry = "select %s from translation, gene " % field
 	qry += " where gene.canonical_transcript_id = translation.transcript_id "
 	qry += " and gene.gene_id = %d " % gene_id
 	rows = search_db(cursor, qry, verbose=False)

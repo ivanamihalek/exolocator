@@ -1,5 +1,6 @@
 import MySQLdb, sys, warnings
 
+
 #########################################
 def error_intolerant_search(cursor, qry):
 	ret =  search_db(cursor, qry)
@@ -8,6 +9,7 @@ def error_intolerant_search(cursor, qry):
 		search_db(cursor, qry, verbose=True)
 		exit()
 	return ret
+
 
 #########################################
 def hard_landing_search(cursor, qry):
@@ -18,12 +20,11 @@ def hard_landing_search(cursor, qry):
 	return ret
 
 
-
 ########
 def check_null(variable):
 	if variable is None:
 		return None
-	if (type(variable) is str and variable == "None"):
+	if type(variable) is str and variable == "None":
 		return None
 	return variable
 
@@ -36,6 +37,7 @@ def switch_to_db(cursor, db_name):
 		print(rows)
 		return False
 	return True
+
 
 ########
 def val2mysqlval(value):

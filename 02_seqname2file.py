@@ -4,7 +4,7 @@ import os
 
 from config import Config
 
-from   el_utils.ensembl       import  *
+from el_utils.ensembl       import  *
 
 
 ####################################################

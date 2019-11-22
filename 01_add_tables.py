@@ -315,7 +315,7 @@ def make_para_groups_table(cursor, db_name):
 
 	qry = ""
 	qry += "CREATE TABLE  %s (" % table
-	qry += "     group_id INT NOT NULL, "
+	qry += "     group_id INT NOT NULL AUTO_INCREMENT, "
 	qry += "  	 stable_ids text NOT NULL, "
 	qry += "	 PRIMARY KEY (group_id) "
 	qry += ") ENGINE=MyISAM"

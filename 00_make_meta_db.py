@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """ 
-@package 01_make_meta_db.py
+@package 00_make_meta_db.py
 @brief  Creating ad filling the configuration database. Hardcoded stuff is here.
 @author Ivana
 @date   2012, 2019
@@ -134,7 +134,7 @@ def  make_flags_table (cursor, db_name, table):
 
 	qry = ""
 	qry += "CREATE TABLE  %s (" % table
-	qry += "     id INT NOT NULL, "
+	qry += "     id INT NOT NULL  AUTO_INCREMENT, "
 	qry += "  	 genome_db text NOT NULL, "
 	qry += "  	 flag VARCHAR(30) NOT NULL, "
 	qry += "  	 raised_by VARCHAR(50) NOT NULL, "
