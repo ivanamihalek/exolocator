@@ -41,9 +41,6 @@ def main():
 
 	#######################
 	print("extracting sequences")
-	if  os.path.exists(out_fasta): os.remove(out_fasta)
-	cmd = "touch {}".format(out_fasta)
-	subprocess.call(["bash","-c", cmd])
 
 	tmpfile = "tmp.fa"
 

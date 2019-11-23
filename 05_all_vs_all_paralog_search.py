@@ -7,6 +7,9 @@ from config import Config
 from el_utils.ensembl import  *
 from el_utils.mysql import  *
 
+# after this, to proceed to gene level paralogues need to know exon structure
+# so do the exons first
+
 ####################################################
 def process_blast_search(blastout, visited, paralogue_file):
 	inf = open(blastout,"r")
