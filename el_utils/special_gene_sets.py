@@ -1,9 +1,9 @@
 #########################################
 
 import os
-from mysql import *
-from utils import erropen
-from ensembl import  *
+from .mysql import *
+from .utils import erropen
+from .ensembl import  *
 
 #########################################
 def get_complement_ids(cursor, ensembl_db_name, config_reader):
@@ -19,11 +19,11 @@ def get_complement_ids(cursor, ensembl_db_name, config_reader):
     for theme_name in theme_names:
         fnm  = path + '/' + theme_name + '.txt'
         if not os.path.exists(fnm):
-            print fnm, "not found"
+            print(fnm, "not found")
             exit(1)
 
         if not os.path.getsize(fnm) > 0:
-            print fnm, "empty"
+            print(fnm, "empty")
             exit(1)
 
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -38,7 +38,7 @@ def get_complement_ids(cursor, ensembl_db_name, config_reader):
             rows = search_db (cursor, qry)
             if not rows: continue
             if 'ERROR' in rows[0]:
-                print rows[0]
+                print(rows[0])
                 exit(1)
             theme_id_set.add(int(rows[0][0]))
         inf.close()
@@ -60,11 +60,11 @@ def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
     path = config_reader.get_path('resources')
     fnm  = path + '/' + theme_name + '.txt'
     if not os.path.exists(fnm):
-        print fnm, "not found"
+        print(fnm, "not found")
         exit(1)
 
     if not os.path.getsize(fnm) > 0:
-        print fnm, "empty"
+        print(fnm, "empty")
         exit(1)
 
     switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
@@ -79,7 +79,7 @@ def get_theme_ids(cursor, ensembl_db_name, config_reader, theme_name):
         rows = search_db (cursor, qry)
         if not rows: continue
         if 'ERROR' in rows[0]:
-            print rows[0]
+            print(rows[0])
             exit(1)
         gene_ids.append(int(rows[0][0]))
     inf.close()
@@ -93,7 +93,7 @@ def  human_genes_w_novel_exon_orthologues (cursor, ensembl_db_name):
 
     human_exons = []
     for table in ['sw_exon', 'usearch_exon']:
-        for db in ensembl_db_name.values():
+        for db in list(ensembl_db_name.values()):
             switch_to_db (cursor, db)
             qry  = "select distinct(maps_to_human_exon_id) from %s" % table
             rows = search_db (cursor, qry)
@@ -113,7 +113,7 @@ def  human_genes_w_novel_exon_orthologues (cursor, ensembl_db_name):
                 human_genes.append(row[0])
         
     
-    print "human exons: ", len(human_exons),  "from genes: ", len(human_genes)
+    print("human exons: ", len(human_exons),  "from genes: ", len(human_genes))
 
 
     return human_genes

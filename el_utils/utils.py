@@ -1,4 +1,4 @@
-import sys, os,  re, commands
+import sys, os,  re, subprocess
 import string, random
 from subprocess import Popen, PIPE, STDOUT
 from tempfile   import NamedTemporaryFile
@@ -26,13 +26,13 @@ def cigar_line (seq_human, seq_other):
     alignment_line = []
 
     if ( not len(seq_human) ==  len(seq_other) ):
-        print "alignment_line:  the seqeunces must be aligned"
+        print("alignment_line:  the seqeunces must be aligned")
         return ""
     else:
         length = len(seq_human)
 
     if not length:
-        print "zero length sequence (?)"
+        print("zero length sequence (?)")
         return ""
 
     for i in range(length):
@@ -128,17 +128,17 @@ def sw_search (cfg, acg, query_seq, target_seq, delete= True):
     # do  SW# search
     swsharpcmd = acg.generate_SW_nt (qry_filename, tgt_filename)
     #print swsharpcmd
-    resultstr  = commands.getoutput (swsharpcmd)
+    resultstr  = subprocess.getoutput (swsharpcmd)
 
 
     if 'Segmentation' in  resultstr:
-        print swsharpcmd
-        print  " ** ", resultstr
+        print(swsharpcmd)
+        print(" ** ", resultstr)
         resultstr = ""
 
     if delete:
         cmd = "rm  {0}  {1} ".format (qry_filename, tgt_filename)
-        stdout  = commands.getoutput (cmd)
+        stdout  = subprocess.getoutput (cmd)
 
 
     return resultstr
@@ -206,18 +206,18 @@ def usearch (cfg, acg, query_seq, target_seq, delete= True):
 
     # do  usearch
     cmd = acg.generate_usearch_nt (qry_filename, tgt_filename, outname)
-    stdout  = commands.getoutput (cmd)
+    stdout  = subprocess.getoutput (cmd)
     if 'Segmentation' in  stdout:
-        print  cmd
-        print  " ** ", stdout
+        print(cmd)
+        print(" ** ", stdout)
         resultstr = ""
 
     # what happens if the search fails?
-    resultstr =  commands.getoutput ("cat "+ outname)
+    resultstr =  subprocess.getoutput ("cat "+ outname)
     
     if delete:
         cmd = "rm  {0}  {1}  {2}".format (qry_filename, tgt_filename, outname)
-        stdout  = commands.getoutput (cmd)
+        stdout  = subprocess.getoutput (cmd)
 
 
     return resultstr
@@ -235,7 +235,7 @@ def parse_sw_output (resultstr):
 
         # Parse result
         seqlen = min(int(re.split('\D+',r[1])[1]),int(re.split('\D+',r[3])[1]))
-        identity, matchlen = map(int, re.split('\D+', r[7])[1:3])
+        identity, matchlen = list(map(int, re.split('\D+', r[7])[1:3]))
         #similarity = int(re.split('\D+',r[8])[1])
         #gaps       = int(re.split('\D+',r[9])[1])
         #score      = float(r[10].split()[1])
@@ -248,7 +248,7 @@ def parse_sw_output (resultstr):
         # ... but lets keep what might be the best match
         if matchlen > longest:
             longest = matchlen
-            [search_start, search_end, template_start, template_end] = map(int,re.split('\D+',r[6])[1:5])
+            [search_start, search_end, template_start, template_end] = list(map(int,re.split('\D+',r[6])[1:5]))
 
             aligned_qry_seq = ""
             for row in r[13::3]: # every third row
@@ -283,8 +283,8 @@ def parse_usearch_output (resultstr):
                 if len(fields) < 7: break
                 target =  fields[-1]
 
-                [search_start, search_end]      =  map (int, re.split('\D+', fields[5])[:2])
-                [template_start, template_end]  =  map (int, re.split('\D+', fields[4])[:2])
+                [search_start, search_end]      =  list(map (int, re.split('\D+', fields[5])[:2]))
+                [template_start, template_end]  =  list(map (int, re.split('\D+', fields[4])[:2]))
 
                 table_entry[target] = [search_start, search_end, template_start, template_end]
 
@@ -295,7 +295,7 @@ def parse_usearch_output (resultstr):
 
         elif 'Evalue' in lines[lineno] and  read_start >0: # the result is in the previous couple of lines
             
-            [matchlen, number_matching, identity] = map(int, re.split('\D+', lines[lineno])[:3])
+            [matchlen, number_matching, identity] = list(map(int, re.split('\D+', lines[lineno])[:3]))
             if  matchlen < 0.4*seqlen or identity < 10: continue
                                                         
             # FOUND AN EXON!
@@ -364,18 +364,18 @@ def get_fasta (acg, species, searchname, searchfile, searchstrand, searchstart, 
 #########################################
 def check_seq_length(sequence, msg):
 
-    if not sequence.values():
+    if not list(sequence.values()):
          return [False, "no sequences"] 
-    aln_length = len(sequence.values()[0])
+    aln_length = len(list(sequence.values())[0])
     if not aln_length:
         return [False, "aln length zero"]
-    for name, seq in sequence.iteritems():
+    for name, seq in sequence.items():
         if not len(seq) == aln_length:
-            print msg, 
-            print "seq length check failure  for",  name, " length: ", len(seq),  "aln_length", aln_length
+            print(msg, end=' ') 
+            print("seq length check failure  for",  name, " length: ", len(seq),  "aln_length", aln_length)
             afa_fnm = msg+'.afa'
-            print "writing the offending almt to ", afa_fnm
-            output_fasta (afa_fnm, sequence.keys(), sequence)
+            print("writing the offending almt to ", afa_fnm)
+            output_fasta (afa_fnm, list(sequence.keys()), sequence)
             return [False, "seq length check failure"]
     return [True,""]
 
@@ -389,20 +389,20 @@ def strip_gaps (sequence):
     if not check_seq_length(sequence, 'in_strip_gaps')[0]: 
         return ""
     
-    aln_length = len(sequence.itervalues().next())
+    aln_length = len(next(iter(sequence.values())))
 
     if aln_length is None or aln_length==0:
-        print "aln length zero (?)"
+        print("aln length zero (?)")
         return sequence
     
-    for name, seq in sequence.iteritems():
+    for name, seq in sequence.items():
         if not len(seq): 
             continue
         sequence[name] = seq.replace("-Z-", "BZB")
 
     for pos in range(aln_length):
         all_gaps[pos] = True
-        for name, seq in sequence.iteritems():
+        for name, seq in sequence.items():
             if not len(seq): 
                 continue
             if (not seq[pos]=='-'):
@@ -410,7 +410,7 @@ def strip_gaps (sequence):
                 break
 
 
-    for name, seq in sequence.iteritems():
+    for name, seq in sequence.items():
         if not len(seq): 
             continue
         seq_stripped[name] = ""
@@ -419,7 +419,7 @@ def strip_gaps (sequence):
             seq_stripped[name] += seq[pos]
 
 
-    for name, seq in seq_stripped.iteritems():
+    for name, seq in seq_stripped.items():
         if not len(seq): 
             continue
         seq_stripped[name] = seq_stripped[name].replace("BZB", "-Z-")
@@ -432,7 +432,7 @@ def erropen (file,mode):
     try:
         of = open (file,mode)
     except:
-        print "error opening ", file
+        print("error opening ", file)
         return None
 
     return of
@@ -453,18 +453,18 @@ def output_fasta (filename, headers, sequence):
     if not outf: return False
 
     for header  in  headers:
-        if not sequence.has_key(header): continue
-        print >> outf, ">"+header
+        if header not in sequence: continue
+        print(">"+header, file=outf)
         chunk_size   = 50
         chunk_number =  1
         while chunk_number*chunk_size <= len (sequence[header]):
             start = (chunk_number-1)*chunk_size
             end = start+chunk_size
-            print >> outf, sequence[header][start:end]
+            print(sequence[header][start:end], file=outf)
             chunk_number += 1
         if chunk_number*chunk_size > len (sequence[header]):
             start = (chunk_number-1)*chunk_size
-            print >> outf, sequence[header][start:]
+            print(sequence[header][start:], file=outf)
     outf.close()
 
     return True
@@ -648,10 +648,10 @@ def  pairwise_tanimoto (seq1, seq2, use_heuristics=True):
         tanimoto = sqrt(float(similar_length*similar_length)/(l1*l2)) 
 
     if False:
-        print l1, l2, "   com", common_length, "   sim", similar_length,  "   eq", equal_length,  "   tani", tanimoto
-        print  " (similar_length > 0.9*l1 ) ", (similar_length > 0.9*l1 )
-        print  " (similar_length > 0.9*l2 ) ", (similar_length > 0.9*l2 )
-        print  "  ( similar_length >= 0.66*common_length > 4) ",  ( similar_length >= 0.9*common_length > 4)
+        print(l1, l2, "   com", common_length, "   sim", similar_length,  "   eq", equal_length,  "   tani", tanimoto)
+        print(" (similar_length > 0.9*l1 ) ", (similar_length > 0.9*l1 ))
+        print(" (similar_length > 0.9*l2 ) ", (similar_length > 0.9*l2 ))
+        print("  ( similar_length >= 0.66*common_length > 4) ",  ( similar_length >= 0.9*common_length > 4))
 
     return tanimoto
 

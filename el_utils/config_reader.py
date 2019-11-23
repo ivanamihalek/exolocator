@@ -6,7 +6,7 @@ Created on Apr 15, 2012
 '''
 # Python imports
 import os, sys, re
-from mysql import connect_to_mysql, search_db, switch_to_db
+from .mysql import connect_to_mysql, search_db, switch_to_db
 
 class ConfigurationReader:
     '''
@@ -30,8 +30,8 @@ class ConfigurationReader:
         qry    = "show databases like'%exoloc%config%'" 
         rows   = search_db (cursor, qry, verbose=False)
         if (not rows):
-            print "config database not found (by guessing)"
-            print "pls fix config_reader.py"
+            print("config database not found (by guessing)")
+            print("pls fix config_reader.py")
             cursor.close()
             db.close()
             exit (1)
@@ -54,14 +54,14 @@ class ConfigurationReader:
         qry = "select name, path from util_path"
         rows   = search_db (cursor, qry, verbose=False)
         if (not rows):
-            print "no util_path info in %s" % self.cfg_db_name
+            print(("no util_path info in %s" % self.cfg_db_name))
             cursor.close()
             db.close()
             sys.exit (1)
         for row in rows:
             [name, path] = row
             if (self.check and not os.path.exists(path)):
-                print path, " not found "
+                print((path, " not found "))
                 sys.exit (1)
             self.util_path[name] = path
 
@@ -69,14 +69,14 @@ class ConfigurationReader:
         qry  = "select name, path from dir_path"
         rows = search_db (cursor, qry, verbose=False)
         if (not rows):
-            print "no dir_path info in %s" % self.cfg_db_name
+            print(("no dir_path info in %s" % self.cfg_db_name))
             cursor.close()
             db.close()
             sys.exit (1)
         for row in rows:
             [name, path] = row
             if (self.check and not os.path.exists(path)):
-                print path, " not found "
+                print((path, " not found "))
                 sys.exit (1)
             self.dir_path[name] = path
 
@@ -85,7 +85,7 @@ class ConfigurationReader:
         qry  = "select name, value from parameter"
         rows = search_db (cursor, qry, verbose=False)
         if (not rows):
-            print "no dir_path info in %s" % self.cfg_db_name
+            print(("no dir_path info in %s" % self.cfg_db_name))
             cursor.close()
             db.close()
             sys.exit (1)
@@ -104,24 +104,24 @@ class ConfigurationReader:
         db.close()
    
     def spill_all(self):
-        for name, path in self.dir_path.iteritems():
-            print name, path
-        for name, path in self.util_path.iteritems():
-            print name, path
-        for name, value in self.parameter_value.iteritems():
-            print name, value
+        for name, path in list(self.dir_path.items()):
+            print((name, path))
+        for name, path in list(self.util_path.items()):
+            print((name, path))
+        for name, value in list(self.parameter_value.items()):
+            print((name, value))
 
 
     def get_path (self, name):
-        if name in self.dir_path.keys():
+        if name in list(self.dir_path.keys()):
             return self.dir_path[name]
-        elif name in self.util_path.keys():
+        elif name in list(self.util_path.keys()):
             return self.util_path[name]
         else:
             return ""
         
     def get_value (self, name):
-        if name in self.parameter_value.keys():
+        if name in list(self.parameter_value.keys()):
             return self.parameter_value[name]
         else:
             return ""
@@ -131,4 +131,4 @@ if __name__ == '__main__':
 
     cfg    = ConfigurationReader()
     cfg.spill_all()
-    print " ** ", cfg.get_path('mafft')
+    print((" ** ", cfg.get_path('mafft')))

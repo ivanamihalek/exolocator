@@ -66,13 +66,13 @@ def check_ccds(cursor, transcript_stable_id="", transcript_id=""):
 
 #########################################
 def get_exons(cursor, gene_id, species, table):
-	if (table == 'exon'):
+	if table == 'exon':
 		return get_known_exons(cursor, gene_id, species)
-	elif (table == 'prediction_exon'):
+	elif table == 'prediction_exon':
 		return get_predicted_exons(cursor, gene_id, species)
-	elif (table == 'sw_exon'):
+	elif table == 'sw_exon':
 		return get_novel_exons(cursor, gene_id, table)
-	elif (table == 'usearch_exon'):
+	elif table == 'usearch_exon':
 		return get_novel_exons(cursor, gene_id, table)
 
 	return []
@@ -190,6 +190,7 @@ def get_gene_region(cursor, gene_id, is_known=None):
 
 
 #########################################
+# known = "has known transcript
 def get_known_exons(cursor, gene_id, species):
 	exons = []
 
@@ -199,9 +200,9 @@ def get_known_exons(cursor, gene_id, species):
 
 	rows = search_db(cursor, qry)
 
-	if (not rows):
+	if not rows:
 		return []
-	if ('Error' in rows[0]):
+	if 'Error' in rows[0]:
 		search_db(cursor, qry, verbose=True)
 		return []
 
@@ -221,7 +222,7 @@ def get_known_exons(cursor, gene_id, species):
 	for exon_id in exon_ids:
 		qry = "select * from exon where exon_id=%d" % exon_id
 		rows = search_db(cursor, qry)
-		if (not rows or 'Error' in rows[0]):
+		if not rows or 'Error' in rows[0]:
 			search_db(cursor, qry, verbose=True)
 			continue
 		exon = Exon()
