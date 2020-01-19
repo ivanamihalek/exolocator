@@ -138,18 +138,24 @@ def store_or_update(cursor, table, fixed_fields, update_fields, verbose=False, p
 
 
 #########################################
-def create_index(cursor, db_name, index_name, table, columns):
+def create_index(cursor, db_name, index_name, table, columns, verbose=False):
 
 	error_intolerant_search(cursor, "use %s"%db_name)
 
 	# check whether this index exists already
-	qry = "show index from %s where key_name like '%s'" % ( table, index_name)
+	if verbose: print("checking existence of index {} on table {} ".format(index_name, table))
+	qry = "show index from %s where key_name like '%s'" % (table, index_name)
 	rows = search_db(cursor, qry, verbose=False)
-	if rows: return True
+	if rows:
+		print("found index {} on table {}.".format(index_name, table))
+		return True
 
+	if verbose: print("creating index {} on table {} ...".format(index_name, table))
 	# columns is a list of columns that we want to have indexed
 	qry = "create index %s on %s (%s)" % (index_name, table, ",".join(columns))
 	error_intolerant_search(cursor, qry)
+	if verbose: print("creating index {} on table {} done.".format(index_name, table))
+
 
 	return True
 
@@ -193,6 +199,10 @@ def check_table_exists(cursor, db_name, table_name):
 	else:
 		return False
 
+############
+def check_and_drop_table(cursor, db_name, table):
+	search_db(cursor, "drop table if exists %s.%s"% (db_name, table))
+	return
 
 #########################################
 def table_create_time(cursor, db_name, table_name):

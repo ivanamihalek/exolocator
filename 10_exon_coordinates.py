@@ -137,8 +137,7 @@ def get_exon_end(cursor, exon_id):
 def get_translated_region(cursor, gene_id, species):
 
 	# get the region on the gene
-	is_known = (species == 'homo_sapiens')
-	ret = get_gene_region (cursor, gene_id, is_known)
+	ret = get_gene_region (cursor, gene_id)
 	if  ret:
 		[gene_seq_id,gene_region_start, gene_region_end,
 		 gene_region_strand] = ret
@@ -320,7 +319,7 @@ def sort_out_covering_exons (cursor, exons):
 def mark_coding (cursor, gene_id, species, exons):
 
 	ret = get_translated_region(cursor, gene_id, species)
-	if ( not ret ):
+	if not ret:
 		return False
 
 	[transl_region_start,transl_region_end, strand] = ret
@@ -374,7 +373,6 @@ def find_exon_info (cursor, gene_id, species):
 	# here we enforce that they are "known", that is,
 	# that they have a corresponding entry in transcript table
 	exons = get_exons(cursor, gene_id, species, 'exon')
-
 	# assorted predicted exons
 	if not species == 'homo_sapiens':
 		exons += get_exons(cursor, gene_id, species, 'prediction_exon')
@@ -383,10 +381,13 @@ def find_exon_info (cursor, gene_id, species):
 
 	# mark the exons belonging to canonical transcript
 	mark_canonical(cursor, gene_id, exons)
+
 	# get annotation info
 	fill_in_annotation_info(cursor, gene_id, exons)
+
 	# find covering exons
 	sort_out_covering_exons(cursor, exons)
+
 	# mark coding exons
 	mark_coding(cursor, gene_id, species, exons)
 
@@ -395,7 +396,8 @@ def find_exon_info (cursor, gene_id, species):
 
 #########################################
 # store into gene2exon table
-def store_exon (cursor, exon):
+# def store_exon (cursor, exon):
+def format_tsv_line(cursor, exon):
 
 	# note we are not storing the stable id here
 	# (the field stable_id  does not exist in gene2exon table)
@@ -405,6 +407,7 @@ def store_exon (cursor, exon):
 	update_fields = {}
 
 	fixed_fields['exon_id']  = exon.exon_id
+	# I should get rid of this 'is known' thing - ensembl dropped it
 	fixed_fields['is_known'] = exon.is_known
 
 	update_fields['gene_id']  = exon.gene_id
@@ -422,25 +425,57 @@ def store_exon (cursor, exon):
 	update_fields['covering_is_known']  = exon.covering_exon_known
 	update_fields['analysis_id']        = exon.analysis_id
 
-	if not store_or_update (cursor, 'gene2exon', fixed_fields, update_fields,primary_key="gene2exon_id"):
-		print("failed storing exon ", exon.exon_id, "from gene",  exon.gene_id)
+	# if not store_or_update(cursor, 'gene2exon',
+	# 						fixed_fields, update_fields,
+	# 						primary_key = "gene2exon_id"):
+	# 	print("failed storing exon ", exon.exon_id, "from gene",  exon.gene_id)
+	all_fields = fixed_fields
+	all_fields.update(update_fields)
+	db_field_names = ["gene_id", "exon_id", "start_in_gene", "end_in_gene",
+	                 "canon_transl_start", "canon_transl_end", "exon_seq_id", "strand", "phase",
+	                  "is_known", "is_coding", "is_canonical", "is_constitutive", "covering_exon",
+	                  "covering_is_known", "analysis_id"]
+	tabbed_line = "\t".join([str(all_fields[field_name]) for field_name in db_field_names])
+	return tabbed_line
+	# abandoned: store_without_checking(cursor, 'gene2exon', all_fields)
 
-
+#########################################
+# profile decorator is for the use with kernprof (a line profiler):
+#  ./el_utils/kernprof.py -l this.py
+# followed by
+# python3 -m line_profiler this.py.lprof
+# see here https://github.com/rkern/line_profiler#line-profiler
+# the reason I am using local kernprof.py is that I don't know where pip
+# installed its version (if anywhere)
+#@profile
 #########################################
 def gene2exon_all(species_list, db_info):
 
 	ensembl_db_name,  = db_info
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
+	search_db(cursor, "set autocommit=1")
+	logf = open("log.{}.txt".format(get_process_id()),"w")
+
 
 	for species in species_list:
-
+		# load in this file later with
+		# sudo mysqlimport  --local <species db>  <"gene2exon.%s"%species>
+		# mysqlimport strips any extension and uses what's left as a table name
+		# before you begin, do
+		# mysql> SET GLOBAL local_infile = 1;
+		outfile = open("gene2exon.%s"%species, "w")
 		switch_to_db (cursor,  ensembl_db_name[species])
 		gene_ids = get_gene_ids (cursor, biotype='protein_coding')
-
+		count = 0
+		time0 = time()
 		for gene_id in gene_ids:
-			if gene_ids.index(gene_id)%200==0:
-				print("%50s:  %5.1f%% " %  (species, float( int(gene_ids.index(gene_id)) +1 )/len(gene_ids)*100))
+			if gene_ids.index(gene_id)%10==0:
+				print("%50s:  %5.1f%%    %ds" %  \
+					(species, float(int(gene_ids.index(gene_id)) +1 )/len(gene_ids)*100,
+				      time()-time0))
+				time0 = time()
+
 			#print (gene_id, get_description(cursor, gene_id))
 			# find all exons associated with the gene id
 			exons = find_exon_info (cursor, gene_id, species)
@@ -449,10 +484,13 @@ def gene2exon_all(species_list, db_info):
 				continue  # if I got to here in the pipeline this shouldn't happen
 			# store into gene2exon table
 			for exon in exons:
-				store_exon(cursor, exon)
+				count += 1
+				tabbed_line = format_tsv_line(cursor, exon)
+				outfile.write("%d\t%s\n"%(count, tabbed_line))
 
-		print(species, "done")
-
+		logf.write(species+"\n")
+		outfile.close()
+	logf.close()
 	cursor.close()
 	db.close()
 
@@ -462,7 +500,7 @@ def gene2exon_all(species_list, db_info):
 def gene2exon_orthologues(gene_list, db_info):
 
 	ensembl_db_name,  = db_info
-	db = connect_to_mysql()
+	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 
 	for gene_id in gene_list:
@@ -501,7 +539,7 @@ def gene2exon_orthologues(gene_list, db_info):
 #########################################
 def main():
 
-	no_threads = 5
+	no_threads = 1
 	special    = None
 
 	if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
@@ -515,6 +553,7 @@ def main():
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
+	all_species = ['homo_sapiens']
 
 	print('=======================================')
 	print(sys.argv[0])

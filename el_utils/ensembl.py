@@ -1,9 +1,11 @@
 #!/usr/bin/python
+from time import time
 
 import MySQLdb
 from el_utils.mysql import *
 from el_utils.exon import Exon
 import subprocess
+import os
 
 
 #########################################
@@ -171,12 +173,11 @@ def get_canonical_coding_exons(cursor, gene_id, db_name=None):
 
 
 #########################################
-def get_gene_region(cursor, gene_id, is_known=None):
+def get_gene_region(cursor, gene_id):
 	qry = "select seq_region_id, seq_region_start, seq_region_end, "
 	qry += " seq_region_strand "
 	qry += " from  gene  where  gene_id=%d" % gene_id
-	if (not is_known is None and is_known):
-		qry += " and  status='known' "
+
 	rows = search_db(cursor, qry, verbose=False)
 
 	if (not rows):
@@ -1003,50 +1004,45 @@ def member2stable(cursor, member_id):
 	return rows[0][0]
 
 
-########
-def get_orthologues(cursor, ortho_type, gene_member_id, verbose=False):
-	# cursor must be pointing to compara database
-	# the ortho pytpe i sone of the following: 'ortholog_one2one',
-	# 'ortholog_one2many', 'ortholog_many2many'
+################
+def time_qry(cursor, qry, verbose=True):
+	time1 = time0 = 0
+	if verbose: time0 = time()
+	ret = error_intolerant_search(cursor,qry)
+	if verbose: time1 = time()
+	if verbose: print("\n%s\ndone in %.3f s" % (qry, float(time1-time0)))
+	return ret
 
-	orthos = []
 
-	qry = "select homology.homology_id from homology_member, homology "
+################
+# ./el_utils/kernprof.py -l <calling script>.py
+# python3 -m line_profiler <calling script>.py.lprof
+# @profile
+def get_orthologues(cursor, compara_db, gene_member_id, verbose=False):
+	switch_to_db(cursor, compara_db)
+	qry = "select  homology.homology_id, homology.description from  homology,  homology_member"
 	qry += " where homology_member.gene_member_id =%d " % gene_member_id
 	qry += " and homology.homology_id = homology_member.homology_id "
-	qry += " and  homology.description = '%s' " % ortho_type
-	rows = search_db(cursor, qry)
-
-	if verbose: print(qry, "\n", rows)
-
-	if not rows:  return []  # no orthologs here
-
-	# for each homology id find the other member id
-	for row in rows:
-		homology_id = row[0]
+	ret = time_qry(cursor,qry, verbose)
+	if not ret or len(ret)==0: return {}
+	# hom type can be ortholog_one2one, ortholog_one2many, apparent_ortholog_one2one
+	# ortholog_one2many, ortholog_many2many
+	homology_type = dict(ret)
+	orthos = {}
+	for hom_id, hom_type in homology_type.items():
+		if not "ortho" in hom_type:continue
+		if not hom_type in orthos: orthos[hom_type] = []
 
 		qry = "select gene_member_id from homology_member "
-		qry += " where homology_id = %d" % int(homology_id)
+		qry += " where homology_id = %d" % hom_id
 		qry += " and not  gene_member_id = %d" % gene_member_id
-		rows2 = search_db(cursor, qry, verbose=True)
-		if verbose: print("\n", qry, "\n", rows2)
-		if not rows2:
-			rows2 = search_db(cursor, qry, verbose=True)
-			return []
-		ortho_id = rows2[0][0]
+		ortho_id = time_qry(cursor,qry, verbose)[0][0] # there should be ony one other member of the pair
 
 		qry = "select  gene_member.stable_id, genome_db.name, genome_db.genome_db_id "
 		qry += " from gene_member, genome_db "
 		qry += " where gene_member.gene_member_id = %d " % ortho_id
 		qry += " and genome_db.genome_db_id = gene_member.genome_db_id"
-		rows3 = search_db(cursor, qry, verbose=True)
-		if verbose: print(qry, "\n", rows3)
-		if not rows3:
-			rows3 = search_db(cursor, qry, verbose=True)
-			return []
-		[ortho_stable, species, genome_db_id] = rows3[0]
-		orthos.append([ortho_stable, species, int(genome_db_id)])
-
+		orthos[hom_type].append(time_qry(cursor, qry, verbose)[0])
 	return orthos
 
 
