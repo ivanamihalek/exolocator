@@ -1,5 +1,5 @@
 import MySQLdb, sys, warnings
-
+from time import time
 
 #########################################
 def error_intolerant_search(cursor, qry):
@@ -138,24 +138,26 @@ def store_or_update(cursor, table, fixed_fields, update_fields, verbose=False, p
 
 
 #########################################
-def create_index(cursor, db_name, index_name, table, columns, verbose=False):
+def create_index(cursor, db_name, table, index_name, columns, verbose=False):
 
-	error_intolerant_search(cursor, "use %s"%db_name)
-
+	time0 = 0
 	# check whether this index exists already
-	if verbose: print("checking existence of index {} on table {} ".format(index_name, table))
-	qry = "show index from %s where key_name like '%s'" % (table, index_name)
+	if verbose: print("checking existence of index {} on table {} in {}".format(index_name, table, db_name))
+	qry = "show index from %s.%s where key_name like '%s'" % (db_name, table, index_name)
 	rows = search_db(cursor, qry, verbose=False)
 	if rows:
-		print("found index {} on table {}.".format(index_name, table))
+		print("found index {} on table {} in {}.".format(index_name, table, db_name))
 		return True
 
-	if verbose: print("creating index {} on table {} ...".format(index_name, table))
+	if verbose:
+		time0 = time()
+		print("creating index {} on table {} in {} ...".format(index_name, table, db_name))
 	# columns is a list of columns that we want to have indexed
-	qry = "create index %s on %s (%s)" % (index_name, table, ",".join(columns))
+	qry = "create index %s on %s.%s (%s)" % (index_name, db_name, table, ",".join(columns))
 	error_intolerant_search(cursor, qry)
-	if verbose: print("creating index {} on table {} done.".format(index_name, table))
-
+	if verbose:
+		time_min = (time() - time0)/60
+		print("\t\t  done in %.1f min." %  time_min)
 
 	return True
 

@@ -25,15 +25,29 @@ def mark_canonical (cursor, gene_id, exons):
 	[canonical_start_in_exon, canonical_start_exon_id,
 	 canonical_end_in_exon, canonical_end_exon_id] = get_canonical_coordinates (cursor, canonical_transcript_id)
 
+	for exon in exons:
+		exon.canon_transl_start = -1
+		exon.canon_transl_end = -1
 	start_found = False
 	end_found   = False
 	for exon in exons:
+		# in translation table canonical_start_in_exon and canonical_end_in_exon
+		# refer to distance from the exon start - these are small numbers, like 15 or 138, starting from 1
+		# and all thet after the reverse direction is taken into the account
+		# I find it extremely difficult to work with
+		# I am stroing the coding start position measured from the gene start, irrespective of reading direction
 		if exon.exon_id == canonical_start_exon_id:
 			start_found = True
-			exon.canon_transl_start = canonical_start_in_exon-1
+			if exon.strand > 0:
+				exon.canon_transl_start = exon.start_in_gene + canonical_start_in_exon - 1
+			else:
+				exon.canon_transl_end = exon.end_in_gene - (canonical_start_in_exon - 1)
 		if exon.exon_id == canonical_end_exon_id:
 			end_found = True
-			exon.canon_transl_end = canonical_end_in_exon-1
+			if exon.strand > 0:
+				exon.canon_transl_end = exon.start_in_gene +  canonical_end_in_exon -1
+			else:
+				exon.canon_transl_start = exon.end_in_gene - (canonical_end_in_exon - 1)
 
 	# can somehting be canonical if we do not know where it starts
 	if not start_found:
@@ -138,7 +152,7 @@ def get_translated_region(cursor, gene_id, species):
 
 	# get the region on the gene
 	ret = get_gene_region (cursor, gene_id)
-	if  ret:
+	if ret:
 		[gene_seq_id,gene_region_start, gene_region_end,
 		 gene_region_strand] = ret
 	else:
@@ -154,7 +168,7 @@ def get_translated_region(cursor, gene_id, species):
 
 		qry  = "SELECT seq_start, start_exon_id, seq_end, end_exon_id "
 		qry += " FROM translation WHERE transcript_id=%d"  %  transcript_id
-		rows = search_db (cursor, qry)
+		rows = search_db(cursor, qry)
 		if (not rows):
 			# if the transcript is not protein coding, there will be no associated translation
 			# there should eb an annotation for that, but we choose not to trust it
@@ -174,7 +188,7 @@ def get_translated_region(cursor, gene_id, species):
 			this_translation_region_end   = start[end_exon_id]   + exon_seq_end   - 1
 
 		else:
-			end   = {}
+			end = {}
 
 			end[start_exon_id] = get_exon_end (cursor, start_exon_id)
 			end[end_exon_id]   = get_exon_end (cursor, end_exon_id)
@@ -435,6 +449,9 @@ def format_tsv_line(cursor, exon):
 	                 "canon_transl_start", "canon_transl_end", "exon_seq_id", "strand", "phase",
 	                  "is_known", "is_coding", "is_canonical", "is_constitutive", "covering_exon",
 	                  "covering_is_known", "analysis_id"]
+	for k,v in all_fields.items():
+		if v is None: all_fields[k] = "\\N"
+
 	tabbed_line = "\t".join([str(all_fields[field_name]) for field_name in db_field_names])
 	return tabbed_line
 	# abandoned: store_without_checking(cursor, 'gene2exon', all_fields)
@@ -459,7 +476,7 @@ def gene2exon_all(species_list, db_info):
 
 
 	for species in species_list:
-		# load in this file later with
+		# load this file later with
 		# sudo mysqlimport  --local <species db>  <"gene2exon.%s"%species>
 		# mysqlimport strips any extension and uses what's left as a table name
 		# before you begin, do
@@ -487,7 +504,6 @@ def gene2exon_all(species_list, db_info):
 				count += 1
 				tabbed_line = format_tsv_line(cursor, exon)
 				outfile.write("%d\t%s\n"%(count, tabbed_line))
-
 		logf.write(species+"\n")
 		outfile.close()
 	logf.close()

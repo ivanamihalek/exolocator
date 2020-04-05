@@ -334,6 +334,44 @@ def feed_species_names (cursor, exolocator_meta_db_name, all_species, ensembl_db
 
 
 #########################################
+def make_db_names_table(cursor, db_name):
+
+	switch_to_db (cursor, db_name)
+	table_name = 'db_names'
+	if check_table_exists(cursor, db_name, table_name):
+		qry = "drop table " + table_name
+		search_db(cursor, qry, verbose=True)
+
+	qry = ""
+	qry += "  CREATE TABLE  %s (" % table_name
+	qry += "     genome_db_id INT(10)  NOT NULL AUTO_INCREMENT, "
+	qry += "  	 db_name VARCHAR (100) NOT NULL, "
+	qry += "	 PRIMARY KEY (genome_db_id) "
+	qry += ") ENGINE=MyISAM"
+
+	rows = search_db(cursor, qry)
+	print(qry)
+	print(rows)
+	return
+
+
+#########
+def fill_db_names_table(cursor, meta_db_name):
+	compara_db_name = get_compara_name(cursor)
+	db_name_table = "%s.%s" % (meta_db_name, "db_names")
+	for line in hard_landing_search(cursor, "select genome_db_id, name from %s.genome_db" % compara_db_name):
+		[genome_db_id, name] = line
+		qry = "select schema_name from information_schema.schemata where schema_name like '{}%'".format(name)
+		ret = error_intolerant_search(cursor, qry)
+		if not ret:
+			print(f"db for {name} not found")
+			continue
+		db_name = ret[0][0]
+		fixed_fields={"genome_db_id":genome_db_id, "db_name":db_name}
+		store_or_update(cursor, db_name_table, fixed_fields=fixed_fields, update_fields={}, primary_key='genome_db_id')
+	return
+
+#########################################
 def main():
 
 	db     = connect_to_mysql(Config.mysql_conf_file)
@@ -346,19 +384,25 @@ def main():
 	exolocator_meta_db_name   = "exolocator_meta"
 	qry  = "show databases like'%s'" % exolocator_meta_db_name
 	rows = search_db (cursor, qry)
-	if (not rows):
+	if not rows:
 		print(exolocator_meta_db_name, "database not found")
 		qry = "create database %s " % exolocator_meta_db_name
 		rows = search_db (cursor, qry)
-		if (rows):
+		if rows:
 			print("some problem creating the database ...")
 			search_db (cursor, qry, verbose=True)
 		print(exolocator_meta_db_name, "database found")
 
 	switch_to_db(cursor, exolocator_meta_db_name)
+	#######################################################
+	# create db_names table , mapping species id to db_name
+	# make_db_names_table(cursor, exolocator_meta_db_name)
+	fill_db_names_table(cursor, exolocator_meta_db_name)
+	#exit()
+
 
 	#######################################################
-	# create flags database (for flagging arbitrary problems - to be filled as we go)
+	# create flags table (for flagging arbitrary problems - to be filled as we go)
 	make_flags_table(cursor, exolocator_meta_db_name, 'flags')
 
 	#######################################################

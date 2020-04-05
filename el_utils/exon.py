@@ -13,12 +13,8 @@ class Exon:
         start_on_seq_region  = ensembl_row[2]
         end_on_seq_region    = ensembl_row[3]
 
-        if ( strand > 0 ):
-            self.start_in_gene = start_on_seq_region-gene_start
-            self.end_in_gene   = end_on_seq_region-gene_start
-        else:
-            self.start_in_gene = gene_end - end_on_seq_region
-            self.end_in_gene   = gene_end - start_on_seq_region
+        self.start_in_gene = start_on_seq_region-gene_start
+        self.end_in_gene   = end_on_seq_region-gene_start
 
         self.strand            = strand
         self.phase             = ensembl_row[5]
@@ -41,12 +37,9 @@ class Exon:
         start_on_seq_region = ensembl_row[4]
         end_on_seq_region   = ensembl_row[5]
 
-        if ( strand > 0 ):
-            self.start_in_gene = start_on_seq_region-gene_start
-            self.end_in_gene   = end_on_seq_region  -gene_start
-        else:
-            self.start_in_gene = gene_end - end_on_seq_region
-            self.end_in_gene   = gene_end - start_on_seq_region
+        self.start_in_gene = start_on_seq_region-gene_start
+        self.end_in_gene   = end_on_seq_region  -gene_start
+
         self.strand            = strand
         self.phase             = ensembl_row[7]
         # not known (that's the source indicator - we 

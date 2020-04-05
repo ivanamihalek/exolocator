@@ -1015,35 +1015,36 @@ def time_qry(cursor, qry, verbose=True):
 
 
 ################
+# this was way too slow - check out the hack in 18_orthologues to go orund thins
 # ./el_utils/kernprof.py -l <calling script>.py
 # python3 -m line_profiler <calling script>.py.lprof
 # @profile
-def get_orthologues(cursor, compara_db, gene_member_id, verbose=False):
-	switch_to_db(cursor, compara_db)
-	qry = "select  homology.homology_id, homology.description from  homology,  homology_member"
-	qry += " where homology_member.gene_member_id =%d " % gene_member_id
-	qry += " and homology.homology_id = homology_member.homology_id "
-	ret = time_qry(cursor,qry, verbose)
-	if not ret or len(ret)==0: return {}
-	# hom type can be ortholog_one2one, ortholog_one2many, apparent_ortholog_one2one
-	# ortholog_one2many, ortholog_many2many
-	homology_type = dict(ret)
-	orthos = {}
-	for hom_id, hom_type in homology_type.items():
-		if not "ortho" in hom_type:continue
-		if not hom_type in orthos: orthos[hom_type] = []
-
-		qry = "select gene_member_id from homology_member "
-		qry += " where homology_id = %d" % hom_id
-		qry += " and not  gene_member_id = %d" % gene_member_id
-		ortho_id = time_qry(cursor,qry, verbose)[0][0] # there should be ony one other member of the pair
-
-		qry = "select  gene_member.stable_id, genome_db.name, genome_db.genome_db_id "
-		qry += " from gene_member, genome_db "
-		qry += " where gene_member.gene_member_id = %d " % ortho_id
-		qry += " and genome_db.genome_db_id = gene_member.genome_db_id"
-		orthos[hom_type].append(time_qry(cursor, qry, verbose)[0])
-	return orthos
+# def get_orthologues(cursor, compara_db, gene_member_id, verbose=False):
+# 	switch_to_db(cursor, compara_db)
+# 	qry = "select  homology.homology_id, homology.description from  homology,  homology_member"
+# 	qry += " where homology_member.gene_member_id =%d " % gene_member_id
+# 	qry += " and homology.homology_id = homology_member.homology_id "
+# 	ret = time_qry(cursor,qry, verbose)
+# 	if not ret or len(ret)==0: return {}
+# 	# hom type can be ortholog_one2one, ortholog_one2many, apparent_ortholog_one2one
+# 	# ortholog_one2many, ortholog_many2many
+# 	homology_type = dict(ret)
+# 	orthos = {}
+# 	for hom_id, hom_type in homology_type.items():
+# 		if not "ortho" in hom_type:continue
+# 		if not hom_type in orthos: orthos[hom_type] = []
+#
+# 		qry = "select gene_member_id from homology_member "
+# 		qry += " where homology_id = %d" % hom_id
+# 		qry += " and not  gene_member_id = %d" % gene_member_id
+# 		ortho_id = time_qry(cursor,qry, verbose)[0][0] # there should be ony one other member of the pair
+#
+# 		qry = "select  gene_member.stable_id, genome_db.name, genome_db.genome_db_id "
+# 		qry += " from gene_member, genome_db "
+# 		qry += " where gene_member.gene_member_id = %d " % ortho_id
+# 		qry += " and genome_db.genome_db_id = gene_member.genome_db_id"
+# 		orthos[hom_type].append(time_qry(cursor, qry, verbose)[0])
+# 	return orthos
 
 
 ########################
