@@ -9,15 +9,6 @@ from el_utils.ensembl import *
 from el_utils.processes import *
 
 
-#########################################
-# writing directly to db way too slow
-def write_orthologues(ortho_file_handle, gene_id, orthos):
-	for ortho in orthos:
-		[ortho_gene_id,  ortho_genome_db_id] = ortho
-		ortho_file_handle.write("{}\t{}\t{}\t{}\n".format(gene_id, ortho_gene_id, ortho_genome_db_id, 'ensembl'))
-		ortho_file_handle.flush()
-	return
-
 ############
 def get_orthologues(cursor, compara_db, tmp_table, gene_stable_id, verbose=False):
 	orthos = {}
@@ -46,6 +37,17 @@ def get_orthologues(cursor, compara_db, tmp_table, gene_stable_id, verbose=False
 
 	return orthos
 
+
+#########################################
+# writing directly to db way too slow
+def write_orthologues(ortho_file_handle, gene_id, orthos):
+	for ortho in orthos:
+		[ortho_gene_id, ortho_genome_db_id] = ortho
+		ortho_file_handle.write("{}\t{}\t{}\t{}\n".format(gene_id, ortho_gene_id, ortho_genome_db_id, 'ensembl'))
+		ortho_file_handle.flush()
+	return
+
+
 #########################################
 # ./el_utils/kernprof.py -l <calling script>.py
 # python3 -m line_profiler <calling script>.py.lprof
@@ -70,7 +72,7 @@ def collect_orthologues(stable_gene_id_list, dummy):
 	ct = 0
 	time0 = time()
 	for stable_id in stable_gene_id_list:
-
+		gene_id = stable2gene(cursor, stable_id,  ensembl_db_name['homo_sapiens'])
 		# in compara table, get everything that homology has to say about
 		# the possible orthologues
 		# find all orthologous pairs suggested for this gene
@@ -81,7 +83,7 @@ def collect_orthologues(stable_gene_id_list, dummy):
 			if (not ortho_type in orthos) or (not orthos[ortho_type]): continue
 			# the triple returned for each ortho type is [ortho_stable, species,  genome_db_id]
 			table = ortho_table[ortho_type]
-			write_orthologues(filehandle[table], ensembl_db_name, orthos[ortho_type])
+			write_orthologues(filehandle[table], gene_id, orthos[ortho_type])
 		ct += 1
 		if not ct%100:
 			print(os.getpid(), ct, "out of ", len(stable_gene_id_list), "  last 100: %d mins" % ((time() - time0) / 60))
@@ -133,7 +135,7 @@ def main():
 	cursor.close()
 	db.close()
 	arguments =[ensembl_compara_name, ensembl_db_name, tmp_table]
-	parallelize(no_threads, collect_orthologues, stable_gene_id_list[:1], arguments)
+	parallelize(no_threads, collect_orthologues, stable_gene_id_list, arguments)
 
 	return True
 

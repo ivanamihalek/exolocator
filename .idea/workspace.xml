@@ -3,16 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_make_meta_db.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/01_add_tables.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/02_seqname2file.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/03_canonical_peptide_sequences.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/10_exon_coordinates.py" beforeDir="false" afterPath="$PROJECT_DIR$/10_exon_coordinates.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/10_exon_coordinates.py.lprof" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/18_orthologues.py" beforeDir="false" afterPath="$PROJECT_DIR$/18_orthologues.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/18_orthologues.py" beforeDir="false" afterPath="$PROJECT_DIR$/17_orthologues.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/exon.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/exon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/mysql.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/mysql.py" afterDir="false" />
     </list>
     <ignored path="exolocator.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -31,20 +23,18 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="18_orthologues.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/18_orthologues.py">
+      <file leaf-file-name="19_make_ortho_maps.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/19_make_ortho_maps.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-918">
-              <caret line="13" column="48" selection-start-line="13" selection-start-column="41" selection-end-line="13" selection-end-column="48" />
-            </state>
+            <state relative-caret-position="-1350" />
           </provider>
         </entry>
       </file>
       <file leaf-file-name="ensembl.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="853">
-              <caret line="1251" lean-forward="true" selection-start-line="1251" selection-end-line="1251" />
+            <state relative-caret-position="115">
+              <caret line="1273" column="4" selection-start-line="1273" selection-start-column="4" selection-end-line="1273" selection-end-column="4" />
               <folding>
                 <element signature="e#18#39#0" expanded="true" />
               </folding>
@@ -56,7 +46,7 @@
         <entry file="file://$PROJECT_DIR$/el_utils/mysql.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="277">
-              <caret line="82" column="95" lean-forward="true" selection-start-line="82" selection-start-column="77" selection-end-line="82" selection-end-column="95" />
+              <caret line="82" column="95" selection-start-line="82" selection-start-column="77" selection-end-line="82" selection-end-column="95" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -104,7 +94,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/16_make_para_maps.py" />
         <option value="$PROJECT_DIR$/17_para_exon_map_to_msa.py" />
         <option value="$PROJECT_DIR$/30_db_migration/01_dump_exons.py" />
         <option value="$PROJECT_DIR$/30_db_migration/03_dump_orthologues.py" />
@@ -150,18 +139,19 @@
         <option value="$PROJECT_DIR$/el_utils/exon.py" />
         <option value="$PROJECT_DIR$/10_exon_coordinates.py" />
         <option value="$PROJECT_DIR$/80_production/01_ortholgue_alignment.py" />
-        <option value="$PROJECT_DIR$/el_utils/ensembl.py" />
         <option value="$PROJECT_DIR$/el_utils/mysql.py" />
         <option value="$PROJECT_DIR$/00_make_meta_db.py" />
         <option value="$PROJECT_DIR$/01_make_meta_db.py" />
+        <option value="$PROJECT_DIR$/el_utils/ensembl.py" />
         <option value="$PROJECT_DIR$/18_orthologues.py" />
+        <option value="$PROJECT_DIR$/18_load_orthologues.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="2020" />
     <option name="y" value="2" />
-    <option name="width" value="1666" />
+    <option name="width" value="1783" />
     <option name="height" value="1024" />
   </component>
   <component name="ProjectLevelVcsManager">
@@ -267,7 +257,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="2020" y="2" width="1666" height="1024" extended-state="0" />
+    <frame x="2020" y="2" width="1783" height="1024" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -278,7 +268,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Python Console" order="9" />
       <window_info anchor="bottom" id="Terminal" order="10" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2580645" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24090908" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.22058824" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
@@ -310,17 +300,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="6" />
+      <option name="time" value="8" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/05_drop_old_databases.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="5" selection-start-line="3" selection-start-column="5" selection-end-line="3" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/lib/python3/dist-packages/pymol/wizard/stereodemo.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1836">
@@ -551,7 +534,7 @@
     <entry file="file://$PROJECT_DIR$/el_utils/mysql.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="277">
-          <caret line="82" column="95" lean-forward="true" selection-start-line="82" selection-start-column="77" selection-end-line="82" selection-end-column="95" />
+          <caret line="82" column="95" selection-start-line="82" selection-start-column="77" selection-end-line="82" selection-end-column="95" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
@@ -565,25 +548,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="853">
-          <caret line="1251" lean-forward="true" selection-start-line="1251" selection-end-line="1251" />
-          <folding>
-            <element signature="e#18#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
           <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/19_make_ortho_maps.py">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/02_add_tables.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -650,11 +620,39 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/18_orthologues.py">
+    <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-918">
-          <caret line="13" column="48" selection-start-line="13" selection-start-column="41" selection-end-line="13" selection-end-column="48" />
+        <state relative-caret-position="115">
+          <caret line="1273" column="4" selection-start-line="1273" selection-start-column="4" selection-end-line="1273" selection-end-column="4" />
+          <folding>
+            <element signature="e#18#39#0" expanded="true" />
+          </folding>
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/18_load_orthologues.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="22" column="10" selection-start-line="22" selection-start-column="10" selection-end-line="22" selection-end-column="10" />
+          <folding>
+            <element signature="e#21#49#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/17_orthologues.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="71" column="10" lean-forward="true" selection-start-line="71" selection-start-column="10" selection-end-line="71" selection-end-column="10" />
+          <folding>
+            <element signature="e#1590#1801#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/19_make_ortho_maps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1350" />
       </provider>
     </entry>
   </component>

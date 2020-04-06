@@ -249,9 +249,9 @@ def get_predicted_exons(cursor, gene_id, species):
 
 	qry = "SELECT  * FROM  prediction_exon  WHERE seq_region_id = %d " % gene_seq_id
 	qry += " AND  seq_region_start >= %d AND seq_region_start <= %d " % \
-	       (gene_region_start, gene_region_end)
+		   (gene_region_start, gene_region_end)
 	qry += " AND  seq_region_end   >= %d AND seq_region_end   <= %d " % \
-	       (gene_region_start, gene_region_end)
+		   (gene_region_start, gene_region_end)
 	rows = search_db(cursor, qry)
 
 	if (not rows):
@@ -307,7 +307,7 @@ def get_primary_seq_info(cursor, gene_id, species):
 	mitochondrial = is_mitochondrial(cursor, gene_id)
 
 	return [seq_name, file_names, seq_region_start,
-	        seq_region_end, seq_region_strand, mitochondrial]
+			seq_region_end, seq_region_strand, mitochondrial]
 
 
 #########################################
@@ -347,7 +347,7 @@ def get_alt_seq_info(cursor, gene_id, species):
 
 #########################################
 def extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,
-                     seq_region_start, seq_region_end):
+					 seq_region_start, seq_region_end):
 	# now the question is, which file do I use if there are several options?
 	first_choice = ""
 	second_choice = ""
@@ -370,11 +370,11 @@ def extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,
 
 	# extract gene sequence  from fasta db
 	fastacmd = acg.generate_fastacmd_gene_command(species, seq_name, fasta_db_file,
-	                                              seq_region_strand, seq_region_start,
-	                                              seq_region_end)
+												  seq_region_strand, seq_region_start,
+												  seq_region_end)
 	ret = subprocess.getoutput(fastacmd)
 	if not ret:
-		print("no refturn for fastacmd for", species, gene_id)
+		#print("no refturn for fastacmd for", species, gene_id)
 		print("fastacmd: ", fastacmd)
 		exit(1)
 	if ('ERROR' in ret):
