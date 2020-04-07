@@ -26,8 +26,14 @@ def main():
 	gene_id = hard_landing_search(cursor, qry)[0][0]
 	print(gene_name, ensembl_id, gene_id)
 
-	for line in error_intolerant_search(cursor, "select * from orthologue where gene_id=%d" % 435660):
-		print(line)
+	qry = "select  cognate_gene_id, cognate_genome_db_id from orthologue where gene_id=%d" % gene_id
+	for line in error_intolerant_search(cursor, qry):
+		[cognate_gene_id, cognate_genome_db_id] = line
+		qry = f"select db_name from exolocator_meta.db_names where genome_db_id={cognate_genome_db_id}"
+		db_name = hard_landing_search(cursor, qry)[0][0]
+		stable_canon_id = gene2stable_canon_transl_id(cursor, cognate_gene_id, db_name)
+		print(db_name, cognate_gene_id, stable_canon_id)
+
 
 	cursor.close()
 	db.close()

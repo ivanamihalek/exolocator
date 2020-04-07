@@ -18,6 +18,9 @@ def get_species_shorthand(cursor, species):
 
 	return rows[0][0]
 
+#########################################
+def get_current_db(cursor):
+	return hard_landing_search(cursor, "SELECT DATABASE() FROM DUAL")[0][0]
 
 #########################################
 def canonical_transl_info(cursor, gene_id):
@@ -942,19 +945,22 @@ def get_selenocysteines(cursor, gene_id):
 
 
 #########################################
-def gene2stable_canon_transl(cursor, gene_id, db_name=None):
-	if (db_name and not switch_to_db(cursor, db_name)):
+def gene2stable_canon_transl_id(cursor, gene_id, db_name=None):
+
+	current_db = get_current_db(cursor)
+	if db_name and not switch_to_db(cursor, db_name):
 		return False
 
-	qry = "select translation.stable_id  from translation, gene "
-	qry += " where gene.canonical_transcript_id = translation.transcript_id "
-	qry += " and gene.gene_id = %d " % gene_id
+	qry  = "select translation.stable_id  from translation, gene "
+	qry += "where gene.canonical_transcript_id = translation.transcript_id "
+	qry += "and gene.gene_id = %d " % gene_id
 	rows = search_db(cursor, qry, verbose=False)
 
-	if (not rows):
+	if not rows:
 		rows = search_db(cursor, qry, verbose=True)
 		return ""
 
+	switch_to_db(cursor, current_db)
 	return rows[0][0]
 
 

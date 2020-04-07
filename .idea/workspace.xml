@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/18_orthologues.py" beforeDir="false" afterPath="$PROJECT_DIR$/17_orthologues.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04_canonical_peptide_sequences.py" beforeDir="false" afterPath="$PROJECT_DIR$/04_canonical_peptide_sequences.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/05_all_vs_all_paralog_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_all_vs_all_paralog_search.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/06_paralogue_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/08_paralogue_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/80_production/01_ortholgue_alignment.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/01_ortholgue_alignment.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
     </list>
     <ignored path="exolocator.iws" />
@@ -23,32 +26,56 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="19_make_ortho_maps.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/19_make_ortho_maps.py">
+      <file leaf-file-name="04_canonical_peptide_sequences.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/04_canonical_peptide_sequences.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1350" />
+            <state relative-caret-position="388">
+              <caret line="83" lean-forward="true" selection-start-line="82" selection-end-line="83" />
+              <folding>
+                <element signature="e#24#49#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="01_ensembl_fasta_format.pl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="648">
+              <caret line="37" column="81" lean-forward="true" selection-start-line="37" selection-start-column="24" selection-end-line="37" selection-end-column="81" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="05_format_canonical_for_blast.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/05_format_canonical_for_blast.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="342">
+              <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
+              <folding>
+                <element signature="e#24#49#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="processes.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/el_utils/processes.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="65">
+              <caret line="128" column="74" selection-start-line="128" selection-start-column="4" selection-end-line="128" selection-end-column="74" />
+            </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="ensembl.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="115">
-              <caret line="1273" column="4" selection-start-line="1273" selection-start-column="4" selection-end-line="1273" selection-end-column="4" />
+            <state relative-caret-position="400">
+              <caret line="947" column="4" selection-start-line="947" selection-start-column="4" selection-end-line="947" selection-end-column="4" />
               <folding>
                 <element signature="e#18#39#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mysql.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/el_utils/mysql.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="277">
-              <caret line="82" column="95" selection-start-line="82" selection-start-column="77" selection-end-line="82" selection-end-column="95" />
-              <folding>
-                <element signature="e#0#29#0" expanded="true" />
+                <element signature="e#233#419#0" />
               </folding>
             </state>
           </provider>
@@ -94,8 +121,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/17_para_exon_map_to_msa.py" />
-        <option value="$PROJECT_DIR$/30_db_migration/01_dump_exons.py" />
         <option value="$PROJECT_DIR$/30_db_migration/03_dump_orthologues.py" />
         <option value="$PROJECT_DIR$/30_db_migration/06_reconstruct_ortho_alnmts.py" />
         <option value="$PROJECT_DIR$/30_db_migration/09_dump_paralogues.py" />
@@ -138,19 +163,21 @@
         <option value="$PROJECT_DIR$/03_canonical_peptide_sequences.py" />
         <option value="$PROJECT_DIR$/el_utils/exon.py" />
         <option value="$PROJECT_DIR$/10_exon_coordinates.py" />
-        <option value="$PROJECT_DIR$/80_production/01_ortholgue_alignment.py" />
         <option value="$PROJECT_DIR$/el_utils/mysql.py" />
         <option value="$PROJECT_DIR$/00_make_meta_db.py" />
         <option value="$PROJECT_DIR$/01_make_meta_db.py" />
-        <option value="$PROJECT_DIR$/el_utils/ensembl.py" />
         <option value="$PROJECT_DIR$/18_orthologues.py" />
         <option value="$PROJECT_DIR$/18_load_orthologues.py" />
+        <option value="$PROJECT_DIR$/80_production/01_ortholgue_alignment.py" />
+        <option value="$PROJECT_DIR$/el_utils/ensembl.py" />
+        <option value="$PROJECT_DIR$/04_canonical_peptide_sequences.py" />
+        <option value="$PROJECT_DIR$/05_format_canonical_for_blast.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2020" />
-    <option name="y" value="2" />
+    <option name="x" value="2032" />
+    <option name="y" value="22" />
     <option name="width" value="1783" />
     <option name="height" value="1024" />
   </component>
@@ -173,12 +200,12 @@
             <path>
               <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
               <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-              <item name="documentation" type="462c0819:PsiDirectoryNode" />
+              <item name="00_download_dbs" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
               <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-              <item name="el_utils" type="462c0819:PsiDirectoryNode" />
+              <item name="documentation" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -257,8 +284,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="2020" y="2" width="1783" height="1024" extended-state="0" />
-    <editor active="true" />
+    <frame x="2032" y="22" width="1783" height="1024" extended-state="0" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info id="DB Browser" order="2" />
@@ -304,15 +330,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///usr/lib/python3/dist-packages/pymol/wizard/stereodemo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1836">
-          <caret line="105" column="8" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/30_db_migration/11_paralogue_directory_cleanup.py" />
-    <entry file="file://$PROJECT_DIR$/30_db_migration/12_reconstruct_para_alnmts.py" />
     <entry file="file://$PROJECT_DIR$/el_utils/tree.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-216">
@@ -377,13 +394,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/06_exon_coordinates.py" />
     <entry file="file://$PROJECT_DIR$/04_paralogues.py" />
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="648">
-          <caret line="37" column="81" selection-start-line="37" selection-start-column="55" selection-end-line="37" selection-end-column="81" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/00_download_dbs/config.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
@@ -399,7 +409,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/07_gene_level_paralogues.py" />
-    <entry file="file://$PROJECT_DIR$/05_all_vs_all_paralog_search.py">
+    <entry file="file://$PROJECT_DIR$/07_all_vs_all_paralog_search.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="10" column="23" selection-start-line="10" selection-start-column="23" selection-end-line="10" selection-end-column="23" />
@@ -407,13 +417,6 @@
       </provider>
     </entry>
     <entry file="file:///usr/local/lib/python3.7/dist-packages/pygraph/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/el_utils/processes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2286">
-          <caret line="128" column="4" selection-start-line="128" selection-start-column="4" selection-end-line="128" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/lib/python3.7/dist-packages/pygraph/predefined_graphs.py" />
     <entry file="file:///usr/local/lib/python3.7/dist-packages/pygraph/classes/directed_graph.py" />
     <entry file="file://$USER_HOME$/.local/lib/python3.7/site-packages/igraph/__init__.py" />
@@ -475,13 +478,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/el_utils/exon.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="738">
-          <caret line="41" selection-start-line="41" selection-end-line="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/01_add_tables.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6948">
@@ -507,20 +503,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/06_paralogue_test.py">
+    <entry file="file://$PROJECT_DIR$/08_paralogue_test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="9" column="28" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/80_production/01_ortholgue_alignment.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
-          <folding>
-            <element signature="e#22#51#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -528,16 +514,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="490">
           <caret line="386" column="10" lean-forward="true" selection-start-line="386" selection-start-column="10" selection-end-line="386" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/el_utils/mysql.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="277">
-          <caret line="82" column="95" selection-start-line="82" selection-start-column="77" selection-end-line="82" selection-end-column="95" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -620,16 +596,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="115">
-          <caret line="1273" column="4" selection-start-line="1273" selection-start-column="4" selection-end-line="1273" selection-end-column="4" />
-          <folding>
-            <element signature="e#18#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/18_load_orthologues.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
@@ -653,6 +619,81 @@
     <entry file="file://$PROJECT_DIR$/19_make_ortho_maps.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1350" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/el_utils/exon.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="738">
+          <caret line="41" selection-start-line="41" selection-end-line="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/el_utils/mysql.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="82" column="95" selection-start-line="82" selection-start-column="77" selection-end-line="82" selection-end-column="95" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/80_production/config.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/80_production/01_ortholgue_alignment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
+          <folding>
+            <element signature="e#22#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/el_utils/ensembl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="947" column="4" selection-start-line="947" selection-start-column="4" selection-end-line="947" selection-end-column="4" />
+          <folding>
+            <element signature="e#18#39#0" expanded="true" />
+            <element signature="e#233#419#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/el_utils/processes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="65">
+          <caret line="128" column="74" selection-start-line="128" selection-start-column="4" selection-end-line="128" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="648">
+          <caret line="37" column="81" lean-forward="true" selection-start-line="37" selection-start-column="24" selection-end-line="37" selection-end-column="81" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/04_canonical_peptide_sequences.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="388">
+          <caret line="83" lean-forward="true" selection-start-line="82" selection-end-line="83" />
+          <folding>
+            <element signature="e#24#49#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/05_format_canonical_for_blast.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
+          <folding>
+            <element signature="e#24#49#0" expanded="true" />
+          </folding>
+        </state>
       </provider>
     </entry>
   </component>
