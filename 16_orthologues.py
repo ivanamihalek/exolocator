@@ -118,7 +118,7 @@ def main():
 		qry += "on homology_member.gene_member_id=subtable.gene_member_id"
 		time_qry(cursor,qry, verbose=False)
 
-		print(hard_landing_search(cursor,"select count(*) from %s"%tmp_table))
+		print(hard_landing_search(cursor, "select count(*) from %s" % tmp_table))
 
 	# this check fro existence before attmepting create
 	create_index(cursor, ensembl_compara_name,  tmp_table, "stable_id_idx", ["stable_id"], verbose=False)

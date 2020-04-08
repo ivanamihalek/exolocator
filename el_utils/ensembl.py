@@ -1112,6 +1112,20 @@ def get_orthologues_from_species(cursor, ensembl_db_name, ortho_type, gene_membe
 	return orthos
 
 
+def canonical_protein2hgnc_symbol(cursor, protein_stable_id):
+
+	qry  = "select  approved_symbol from identifier_maps.hgnc h, gene g, transcript mrna, translation prot "
+	qry += "where h.ensembl_gene_id=g.stable_id and g.gene_id=mrna.gene_id and "
+	qry += "mrna.canonical_translation_id=prot.translation_id "
+	qry += f"and prot.stable_id='{protein_stable_id}'"
+	ret = error_intolerant_search(cursor, qry)
+	if not ret:
+		print("[Warning] HGNC symbol not found for", protein_stable_id)
+		return protein_stable_id
+
+	return ret[0][0]
+
+
 ########
 def stable2gene(cursor, stable_id=None, db_name=None):
 	if (not stable_id):
@@ -1313,16 +1327,12 @@ def get_species(cursor):
 def get_compara_name(cursor):
 	# find the release number
 	qry = "select value from exolocator_meta.parameters where name = 'ensembl_release_number'"
-	rows = search_db(cursor, qry)
-	if not rows or 'error' in rows[0][0].lower():
-		print('ensembl_release_number not set in exolocator_meta')
-		exit(1)
-	release_number = rows[0][0]
+	release_number = hard_landing_search(cursor, qry)[0][0]
 
-	qry = "show databases like '%compara_{0}%'".format(release_number)
+	qry = f"show databases like '%compara_{release_number}%'"
 	rows = search_db(cursor, qry)
-	if (not rows):
-		rows = search_db(cursor, qry, verbose=True)
+	if not rows:
+		search_db(cursor, qry, verbose=True)
 		return ""
 
 	return rows[0][0]
@@ -1330,7 +1340,6 @@ def get_compara_name(cursor):
 
 ########
 def species2taxid(cursor, species):
-	switch_to_db(cursor, get_compara_name(cursor))
 	qry = "select tax_id from exolocator_meta.species_names where species = '%s'" % species
 	tax_id = hard_landing_search(cursor, qry)[0][0]
 	return tax_id

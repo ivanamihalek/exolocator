@@ -315,7 +315,7 @@ def make_para_groups_table(cursor, db_name):
 
 	qry = ""
 	qry += "CREATE TABLE  %s (" % table
-	qry += "     group_id INT NOT NULL AUTO_INCREMENT, "
+	qry += "     bait_stable_id varchar (128), "
 	qry += "  	 stable_ids text NOT NULL, "
 	qry += "	 PRIMARY KEY (group_id) "
 	qry += ") ENGINE=MyISAM"
@@ -385,7 +385,7 @@ def main():
 	db     = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
-	# the 000 date problem
+	#the 000 date problem
 	qry = " SET @@sql_mode :='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'"
 	error_intolerant_search(cursor,qry)
 
@@ -442,20 +442,6 @@ def main():
 			create_index(cursor, db_name,'cognate_exon_index', table, ['cognate_exon_id', 'cognate_exon_known', 'cognate_genome_db_id'])
 		else:
 			create_index (cursor, db_name,'gene_index', table, ['gene_id'])
-
-	# for other species, add paralogue map pnly
-	for species in all_species:
-		db_name = ensembl_db_name[species]
-		# add_column checks whether column exists
-		add_column(cursor, db_name, 'gene', 'paralogue_group_ids', "text")
-		for table in ['paralogue_groups', 'para_exon_map']:
-			if check_table_exists(cursor, db_name, table):
-				print(table, " found in ", db_name)
-			else:
-				print(table, " not found in ", db_name)
-				make_table(cursor, db_name, table)
-			if table == 'para_exon_map':
-				create_index(cursor, db_name,'gene_index', table, ['exon_id'])
 
 
 	cursor.close()

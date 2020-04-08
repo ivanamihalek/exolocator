@@ -183,8 +183,9 @@ def subtree_leafs (node):
 			leafs += subtree_leafs(child)
 	return leafs
 
+
 #########################################
-def  find_cousins (qry_node):
+def find_cousins (qry_node):
 
 	cousins = []
 	if not qry_node.parent:
@@ -198,20 +199,20 @@ def  find_cousins (qry_node):
 
 	return cousins
 
-#########################################
-def  species_sort(cursor, all_species, qry_species):
 
-	cousins = []
-	tree   = Tree()
+##############
+def species_sort(cursor, all_species, qry_species):
+	qry_leaf = None
+	tree = Tree()
 	for species in all_species:
 		leaf = Node(species)
 		tree.leafs.append(leaf)
 		if leaf.name == qry_species:
 			qry_leaf = leaf
-
+	assert qry_leaf, f"in species_sort(), leaf not found for {qry_species}"
 	tree.build(cursor)
 	#find cousins for the qry leaf (recursively)
-	cousins = find_cousins (qry_leaf)
+	cousins = find_cousins(qry_leaf)
 
 	return [qry_species]+cousins
 
