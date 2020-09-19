@@ -7,6 +7,13 @@ from el_utils.exon import Exon
 import subprocess
 import os
 
+def get_trivial(cursor, species_names):
+	trivial = {}
+	for spec in species_names:
+		qry = "select trivial_name from exolocator_meta.species_names where species='%s'" % spec
+		ret = error_intolerant_search(cursor, qry)
+		trivial[spec] = ret[0][0] if (ret and ret[0] and ret[0][0] and len(ret[0][0]) > 0) else spec
+	return trivial
 
 #########################################
 def get_species_shorthand(cursor, species):

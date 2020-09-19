@@ -11,12 +11,13 @@
 # schema. This includes chromsomes, regions not assembled into chromosomes and
 # N padded haplotype/patch regions."
 
-
+# TODO: check for the files that exist locally in the older release directory
+# (or should I just delete everything except human once I am done putting together the ?)
 
 use strict;
 use warnings FATAL => 'all';
 use Net::FTP;
-my $release_num = 97;
+my $release_num = 101;
 my $local_repository = "/storage/databases/ensembl-$release_num/fasta";
 $| = 1; # flush stdout
 
@@ -42,6 +43,10 @@ my $animal;
 my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
 	    "ciona_intestinalis",  "ciona_savignyi", "drosophila_melanogaster",
 	    "saccharomyces_cerevisiae");
+# ensembl has started collecting breeds for some animals - not of interest here
+my @breed = ("mus_musculus_", "hybrid", "oryzias_latipes_", "sus_scrofa_", "capra_hircus_",
+			"cyprinus_carpio_", "ovis_aries_");
+
 
 my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 
@@ -53,9 +58,15 @@ my $ct = 0;
 foreach $animal ( @farm ) {
 
 	#print("$animal\n");
-    next if ( grep {/$animal/} @skip);
-  	# there is a bunch of mouse genomes that I do not want to deal with now
-	next if ($animal=~/mus_musculus_/ || $animal=~/hybrid/ || $animal=~/oryzias_latipes_/ || $animal=~/sus_scrofa_/);
+	next if ( grep {/$animal/} @skip);
+	next if ( grep {$animal=~/$_/} @breed);
+	# there is no canis_lupus without extension
+	next if ($animal=~/canis_lupus_/ &&  $animal ne "canis_lupus_familiaris");
+	next if ($animal=~/cricetulus_griseus_/ &&  $animal!~/cricetulus_griseus_crigri/);
+	# as of Sept 2020, there are two duck assemblies, both from China:
+	# anas_platyrhynchos_platyrhynchos has been updated more recently
+	# and has more gene transcripts then anas_platyrhynchos
+	next if ($animal=~/anas_platyrhynchos/ &&  $animal!~/anas_platyrhynchos_platyrhynchos/);
 
     $ct += 1;
     print $ct, "  ", $animal, "\n";

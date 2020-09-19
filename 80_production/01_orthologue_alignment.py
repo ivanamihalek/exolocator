@@ -30,7 +30,7 @@ def write_to_fasta(home, species, stable_transl_id, tmpfile, logfile, out_fasta)
 
 	return False
 
-def reorder_seqs(in_afa, species_sorted, out_afa):
+def reorder_seqs(in_afa, species_sorted, out_afa, trivial):
 	seq = {}
 	name = 'anon'
 	with open(in_afa) as inf:
@@ -45,7 +45,7 @@ def reorder_seqs(in_afa, species_sorted, out_afa):
 
 	with open(out_afa, "w") as outf:
 		for name in species_sorted:
-			outf.write(f">{name}\n")
+			outf.write(f">{trivial[name] if trivial else name}\n")
 			for i in range(0,len(seq[name]), 100):
 				outf.write(f"{seq[name][i:i+100]}\n")
 
@@ -54,9 +54,10 @@ def reorder_seqs(in_afa, species_sorted, out_afa):
 def main():
 
 	if len(sys.argv)<2:
-		print("usage: %s <gene symbol> " % sys.argv[0])
+		print("usage: %s <gene symbol> [trivial]" % sys.argv[0])
 		exit()
 	gene_name = sys.argv[1]
+	trivial =  len(sys.argv)>2 and sys.argv[2]=="trivial"
 	ref_species = 'homo_sapiens'  # the orthologue table is filled only here, for the moment
 
 	out_fasta = f"{gene_name}.orthos.fasta"
@@ -103,7 +104,8 @@ def main():
 	subprocess.call(["bash","-c", cmd])
 
 	species_sorted = species_sort(cursor, species_in_the_almt, ref_species)
-	reorder_seqs('tmp.afa', species_sorted, out_afa)
+	trivial_names = get_trivial(cursor, species_sorted) if trivial else None
+	reorder_seqs('tmp.afa', species_sorted, out_afa, trivial_names)
 	if os.path.exists('tmp.afa'): os.remove('tmp.afa')
 
 	cursor.close()

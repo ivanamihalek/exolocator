@@ -2,7 +2,7 @@
 
 use warnings;
 use strict;
-my $release_num = 97;
+my $release_num = 101;
 
 my $local_repository    = "/storage/databases/ensembl-$release_num/fasta";
 my $db_formatting_tool  = "/usr/bin/makeblastdb";
@@ -20,8 +20,10 @@ my @farm =  split "\n", `ls -d *_*`;
 
 foreach my $animal (@farm) {
 
-	print "----------------------------\n";
-	print " ... formating  $animal... \n\n";
+	# $animal eq "xenopus_tropicalis" && last;
+
+	print "\n----------------------------\n";
+	print " ... formating  $animal ... \n\n";
 
     foreach my $dir  ( "pep",  "dna" ){
 
@@ -30,14 +32,27 @@ foreach my $animal (@farm) {
 
 		my @fastas = split "\n",  `ls *.fa`;
 		for my $fasta (@fastas) {
-			print "\t $fasta\n";
 			my $cmd;
 			if ( $dir eq "dna") {
-				$cmd = "$db_formatting_tool -in $fasta -dbtype nucl -parse_seqids";
+				if ((-e "$fasta.nsq" && ! -z  "$fasta.nsq") || (-e "$fasta.00.nsq" && ! -z  "$fasta.00.nsq")) {
+					print "\t found $fasta \n";
+
+				} else {
+					print "\t formatting $fasta\n";
+					$cmd = "$db_formatting_tool -in $fasta -dbtype nucl -parse_seqids";
+					(system $cmd) && die " error running $cmd\n";
+				}
+
 			} else {
-				$cmd = "$db_formatting_tool -in $fasta -dbtype prot -parse_seqids";
+				if (-e "$fasta.psq" && ! -z  "$fasta.psq") {
+					print "\t found $fasta \n";
+
+				} else {
+					print "\t formatting $fasta\n";
+					$cmd = "$db_formatting_tool -in $fasta -dbtype prot -parse_seqids";
+					(system $cmd) && die " error running $cmd\n";
+				}
 			}
-			(system $cmd) && die  " error running $cmd\n";
 		}
     }
 }
