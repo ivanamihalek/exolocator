@@ -1,5 +1,16 @@
 #! /usr/bin/perl -w
 
+# TODO: for the next update - download species names
+# and decide which of them should be downloaded prior to downloading
+# - check if they correspond to different taxonomy_ids, and which build is nerwe
+# apparently ensembl started shoveling
+# uncurated number of builds so we have
+# astyanax_mexicanus_pachon is an older build of astyanax_mexicanus
+# and anas_platyrhynchos and anas_platyrhynchos_platyrhynchos
+# which are not subspecies but different builds
+# I am not sure what use if any I have from haveing both male and female H.glaber
+# male annotation is newer
+
 # notes:
 # *pep.all.fa vs *pep.abinitio.fa
 # not clear if there is any overlap. Genes are labeled with GENSCAN rather than ENS.
@@ -45,8 +56,8 @@ my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
 	    "saccharomyces_cerevisiae");
 # ensembl has started collecting breeds for some animals - not of interest here
 my @breed = ("mus_musculus_", "hybrid", "oryzias_latipes_", "sus_scrofa_", "capra_hircus_",
-			"cyprinus_carpio_", "ovis_aries_");
-
+			"cyprinus_carpio_", "ovis_aries_", "astyanax_mexicanus_");
+# astyanax_mexicanus_pachon is an older build of astyanax_mexicanus
 
 my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 

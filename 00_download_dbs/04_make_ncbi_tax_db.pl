@@ -4,7 +4,10 @@
 # are separate from the schema (ncbi_taxonomy.sql.gz)
 use strict;
 use warnings;
-my $path_to_db = "/storage/databases/ensembl-97/ncbi_tax";
+
+my $version = 101;
+
+my $path_to_db = "/storage/databases/ensembl-$version/ncbi_taxonomy";
 (-e $path_to_db) || die "$path_to_db not found\n";
 
 chdir $path_to_db;
@@ -16,7 +19,7 @@ foreach my $db  ("ncbi_taxonomy") {
 
     print "************************\n";
     print $db, "\n";
-    chdir "$path_to_db/$db";
+    chdir "$path_to_db";
 
     print "making db  ... \n";
     # do not check for error here (if the database exists)"
@@ -27,8 +30,10 @@ foreach my $db  ("ncbi_taxonomy") {
     (system $cmd) && warn "error running $cmd - moving on\n\n";
 
 
-    my $sqlname = "$db.sql";
-    (-e $sqlname) || die "$sqlname not found in $path_to_db/$db";
+    my $sqlname = "$db\_$version.sql";
+    (-e $sqlname) || die "$sqlname not found in $path_to_db";
+    # as of mysql v 8,  NFORMATION_SCHEMA.SESSION_VARIABLES became performance_schema.session_variables
+    `sed 's/INFORMATION_SCHEMA.SESSION_VARIABLES/performance_schema.session_variables/g' -i  $sqlname `;
     $cmd = "mysql  --login-path=tcga   $db < $sqlname";
     (system $cmd) && die "error running $cmd - exiting\n";
 

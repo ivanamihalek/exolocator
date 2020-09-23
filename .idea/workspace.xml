@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
-    </list>
+    <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="" />
     <ignored path="exolocator.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,25 +20,57 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
       <file leaf-file-name="00_ensembl_fasta_down.pl" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl">
+        <entry file="file://$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="69" selection-start-line="60" selection-end-line="69" />
+            <state relative-caret-position="144">
+              <caret line="11" selection-start-line="11" selection-end-line="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="01_make_meta_db.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/../01_make_meta_db.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="609">
+              <caret line="302" column="22" selection-start-line="302" selection-start-column="22" selection-end-line="302" selection-end-column="22" />
               <folding>
-                <element signature="n#!!doc" expanded="true" />
+                <element signature="e#1025#1055#0" expanded="true" />
+                <element signature="e#4906#5546#0" />
+                <element signature="e#4906#5154#1" />
+                <element signature="e#5392#5532#0" />
+                <element signature="e#5639#6180#0" />
+                <element signature="e#5737#5803#0" />
+                <element signature="e#6278#6789#0" />
+                <element signature="e#6395#6466#0" />
+                <element signature="e#7573#8500#0" />
+                <element signature="e#7589#7649#0" />
+                <element signature="e#8214#8291#0" />
+                <element signature="e#8376#8500#0" />
+                <element signature="e#8662#8701#0" />
+                <element signature="e#9713#9764#0" />
+                <element signature="e#14156#14211#0" />
+                <element signature="e#14419#14714#0" />
+                <element signature="e#14575#14663#0" />
+                <element signature="e#15603#15658#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="02_ensembl_mysql_down.pl" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl">
+      <file leaf-file-name="mysql.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../el_utils/mysql.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="593">
-              <caret line="49" column="1" selection-start-line="49" selection-start-column="1" selection-end-line="49" selection-end-column="1" />
-              <folding>
-                <element signature="e#1888#1954#0#Perl5" expanded="true" />
-              </folding>
+            <state relative-caret-position="290">
+              <caret line="82" column="4" selection-start-line="82" selection-start-column="4" selection-end-line="82" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ensembl.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../el_utils/ensembl.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="407">
+              <caret line="1304" column="20" lean-forward="true" selection-start-line="1304" selection-start-column="20" selection-end-line="1304" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -77,6 +102,7 @@
       <find>N</find>
       <find>canon_transl_start</find>
       <find>paralogue_grou</find>
+      <find>97</find>
     </findStrings>
     <replaceStrings>
       <replace>exolocator_meta</replace>
@@ -86,18 +112,11 @@
     </replaceStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/00_download_dbs/05_drop_old_databases.py" />
-        <option value="$PROJECT_DIR$/00_download_dbs/04_make_ncbi_tax_db.pl" />
-        <option value="$PROJECT_DIR$/01_make_config_db.py" />
-        <option value="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" />
-        <option value="$PROJECT_DIR$/30_db_migration/12_reconstruct_para_alnmts.py" />
-        <option value="$PROJECT_DIR$/30_db_migration/11_paralogue_directory_cleanup.py" />
-        <option value="$PROJECT_DIR$/el_utils/ncbi.py" />
         <option value="$PROJECT_DIR$/60_meta/41_make_tree.py" />
         <option value="$PROJECT_DIR$/03_seqname2file.py" />
         <option value="$PROJECT_DIR$/el_utils/processes.py" />
@@ -136,20 +155,27 @@
         <option value="$PROJECT_DIR$/80_production/el_utils/tree.py" />
         <option value="$PROJECT_DIR$/07_all_vs_all_paralog_search.py" />
         <option value="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" />
-        <option value="$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl" />
         <option value="$PROJECT_DIR$/../00_download_dbs/01_ensembl_fasta_format.pl" />
         <option value="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" />
         <option value="$PROJECT_DIR$/80_production/05_all_alignments.py" />
         <option value="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" />
         <option value="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" />
+        <option value="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" />
+        <option value="$PROJECT_DIR$/../00_download_dbs/03_make_ensembl_dbs.pl" />
+        <option value="$PROJECT_DIR$/../00_download_dbs/05_drop_old_databases.py" />
+        <option value="$PROJECT_DIR$/../00_download_dbs/02_ensembl_mysql_down.pl" />
+        <option value="$PROJECT_DIR$/../00_download_dbs/04_make_ncbi_tax_db.pl" />
+        <option value="$PROJECT_DIR$/../el_utils/ensembl.py" />
+        <option value="$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl" />
+        <option value="$PROJECT_DIR$/../01_make_meta_db.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2163" />
-    <option name="y" value="34" />
-    <option name="width" value="1578" />
-    <option name="height" value="927" />
+    <option name="x" value="2178" />
+    <option name="y" value="30" />
+    <option name="width" value="1568" />
+    <option name="height" value="1029" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -163,18 +189,13 @@
         <subPane>
           <expand>
             <path>
-              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
+              <item name="." type="b2602c69:ProjectViewProjectNode" />
               <item name="exolocator" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
+              <item name="." type="b2602c69:ProjectViewProjectNode" />
               <item name="exolocator" type="462c0819:PsiDirectoryNode" />
               <item name="00_download_dbs" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-              <item name="80_production" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -255,10 +276,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="2163" y="34" width="1578" height="927" extended-state="0" />
+    <frame x="2178" y="30" width="1568" height="1029" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23086816" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18964401" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info id="DB Browser" order="2" />
       <window_info anchor="bottom" id="DB Execution Console" order="7" />
@@ -298,11 +319,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="8" />
+      <option name="time" value="11" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/02_seqname2file.py" />
     <entry file="file://$PROJECT_DIR$/../23_gene2exon_store.py" />
     <entry file="file://$PROJECT_DIR$/../14_exon_pep_seqs.py" />
     <entry file="file://$PROJECT_DIR$/03_canonical_peptide_sequences.py" />
@@ -311,7 +331,6 @@
     <entry file="file://$PROJECT_DIR$/../00_download_dbs/03_make_ensembl_dbs.pl" />
     <entry file="file://$PROJECT_DIR$/../19_make_ortho_maps.py" />
     <entry file="file://$PROJECT_DIR$/../el_utils/exon.py" />
-    <entry file="file://$PROJECT_DIR$/../el_utils/mysql.py" />
     <entry file="file://$PROJECT_DIR$/../80_production/config.py" />
     <entry file="file://$PROJECT_DIR$/../el_utils/processes.py" />
     <entry file="file://$PROJECT_DIR$/../el_utils/translation.py" />
@@ -322,12 +341,9 @@
     <entry file="file://$PROJECT_DIR$/../50_workflows/62_workflow_02.pl" />
     <entry file="file://$PROJECT_DIR$/../00_download_dbs/config.py" />
     <entry file="file://$PROJECT_DIR$/../el_utils/tree.py" />
-    <entry file="file://$PROJECT_DIR$/../01_make_meta_db.py" />
     <entry file="file://$PROJECT_DIR$/18_paralogues.py" />
     <entry file="file://$PROJECT_DIR$/../03_seqname2file.py" />
-    <entry file="file://$PROJECT_DIR$/../16_orthologues.py" />
     <entry file="file://$PROJECT_DIR$/../17_load_orthologues.py" />
-    <entry file="file://$PROJECT_DIR$/../el_utils/ensembl.py" />
     <entry file="file://$PROJECT_DIR$/../80_production/el_utils/tree.py" />
     <entry file="file://$PROJECT_DIR$/../02_add_tables.py" />
     <entry file="file://$PROJECT_DIR$/../12_exon_dna_seqs.py" />
@@ -345,72 +361,126 @@
     <entry file="file://$PROJECT_DIR$/../.gitignore" />
     <entry file="file://$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl" />
     <entry file="file://$PROJECT_DIR$/../00_download_dbs/01_ensembl_fasta_format.pl" />
-    <entry file="file://$PROJECT_DIR$/80_production/03_paralogue_alignment.py">
+    <entry file="file://$PROJECT_DIR$/../80_production/03_paralogue_alignment.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
           <caret line="6" selection-end-line="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/80_production/01_orthologue_alignment.py">
+    <entry file="file://$PROJECT_DIR$/../80_production/01_orthologue_alignment.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="604">
           <caret line="104" selection-start-line="102" selection-end-line="104" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl">
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/01_ensembl_fasta_format.pl">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="378">
           <caret line="22" column="6" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/80_production/05_all_alignments.py">
+    <entry file="file://$PROJECT_DIR$/../80_production/05_all_alignments.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="522">
           <caret line="29" selection-start-line="29" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/05_drop_old_databases.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="16" column="24" lean-forward="true" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
           <folding>
-            <element signature="e#22#51#0" expanded="true" />
+            <element signature="e#20#49#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/04_make_ncbi_tax_db.pl">
+    <entry file="file://$PROJECT_DIR$/../16_orthologues.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="13" column="35" selection-start-line="13" selection-start-column="35" selection-end-line="13" selection-end-column="35" />
+        <state relative-caret-position="-1585">
+          <caret line="16" column="52" selection-start-line="16" selection-start-column="52" selection-end-line="16" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/02_ensembl_mysql_down.pl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="687">
+          <caret line="148" selection-start-line="148" selection-end-line="148" />
+          <folding>
+            <element signature="e#3890#3891#0#Perl5" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/03_make_ensembl_dbs.pl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="648">
+          <caret line="40" lean-forward="true" selection-start-line="38" selection-end-line="40" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="e#407#439#0#Perl5" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/04_make_ncbi_tax_db.pl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="38" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
+    <entry file="file://$PROJECT_DIR$/../el_utils/ensembl.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
+        <state relative-caret-position="407">
+          <caret line="1304" column="20" lean-forward="true" selection-start-line="1304" selection-start-column="20" selection-end-line="1304" selection-end-column="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl">
+    <entry file="file://$PROJECT_DIR$/../el_utils/mysql.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="69" selection-start-line="60" selection-end-line="69" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
+        <state relative-caret-position="290">
+          <caret line="82" column="4" selection-start-line="82" selection-start-column="4" selection-end-line="82" selection-end-column="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl">
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="593">
-          <caret line="49" column="1" selection-start-line="49" selection-start-column="1" selection-end-line="49" selection-end-column="1" />
+        <state relative-caret-position="144">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../01_make_meta_db.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="609">
+          <caret line="302" column="22" selection-start-line="302" selection-start-column="22" selection-end-line="302" selection-end-column="22" />
           <folding>
-            <element signature="e#1888#1954#0#Perl5" expanded="true" />
+            <element signature="e#1025#1055#0" expanded="true" />
+            <element signature="e#4906#5546#0" />
+            <element signature="e#4906#5154#1" />
+            <element signature="e#5392#5532#0" />
+            <element signature="e#5639#6180#0" />
+            <element signature="e#5737#5803#0" />
+            <element signature="e#6278#6789#0" />
+            <element signature="e#6395#6466#0" />
+            <element signature="e#7573#8500#0" />
+            <element signature="e#7589#7649#0" />
+            <element signature="e#8214#8291#0" />
+            <element signature="e#8376#8500#0" />
+            <element signature="e#8662#8701#0" />
+            <element signature="e#9713#9764#0" />
+            <element signature="e#14156#14211#0" />
+            <element signature="e#14419#14714#0" />
+            <element signature="e#14575#14663#0" />
+            <element signature="e#15603#15658#0" />
           </folding>
         </state>
       </provider>

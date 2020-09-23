@@ -1,31 +1,37 @@
 #!/usr/bin/python3
 
-from el_utils.mysql  import connect_to_mysql, search_db
+from el_utils.mysql  import *
 from config import Config
+
+
+def drop(cursor, db_name):
+	print (f"dropping {db_name}")
+	error_intolerant_search(cursor, f"drop database {db_name}")
+
 
 #########################################
 def main():
+	version = 97
 
-    db      = connect_to_mysql(Config.mysql_conf_file)
-    cursor = db.cursor()
+	db      = connect_to_mysql(Config.mysql_conf_file)
+	cursor = db.cursor()
 
-    #######################################################
-    # check if the config db exists -- if not, make it
-    qry  = "show databases like '%s'" %  "%_94_%"
-    rows = search_db (cursor, qry, verbose=True)
-    if rows:
-        for row in rows:
-            db_name = row[0]
-            print (db_name)
-            qry = "drop database " + db_name
-            rows2 = search_db (cursor, qry, verbose=True)
+	#######################################################
+	qry  = f"show databases like '_{version}_'"
+	rows = error_intolerant_search(cursor, qry)
+	if rows:
+		for row in rows:
+			db_name = row[0]
+			drop(cursor, db_name)
 
+	db_name = f"ensembl_compara_{version}"
+	drop(cursor, db_name)
 
-    cursor.close()
-    db.close()
+	cursor.close()
+	db.close()
 
 
 
 #########################################
 if __name__ == '__main__':
-    main()
+	main()

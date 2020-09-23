@@ -123,9 +123,13 @@ foreach $dir ( @dirs_I_need) {
     }
 }
 
-#=pod
+#
 #################################################################################
 # now take care of compara db
+# caveat here: homology_member.txt.gz is huge - almo 70 GB as og ensembl 101
+# 15 hours to download (using wget), another 1 hr to gunzip to 173 GB
+# can I reconstruct the contents on my own, without downloading?
+# the time to load this shit into mySQL is also becoming ridiculous  - 4hr just for homology table
 $dir       = $compara_dir;
 $local_dir = "$local_repository/$dir" ;
 (-e $local_dir )|| `mkdir -p $local_dir`;

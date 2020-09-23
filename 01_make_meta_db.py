@@ -4,7 +4,7 @@
 @package 00_make_meta_db.py
 @brief  Creating ad filling the configuration database. Hardcoded stuff is here.
 @author Ivana
-@date   2012, 2019
+@date   2012, 2020
 @mainpage Overview
 @main @section Purpose
 @main  exolocator pipeline is intended to fill exolocator_db, the database behind the ExoLocator server. 
@@ -21,7 +21,7 @@
 """
 
 from el_utils.mysql   import *
-from el_utils.ensembl import get_species, get_compara_name, species2taxid
+from el_utils.ensembl import get_ensembl_species, get_compara_name, ncbi_species2taxid
 from el_utils.ncbi    import get_ncbi_tax_name
 from config import Config
 
@@ -29,12 +29,14 @@ def set_trivial_names():
 	trivial = {}
 	trivial['ailuropoda_melanoleuca'] = 'panda'
 	trivial['anas_platyrhynchos_platyrhynchos']     = 'duck'
+	trivial['anas_zonorhyncha']       = 'spot-billed_duck'
 	trivial['anolis_carolinensis']    = 'anole_lizard'
 	trivial['astyanax_mexicanus']     = 'blind_cavefish'
 	trivial['bison_bison_bison']      = 'bison'
 	trivial['bos_taurus']             = 'cow'
 	trivial['callithrix_jacchus']     = 'marmoset'
 	trivial['canis_familiaris']       = 'dog'
+	trivial['cairina_moschata_domestica']  = 'muscovy_duck'
 	trivial['carlito_syrichta']       = 'tarsier'
 	trivial['cebus_capucinus']        = 'capuchin_monkey'
 	trivial['cavia_porcellus']        = 'guinea_pig'
@@ -60,6 +62,7 @@ def set_trivial_names():
 	trivial['lepisosteus_oculatus']        = 'spotted_gar'
 	trivial['loxodonta_africana']          = 'elephant'
 	trivial['macaca_mulatta']              = 'macaque'
+	trivial['nannospalax_galili']          = 'blind_mole_rat'
 	trivial['notamacropus_eugenii']        = 'wallaby'
 	trivial['meleagris_gallopavo']         = 'turkey'
 	trivial['microcebus_murinus']          = 'lemur'
@@ -85,7 +88,9 @@ def set_trivial_names():
 	trivial['pteropus_vampyrus']           = 'flying_fox'
 	trivial['pygocentrus_nattereri']       = 'piranha'
 	trivial['rattus_norvegicus']           = 'rat'
+	trivial['salvator_merianae']           = 'argentine_giant_tegu'
 	trivial['sarcophilus_harrisii']        = 'tasmanian_devil'
+	trivial['serinus_canaria']             = 'canary'
 	trivial['sorex_araneus']               = 'european_shrew'
 	trivial['sus_scrofa']                  = 'pig'
 	trivial['taeniopygia_guttata']         = 'zebra_finch'
@@ -174,40 +179,14 @@ def make_seqregion2file_table (cursor, db_name):
 
 
 #########################################
-def make_species_names_table(cursor, db_name):
-
-	switch_to_db (cursor, db_name)
-	table_name = 'species_names'
-	if check_table_exists(cursor, db_name, table_name):
-		qry = "drop table " + table_name
-		search_db(cursor, qry, verbose=True)
-
-	qry = ""
-	qry += "  CREATE TABLE  %s (" % table_name
-	qry += "     id INT(10)  NOT NULL AUTO_INCREMENT, "
-	qry += "     tax_id INT(10)  NOT NULL, "
-	qry += "  	 species VARCHAR (100) NOT NULL, "
-	qry += "  	 shorthand VARCHAR (20) NOT NULL, "
-	qry += "  	 trivial_name VARCHAR (50) NOT NULL, "
-
-	qry += "	 PRIMARY KEY (id) "
-	qry += ") ENGINE=MyISAM"
-
-	rows = search_db(cursor, qry)
-	print(qry)
-	print(rows)
-	return
-
-
-#########################################
-def feed_parameters(cursor, db_name):
+def feed_parameters(cursor, db_name, version):
 
 	parameter = {}
 	# in case I ever have to handle multiple versions of ensembl
 	# (but for now I don't have enough space)
 	# note though that there are functions in el_utils/mysql.py that assume
 	# that whatever ensembl stuff is available to the mysql server corresponds to the same release
-	parameter['ensembl_release_number'] = '97'
+	parameter['ensembl_release_number'] = version
 	parameter['blastp_e_value']         = "1.e-10" # it will be used as a string  when fmting the blastp cmd
 	parameter['min_accptbl_exon_sim']   = 0.33333 #minimum acceptable exon similarity
 
@@ -226,8 +205,50 @@ def feed_parameters(cursor, db_name):
 		store_or_update (cursor, table, fixed_fields, update_fields)
 
 
+########################
+def make_db_names_table(cursor, db_name):
+
+	switch_to_db (cursor, db_name)
+	table_name = 'db_names'
+	if check_table_exists(cursor, db_name, table_name):
+		qry = "drop table " + table_name
+		search_db(cursor, qry, verbose=True)
+
+	qry = ""
+	qry += "  CREATE TABLE  %s (" % table_name
+	qry += "     genome_db_id INT(10)  NOT NULL AUTO_INCREMENT, "
+	qry += "  	 species_name VARCHAR (100) NOT NULL, "
+	qry += "  	 db_name VARCHAR (100) NOT NULL, "
+	qry += "	 PRIMARY KEY (genome_db_id) "
+	qry += ") ENGINE=MyISAM"
+
+	rows = search_db(cursor, qry)
+	print(qry)
+	print(rows)
+	return
+
+
+#########
+def fill_db_names_table(cursor, ensembl_db_name):
+	compara_db_name = get_compara_name(cursor)
+	# how is this suppesd to work if they keep pulling name out of their arses like this
+	exceptions = {'cricetulus_griseus': 'cricetulus_griseus_crigri',
+					'heterocephalus_glaber': 'heterocephalus_glaber_male',
+					# some ornythologists are confused
+					'cyanoderma_ruficeps': 'stachyris_ruficeps'}
+	# I am not sure what use if any I have from haveing both male and female H.glaber
+	# male annotation is newer
+	for species_name, db_name in ensembl_db_name.items():
+		name = species_name if species_name not in exceptions else exceptions[species_name]
+		qry = f"select genome_db_id from {compara_db_name}.genome_db where name='{name}'"
+		genome_db_id = hard_landing_search(cursor, qry)[0][0]
+		print(genome_db_id, species_name, db_name)
+		fixed_fields={"genome_db_id":genome_db_id, "species_name":species_name, "db_name":ensembl_db_name[species_name]}
+		store_or_update(cursor, "db_names", fixed_fields=fixed_fields, update_fields={}, primary_key='genome_db_id')
+	return
+
 #########################################
-def get_trivial_names(cursor, all_species):
+def get_trivial_names(cursor, all_species, common_name):
 
 	tax_id  = {}
 	db_name = get_compara_name (cursor)
@@ -236,22 +257,7 @@ def get_trivial_names(cursor, all_species):
 		exit(1)
 	switch_to_db(cursor, db_name)
 	for species in all_species:
-		tax_id[species] = species2taxid(cursor, species)
-
-	# switch to ncbi taxonomy database
-	tax_db_name = get_ncbi_tax_name (cursor)
-	if not tax_db_name:
-		print("ncbi taxonomy db not found")
-		exit(1)
-	switch_to_db(cursor, tax_db_name)
-
-	common_name = {}
-	for species in all_species:
-		qry  = "select * from ncbi_taxa_name where taxon_id=%d " % tax_id[species]
-		qry += "and name_class='genbank common name'"
-		ret = search_db(cursor, qry)
-		if not ret: continue
-		common_name[species] = ret[0][1]
+		tax_id[species] = ncbi_species2taxid(cursor, species)
 
 	trivial_names = set_trivial_names()
 	for species in all_species:
@@ -282,8 +288,6 @@ def get_shorthand(cursor, species, ensembl_db):
 		shorthand='HSA'
 	elif species=='canis_lupus_dingo':
 		shorthand='CLD'
-	elif 'cricetulus_griseus' in species: # (three assemblies)
-		shorthand = "CGR_" + species.split("_")[2].upper()
 	else:
 		qry="select meta_value  from %s.meta where meta_key='species.stable_id_prefix'" % ensembl_db
 		stable_id_prefix = hard_landing_search(cursor, qry)[0][0]
@@ -296,13 +300,40 @@ def tax_id_sanity_check(cursor, species, ensembl_db, ncbi_taxonomy_id):
 	qry = "select meta_value from %s.meta where meta_key='species.taxonomy_id'" % ensembl_db
 	tax_id_ensembl =  int(hard_landing_search(cursor, qry)[0][0])
 	if tax_id_ensembl != ncbi_taxonomy_id:
-		print("tax_id mismatch for " + species)
-		print(tax_id_ensembl, ncbi_taxonomy_id)
-		exit()
+		print("Warning: tax_id mismatch for " + species)
+		print(f"ensembl:{tax_id_ensembl},  ncbi:{ncbi_taxonomy_id} - will use ncbi")
+
 	return ncbi_taxonomy_id
 
 
 #########################################
+def make_species_names_table(cursor, db_name):
+
+	switch_to_db (cursor, db_name)
+	table_name = 'species_names'
+	if check_table_exists(cursor, db_name, table_name):
+		return
+		# qry = "drop table " + table_name
+		# search_db(cursor, qry, verbose=True)
+
+	qry = ""
+	qry += "  CREATE TABLE  %s (" % table_name
+	qry += "     id INT(10)  NOT NULL AUTO_INCREMENT, "
+	qry += "     tax_id INT(10)  NOT NULL, "
+	qry += "  	 species VARCHAR (100) NOT NULL, "
+	qry += "  	 shorthand VARCHAR (20) NOT NULL, "
+	qry += "  	 trivial_name VARCHAR (50) NOT NULL, "
+
+	qry += "	 PRIMARY KEY (id) "
+	qry += ") ENGINE=MyISAM"
+
+	rows = search_db(cursor, qry)
+	print(qry)
+	print(rows)
+	return
+
+
+#########
 def feed_species_names (cursor, exolocator_meta_db_name, all_species, ensembl_db_name, trivial_name, ncbi_tax_id):
 
 	make_species_names_table(cursor, exolocator_meta_db_name)
@@ -310,11 +341,9 @@ def feed_species_names (cursor, exolocator_meta_db_name, all_species, ensembl_db
 	dbs_with_shorthand = {}
 	for species in all_species:
 		shorthand = get_shorthand(cursor, species, ensembl_db_name[species])
-		if not shorthand in dbs_with_shorthand: dbs_with_shorthand[shorthand]=[]
-		dbs_with_shorthand[shorthand].append(ensembl_db_name[species])
 		tax_id = tax_id_sanity_check(cursor, species, ensembl_db_name[species], ncbi_tax_id[species])
 		print("%8d %35s %45s %20s   %s (%d)" % (tax_id, species, ensembl_db_name[species],
-												shorthand, trivial_name[species], len(trivial_name[species])))
+		 										shorthand, trivial_name[species], len(trivial_name[species])))
 		fixed_fields  = {}
 		update_fields = {}
 		fixed_fields  ['species']   = species
@@ -334,45 +363,11 @@ def feed_species_names (cursor, exolocator_meta_db_name, all_species, ensembl_db
 
 
 #########################################
-def make_db_names_table(cursor, db_name):
-
-	switch_to_db (cursor, db_name)
-	table_name = 'db_names'
-	if check_table_exists(cursor, db_name, table_name):
-		qry = "drop table " + table_name
-		search_db(cursor, qry, verbose=True)
-
-	qry = ""
-	qry += "  CREATE TABLE  %s (" % table_name
-	qry += "     genome_db_id INT(10)  NOT NULL AUTO_INCREMENT, "
-	qry += "  	 db_name VARCHAR (100) NOT NULL, "
-	qry += "	 PRIMARY KEY (genome_db_id) "
-	qry += ") ENGINE=MyISAM"
-
-	rows = search_db(cursor, qry)
-	print(qry)
-	print(rows)
-	return
-
-
-#########
-def fill_db_names_table(cursor, meta_db_name):
-	compara_db_name = get_compara_name(cursor)
-	db_name_table = "%s.%s" % (meta_db_name, "db_names")
-	for line in hard_landing_search(cursor, "select genome_db_id, name from %s.genome_db" % compara_db_name):
-		[genome_db_id, name] = line
-		qry = "select schema_name from information_schema.schemata where schema_name like '{}%'".format(name)
-		ret = error_intolerant_search(cursor, qry)
-		if not ret:
-			print(f"db for {name} not found")
-			continue
-		db_name = ret[0][0]
-		fixed_fields={"genome_db_id":genome_db_id, "db_name":db_name}
-		store_or_update(cursor, db_name_table, fixed_fields=fixed_fields, update_fields={}, primary_key='genome_db_id')
-	return
 
 #########################################
 def main():
+
+	version = '101'
 
 	db     = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
@@ -382,7 +377,7 @@ def main():
 	#######################################################
 	# check if the config db exists -- if not, make it
 	exolocator_meta_db_name   = "exolocator_meta"
-	qry  = "show databases like'%s'" % exolocator_meta_db_name
+	qry  = "show databases like '%s'" % exolocator_meta_db_name
 	rows = search_db (cursor, qry)
 	if not rows:
 		print(exolocator_meta_db_name, "database not found")
@@ -395,26 +390,28 @@ def main():
 
 	switch_to_db(cursor, exolocator_meta_db_name)
 	#######################################################
+	# store parameters, to make sure we are consistent and reproducible
+	# this has to be stored first, because from this point on we read version from the parameter table
+	# feed_parameters(cursor, exolocator_meta_db_name, version)
+	#######################################################
+
+	[all_species, ensembl_db_name, common_name] = get_ensembl_species(cursor)
+	# for species in all_species:
+	# 	print(species, "     ", common_name[species], "     ", ensembl_db_name[species])
+
+	#######################################################
 	# create db_names table , mapping species id to db_name
 	# make_db_names_table(cursor, exolocator_meta_db_name)
-	fill_db_names_table(cursor, exolocator_meta_db_name)
-	#exit()
+	# fill_db_names_table(cursor, ensembl_db_name)
 
 
-	#######################################################
+	########################################################
 	# create flags table (for flagging arbitrary problems - to be filled as we go)
-	make_flags_table(cursor, exolocator_meta_db_name, 'flags')
-
-	#######################################################
-	# store parameters, to make sure we are consistent and reproducible
-	feed_parameters(cursor, exolocator_meta_db_name)
-
-	#######################################################
-	[all_species, ensembl_db_name] = get_species(cursor)
+	# make_flags_table(cursor, exolocator_meta_db_name, 'flags')
 
 	#######################################################
 	# get trivial names
-	trivial_names, ncbi_tax_id = get_trivial_names (cursor, all_species)
+	trivial_names, ncbi_tax_id = get_trivial_names(cursor, all_species, common_name)
 
 	#######################################################
 	# add species shorthands (used in ENS* names formation)

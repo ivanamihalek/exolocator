@@ -1298,37 +1298,39 @@ def get_gene_ids(cursor, db_name=None, biotype=None,  stable=False, ref_only=Fal
 
 
 ########
-def get_species(cursor):
+def get_ensembl_species(cursor):
+	exceptions = {'cebus_capucinus_imitator':'cebus_capucinus',
+					'gorilla_gorilla_gorilla':'gorilla_gorilla'}
 	ensembl_db_name = {}
+	common_name = {}
 	all_species = []
 
 	# find the release number
 	qry = "select value from exolocator_meta.parameters where name = 'ensembl_release_number'"
-	rows = search_db(cursor, qry)
-	if not rows or 'error' in rows[0][0].lower():
-		print('ensembl_release_number not set in exolocator_meta')
-		exit(1)
-	release_number = rows[0][0]
+	release_number = hard_landing_search(cursor, qry)[0][0]
 
-	qry = "show databases like '%core_{0}%'".format(release_number)
-	rows = search_db(cursor, qry)
-	if (not rows):
-		print("No databases with 'core_{0}' in the name found".format(release_number))
-		exit(1)
-
-	for row in rows:
+	qry = f"show databases like '%core_{release_number}%'"
+	for row in hard_landing_search(cursor, qry):
 		db_name = row[0]
-		name_token = db_name.split('_')
-		species = name_token[0]
-		i = 1
-		while not name_token[i] == 'core':
-			species += "_" + name_token[i]
-			i += 1
+
+		qry = f"select meta_value from {db_name}.meta where meta_key='species.scientific_name'"
+		species = hard_landing_search(cursor, qry)[0][0].lower().replace(" ", "_").replace("'", "_")
+		if species in exceptions: species = exceptions[species]
 		ensembl_db_name[species] = db_name
+
+		qry = f"select meta_value from {db_name}.meta where meta_key='species.common_name'"
+		species_common = hard_landing_search(cursor, qry)[0][0].lower().replace(" ", "_").replace("'", "_")
+		common_name[species] = species_common
+
 		all_species.append(species)
 
-	return all_species, ensembl_db_name
+	return all_species, ensembl_db_name, common_name
 
+
+def get_species(cursor):
+	qry = "select species_name, db_name from exolocator_meta.db_names "
+	ensembl_db_name = dict(hard_landing_search(cursor, qry))
+	return sorted(list(ensembl_db_name.keys())), ensembl_db_name
 
 ########
 def get_compara_name(cursor):
@@ -1348,6 +1350,15 @@ def get_compara_name(cursor):
 ########
 def species2taxid(cursor, species):
 	qry = "select tax_id from exolocator_meta.species_names where species = '%s'" % species
+	tax_id = hard_landing_search(cursor, qry)[0][0]
+	return tax_id
+
+
+########
+def ncbi_species2taxid(cursor, species):
+	species_txt = species.replace('_', ' ')
+	qry  = "select taxon_id from ncbi_taxonomy.ncbi_taxa_name "
+	qry += f"where name='{species_txt}' "
 	tax_id = hard_landing_search(cursor, qry)[0][0]
 	return tax_id
 
