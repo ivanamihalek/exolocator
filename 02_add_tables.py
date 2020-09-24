@@ -385,9 +385,6 @@ def main():
 	db     = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
-	#the 000 date problem
-	qry = " SET @@sql_mode :='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'"
-	error_intolerant_search(cursor,qry)
 
 	# add exon tables to all species
 	for species in all_species:

@@ -33,7 +33,7 @@ def canon_seqs_for_species(cursor, species, ensembl_db_name):
 	# we'll do this for human only, for now
 	switch_to_db (cursor, ensembl_db_name[species])
 
-	fasta_path = "/storage/databases/ensembl-{}/fasta/{}/pep".format(Config.release_number, species)
+	fasta_path = f"/storage/databases/ensembl-{Config.release_number}/fasta/{species}/pep"
 	ext = "pep.all.fa"
 	in_fastas = [fnm for fnm in  os.listdir(fasta_path) if fnm[-(len(ext)):] == ext]
 	if len(in_fastas) == 0:
@@ -114,7 +114,6 @@ def main():
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
-	all_species.remove("homo_sapiens")
 	cursor.close()
 	db.close()
 
