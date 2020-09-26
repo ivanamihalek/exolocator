@@ -35,7 +35,6 @@ def main():
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
-	all_species.remove("homo_sapiens")
 	cursor.close()
 	db.close()
 

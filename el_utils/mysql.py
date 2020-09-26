@@ -130,7 +130,7 @@ def store_or_update(cursor, table, fixed_fields, update_fields, verbose=False, p
 	if not exists:
 		rows = search_db (cursor, "select last_insert_id()" )
 		try:
-			primary_keys =  rows[0]
+			primary_keys = rows[0]
 		except:
 			return False
 
@@ -193,8 +193,8 @@ def check_table_exists(cursor, db_name, table_name):
 
 	qry = "show tables like '%s'" % table_name
 	rows = search_db(cursor, qry, verbose=False)
-	if (rows):
-		if ( 'Error' in rows[0]):
+	if rows:
+		if 'Error' in rows[0]:
 			return False
 		else:
 			return True

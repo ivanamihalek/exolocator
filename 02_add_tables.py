@@ -410,17 +410,6 @@ def main():
 		qry = "optimize table exon_seq"
 		print(search_db(cursor, qry))
 
-	# add file_name column to seq_region table (seq_region table  already exists in ensembl schema)
-	for species in all_species:
-		print(species)
-		db_name = ensembl_db_name[species]
-
-		if column_exists(cursor, db_name, "seq_region", "file_name"):
-			print("file_name found in seq_region, ", db_name)
-
-		else:  # modify_filename_column (cursor, db_name)
-			print("file_name  not found in seq_region, ", db_name, "(making the column)")
-			add_filename_column (cursor, db_name)
 
 	# add orthologue table to human - we are human-centered here
 	# ditto for map (which exons from other species map onto human exons)

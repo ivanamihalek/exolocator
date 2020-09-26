@@ -75,8 +75,6 @@ def main():
 	ensembl_stable_gene_id = hard_landing_search(cursor, qry)[0][0]
 
 	[all_species, ensembl_db_name] = get_species(cursor)
-	all_species.remove('heterocephalus_glaber_male')
-	del ensembl_db_name['heterocephalus_glaber_male']
 
 	switch_to_db(cursor, ensembl_db_name[ref_species])
 	qry = "select gene_id from gene where stable_id='%s'" % ensembl_stable_gene_id

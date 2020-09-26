@@ -17,6 +17,15 @@ import os
 # move files that need to be loaded tothat dir
 # remove later
 
+# cleaner solution:
+# for this to work conf file must have the local_infile=1 line
+# and in mysql one has to run
+# mysql>  SET GLOBAL local_infile = 'ON';
+# check
+# mysql> SHOW GLOBAL VARIABLES LIKE 'local_infile';
+# not sure how thid variable gets flipped back to OFF - on server restart?
+# table name and tsv name must match
+
 
 def main():
 	print("careful, this script deletes table contents")
