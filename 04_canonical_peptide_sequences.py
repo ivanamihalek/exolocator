@@ -35,7 +35,7 @@ def canon_seqs_for_species(cursor, species, ensembl_db_name):
 
 	fasta_path = f"/storage/databases/ensembl-{Config.release_number}/fasta/{species}/pep"
 	ext = "pep.all.fa"
-	in_fastas = [fnm for fnm in  os.listdir(fasta_path) if fnm[-(len(ext)):] == ext]
+	in_fastas = [fnm for fnm in os.listdir(fasta_path) if fnm[-(len(ext)):] == ext]
 	if len(in_fastas) == 0:
 		print(f"*.{ext} not found")
 		exit()

@@ -10,7 +10,10 @@ from config import Config
 from el_utils.ensembl import *
 from el_utils.processes import *
 
-
+#########################################
+# ./el_utils/kernprof.py -l <calling script>.py
+# python3 -m line_profiler <calling script>.py.lprof
+# @profile
 ############
 def get_orthologues(cursor, compara_db, homology_ids, qry_stable_id, verbose=False):
 	orthos = {}
@@ -56,17 +59,13 @@ def write_orthologues(ortho_file_handle, gene_id, orthos):
 
 
 def open_files():
-	pid= os.getpid()
-	filehandle = {'orthologue':open("raw_tables/orthologue.tsv", "w"),
-					'unresolved_ortho':open("raw_tables/unresolved_ortho.tsv", "w")}
+	pid = os.getpid()
+	filehandle = {'orthologue':open(f"raw_tables/orthologue.{pid}.tsv", "w"),
+					'unresolved_ortho':open(f"raw_tables/unresolved_ortho.{pid}.tsv", "w")}
 	return filehandle
 
-#########################################
-# ./el_utils/kernprof.py -l <calling script>.py
-# python3 -m line_profiler <calling script>.py.lprof
-#@profile
-def collect_orthologues(cursor, ensembl_compara_name, ensembl_db_name, stable_id, homology_ids, filehandle):
 
+def collect_orthologues(cursor, ensembl_compara_name, ensembl_db_name, stable_id, homology_ids, filehandle):
 
 	switch_to_db(cursor, ensembl_db_name['homo_sapiens'])
 	search_db(cursor, "set autocommit=1")
@@ -83,33 +82,23 @@ def collect_orthologues(cursor, ensembl_compara_name, ensembl_db_name, stable_id
 	orthos = get_orthologues(cursor, ensembl_compara_name, homology_ids, stable_id, verbose=False)
 
 	for ortho_type in ['ortholog_one2one','possible_ortholog', 'apparent_ortholog_one2one',
-	                   'ortholog_one2many','ortholog_many2many']:
+						'ortholog_one2many','ortholog_many2many']:
 		if (not ortho_type in orthos) or (not orthos[ortho_type]): continue
 		# the triple returned for each ortho type is [ortho_stable, species,  genome_db_id]
 		table = ortho_table[ortho_type]
 		write_orthologues(filehandle[table], gene_id, orthos[ortho_type])
 
+def core_loop(genes, other_args):
 
-
-
-def main():
-
-	#species = 'homo_sapiens' # taxon id = 9606
+	[ensembl_compara_name, ensembl_db_name] = other_args
 
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
-
-	ensembl_compara_name = get_compara_name(cursor)
-	[all_species, ensembl_db_name] = get_species(cursor)
-
 	filehandle = open_files()
 
 	time1 = time0 = time()
 	ct = 0
-	qry  = f"select gene_member_id, stable_id from {ensembl_compara_name}.gene_member "
-	qry += "where taxon_id=9606 and biotype_group='coding'"
-	for row in hard_landing_search(cursor, qry):
-		[gene_member_id, stable_id] = row
+	for gene_member_id, stable_id in genes[6020:6022]:
 		qry  = f"select homology_id from {ensembl_compara_name}.homology_member  where gene_member_id={gene_member_id}"
 		ret = time_qry(cursor, qry, verbose=False)
 		if not ret: continue
@@ -121,12 +110,45 @@ def main():
 			time1 = time()
 
 	minutes = (time()-time0)/60
-	print("done in %.1f mins" % minutes)
+	print(os.getpid(), "done in %.1f mins" % minutes)
 
 	for fh in filehandle.values(): fh.close()
 
 	cursor.close()
 	db.close()
+
+
+def main():
+	# in version 101, this takes 4 CPU hrs, producing a file
+	# that has 207M and 10,978,400 lines/entries;
+	# the original homology_member file has 945 million entries
+	# how does the Ensembl borwser use that - what am I missing?
+	number_of_chunks = 1
+	db = connect_to_mysql(Config.mysql_conf_file)
+	cursor = db.cursor()
+
+	ensembl_compara_name = get_compara_name(cursor)
+	[all_species, ensembl_db_name] = get_species(cursor)
+
+	outf = open("raw_tables/homology_human_subset.tsv", "w")
+
+	qry  = f"select gene_member_id, stable_id from {ensembl_compara_name}.gene_member "
+	qry += "where taxon_id=9606 and biotype_group='coding'"
+	for gene_member_id, stable_id in  hard_landing_search(cursor, qry):
+		qry = f"select homology_id from {ensembl_compara_name}.homology_member where gene_member_id={gene_member_id}"
+		ret =  error_intolerant_search(cursor, qry)
+		if not ret: continue
+		for line in ret:
+			homology_id = line[0]
+			qry = f"select homology_id, gene_member_id from {ensembl_compara_name}.homology_member where homology_id={homology_id}"
+			ret = error_intolerant_search(cursor, qry)
+			if not ret: continue
+			print("\n".join(["\t".join([str(field) for field in  line]) for line in ret]), file=outf)
+	cursor.close()
+	db.close()
+
+	#parallelize(number_of_chunks, core_loop, genes, [ensembl_compara_name, ensembl_db_name])
+	#core_loop(genes, [ensembl_compara_name, ensembl_db_name])
 
 	return True
 
@@ -134,3 +156,14 @@ def main():
 #########################################
 if __name__ == '__main__':
 	main()
+
+'''
+none of this worked:
+create  table  scratch_gene_mem_subtable  engine=MYISAM  as select gene_member_id, 
+stable_id from gene_member where taxon_id=9606  and biotype_group='coding' ;
+
+Query OK, 23471 rows affected (0.66 sec)
+Records: 23471  Duplicates: 0  Warnings: 0
+
+'''
+

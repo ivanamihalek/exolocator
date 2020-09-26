@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="" />
+    <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/06_output_human_homology_members.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04_canonical_peptide_sequences.py" beforeDir="false" afterPath="$PROJECT_DIR$/04_canonical_peptide_sequences.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/06_orthologues.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/07_load_orthologues.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_load_human_homology_members.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/08_all_vs_all_paralog_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/09_all_vs_all_paralog_search.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/09_paralogue_store.py" beforeDir="false" afterPath="$PROJECT_DIR$/10_paralogue_store.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/10_exon_coordinates.py" beforeDir="false" afterPath="$PROJECT_DIR$/11_exon_coordinates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raw_tables/orthologue.tsv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/raw_tables/unresolved_ortho.tsv" beforeDir="false" />
+    </list>
     <ignored path="exolocator.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,50 +30,35 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="06_orthologues.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../06_orthologues.py">
+      <file leaf-file-name="06_output_human_homology_members.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/06_output_human_homology_members.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="447">
-              <caret line="119" column="52" selection-start-line="119" selection-start-column="52" selection-end-line="119" selection-end-column="52" />
+            <state relative-caret-position="323">
+              <caret line="18" column="51" selection-start-line="18" selection-start-column="51" selection-end-line="18" selection-end-column="51" />
               <folding>
-                <element signature="e#218#239#0" expanded="true" />
+                <element signature="e#220#245#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/../.gitignore">
+      <file leaf-file-name="07_load_human_homology_members.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/07_load_human_homology_members.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="666">
-              <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+            <state relative-caret-position="303">
+              <caret line="50" column="78" selection-start-line="50" selection-start-column="78" selection-end-line="50" selection-end-column="78" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mysql.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../el_utils/mysql.py">
+      <file leaf-file-name="03_make_ensembl_dbs.pl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="204" column="4" selection-start-line="204" selection-start-column="4" selection-end-line="204" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ensembl.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../el_utils/ensembl.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="263">
-              <caret line="1329" column="4" selection-start-line="1329" selection-start-column="4" selection-end-line="1329" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="07_load_orthologues.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../07_load_orthologues.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="54" lean-forward="true" selection-start-line="47" selection-end-line="54" />
+            <state relative-caret-position="702">
+              <caret line="44" column="80" selection-start-line="44" selection-start-column="11" selection-end-line="44" selection-end-column="80" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -104,16 +100,11 @@
     </replaceStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/06_paralogue_test.py" />
-        <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/07_gene_level_paralogues.py" />
-        <option value="$PROJECT_DIR$/05_all_vs_all_paralog_search.py" />
-        <option value="$PROJECT_DIR$/03_canonical_peptide_sequences.py" />
         <option value="$PROJECT_DIR$/el_utils/exon.py" />
         <option value="$PROJECT_DIR$/10_exon_coordinates.py" />
         <option value="$PROJECT_DIR$/el_utils/mysql.py" />
@@ -150,7 +141,6 @@
         <option value="$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl" />
         <option value="$PROJECT_DIR$/../01_make_meta_db.py" />
         <option value="$PROJECT_DIR$/../00_download_dbs/config.py" />
-        <option value="$PROJECT_DIR$/../04_canonical_peptide_sequences.py" />
         <option value="$PROJECT_DIR$/../02_add_tables.py" />
         <option value="$PROJECT_DIR$/../el_utils/mysql.py" />
         <option value="$PROJECT_DIR$/../03_seqname2file.py" />
@@ -158,15 +148,21 @@
         <option value="$PROJECT_DIR$/../80_production/01_orthologue_alignment.py" />
         <option value="$PROJECT_DIR$/../17_load_orthologues.py" />
         <option value="$PROJECT_DIR$/../16_orthologues.py" />
-        <option value="$PROJECT_DIR$/../06_orthologues.py" />
         <option value="$PROJECT_DIR$/../.gitignore" />
+        <option value="$PROJECT_DIR$/../04_canonical_peptide_sequences.py" />
+        <option value="$PROJECT_DIR$/../06_orthologues.py" />
+        <option value="$PROJECT_DIR$/06_orthologues.py" />
+        <option value="$PROJECT_DIR$/07_orthologues.py" />
+        <option value="$PROJECT_DIR$/06_output_human_homology_table.py" />
+        <option value="$PROJECT_DIR$/06_output_human_homology_members.py" />
+        <option value="$PROJECT_DIR$/07_load_human_homology_members.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2119" />
-    <option name="y" value="19" />
-    <option name="width" value="1655" />
+    <option name="x" value="1954" />
+    <option name="y" value="17" />
+    <option name="width" value="1763" />
     <option name="height" value="973" />
   </component>
   <component name="ProjectLevelVcsManager">
@@ -181,8 +177,13 @@
         <subPane>
           <expand>
             <path>
-              <item name="." type="b2602c69:ProjectViewProjectNode" />
+              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
               <item name="exolocator" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="exolocator" type="b2602c69:ProjectViewProjectNode" />
+              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
+              <item name="00_download_dbs" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -202,8 +203,8 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/80_production" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/80_production" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -263,10 +264,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="2119" y="19" width="1655" height="973" extended-state="0" />
+    <frame x="1954" y="17" width="1763" height="973" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23100491" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21666667" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info id="DB Browser" order="2" />
       <window_info anchor="bottom" id="DB Execution Console" order="7" />
@@ -310,14 +311,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../23_gene2exon_store.py" />
-    <entry file="file://$PROJECT_DIR$/../14_exon_pep_seqs.py" />
-    <entry file="file://$PROJECT_DIR$/03_canonical_peptide_sequences.py" />
-    <entry file="file://$PROJECT_DIR$/01_add_tables.py" />
-    <entry file="file://$PROJECT_DIR$/00_make_meta_db.py" />
-    <entry file="file://$PROJECT_DIR$/../00_download_dbs/03_make_ensembl_dbs.pl" />
-    <entry file="file://$PROJECT_DIR$/../19_make_ortho_maps.py" />
-    <entry file="file://$PROJECT_DIR$/../el_utils/exon.py" />
     <entry file="file://$PROJECT_DIR$/../80_production/config.py" />
     <entry file="file://$PROJECT_DIR$/../el_utils/processes.py" />
     <entry file="file://$PROJECT_DIR$/../el_utils/translation.py" />
@@ -340,159 +333,78 @@
     <entry file="file://$PROJECT_DIR$/../80_production/03_paralogue_alignment.py" />
     <entry file="file://$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl" />
     <entry file="file://$PROJECT_DIR$/../00_download_dbs/01_ensembl_fasta_format.pl" />
-    <entry file="file://$PROJECT_DIR$/../80_production/03_paralogue_alignment.py">
+    <entry file="file://$PROJECT_DIR$/../80_production/03_paralogue_alignment.py" />
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/01_ensembl_fasta_format.pl" />
+    <entry file="file://$PROJECT_DIR$/../80_production/05_all_alignments.py" />
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/05_drop_old_databases.py" />
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/02_ensembl_mysql_down.pl" />
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/04_make_ncbi_tax_db.pl" />
+    <entry file="file://$PROJECT_DIR$/../01_make_meta_db.py" />
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl" />
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/config.py" />
+    <entry file="file://$PROJECT_DIR$/../00_download_dbs/03_make_ensembl_dbs.pl" />
+    <entry file="file://$PROJECT_DIR$/../02_add_tables.py" />
+    <entry file="file://$PROJECT_DIR$/../80_production/01_orthologue_alignment.py" />
+    <entry file="file://$PROJECT_DIR$/../08_all_vs_all_paralog_search.py" />
+    <entry file="file://$PROJECT_DIR$/../05_format_canonical_for_blast.py" />
+    <entry file="file://$PROJECT_DIR$/../03_seqname2file.py" />
+    <entry file="file://$PROJECT_DIR$/../07_load_orthologues.py" />
+    <entry file="file://$PROJECT_DIR$/../el_utils/ensembl.py" />
+    <entry file="file://$PROJECT_DIR$/../el_utils/mysql.py" />
+    <entry file="file://$PROJECT_DIR$/../.gitignore" />
+    <entry file="file://$PROJECT_DIR$/../el_utils/kernprof.py" />
+    <entry file="file://$PROJECT_DIR$/../04_canonical_peptide_sequences.py" />
+    <entry file="file://$PROJECT_DIR$/../06_orthologues.py" />
+    <entry file="file://$PROJECT_DIR$/08_orthologues.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="6" selection-end-line="6" />
+        <state relative-caret-position="450">
+          <caret line="119" lean-forward="true" selection-start-line="119" selection-end-line="119" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../00_download_dbs/01_ensembl_fasta_format.pl">
+    <entry file="file://$PROJECT_DIR$/02_add_tables.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="22" column="6" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="6" />
+        <state relative-caret-position="-3456" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/03_seqname2file.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="486">
+          <caret line="49" lean-forward="true" selection-start-line="38" selection-end-line="49" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../80_production/05_all_alignments.py">
+    <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="522">
-          <caret line="29" selection-start-line="29" selection-end-line="29" />
+        <state relative-caret-position="126">
+          <caret line="7" column="45" lean-forward="true" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="45" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../00_download_dbs/05_drop_old_databases.py">
+    <entry file="file://$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="24" lean-forward="true" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../00_download_dbs/02_ensembl_mysql_down.pl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="687">
-          <caret line="148" selection-start-line="148" selection-end-line="148" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../00_download_dbs/04_make_ncbi_tax_db.pl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="684">
-          <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../01_make_meta_db.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="537">
-          <caret line="358" column="44" lean-forward="true" selection-start-line="358" selection-start-column="44" selection-end-line="358" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../00_download_dbs/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../00_download_dbs/03_make_ensembl_dbs.pl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="41" column="39" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="39" />
+        <state relative-caret-position="702">
+          <caret line="44" column="80" selection-start-line="44" selection-start-column="11" selection-end-line="44" selection-end-column="80" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../02_add_tables.py">
+    <entry file="file://$PROJECT_DIR$/06_output_human_homology_members.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="329" lean-forward="true" selection-start-line="329" selection-end-line="329" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../80_production/01_orthologue_alignment.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9">
-          <caret line="77" selection-start-line="77" selection-end-line="77" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../08_all_vs_all_paralog_search.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9">
-          <caret line="79" column="9" lean-forward="true" selection-start-line="79" selection-start-column="9" selection-end-line="79" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../04_canonical_peptide_sequences.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="43" column="14" selection-start-line="43" selection-start-column="14" selection-end-line="43" selection-end-column="14" />
+        <state relative-caret-position="323">
+          <caret line="18" column="51" selection-start-line="18" selection-start-column="51" selection-end-line="18" selection-end-column="51" />
           <folding>
-            <element signature="e#24#49#0" expanded="true" />
+            <element signature="e#220#245#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../05_format_canonical_for_blast.py">
+    <entry file="file://$PROJECT_DIR$/07_load_human_homology_members.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="37" selection-start-line="37" selection-end-line="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../03_seqname2file.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2">
-          <caret line="83" column="47" lean-forward="true" selection-start-line="83" selection-start-column="47" selection-end-line="83" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../07_load_orthologues.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="54" lean-forward="true" selection-start-line="47" selection-end-line="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../el_utils/ensembl.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="1329" column="4" selection-start-line="1329" selection-start-column="4" selection-end-line="1329" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../el_utils/mysql.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="204" column="4" selection-start-line="204" selection-start-column="4" selection-end-line="204" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../06_orthologues.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="447">
-          <caret line="119" column="52" selection-start-line="119" selection-start-column="52" selection-end-line="119" selection-end-column="52" />
-          <folding>
-            <element signature="e#218#239#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="666">
-          <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+        <state relative-caret-position="303">
+          <caret line="50" column="78" selection-start-line="50" selection-start-column="78" selection-end-line="50" selection-end-column="78" />
         </state>
       </provider>
     </entry>
