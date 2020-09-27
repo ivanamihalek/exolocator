@@ -19,10 +19,10 @@ def get_orthologues(cursor, compara_db, homology_ids, qry_stable_id, verbose=Fal
 	orthos = {}
 
 	for homid in homology_ids:
-		qry = f"select description from {compara_db}.homology where homology_id={homid}"
+		qry = f"select description from {compara_db}.homology_human where homology_id={homid}"
 		homology_description = hard_landing_search(cursor, qry)[0][0]
 
-		qry = f"select gene_member_id from {compara_db}.homology_member where homology_id={homid}"
+		qry = f"select gene_member_id from {compara_db}.homology_member_human where homology_id={homid}"
 		ret = error_intolerant_search(cursor, qry)
 		if not ret: continue # strange, but possible
 
@@ -98,8 +98,8 @@ def core_loop(genes, other_args):
 
 	time1 = time0 = time()
 	ct = 0
-	for gene_member_id, stable_id in genes[6020:6022]:
-		qry  = f"select homology_id from {ensembl_compara_name}.homology_member  where gene_member_id={gene_member_id}"
+	for gene_member_id, stable_id in genes:
+		qry  = f"select homology_id from {ensembl_compara_name}.homology_member_human  where gene_member_id={gene_member_id}"
 		ret = time_qry(cursor, qry, verbose=False)
 		if not ret: continue
 		homology_ids = [r[0] for r in ret]
@@ -119,10 +119,7 @@ def core_loop(genes, other_args):
 
 
 def main():
-	# in version 101, this takes 4 CPU hrs, producing a file
-	# that has 207M and 10,978,400 lines/entries;
-	# the original homology_member file has 945 million entries
-	# how does the Ensembl borwser use that - what am I missing?
+
 	number_of_chunks = 1
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
@@ -130,25 +127,15 @@ def main():
 	ensembl_compara_name = get_compara_name(cursor)
 	[all_species, ensembl_db_name] = get_species(cursor)
 
-	outf = open("raw_tables/homology_human_subset.tsv", "w")
 
 	qry  = f"select gene_member_id, stable_id from {ensembl_compara_name}.gene_member "
 	qry += "where taxon_id=9606 and biotype_group='coding'"
-	for gene_member_id, stable_id in  hard_landing_search(cursor, qry):
-		qry = f"select homology_id from {ensembl_compara_name}.homology_member where gene_member_id={gene_member_id}"
-		ret =  error_intolerant_search(cursor, qry)
-		if not ret: continue
-		for line in ret:
-			homology_id = line[0]
-			qry = f"select homology_id, gene_member_id from {ensembl_compara_name}.homology_member where homology_id={homology_id}"
-			ret = error_intolerant_search(cursor, qry)
-			if not ret: continue
-			print("\n".join(["\t".join([str(field) for field in  line]) for line in ret]), file=outf)
+	genes = hard_landing_search(cursor, qry)
 	cursor.close()
 	db.close()
 
 	#parallelize(number_of_chunks, core_loop, genes, [ensembl_compara_name, ensembl_db_name])
-	#core_loop(genes, [ensembl_compara_name, ensembl_db_name])
+	core_loop(genes, [ensembl_compara_name, ensembl_db_name])
 
 	return True
 

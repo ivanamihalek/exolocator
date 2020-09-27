@@ -45,8 +45,8 @@ def make_human_hom_member_table(cursor, db_name, table):
 
 
 def main():
-	# print("careful, this script deletes table contents")
-	# exit()
+	print("careful, this script deletes table contents")
+	exit()
 	# in ensembl 101 this take about 1 min to read in
 	# check out, though, the previous scrip for the time to produce this table
 	home = os.getcwd()
