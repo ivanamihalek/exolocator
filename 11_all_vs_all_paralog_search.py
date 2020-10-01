@@ -31,7 +31,7 @@ def find_paralogues(stable_translation_ids, other_args):
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 
-	paralogue_file = f"{out_dir}/paralogues.{os.getpid()}.txt"
+	paralogue_file = f"{out_dir}/paralogues.{os.getpid()}.tsv"
 	cmd = "touch {}".format(paralogue_file)
 	subprocess.call(["bash","-c", cmd])
 

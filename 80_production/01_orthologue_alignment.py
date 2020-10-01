@@ -85,7 +85,7 @@ def main():
 
 	print(gene_name, ensembl_stable_gene_id, gene_id, ref_stable_transl_id)
 	species_in_the_almt = [ref_species]
-	qry = "select  cognate_gene_id, cognate_genome_db_id from orthologue where gene_id=%d" % gene_id
+	qry = "select  cognate_gene_id, cognate_genome_db_id from orthologues where gene_id=%d" % gene_id
 	for line in error_intolerant_search(cursor, qry):
 		[cognate_gene_id, cognate_genome_db_id] = line
 		qry = f"select db_name from exolocator_meta.db_names where genome_db_id={cognate_genome_db_id}"

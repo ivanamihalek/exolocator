@@ -154,36 +154,6 @@ def make_coding_region_table(cursor):
 			return False
 
 
-#########################################
-def make_orthologue_table (cursor, table):
-
-
-	# if congate_gene_id is 0, and source is 'rbh'
-	# means that the reciprocal-best-hit was attempted but nothing was found
-
-	qry  = "CREATE TABLE " + table + "  (orth_pair_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
-	rows = search_db (cursor, qry)
-	if (rows):
-		return False
-
-	for column_name in ['gene_id', 'cognate_gene_id']:
-		qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['cognate_genome_db_id']:
-		qry = "ALTER TABLE %s  ADD %s INT" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-
-	for column_name in ['source']:
-		qry = "ALTER TABLE %s  ADD %s VARCHAR(20)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
 
 
 #########################################
@@ -305,25 +275,6 @@ def make_para_exon_map_table (cursor):
 			return False
 
 
-#########################################
-def make_para_groups_table(cursor, db_name):
-	switch_to_db (cursor, db_name)
-	table = 'paralogue_groups'
-	if check_table_exists(cursor, db_name, table):
-		qry = "drop table " + table
-		search_db(cursor, qry, verbose=True)
-
-	qry = ""
-	qry += "CREATE TABLE  %s (" % table
-	qry += "     bait_stable_id varchar (128), "
-	qry += "  	 stable_ids text NOT NULL, "
-	qry += "	 PRIMARY KEY (group_id) "
-	qry += ") ENGINE=MyISAM"
-
-	rows = search_db(cursor, qry)
-	print(qry)
-	print(rows)
-
 
 #########################################
 def make_table (cursor, db_name, table):
@@ -343,10 +294,6 @@ def make_table (cursor, db_name, table):
 		make_novel_exon_table (cursor, table)
 	elif table == 'coding_region':
 		make_coding_region_table (cursor)
-	elif table in ['orthologue', 'unresolved_ortho']:
-		make_orthologue_table (cursor, table)
-	elif table == 'paralogue_groups':
-		make_para_groups_table(cursor, db_name)
 	elif table == 'exon_map':
 		make_exon_map_table (cursor)
 	elif table == 'para_exon_map':
@@ -413,10 +360,10 @@ def main():
 
 	# add orthologue table to human - we are human-centered here
 	# ditto for map (which exons from other species map onto human exons)
-	print("adding orthologue to human")
+	print("adding exon_map to human")
 	species = 'homo_sapiens'
 	db_name = ensembl_db_name[species]
-	for table in ['orthologue', 'unresolved_ortho', 'paralogue', 'exon_map']:
+	for table in [ 'exon_map']:
 		if check_table_exists(cursor, db_name, table):
 			print(table, " found in ", db_name)
 		else:

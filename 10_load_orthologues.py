@@ -1,14 +1,11 @@
-#! /usr/bin/python3
+#!/usr/bin/python3
 
-from el_utils.mysql import *
-from el_utils.ensembl import *
+
 from config import Config
-import os
+from el_utils.ensembl import *
 
-#########################################/home/ivana/.tcga_conf
+#########################################
 # problem:
-# if try to load with
-# load data infile from within mysql
 # "The MySQL server is running with the --secure-file-priv option so it cannot execute this statement"
 # if you do not wish to  to reconfigure and restart the server,
 # find the privileged directory with
@@ -26,50 +23,49 @@ import os
 # check
 # mysql> SHOW GLOBAL VARIABLES LIKE 'local_infile';
 # not sure how thid variable gets flipped back to OFF - on server restart, apparently
-# table name and tsv name must match
+# table name and tsv name must match <<<< !!! NOTE THIS
 # Then load with mysqlimport (-L stands for local) - table and the filename without the extension have to match
 # "mysqlimport --login-path=tcga --fields_escaped_by=\\\\ $db -L *.txt"
 
-def make_human_hom_member_table(cursor, db_name, table):
-	check_and_drop_table(cursor, db_name, table)
+
+def make_orthologues_table(cursor, db_name):
+	check_and_drop_table(cursor, db_name, "orthologues")
 	switch_to_db(cursor, db_name)
 	qry = ""
-	qry += f"CREATE TABLE  {table} ("
-	qry += "     homology_id bigint unsigned not null, "
-	qry += "  	 gene_member_id int unsigned not null, "
-	qry += "	 PRIMARY KEY (homology_id, gene_member_id) "
+	qry += f"CREATE TABLE  orthologues ("
+	qry += "     gene_id int unsigned not null, "
+	qry += "  	 cognate_gene_id int unsigned not null, "
+	qry += "  	 cognate_genome_db_id int unsigned not null"
+	#qry += "	 PRIMARY KEY (gene_id) " # I have duplicate gene_ids here!
 	qry += ") ENGINE=MyISAM"
 	error_intolerant_search(cursor, qry)
 	return
 
 
-
+####################################################
 def main():
-	print("careful, this script deletes table contents")
+	print("careful, this script deletes orthologues table")
 	exit()
-	# in ensembl 101 this take about 1 min to read in
-	# check out, though, the previous scrip for the time to produce this table
-	home = os.getcwd()
-	table_name = "homology_member_human"
-	infile = f"{home}/raw_tables/{table_name}.tsv"
-	if not os.path.exists(infile):
-		print(f"{infile} not found")
-		exit()
 
+	# we'll do this for human only, for now
+	species = 'homo_sapiens'
+	in_dir = "raw_tables"
+	for dep in [in_dir, f"{in_dir}/orthologues.tsv"]:
+		if not os.path.exists(dep):
+			print(dep,"not found")
+			exit()
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	search_db(cursor, "set autocommit=1")
+	[all_species, ensembl_db_name] = get_species(cursor)
 
-	ensembl_compara_name = get_compara_name(cursor)
-	make_human_hom_member_table(cursor, ensembl_compara_name, table_name)
+	make_orthologues_table(cursor, ensembl_db_name[species])
+	cmd = f"mysqlimport --login-path=tcga --fields_escaped_by=\\\\ {ensembl_db_name[species]} -L {in_dir}/orthologues.tsv"
+	subprocess.call(["bash","-c", cmd])
+
 	cursor.close()
 	db.close()
 
-	cmd = f"mysqlimport --login-path=tcga --fields_escaped_by=\\\\ {ensembl_compara_name} -L {infile}"
-	subprocess.call(["bash","-c", cmd])
-
-
-
-#########################################
-if __name__ == '__main__':
+#####################################################
+if __name__=="__main__":
 	main()

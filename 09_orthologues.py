@@ -10,6 +10,8 @@ from config import Config
 from el_utils.ensembl import *
 from el_utils.processes import *
 
+
+
 #########################################
 # ./el_utils/kernprof.py -l <calling script>.py
 # python3 -m line_profiler <calling script>.py.lprof
@@ -17,7 +19,7 @@ from el_utils.processes import *
 ############
 def get_orthologues(cursor, compara_db, homology_ids, qry_stable_id, verbose=False):
 	orthos = {}
-
+	# multiple threads are accessing the same table here, this is just now qorking particularly well
 	for homid in homology_ids:
 		qry = f"select description from {compara_db}.homology_human where homology_id={homid}"
 		homology_description = hard_landing_search(cursor, qry)[0][0]
@@ -53,15 +55,15 @@ def get_orthologues(cursor, compara_db, homology_ids, qry_stable_id, verbose=Fal
 def write_orthologues(ortho_file_handle, gene_id, orthos):
 	for ortho in orthos:
 		[ortho_gene_id, ortho_genome_db_id] = ortho
-		ortho_file_handle.write("{}\t{}\t{}\t{}\n".format(gene_id, ortho_gene_id, ortho_genome_db_id, 'ensembl'))
+		ortho_file_handle.write("{}\t{}\t{}\n".format(gene_id, ortho_gene_id, ortho_genome_db_id))
 		ortho_file_handle.flush()
 	return
 
 
 def open_files():
 	pid = os.getpid()
-	filehandle = {'orthologue':open(f"raw_tables/orthologue.{pid}.tsv", "w"),
-					'unresolved_ortho':open(f"raw_tables/unresolved_ortho.{pid}.tsv", "w")}
+	filehandle = {'orthologue':open(f"raw_tables/orthologues.{pid}.tsv", "w"),
+					'unresolved_ortho':open(f"raw_tables/unresolved_orthos.{pid}.tsv", "w")}
 	return filehandle
 
 
@@ -120,13 +122,11 @@ def core_loop(genes, other_args):
 
 def main():
 
-	number_of_chunks = 1
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 
 	ensembl_compara_name = get_compara_name(cursor)
 	[all_species, ensembl_db_name] = get_species(cursor)
-
 
 	qry  = f"select gene_member_id, stable_id from {ensembl_compara_name}.gene_member "
 	qry += "where taxon_id=9606 and biotype_group='coding'"
@@ -134,7 +134,6 @@ def main():
 	cursor.close()
 	db.close()
 
-	#parallelize(number_of_chunks, core_loop, genes, [ensembl_compara_name, ensembl_db_name])
 	core_loop(genes, [ensembl_compara_name, ensembl_db_name])
 
 	return True
