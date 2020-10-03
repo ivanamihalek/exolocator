@@ -85,7 +85,7 @@ def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_peps
             update_fields['left_flank']  = left_flank[exon_id]
         if (right_flank[exon_id] ):
             update_fields['right_flank'] = right_flank[exon_id]
-        if ( canonical_exon_pepseq.has_key(exon_id) and canonical_exon_pepseq[exon_id]):
+        if ( exon_id in canonical_exon_pepseq and canonical_exon_pepseq[exon_id]):
             update_fields['protein_seq'] = canonical_exon_pepseq[exon_id]
         #####
         store_or_update (cursor, 'exon_seq', fixed_fields, update_fields)
@@ -113,9 +113,9 @@ def store_exon_seqs(species_list, db_info):
     cursor = db.cursor()
 
     for species in species_list:
-        print
-        print "############################"
-        print  species
+        print()
+        print("############################")
+        print(species)
         #continue
         if not switch_to_db(cursor, ensembl_db_name[species]):
             return False      
@@ -132,7 +132,7 @@ def store_exon_seqs(species_list, db_info):
         for gene_id in gene_ids:
             tot += 1
             if (not  tot%1000):
-                print species, "tot genes:", tot, " fail:", ct           
+                print(species, "tot genes:", tot, " fail:", ct)           
             # extract raw gene  region - bonus return from checking whether the 
             # sequence is correct: translation of canonical exons
             ret = get_gene_seq(acg, cursor, gene_id, species, verbose=verbose)
@@ -141,7 +141,7 @@ def store_exon_seqs(species_list, db_info):
             if (not gene_seq or not canonical_exon_pepseq):
                 ct += 1
                 if verbose:
-                    print 'no sequence found for ', gene_id, gene2stable(cursor, gene_id)
+                    print('no sequence found for ', gene_id, gene2stable(cursor, gene_id))
                 seqs_not_found.append(gene_id)
                 continue
 
@@ -159,12 +159,12 @@ def store_exon_seqs(species_list, db_info):
             store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
 
 
-        print species, "done; tot:", tot, " fail:", ct
+        print(species, "done; tot:", tot, " fail:", ct)
         if (seqs_not_found):
             outf = open(species+".seqs_not_found", "w")
             for not_found in seqs_not_found:
-                print >> outf, str(not_found)+", ",
-            print >> outf, "\n"
+                print(str(not_found)+", ", end=' ', file=outf)
+            print("\n", file=outf)
             outf.close
     cursor.close()
     db    .close()
@@ -190,7 +190,7 @@ def store_exon_seqs_special(gene_list, db_info):
 
         for [ortho_gene_id, ortho_species] in [[gene_id,'homo_sapiens']] + orthologues:
 
-            print ">>> ", ortho_species, ortho_gene_id
+            print(">>> ", ortho_species, ortho_gene_id)
             tot += 1
 
             switch_to_db (cursor, ensembl_db_name[ortho_species])
@@ -203,14 +203,14 @@ def store_exon_seqs_special(gene_list, db_info):
             if (not gene_seq or not canonical_exon_pepseq):
                 fail_ct += 1
                 if verbose:
-                    print 'no sequence found for ', ortho_gene_id, gene2stable(cursor, ortho_gene_id)
+                    print('no sequence found for ', ortho_gene_id, gene2stable(cursor, ortho_gene_id))
                 continue
 
             # get _all_ exons
             exons = gene2exon_list(cursor, ortho_gene_id, ensembl_db_name[ortho_species])
             if (not exons):
                 if verbose:
-                    print 'no sequence found for ', ortho_gene_id, gene2stable(cursor, ortho_gene_id)
+                    print('no sequence found for ', ortho_gene_id, gene2stable(cursor, ortho_gene_id))
                 fail_ct += 1
                 continue
 
@@ -221,7 +221,7 @@ def store_exon_seqs_special(gene_list, db_info):
 
 
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        print gene_id, gene2stable(cursor, gene_id), "done; tot:", tot, " fail:", fail_ct
+        print(gene_id, gene2stable(cursor, gene_id), "done; tot:", tot, " fail:", fail_ct)
 
  
     cursor.close()
@@ -241,7 +241,7 @@ def main():
     special    = ''
 
     if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
-        print "usage: %s <set name> <number of threads>" % sys.argv[0]
+        print("usage: %s <set name> <number of threads>" % sys.argv[0])
         exit(1) # after usage statment
     elif len(sys.argv)==3:
         special = sys.argv[1].lower()
@@ -252,10 +252,10 @@ def main():
     cfg    = ConfigurationReader()
     cursor = db.cursor()
     [all_species, ensembl_db_name] = get_species (cursor)
-    print '======================================='
-    print sys.argv[0]
+    print('=======================================')
+    print(sys.argv[0])
     if special:
-        print "using", special, "set"
+        print("using", special, "set")
         gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
  
     cursor.close()

@@ -60,11 +60,12 @@ def main():
 	[all_species, ensembl_db_name] = get_species(cursor)
 
 	make_orthologues_table(cursor, ensembl_db_name[species])
+	cursor.close()
+	db.close()
+
 	cmd = f"mysqlimport --login-path=tcga --fields_escaped_by=\\\\ {ensembl_db_name[species]} -L {in_dir}/orthologues.tsv"
 	subprocess.call(["bash","-c", cmd])
 
-	cursor.close()
-	db.close()
 
 #####################################################
 if __name__=="__main__":

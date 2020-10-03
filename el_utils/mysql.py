@@ -186,6 +186,15 @@ def add_column(cursor, db_name, table_name, column_name, col_type, default=None,
 		error_intolerant_search(cursor,qry)
 	return
 
+
+#########################################
+def get_column_names (cursor, db_name, table_name):
+
+	qry = f"show columns from {db_name}.{table_name}"
+	rows = hard_landing_search (cursor, qry)
+	return [row[0] for row in rows]
+
+
 #########################################
 def check_table_exists(cursor, db_name, table_name):
 	if not switch_to_db(cursor, db_name):

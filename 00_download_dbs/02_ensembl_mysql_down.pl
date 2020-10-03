@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+sel#! /usr/bin/perl -w
 
 use strict;
 use warnings FATAL => 'all';
@@ -86,13 +86,12 @@ foreach $dir ( @dirs_I_need) {
         next if ($item !~ /\.gz$/);
         next if ($item eq 'assembly.txt.gz');
         next if ($item eq 'dna.txt.gz');
-        next if ($item eq 'protein_align_feature.txt.gz');
         next if ($item eq 'repeat_feature.txt.gz');
         next if ($item eq 'ditag_feature.txt.gz'); # see below for ditag definition
         next if ($item eq 'ditag.txt.gz');
         # CCDS info, contained in dna_align_feature.txt.gz  covers confirmed alt splices,
         # but only for human and mouse
-        if ($item eq 'dna_align_feature.txt.gz') {
+        if ($item eq 'dna_align_feature.txt.gz' or $item eq 'protein_align_feature') {
             next if ($dir !~ 'homo_sapiens' && $dir !~ 'mus_musculus');
         }
         print "\t$item\n";

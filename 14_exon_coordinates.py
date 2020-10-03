@@ -287,7 +287,7 @@ def find_master (cursor, exon_1, exon_2, is_ensembl, is_havana):
 
 
 #########################################
-def sort_out_covering_exons (cursor, exons):
+def sort_out_covering_exons(cursor, exons):
 
 	# havana is manually curated and gets priority
 	is_ensembl = {}
@@ -377,36 +377,6 @@ def mark_coding (cursor, gene_id, species, exons):
 	return True
 
 
-#########################################
-# fetch all exons for a given gene,
-# and figure out whether they are canonical and/or coding
-# which ones cover others, and what is the source of the annotation
-def find_exon_info (cursor, gene_id, species):
-
-	# get all exons from the 'exon' table
-	# here we enforce that they are "known", that is,
-	# that they have a corresponding entry in transcript table
-	exons = get_exons(cursor, gene_id, species, 'exon')
-	# assorted predicted exons
-	if not species == 'homo_sapiens':
-		exons += get_exons(cursor, gene_id, species, 'prediction_exon')
-		exons += get_exons(cursor, gene_id, species, 'sw_exon')
-		exons += get_exons(cursor, gene_id, species, 'usearch_exon')
-
-	# mark the exons belonging to canonical transcript
-	mark_canonical(cursor, gene_id, exons)
-
-	# get annotation info
-	fill_in_annotation_info(cursor, gene_id, exons)
-
-	# find covering exons
-	sort_out_covering_exons(cursor, exons)
-
-	# mark coding exons
-	mark_coding(cursor, gene_id, species, exons)
-
-	return exons
-
 
 #########################################
 # store into gene2exon table
@@ -446,7 +416,7 @@ def format_tsv_line(cursor, exon):
 	all_fields = fixed_fields
 	all_fields.update(update_fields)
 	db_field_names = ["gene_id", "exon_id", "start_in_gene", "end_in_gene",
-	                 "canon_transl_start", "canon_transl_end", "exon_seq_id", "strand", "phase",
+	                  "canon_transl_start", "canon_transl_end", "exon_seq_id", "strand", "phase",
 	                  "is_known", "is_coding", "is_canonical", "is_constitutive", "covering_exon",
 	                  "covering_is_known", "analysis_id"]
 	for k,v in all_fields.items():
@@ -455,6 +425,44 @@ def format_tsv_line(cursor, exon):
 	tabbed_line = "\t".join([str(all_fields[field_name]) for field_name in db_field_names])
 	return tabbed_line
 	# abandoned: store_without_checking(cursor, 'gene2exon', all_fields)
+
+def hgnc_symbol(cursor, gene_id):
+	qry = "select h.approved_symbol from identifier_maps.hgnc h, gene g "
+	qry += f"where h.ensembl_gene_id=g.stable_id and g.gene_id={gene_id}"
+	ret = error_intolerant_search(cursor, qry)
+	return ret[0][0] if ret else "unk"
+
+#########################################
+# fetch all exons for a given gene,
+# and figure out whether they are canonical and/or coding
+# which ones cover others, and what is the source of the annotation
+def find_exon_info (cursor, gene_id, species):
+
+	print (gene_id, hgnc_symbol(cursor, gene_id), get_description(cursor, gene_id))
+
+	# get all exons from the 'exon' table
+	# here we enforce that they are "known", that is,
+	# that they have a corresponding entry in transcript table
+	exons = get_exons(cursor, gene_id, species, 'exon')
+	# assorted predicted exons
+	if not species == 'homo_sapiens':
+		exons += get_exons(cursor, gene_id, species, 'prediction_exon')
+		exons += get_exons(cursor, gene_id, species, 'sw_exon')
+		exons += get_exons(cursor, gene_id, species, 'usearch_exon')
+
+	# mark the exons belonging to canonical transcript
+	mark_canonical(cursor, gene_id, exons)
+
+	# get annotation info
+	fill_in_annotation_info(cursor, gene_id, exons)
+
+	# find covering exons
+	sort_out_covering_exons(cursor, exons)
+
+	# mark coding exons
+	mark_coding(cursor, gene_id, species, exons)
+
+	return exons
 
 #########################################
 # profile decorator is for the use with kernprof (a line profiler):
@@ -466,24 +474,25 @@ def format_tsv_line(cursor, exon):
 # installed its version (if anywhere)
 #@profile
 #########################################
-def gene2exon_all(species_list, db_info):
+def gene2exon(species_list, db_info):
 
-	ensembl_db_name,  = db_info
+	[ensembl_db_name, outdir] = db_info
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	search_db(cursor, "set autocommit=1")
 	logf = open("log.{}.txt".format(get_process_id()),"w")
 
-
 	for species in species_list:
 		# load this file later with
-		# sudo mysqlimport  --local <species db>  <"gene2exon.%s"%species>
+		# sudo mysqlimport  --local <species db>  outfir/species/gene2exon.tsv
 		# mysqlimport strips any extension and uses what's left as a table name
 		# before you begin, do
 		# mysql> SET GLOBAL local_infile = 1;
-		outfile = open("gene2exon.%s"%species, "w")
+		os.makedirs(f"{outdir}/{species}", exist_ok=True)
+		outfile = open(f"{outdir}/{species}/gene2exon.tsv", "w")
+
 		switch_to_db (cursor,  ensembl_db_name[species])
-		gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+		gene_ids = get_gene_ids(cursor, biotype='protein_coding')
 		count = 0
 		time0 = time()
 		for gene_id in gene_ids:
@@ -492,18 +501,18 @@ def gene2exon_all(species_list, db_info):
 					(species, float(int(gene_ids.index(gene_id)) +1 )/len(gene_ids)*100,
 				      time()-time0))
 				time0 = time()
-
-			#print (gene_id, get_description(cursor, gene_id))
 			# find all exons associated with the gene id
 			exons = find_exon_info (cursor, gene_id, species)
+
 			if not exons:
-				print(gene2stable (cursor, gene_id = gene_id), " no exons found (%s)" % species)
+				print(gene2stable (cursor, gene_id=gene_id), " no exons found (%s)" % species)
 				continue  # if I got to here in the pipeline this shouldn't happen
 			# store into gene2exon table
 			for exon in exons:
 				count += 1
 				tabbed_line = format_tsv_line(cursor, exon)
 				outfile.write("%d\t%s\n"%(count, tabbed_line))
+
 		logf.write(species+"\n")
 		outfile.close()
 	logf.close()
@@ -512,86 +521,22 @@ def gene2exon_all(species_list, db_info):
 
 	return True
 
-#########################################
-def gene2exon_orthologues(gene_list, db_info):
-
-	ensembl_db_name,  = db_info
-	db = connect_to_mysql(Config.mysql_conf_file)
-	cursor = db.cursor()
-
-	for gene_id in gene_list:
-
-		switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-		orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
-		switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-		orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
-
-		for [ortho_gene_id, ortho_species] in orthologues:
-
-			switch_to_db (cursor, ensembl_db_name[ortho_species])
-
-			# find all exons associated with the gene id
-			exons = find_exon_info (cursor, ortho_gene_id, ortho_species)
-			if (not exons):
-				print(gene2stable (cursor, gene_id = ortho_gene_id), " no exons found for", ortho_species)
-				print()
-				continue  # if I got to here in the pipeline this shouldn't happen
-
-
-			exons.sort(key=lambda exon: exon.start_in_gene)
-			# store into gene2exon table
-			for exon in exons:
-				store_exon (cursor, exon)
-
-		print("progress:  %8.3f " %  ( float( int(gene_list.index(gene_id)) +1 )/len(gene_list)))
-
-	cursor.close()
-	db.close()
-
-	return True
-
-
 
 #########################################
 def main():
+	outdir = "raw_tables"
+	os.makedirs(outdir, exist_ok=True)
 
 	no_threads = 1
-	special    = None
-
-	if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
-		print("usage: %s <set name> <number of threads>" % sys.argv[0])
-		exit(1) # after usage statment
-	elif len(sys.argv)==3:
-		special = sys.argv[1].lower()
-		if special == 'none': special = None
-		no_threads = int(sys.argv[2])
-
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
 	all_species = ['homo_sapiens']
 
-	print('=======================================')
-	print(sys.argv[0])
-	gene_list = []
-	if special:
-		print("using", special, "set")
-		# if special == 'complement':
-		# 	gene_list = get_complement_ids(cursor, ensembl_db_name, cfg)
-		# else:
-		# 	gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special)
-
 	cursor.close()
 	db    .close()
 
-	# two versions of the main loop:
-	# 1) over all species, and all genes in each species
-	if not special:
-		parallelize(no_threads, gene2exon_all, all_species,  [ensembl_db_name])
-	# 2) over orthologues for a given list of genes
-	else:
-		parallelize(no_threads, gene2exon_orthologues, gene_list,  [ensembl_db_name])
-
+	parallelize(no_threads, gene2exon, all_species,  [ensembl_db_name, outdir])
 
 #########################################
 if __name__ == '__main__':
