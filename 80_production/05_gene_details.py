@@ -93,118 +93,127 @@ def extract_cdna_from_fasta(fasta_full_path, seq_region_name, seq_region_start,s
 ##########
 def get_cdna(cursor, species, db_name, gene_id, sorted_exons):
 
+	splice_length = Config.exon_flanking_region_length
+
 	switch_to_db(cursor, db_name)
 
 	qry =  f"select seq_region_id, seq_region_start, seq_region_end, seq_region_strand from gene where gene_id={gene_id}"
-	[seq_region_id, seq_region_start, seq_region_end, seq_region_strand] = hard_landing_search(cursor, qry)[0]
+	[gene_region_id, gene_region_start, gene_region_end, gene_region_strand] = hard_landing_search(cursor, qry)[0]
+	reverse = gene_region_strand<0
 
-	qry =  f"select name from seq_region where seq_region_id={seq_region_id}"
+	qry =  f"select name from seq_region where seq_region_id={gene_region_id}"
 	seq_region_name = hard_landing_search(cursor, qry)[0][0]
 
-	file_name = get_file_name(cursor, seq_region_id)
-	print(seq_region_id, seq_region_start, seq_region_end, seq_region_strand, seq_region_name, file_name)
+	file_name = get_file_name(cursor, gene_region_id)
+	print(gene_region_id, gene_region_start, gene_region_end, gene_region_strand, seq_region_name, file_name)
 
 	# convention over configuration :}
 	fasta_full_path = f"{Config.fasta_repo}/{species}/dna/{file_name}"
 	if not os.path.exists(fasta_full_path):
 		print(f"{fasta_full_path} not found")
 		exit()
-	cdna = extract_cdna_from_fasta(fasta_full_path, seq_region_name, seq_region_start,seq_region_end)
-	print(cdna[:50])
-	flank_length = Config.exon_flanking_region_length
-	reverse = seq_region_strand<0
-	#
-	# seq = ""
-	# for exon in exons:
-	# 	with open(tmpfile) as inf:
-	# 		inseq = inf.read().replace("\n", "")
-	# 	seq += inseq[splice_length:-splice_length]
-	# 	if reverse:
-	# 		exon.donor_splice    = str(Seq(inseq[:splice_length]).reverse_complement())
-	# 		exon.acceptor_splice = str(Seq(inseq[-splice_length:]).reverse_complement())
-	# 	else:
-	# 		# if the exon is not the first, technically this is not the splice region
-	# 		exon.acceptor_splice = inseq[:splice_length]
-	# 		exon.donor_splice    = inseq[-splice_length:]
-	# 	# I do not know wtf this is, but it correposnds to the way variants are reported in the literature
-	#
-	# acceptor_splice = {}
-	# donor_splice = {}
-	# cdna2gdna = {}
-	# cumulative_length = 0
-	# exon_boundary = 0
-	#
-	# for exon in sorted(exons, key=lambda e: e.start, reverse=reverse):
-	# 	acceptor_splice[exon_boundary+1] = exon.acceptor_splice
-	# 	cdna2gdna[exon_boundary+1] = exon.end if reverse else exon.start
-	# 	cumulative_length += exon.end-exon.start+1
-	#
-	# 	exon_boundary  = cumulative_length
-	#
-	# 	donor_splice[exon_boundary] = exon.donor_splice
-	# 	cdna2gdna[exon_boundary] = exon.start if reverse else exon.end
-	#
-	# # for eb in sorted(cdna2gdna.keys()):
-	# # 	print(f"{eb}    {cdna2gdna[eb]}")
-	# # exit()
-	# print(cumulative_length, cumulative_length%3, cumulative_length/3)
-	# biopython_dna = Seq(seq, generic_dna)
-	# if reverse: biopython_dna = biopython_dna.reverse_complement()
-	# cdna = str(biopython_dna)
-	# protein = str(biopython_dna.translate())
-	# # print(biopython_dna)
-	# # print("============")
-	# # print(protein)
-	# # codon = [cdna[i:i+3] for i in range(0,len(cdna),3)]
-	# # for i in range(len(protein)):
-	# # 	print(i, protein[i], codon[i])
-	# # exit()
-	# return seq_region_name, cdna, protein, acceptor_splice, donor_splice, cdna2gdna
-	#
-	return [0]*6
+	transcript = extract_cdna_from_fasta(fasta_full_path, seq_region_name, gene_region_start, gene_region_end)
+
+
+	cdna = ""
+	for exon in sorted_exons:
+		reading = exon['is_coding']
+		if reading:
+			start = exon['start_in_gene'] if exon['canon_transl_start']<0 else  exon['canon_transl_start']
+			end = exon['end_in_gene'] if exon['canon_transl_end']<0 else  exon['canon_transl_end']
+			cdna += transcript[start:end+1]
+
+	cdna_length = len(cdna)
+	biopython_cdna = Seq(cdna, generic_dna)
+	if reverse:
+		biopython_cdna = biopython_cdna.reverse_complement()
+		cdna = str(biopython_cdna)
+	protein = str(biopython_cdna.translate())
+
+	print(f"cdna_length = {cdna_length}, cdna_length%3 = {cdna_length%3}, cdna_length/3 = {cdna_length/3}")
+	print(protein)
+	print()
+
+	acceptor_splice = {}
+	donor_splice = {}
+	cdna2gdna = {}
+	cumulative_length = 0
+
+	for exon in reversed(sorted_exons) if reverse else sorted_exons:
+
+		# these coordinates are forward
+		start = exon['start_in_gene'] if exon['canon_transl_start'] < 0 else exon['canon_transl_start']
+		end   = exon['end_in_gene'] if exon['canon_transl_end'] < 0 else exon['canon_transl_end']
+		exon_length = end - start + 1
+
+		# exon start and end on the cdna sequence - this one runs backward on reverse strand
+		cdna2gdna[cumulative_length+1] = gene_region_start + (end if reverse else start)
+		cdna2gdna[cumulative_length+exon_length] = gene_region_start + (start if reverse else end)
+		# store the splice site fragments
+		if reverse:
+			flank = Seq(transcript[end+1:end + splice_length], generic_dna)
+			acceptor_splice[cumulative_length+1] = str(flank.reverse_complement())
+			flank = Seq( transcript[max(start-splice_length, 0):start], generic_dna)
+			donor_splice[cumulative_length+exon_length] =  str(flank.reverse_complement())
+		else:
+			acceptor_splice[cumulative_length+1] = transcript[max(start-splice_length, 0):start]
+			donor_splice[cumulative_length+exon_length] = transcript[end+1:end + splice_length]
+		# how far did we move along the cDNA?
+		cumulative_length += exon_length
+
+
+	# for cdnapos in sorted(cdna2gdna.keys()):
+	# 	print(cdnapos, cdna2gdna[cdnapos])
+	# 	if cdnapos in acceptor_splice:
+	# 		print(f"\tacceptor splice: {acceptor_splice[cdnapos]}")
+		# if cdnapos in donor_splice:
+		# 	print(f"\tdonor splice: {donor_splice[cdnapos]}")
+	return seq_region_name, cdna, protein, acceptor_splice, donor_splice, cdna2gdna
 
 
 output_format = '''
 
-abca4_chromosome = "{}"
+SYMBOL_chromosome = "{}"
 
-abca4_cdna = \'\'\'
+SYMBOL_cdna = \'\'\'
 {}
 \'\'\'
 
-abca4_protein =  \'\'\'
+SYMBOL_protein =  \'\'\'
 {}
 \'\'\'
 
-abca4_donor_splice = {}
+SYMBOL_donor_splice = {}
 
-abca4_acceptor_splice = {}
+SYMBOL_acceptor_splice = {}
 
-abca4_cdna2gdna = {}
+SYMBOL_cdna2gdna = {}
 
 def get_cdna():
-	return abca4_cdna.replace("\\n", "")
+	return SYMBOL_cdna.replace("\\n", "")
 	
 def get_protein():
-	return abca4_protein.replace("\\n", "")
+	return SYMBOL_protein.replace("\\n", "")
 	
 def get_codons():
-	return [abca4_cdna[i:i+3] for i in range(0,len(abca4_cdna),3)]
+	return [SYMBOL_cdna[i:i+3] for i in range(0,len(SYMBOL_cdna),3)]
 	
 def get_backward_numbered_acceptor_splice(bdry_pos):
-	cumulative_length = max(abca4_acceptor_splice.keys())
-	return abca4_acceptor_splice.get(cumulative_length-bdry_pos, None)
+	cumulative_length = max(SYMBOL_acceptor_splice.keys())
+	return SYMBOL_acceptor_splice.get(cumulative_length-bdry_pos, None)
 	
 def get_backward_numbered_donor_splice(bdry_pos):
-	cumulative_length = max(abca4_donor_splice.keys())
-	return abca4_donor_splice.get(cumulative_length-bdry_pos, None)
+	cumulative_length = max(SYMBOL_donor_splice.keys())
+	return SYMBOL_donor_splice.get(cumulative_length-bdry_pos, None)
 
 '''
 
 ########################################
 def main():
 
-	symbol = "ABCA4"
+	global output_format
+
+	symbol = "GNAO1"
 	species = "homo_sapiens"
 
 	db = connect_to_mysql(Config.mysql_conf_file)
@@ -215,7 +224,10 @@ def main():
 	qry = f"select ensembl_gene_id from identifier_maps.hgnc where approved_symbol='{symbol}'"
 	stable_id = hard_landing_search(cursor, qry)[0][0]
 	gene_id = stable2gene(cursor, stable_id,  ensembl_db_name[species])
-	print(symbol, stable_id, gene_id)
+	tr_id = get_canonical_transcript_id(cursor, gene_id, ensembl_db_name[species])
+	qry=f"select stable_id from {ensembl_db_name[species]}.transcript where transcript_id={tr_id}"
+	canonical_tr_stable_id = hard_landing_search(cursor,qry)[0][0]
+	print(symbol, stable_id, gene_id, canonical_tr_stable_id)
 
 	# coordinates of canonical exons
 	# we will just extract positions of exon boundaries on cdna
@@ -224,13 +236,14 @@ def main():
 	# canonical cdna and its translation
 	ret = get_cdna(cursor, species, ensembl_db_name[species], gene_id, sorted_exons)
 	[seq_region_name, cdna, protein, acceptor_splice, donor_splice, cdna2gdna] = ret
-	# pp = pprint.PrettyPrinter(indent=4)
-	# with open(f"{gene.lower()}_gene.py", "w") as outf:
-	# 	newlined_cdna = "\n".join([cdna[i:i+100] for i in range(0,len(cdna),100)])
-	# 	newlined_protein = "\n".join([protein[i:i+100] for i in range(0,len(protein),100)])
-	# 	outf.write(output_format.format(seq_region_name, newlined_cdna, newlined_protein, pp.pformat(donor_splice),
-	# 									pp.pformat(acceptor_splice),  pp.pformat(cdna2gdna)))
-	#
+	pp = pprint.PrettyPrinter(indent=4)
+	with open(f"{symbol.lower()}_gene.py", "w") as outf:
+		newlined_cdna = "\n".join([cdna[i:i+100] for i in range(0,len(cdna),100)])
+		newlined_protein = "\n".join([protein[i:i+100] for i in range(0,len(protein),100)])
+		output_format =  output_format.replace("SYMBOL", symbol.lower())
+		outf.write(output_format.format(seq_region_name, newlined_cdna, newlined_protein, pp.pformat(donor_splice),
+										pp.pformat(acceptor_splice),  pp.pformat(cdna2gdna)))
+
 	cursor.close()
 	db.close()
 
