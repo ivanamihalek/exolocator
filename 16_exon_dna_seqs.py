@@ -1,285 +1,208 @@
-#!/usr/bin/python -u
+#!/usr/bin/python3 -u
 
-from   el_utils.mysql   import  *
+from   el_utils.el_specific   import  *
 from   el_utils.ensembl import  *
 from   el_utils.el_specific import  *
-from   el_utils.exon    import  Exon
-from   el_utils.processes import  parallelize
-from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
-from   el_utils.config_reader      import ConfigurationReader
-from   el_utils.special_gene_sets  import get_theme_ids
+
+
+from el_utils.processes import parallelize
+from config import Config
+
+
 
 # BioPython
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 
 verbose = True
-    
-########################################
-def get_canonical_exons (cursor, gene_id):
 
-    exons = gene2exon_list (cursor, gene_id)
-    if (not exons):
-        #print gene2stable (cursor, gene_id = gene_id), " no exons found ", ct, tot
-        return []
-        #exit(1) # shouldn't happen at this point
 
-    # sorting exons in place by their start in gene:
-    exons.sort(key=lambda exon: exon.start_in_gene)
+####################
+# phase: position where the codon is split, not the offset
+# phaew can be -1 in UTR exons
+def find_offset(exon, exon_length):
+	phase = max(exon['phase'],0)
 
-    canonical_coding_exons = []
-    reading = False
-    for exon in exons:        
-        if (not exon.is_canonical or  not exon.is_coding): 
-            continue
-        if (not exon.canon_transl_start is None):
-            reading = True
-        if (reading):
-            canonical_coding_exons.append(exon)
-        if (not exon.canon_transl_end is None):
-            break  
+	if exon['strand']>0:
+		offset = (3-phase)%3 # complement of 3, but 0 stays 0
+		full_codons = (exon_length-offset)//3*3 # integer division in python3
+	else: # on reverse strand, phase is actually end phase
+		end_offset = (3-phase)%3
+		full_codons = (exon_length-end_offset)//3*3
+		offset = exon_length - full_codons - end_offset
 
-    return canonical_coding_exons
+	return offset, full_codons
 
+#########################################
+def reconstruct_exon_seqs (cdna, sorted_exons, mitochondrial):
+
+	flank_length = Config.exon_flanking_region_length
+
+	exon_seq = {}
+	left_flank  = {}
+	right_flank = {}
+	exon_pepseq = {}
+	phase = {}
+	cumulative_length = 0
+	print(f"number of exons: {len(sorted_exons)}")
+	for exon in sorted_exons:
+		if not exon['is_coding']: continue
+		exon_id = exon['exon_id']
+		start = exon['start_in_gene'] if exon['canon_transl_start'] < 0 else exon['canon_transl_start']
+		end   = exon['end_in_gene'] if exon['canon_transl_end'] < 0 else exon['canon_transl_end']
+		exon_length = end - start + 1
+
+		offset, full_codons = find_offset(exon, exon_length)
+
+		left_flank[exon_id]  = cdna[min(cumulative_length-flank_length,0):cumulative_length]
+		exon_seq[exon_id]    = cdna[cumulative_length : cumulative_length+exon_length]
+		if mitochondrial:
+			exon_pepseq[exon_id] = str(Seq(exon_seq[exon_id][offset:offset+full_codons],
+			                               generic_dna).translate(table="Vertebrate Mitochondrial"))
+		else:
+			exon_pepseq[exon_id] = str(Seq(exon_seq[exon_id][offset:offset+full_codons], generic_dna).translate())
+
+		cumulative_length += exon_length
+		right_flank[exon_id] = cdna[cumulative_length:cumulative_length+flank_length]
+
+		# this now is to be understood as the phase in the reading direction of the gene
+		phase[exon_id] = (3-offset)%3 # complement of 3, but 0 stays 0
+		if len(sorted_exons)>1:
+			print(mitochondrial, exon['strand'], exon_length, exon_length%3, exon['phase'], phase[exon_id])
+			print(exon_pepseq[exon_id])
+
+	return [exon_seq, left_flank, right_flank, exon_pepseq]
 
 
 #########################################
-def reconstruct_exon_seqs (gene_seq, exons):
+def store(cursor, exons, exon_seq, left_flank, right_flank, exon_pepseq):
 
-    """
-    Return dna sequences belonging to each exon in the input list, according to Ensembl.
-    """
-
-    exon_seq    = {} 
-    left_flank  = {}
-    right_flank = {}
-
-    for exon in exons:
-        start   = exon.start_in_gene
-        end     = exon.end_in_gene
-        exon_id = exon.exon_id
-        left_flank[exon_id]  = gene_seq[start-15:start]
-        exon_seq[exon_id]    = gene_seq[start:end+1]
-        right_flank[exon_id] = gene_seq[end+1:end+16]
-
-    return [exon_seq, left_flank, right_flank]
-            
-#########################################
-def store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq):    
-    """
-    Calls store_or_update() from el_utils.mysql.py:
-    It sets the fixed fields to be exon_id, is_known, and is_sw;
-    The rest of the exon info is updateable.
-    """
-    for exon in exons:
-        exon_id = exon.exon_id
-        #####
-        fixed_fields  = {}
-        update_fields = {}
-        fixed_fields['exon_id']          = exon_id
-        fixed_fields['is_known']         = exon.is_known
-        fixed_fields['is_sw']            = 0
-        if (exon_seq[exon_id]):
-            update_fields['dna_seq']     = exon_seq[exon_id]
-        if (left_flank[exon_id] ):
-            update_fields['left_flank']  = left_flank[exon_id]
-        if (right_flank[exon_id] ):
-            update_fields['right_flank'] = right_flank[exon_id]
-        if ( exon_id in canonical_exon_pepseq and canonical_exon_pepseq[exon_id]):
-            update_fields['protein_seq'] = canonical_exon_pepseq[exon_id]
-        #####
-        store_or_update (cursor, 'exon_seq', fixed_fields, update_fields)
-#########################################
-def store_exon_seqs(species_list, db_info):
-
-    """
-    The core of the operation: for each exon find and store dna sequence; for canonical exons also add the translation.
-    For each species retrieves all protein coding genes, 
-    and for each of the genes its full sequence and  the list of the known exons;  
-    assigns dna  sequence to each exon (+ the translation for the canonical exons) and stores it in db.
-
-    The reason why only the canonical exons get the translation at this point is that the canonical translation available in
-    Ensembl is used to make sure we are looking at the right genome region. Namely, some sequences have a "patch"
-    with a corrected or completed sequence. The info about that can be found in the assembly_exception table.
-    Once we have the translation we can just as well store it.
-
-    Note that the information about the translation start and end positions are added in the following script in the pipeline.
-
-    """
-    
-    [local_db, ensembl_db_name] = db_info
-    db     = connect_to_mysql()
-    acg    = AlignmentCommandGenerator()
-    cursor = db.cursor()
-
-    for species in species_list:
-        print()
-        print("############################")
-        print(species)
-        #continue
-        if not switch_to_db(cursor, ensembl_db_name[species]):
-            return False      
- 
-        if (species=='homo_sapiens'):
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
-        else:
-            gene_ids = get_gene_ids (cursor, biotype='protein_coding')
-
-        ###########################
-        seqs_not_found = []
-        ct  = 0
-        tot = 0
-        for gene_id in gene_ids:
-            tot += 1
-            if (not  tot%1000):
-                print(species, "tot genes:", tot, " fail:", ct)           
-            # extract raw gene  region - bonus return from checking whether the 
-            # sequence is correct: translation of canonical exons
-            ret = get_gene_seq(acg, cursor, gene_id, species, verbose=verbose)
-            [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
-
-            if (not gene_seq or not canonical_exon_pepseq):
-                ct += 1
-                if verbose:
-                    print('no sequence found for ', gene_id, gene2stable(cursor, gene_id))
-                seqs_not_found.append(gene_id)
-                continue
-
-            # get _all_ exons
-            exons = gene2exon_list(cursor, gene_id, ensembl_db_name[species])
-            if (not exons):
-                #print 'no exons for ', gene_id
-                #exit(1)
-                ct += 1
-                continue
-
-            # get the sequence for each of the exons, as well as for the flanks
-            # (the return are three dictionaries, with exon_ids as keys)
-            [exon_seq, left_flank, right_flank] = reconstruct_exon_seqs (gene_seq, exons)
-            store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
+	for exon in exons:
+		if not exon['is_coding']: continue
+		exon_id = exon['exon_id']
+		#####
+		fixed_fields  = {}
+		update_fields = {}
+		fixed_fields['exon_id'] = exon_id
+		fixed_fields['is_sw']   = 0
+		update_fields['phase']  = exon['phase']
+		if exon_seq[exon_id]:
+			update_fields['dna_seq']     = exon_seq[exon_id]
+		if left_flank[exon_id]:
+			update_fields['left_flank']  = left_flank[exon_id]
+		if right_flank[exon_id]:
+			update_fields['right_flank'] = right_flank[exon_id]
+		if exon_id in exon_pepseq and exon_pepseq[exon_id]:
+			update_fields['protein_seq'] = exon_pepseq[exon_id]
+		#####
+		store_or_update (cursor, 'exon_seq', fixed_fields, update_fields)
+		exit()
 
 
-        print(species, "done; tot:", tot, " fail:", ct)
-        if (seqs_not_found):
-            outf = open(species+".seqs_not_found", "w")
-            for not_found in seqs_not_found:
-                print(str(not_found)+", ", end=' ', file=outf)
-            print("\n", file=outf)
-            outf.close
-    cursor.close()
-    db    .close()
+def store_exon_seqs(cursor, gene_id, species , ensembl_db_name):
+	db_name = ensembl_db_name[species]
+	#print(f" {gene_id} {gene2stable(cursor, gene_id, db_name=db_name)}")
+	# extract raw gene  region - bonus return from checking whether the
+	# sequence is correct: translation of canonical exons
+	gene_region_dna = get_gene_dna(cursor, species, db_name, gene_id)
+	if not gene_region_dna:
+		return f"Error: gene equence not found for {gene_id} {gene2stable(cursor, gene_id, db_name=db_name)}"
 
+	# get _all_ exons
+	sorted_exons = get_sorted_canonical_exons(cursor, db_name, gene_id)
+	if not sorted_exons:
+		return f"Error: no exons found."
+	if type(sorted_exons)==str and 'Error' in sorted_exons: # some sort of failure msg - ignore warnings
+		return sorted_exons
+
+	# cdna - use this to chek if it is translateble into protein
+	cdna = exons2cdna(gene_region_dna, sorted_exons)
+	# sanity
+	mitochondrial = is_mitochondrial(cursor, gene_id, db_name=db_name)
+	if mitochondrial:
+		protein = Seq(cdna, generic_dna).translate(table="Vertebrate Mitochondrial")
+	else:
+		protein = Seq(cdna, generic_dna).translate()
+	if '*' in protein[:-1]:
+		return f"Error: stop codon in the protein sequence."
+	print("++++++++++++++++++++++++++++++++++++")
+	print(gene_id, gene2stable(cursor, gene_id, db_name=db_name))
+	print(protein)
+	# print()
+	# exit()
+	# (the return are three dictionaries, with exon_ids as keys)
+	[exon_seq, left_flank, right_flank, exon_pepseq] = reconstruct_exon_seqs(cdna, sorted_exons, mitochondrial)
+	#store(cursor, sorted_exons, exon_seq, left_flank, right_flank, exon_pepseq)
+	return "ok"
 
 #########################################
-def store_exon_seqs_special(gene_list, db_info):
-    
-    [local_db, ensembl_db_name] = db_info
-    db     = connect_to_mysql()
-    acg    = AlignmentCommandGenerator()
-    cursor = db.cursor()
+def store_exon_seqs_species(species_list, other_args):
 
-    fail_ct = 0
-    tot     = 0
-    for gene_id in gene_list:
-            
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        orthologues  = get_orthos (cursor, gene_id, 'orthologue') # get_orthos changes the db pointer
+	[ensembl_db_name] = other_args
+	db = connect_to_mysql(Config.mysql_conf_file)
+	cursor = db.cursor()
 
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        orthologues += get_orthos (cursor, gene_id, 'unresolved_ortho')
+	for species in species_list:
+		print()
+		print("############################")
+		print(species)
+		switch_to_db(cursor, ensembl_db_name[species])
+		gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+		print(f"nummber of genes: {len(gene_ids)}")
 
-        for [ortho_gene_id, ortho_species] in [[gene_id,'homo_sapiens']] + orthologues:
+		###########################
+		tot = 0
+		fail_ct = 0
 
-            print(">>> ", ortho_species, ortho_gene_id)
-            tot += 1
+		for gene_id in gene_ids[:100]:
+			tot += 1
+			if tot%1000 == 0: print(species, "tot genes:", tot, " fail:", fail_ct)
+			ret = store_exon_seqs(cursor, gene_id, species , ensembl_db_name)
+			if ret != "ok":
+				print(gene_id, ret)
+				fail_ct += 1
+				store_problem(cursor, ensembl_db_name[species], gene_id, f"When storing exon seqs: {ret}")
 
-            switch_to_db (cursor, ensembl_db_name[ortho_species])
+		print(species, "done; tot:", tot, " fail:", fail_ct)
 
-            # extract raw gene  region - bonus return from checking whether the 
-            # sequence is correct: translation of canonical exons
-            ret = get_gene_seq(acg, cursor, ortho_gene_id, ortho_species, verbose=verbose)
-            [gene_seq, canonical_exon_pepseq, file_name, seq_name, seq_region_start, seq_region_end]  = ret
-
-            if (not gene_seq or not canonical_exon_pepseq):
-                fail_ct += 1
-                if verbose:
-                    print('no sequence found for ', ortho_gene_id, gene2stable(cursor, ortho_gene_id))
-                continue
-
-            # get _all_ exons
-            exons = gene2exon_list(cursor, ortho_gene_id, ensembl_db_name[ortho_species])
-            if (not exons):
-                if verbose:
-                    print('no sequence found for ', ortho_gene_id, gene2stable(cursor, ortho_gene_id))
-                fail_ct += 1
-                continue
-
-            # get the sequence for each of the exons, as well as for the flanks
-            # (the return are three dictionaries, with exon_ids as keys)
-            [exon_seq, left_flank, right_flank] = reconstruct_exon_seqs (gene_seq, exons)
-            store (cursor, exons, exon_seq, left_flank, right_flank, canonical_exon_pepseq)
+	cursor.close()
+	db    .close()
 
 
-        switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
-        print(gene_id, gene2stable(cursor, gene_id), "done; tot:", tot, " fail:", fail_ct)
-
- 
-    cursor.close()
-    db    .close()
 
 
 
 #########################################
 def main():
 
-    """
-    Main entry point, but in reality does nothing except taking care of the parallelization.
-    The parallelization here is per-species.
-    """
+	"""
+	Main entry point, but in reality does nothing except taking care of the parallelization.
+	The parallelization here is per-species.
+	"""
 
-    no_threads = 1
-    special    = ''
+	no_threads = 1
 
-    if len(sys.argv) > 1 and  len(sys.argv)<3  or len(sys.argv) >= 2 and sys.argv[1]=="-h":
-        print("usage: %s <set name> <number of threads>" % sys.argv[0])
-        exit(1) # after usage statment
-    elif len(sys.argv)==3:
-        special = sys.argv[1].lower()
-        if special == 'none': special = None
-        no_threads = int(sys.argv[2])
+	db = connect_to_mysql(Config.mysql_conf_file)
+	cursor = db.cursor()
+	[all_species, ensembl_db_name] = get_species (cursor)
+	all_species = ['homo_sapiens']
 
-    db     = connect_to_mysql()
-    cfg    = ConfigurationReader()
-    cursor = db.cursor()
-    [all_species, ensembl_db_name] = get_species (cursor)
-    print('=======================================')
-    print(sys.argv[0])
-    if special:
-        print("using", special, "set")
-        gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
- 
-    cursor.close()
-    db    .close()
+	cursor.close()
+	db    .close()
 
-    # two version of the main loop:
-    # 1) over all species, and all genes in each speceis
-    if not special:
-        parallelize (no_threads, store_exon_seqs, all_species, [local_db, ensembl_db_name])
-    else:
-        parallelize (no_threads, store_exon_seqs_special, gene_list,  [local_db, ensembl_db_name])
-
+	parallelize (no_threads, store_exon_seqs_species, all_species, [ensembl_db_name])
 
 
 
 #########################################
 if __name__ == '__main__':
-    main()
+	main()
 '''
-    # Ivana:
-    # What is the proper way to find out whether the seq_region is mitochondrial?
-    # EMily:
-    # It's in the seq_region table, under name. Name will either be a chromosome
-    # number, MT for mitochrondria or the name of a contig.
+	# Ivana:
+	# What is the proper way to find out whether the seq_region is mitochondrial?
+	# EMily:
+	# It's in the seq_region table, under name. Name will either be a chromosome
+	# number, MT for mitochrondria or the name of a contig.
 Hi Ivana
 
 To find which contigs are mitochondrial, use the assembly table.

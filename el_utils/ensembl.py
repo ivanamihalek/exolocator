@@ -875,58 +875,6 @@ def get_exon(cursor, exon_id, is_known=None, db_name=None):
 	return exon
 
 
-#########################################
-def gene2exon_list(cursor, gene_id, db_name=None, verbose=False):
-	exons = []
-
-	if (db_name):
-		if not switch_to_db(cursor, db_name):
-			return False
-
-	qry = "select * from gene2exon where gene_id = %d " % gene_id
-	rows = search_db(cursor, qry)
-
-	if (not rows):
-		rows = search_db(cursor, 'select database()')
-		if verbose:
-			print("database ", rows[0][0])
-			rows = search_db(cursor, qry, verbose=True)
-			print(rows)
-		return []
-
-	for row in rows:
-		exon = Exon()
-		if (not exon.load_from_gene2exon(row)):
-			continue
-		exons.append(exon)
-
-	return exons
-
-
-########################################
-def get_canonical_exons(cursor, gene_id):
-	exons = gene2exon_list(cursor, gene_id)
-	if (not exons):
-		print(" no exons found for ", gene2stable(cursor, gene_id=gene_id))
-		exit(1)  # shouldn't happen at this point
-
-	# sorting exons in place by their start in gene:
-	exons.sort(key=lambda exon: exon.start_in_gene)
-
-	canonical_coding_exons = []
-	reading = False
-	for exon in exons:
-		if (not exon.is_canonical):
-			continue
-		if (not exon.canon_transl_start is None):
-			reading = True
-		if (reading):
-			canonical_coding_exons.append(exon)
-		if (not exon.canon_transl_end is None):
-			break
-
-	return canonical_coding_exons
-
 
 #########################################
 def get_selenocysteines(cursor, gene_id):

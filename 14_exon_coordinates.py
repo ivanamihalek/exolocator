@@ -22,8 +22,10 @@ def mark_canonical (cursor, gene_id, exons):
 			exon.is_canonical = 1
 		else:
 			exon.is_canonical = 0
-	[canonical_start_in_exon, canonical_start_exon_id,
-	 canonical_end_in_exon, canonical_end_exon_id] = get_canonical_coordinates (cursor, canonical_transcript_id)
+	ret = get_canonical_coordinates(cursor, canonical_transcript_id)
+	if not ret:
+		return f"Error: no canonical_coordinates found for transcript {canonical_transcript_id} gene {gene_id}."
+	[canonical_start_in_exon, canonical_start_exon_id, canonical_end_in_exon, canonical_end_exon_id] = ret
 
 	for exon in exons:
 		exon.canon_transl_start = -1
@@ -73,6 +75,8 @@ def mark_canonical (cursor, gene_id, exons):
 			continue
 		if exon.exon_id in canonical_ids:
 			exon.is_canonical = 1
+
+	return "ok"
 
 #########################################
 def fill_in_annotation_info (cursor, gene_id, exons):
@@ -438,7 +442,7 @@ def hgnc_symbol(cursor, gene_id):
 # which ones cover others, and what is the source of the annotation
 def find_exon_info (cursor, gene_id, species):
 
-	print (gene_id, hgnc_symbol(cursor, gene_id), get_description(cursor, gene_id))
+	#print (gene_id, hgnc_symbol(cursor, gene_id), get_description(cursor, gene_id))
 
 	# get all exons from the 'exon' table
 	# here we enforce that they are "known", that is,
@@ -451,7 +455,8 @@ def find_exon_info (cursor, gene_id, species):
 		exons += get_exons(cursor, gene_id, species, 'usearch_exon')
 
 	# mark the exons belonging to canonical transcript
-	mark_canonical(cursor, gene_id, exons)
+	ret = mark_canonical(cursor, gene_id, exons)
+	if ret != "ok": return ret
 
 	# get annotation info
 	fill_in_annotation_info(cursor, gene_id, exons)
@@ -504,9 +509,13 @@ def gene2exon(species_list, db_info):
 			# find all exons associated with the gene id
 			exons = find_exon_info (cursor, gene_id, species)
 
-			if not exons:
-				print(gene2stable (cursor, gene_id=gene_id), " no exons found (%s)" % species)
+			if type(exons)==str:
+				print(f"\t{species} {gene2stable (cursor, gene_id=gene_id)} {exons}", file=logf)
+				continue
+			elif not exons:
+				print(f"\t{species} {gene2stable (cursor, gene_id=gene_id)} no exons found", file=logf)
 				continue  # if I got to here in the pipeline this shouldn't happen
+
 			# store into gene2exon table
 			for exon in exons:
 				count += 1
@@ -527,11 +536,12 @@ def main():
 	outdir = "raw_tables"
 	os.makedirs(outdir, exist_ok=True)
 
-	no_threads = 1
+	no_threads = 8
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
-	all_species = ['homo_sapiens']
+	#all_species = ["mus_musculus"]
+	#all_species.remove('homo_sapiens')
 
 	cursor.close()
 	db    .close()
@@ -542,3 +552,9 @@ def main():
 if __name__ == '__main__':
 	main()
 
+'''
+In v 101 a bund of canonical transcript coordinated were missing for mus caroli
+not sure if I should worry about that - there ar 75 cases like that
+exmaple MGP_CAROLIEiJ_G0027698 Ppp1cc protein phosphatase 1 catalytic subunit gamma
+The smae for mus pahari and mus spreturs
+'''

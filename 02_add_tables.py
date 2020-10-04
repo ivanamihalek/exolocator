@@ -110,7 +110,7 @@ def make_exon_seq_table (cursor):
 			return False
 
 
-	for column_name in ['is_known', 'is_sw']:
+	for column_name in ['phase', 'is_sw']:
 		qry = "ALTER TABLE %s  ADD %s tinyint" %  (table, column_name)
 		rows = search_db (cursor, qry)
 		if (rows):
@@ -122,15 +122,6 @@ def make_exon_seq_table (cursor):
 		if (rows):
 			return False
 
-	qry  = "alter TABLE " + table + "  add column pepseq_transl_start int(10)"
-	rows = search_db (cursor, qry)
-	if (rows):
-		return False
-
-	qry  = "alter TABLE " + table + "  add column pepseq_transl_end int(10)"
-	rows = search_db (cursor, qry)
-	if (rows):
-		return False
 
 
 #########################################
@@ -154,7 +145,15 @@ def make_coding_region_table(cursor):
 			return False
 
 
+#########################################
+def make_problems_table(cursor):
 
+	qry = ""
+	qry += "  CREATE TABLE  problems ("
+	qry += "     gene_id INT PRIMARY KEY, "
+	qry += "	 description text"
+	qry += ") ENGINE=MyISAM"
+	error_intolerant_search(cursor, qry)
 
 #########################################
 def modify_exon_map_table (cursor):
@@ -166,6 +165,8 @@ def modify_exon_map_table (cursor):
 		rows = search_db (cursor, qry)
 		if (rows):
 			return False
+
+
 
 
 #########################################
@@ -281,10 +282,10 @@ def make_table (cursor, db_name, table):
 
 	qry = "use %s" % db_name
 	rows = search_db (cursor, qry, verbose=False)
-	if (rows):
+	if rows:
 		return False
 
-	if   table == 'gene2exon':
+	if table == 'gene2exon':
 		make_gene2exon_table (cursor)
 	elif table == 'exon_seq':
 		make_exon_seq_table (cursor)
@@ -298,7 +299,8 @@ def make_table (cursor, db_name, table):
 		make_exon_map_table (cursor)
 	elif table == 'para_exon_map':
 		make_para_exon_map_table (cursor)
-
+	elif table == 'problems':
+		make_problems_table (cursor)
 	else:
 		print("I don't know how to make table '%s'" % table)
 
@@ -339,7 +341,8 @@ def main():
 		db_name = ensembl_db_name[species]
 		switch_to_db (cursor, ensembl_db_name[species])
 
-		for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region']:
+
+		for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region', 'problems']:
 			if check_table_exists(cursor, db_name, table):
 				print(table, " found in ", db_name)
 			else:

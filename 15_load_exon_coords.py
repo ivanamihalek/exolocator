@@ -35,27 +35,30 @@ def make_orthologues_table(cursor, db_name):
 def main():
 	print("careful, this script deletes contents of gene2exon table")
 	exit()
-
-	# we'll do this for human only, for now
-	species = 'homo_sapiens'
 	in_dir = "raw_tables"
 	table  = "gene2exon"
-	infile = f"{in_dir}/{species}/{table}.tsv"
-	for dep in [in_dir, f"{in_dir}/{species}", infile]:
-		if not os.path.exists(dep):
-			print(dep,"not found")
-			exit()
+	if not os.path.exists(in_dir):
+		print(in_dir,"not found")
+		exit()
+
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
-	switch_to_db(cursor, ensembl_db_name[species])
-	error_intolerant_search(cursor, f"delete from {table}")
-
+	for species in all_species:
+		print(species)
+		infile = f"{in_dir}/{species}/{table}.tsv"
+		for dep in [f"{in_dir}/{species}", infile]:
+			if not os.path.exists(dep):
+				print(dep,"not found")
+				exit()
+		error_intolerant_search(cursor, f"delete from {ensembl_db_name[species]}.{table}")
 	cursor.close()
 	db.close()
 
-	cmd = f"mysqlimport --login-path=tcga --fields_escaped_by=\\\\ {ensembl_db_name[species]} -L {infile}"
-	subprocess.call(["bash","-c", cmd])
+	for species in all_species:
+		cmd = f"mysqlimport --login-path=tcga --fields_escaped_by=\\\\ {ensembl_db_name[species]} -L {infile}"
+		print(cmd)
+		subprocess.call(["bash","-c", cmd])
 
 
 #####################################################
