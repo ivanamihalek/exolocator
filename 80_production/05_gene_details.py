@@ -50,7 +50,6 @@ def get_seq_data(cursor, species, db_name, gene_id, sorted_exons):
 	cdna2gdna = {}
 	cumulative_length = 0
 
-
 	for exon in reversed(sorted_exons) if reverse else sorted_exons:
 
 		# these coordinates are forward
@@ -66,7 +65,7 @@ def get_seq_data(cursor, species, db_name, gene_id, sorted_exons):
 			flank = Seq(gene_region_dna[end+1:end + splice_length], generic_dna)
 			acceptor_splice[cumulative_length+1] = str(flank.reverse_complement())
 			flank = Seq( gene_region_dna[max(start-splice_length, 0):start], generic_dna)
-			donor_splice[cumulative_length+exon_length] =  str(flank.reverse_complement())
+			donor_splice[cumulative_length+exon_length] = str(flank.reverse_complement())
 		else:
 			acceptor_splice[cumulative_length+1] = gene_region_dna[max(start-splice_length, 0):start]
 			donor_splice[cumulative_length+exon_length] = gene_region_dna[end+1:end + splice_length]
@@ -125,7 +124,7 @@ def main():
 
 	global output_format
 
-	symbol = "GNAO1"
+	symbol = "ABCA4"
 	species = "homo_sapiens"
 
 	db = connect_to_mysql(Config.mysql_conf_file)

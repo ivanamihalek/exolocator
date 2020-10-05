@@ -32,7 +32,8 @@ gnao1_donor_splice = {   118: 'GTAAGGACCGCCGC',
     877: 'GTAGAGACCCCTCC',
     1065: 'GCCCAGCCGCCCTG'}
 
-gnao1_acceptor_splice = {   1: 'AGGGAAGGGGCCACC',
+gnao1_acceptor_splice = {
+    1: 'AGGGAAGGGGCCACC',
     119: 'TCTGTGTCCCAACAG',
     162: 'GTGGTTTTTCTCTAG',
     304: 'CACCTCTCCTCACAG',
@@ -60,18 +61,17 @@ gnao1_cdna2gdna = {   1: 56192236,
 
 def get_cdna():
 	return gnao1_cdna.replace("\n", "")
-	
+
 def get_protein():
 	return gnao1_protein.replace("\n", "")
-	
+
 def get_codons():
 	return [gnao1_cdna[i:i+3] for i in range(0,len(gnao1_cdna),3)]
-	
+
 def get_backward_numbered_acceptor_splice(bdry_pos):
 	cumulative_length = max(gnao1_acceptor_splice.keys())
 	return gnao1_acceptor_splice.get(cumulative_length-bdry_pos, None)
-	
+
 def get_backward_numbered_donor_splice(bdry_pos):
 	cumulative_length = max(gnao1_donor_splice.keys())
 	return gnao1_donor_splice.get(cumulative_length-bdry_pos, None)
-

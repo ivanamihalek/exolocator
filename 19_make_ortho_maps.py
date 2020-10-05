@@ -1,8 +1,8 @@
 #!/usr/bin/python -u
 
 
-import StringIO
-import MySQLdb, commands, re, sys
+import io
+import MySQLdb, subprocess, re, sys
 from hashlib import sha1
 from random  import random
 from   el_utils.mysql   import  *
@@ -84,13 +84,13 @@ def maps_for_gene_list(gene_list, db_info):
 
         ct += 1
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-        if verbose: print gene_id, gene2stable(cursor, gene_id), get_description(cursor, gene_id)
+        if verbose: print(gene_id, gene2stable(cursor, gene_id), get_description(cursor, gene_id))
         
         # get _all_ exons
         switch_to_db (cursor, ensembl_db_name['homo_sapiens'])
         human_exons = gene2exon_list(cursor, gene_id)
         if (not human_exons):
-            print 'no exons for ', gene_id
+            print('no exons for ', gene_id)
             continue
 
         # get rid of the old maps
@@ -114,7 +114,7 @@ def maps_for_gene_list(gene_list, db_info):
             
             if not ortho_exons:
                 missing_exon_info += 1
-                print "\t", ortho_species, "no exon info"
+                print("\t", ortho_species, "no exon info")
                 continue
             # maps are based on pairwise alignements of human to other species
             # multiple seqence alignements on exon-by-exon basis are produced in 17_ortho_exon_map_to_msa.py
@@ -123,18 +123,18 @@ def maps_for_gene_list(gene_list, db_info):
             maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons, verbose)   
             if not maps:
                 missing_seq_info += 1
-                print "\t", ortho_species, "no maps"
+                print("\t", ortho_species, "no maps")
                 continue
 
             no_maps += len(maps)
             store (cursor, maps, ensembl_db_name)
  
         if  not ct%100:
-            datastring = StringIO.StringIO()
-            print >> datastring, "processed ", ct, "genes,  out of ", len(gene_list), "  ",
-            print >> datastring, no_maps, " maps;  no_exon_info: ", missing_exon_info, "no_seq_info:", missing_seq_info 
-            print datastring.getvalue()
-    print "gene list done"
+            datastring = io.StringIO()
+            print("processed ", ct, "genes,  out of ", len(gene_list), "  ", end=' ', file=datastring)
+            print(no_maps, " maps;  no_exon_info: ", missing_exon_info, "no_seq_info:", missing_seq_info, file=datastring) 
+            print(datastring.getvalue())
+    print("gene list done")
     cursor.close()
     db.close()
 
@@ -148,7 +148,7 @@ def main():
     special    = None
 
     if len(sys.argv) > 1 and  len(sys.argv)<3:
-        print "usage: %s <set name> <number of threads> " % sys.argv[0]
+        print("usage: %s <set name> <number of threads> " % sys.argv[0])
         exit(1)
     elif len(sys.argv)==3:
 
@@ -164,13 +164,13 @@ def main():
 
     [all_species, ensembl_db_name] = get_species (cursor)
     
-    print '======================================='
-    print sys.argv[0]
+    print('=======================================')
+    print(sys.argv[0])
     if special:
-        print "using", special, "set"
+        print("using", special, "set")
         gene_list = get_theme_ids (cursor,  ensembl_db_name, cfg, special )
     else:
-        print "using all protein coding genes"
+        print("using all protein coding genes")
         switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
         gene_list = get_gene_ids (cursor, biotype='protein_coding', is_known=1)
         

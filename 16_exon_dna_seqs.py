@@ -1,14 +1,9 @@
 #!/usr/bin/python3 -u
 
-from   el_utils.el_specific   import  *
-from   el_utils.ensembl import  *
+from random import sample
 from   el_utils.el_specific import  *
-
-
 from el_utils.processes import parallelize
 from config import Config
-
-
 
 # BioPython
 from Bio.Seq import Seq
@@ -19,22 +14,18 @@ verbose = True
 
 ####################
 # phase: position where the codon is split, not the offset
-# phaew can be -1 in UTR exons
+# phase can be -1 in UTR exons
 def find_offset(exon, exon_length):
 	phase = max(exon['phase'],0)
-
-	if exon['strand']>0:
-		offset = (3-phase)%3 # complement of 3, but 0 stays 0
-		full_codons = (exon_length-offset)//3*3 # integer division in python3
-	else: # on reverse strand, phase is actually end phase
-		end_offset = (3-phase)%3
-		full_codons = (exon_length-end_offset)//3*3
-		offset = exon_length - full_codons - end_offset
+	# it seems that the phase always refers to cdna, not the main strand
+	offset = (3-phase)%3 # complement of 3, but 0 stays 0
+	full_codons = (exon_length-offset)//3*3 # integer division in python3
 
 	return offset, full_codons
 
+
 #########################################
-def reconstruct_exon_seqs (cdna, sorted_exons, mitochondrial):
+def reconstruct_exon_seqs (gene_region_dna, sorted_exons, mitochondrial):
 
 	flank_length = Config.exon_flanking_region_length
 
@@ -43,8 +34,17 @@ def reconstruct_exon_seqs (cdna, sorted_exons, mitochondrial):
 	right_flank = {}
 	exon_pepseq = {}
 	phase = {}
-	cumulative_length = 0
-	print(f"number of exons: {len(sorted_exons)}")
+
+	# the hope is we have checled some place else
+	# fo the bizarre possibilty that not all exons are marked as being on the same strand
+	reverse = sorted_exons[0]['strand']<0
+
+	last_coding_exon = sorted_exons[-1]
+	for exon in sorted_exons if reverse else reversed(sorted_exons):
+		if exon['is_coding']:
+			last_coding_exon = exon
+			break
+
 	for exon in sorted_exons:
 		if not exon['is_coding']: continue
 		exon_id = exon['exon_id']
@@ -52,30 +52,49 @@ def reconstruct_exon_seqs (cdna, sorted_exons, mitochondrial):
 		end   = exon['end_in_gene'] if exon['canon_transl_end'] < 0 else exon['canon_transl_end']
 		exon_length = end - start + 1
 
-		offset, full_codons = find_offset(exon, exon_length)
+		left   = gene_region_dna[max(start - flank_length, 0):start]
+		coding = gene_region_dna[start:end+1]
+		right  = gene_region_dna[end+1:end+1 + flank_length]
 
-		left_flank[exon_id]  = cdna[min(cumulative_length-flank_length,0):cumulative_length]
-		exon_seq[exon_id]    = cdna[cumulative_length : cumulative_length+exon_length]
+		if reverse:
+			exon_seq[exon_id]    = str(Seq(coding,generic_dna).reverse_complement())
+			left_flank[exon_id]  = str(Seq(right,generic_dna).reverse_complement())
+			right_flank[exon_id] = str(Seq(left,generic_dna).reverse_complement())
+		else:
+			exon_seq[exon_id]    = coding
+			left_flank[exon_id]  = left
+			right_flank[exon_id] = right
+
+		offset, full_codons = find_offset(exon, exon_length)
 		if mitochondrial:
 			exon_pepseq[exon_id] = str(Seq(exon_seq[exon_id][offset:offset+full_codons],
 			                               generic_dna).translate(table="Vertebrate Mitochondrial"))
 		else:
 			exon_pepseq[exon_id] = str(Seq(exon_seq[exon_id][offset:offset+full_codons], generic_dna).translate())
 
-		cumulative_length += exon_length
-		right_flank[exon_id] = cdna[cumulative_length:cumulative_length+flank_length]
-
 		# this now is to be understood as the phase in the reading direction of the gene
 		phase[exon_id] = (3-offset)%3 # complement of 3, but 0 stays 0
-		if len(sorted_exons)>1:
-			print(mitochondrial, exon['strand'], exon_length, exon_length%3, exon['phase'], phase[exon_id])
-			print(exon_pepseq[exon_id])
+
+		# sanity
+		# it can happen (eg human,  gene id 597950 ENSG00000163239) that an exon contains only a part of a single codon
+		# waht we do not want to see, however, is a stop codon in the middle of the seqeunce
+		if len(exon_pepseq[exon_id])>0 and \
+				('*' in exon_pepseq[exon_id][:-1] or exon!=last_coding_exon and exon_pepseq[exon_id][-1]=='*'):
+			return f"Error: stop codon while trying to recosntruct exon id {exon_id}."
+			# print(f"problem when translating exon {sorted_exons.index(exon)} {len(sorted_exons)}")
+			# print(f"mitochondrial: {mitochondrial}, strand: {exon['strand']},  phase reported: {exon['phase']}, phase calculated: { phase[exon_id]}")
+			# print(f"  exon length: {exon_length}, exon_length%3: {exon_length%3}")
+			# print(exon_pepseq[exon_id])
+			# for offset in range(3):
+			# 	print(Seq(exon_seq[exon_id][offset:offset+full_codons], generic_dna).translate())
+			# print()
+			# exit()
 
 	return [exon_seq, left_flank, right_flank, exon_pepseq]
 
 
 #########################################
-def store(cursor, exons, exon_seq, left_flank, right_flank, exon_pepseq):
+def store_exon_seqs(cursor, exons, exon_seq, left_flank, right_flank, exon_pepseq):
 
 	for exon in exons:
 		if not exon['is_coding']: continue
@@ -84,7 +103,7 @@ def store(cursor, exons, exon_seq, left_flank, right_flank, exon_pepseq):
 		fixed_fields  = {}
 		update_fields = {}
 		fixed_fields['exon_id'] = exon_id
-		fixed_fields['is_sw']   = 0
+		fixed_fields['by_exolocator']   = 0
 		update_fields['phase']  = exon['phase']
 		if exon_seq[exon_id]:
 			update_fields['dna_seq']     = exon_seq[exon_id]
@@ -94,14 +113,12 @@ def store(cursor, exons, exon_seq, left_flank, right_flank, exon_pepseq):
 			update_fields['right_flank'] = right_flank[exon_id]
 		if exon_id in exon_pepseq and exon_pepseq[exon_id]:
 			update_fields['protein_seq'] = exon_pepseq[exon_id]
-		#####
-		store_or_update (cursor, 'exon_seq', fixed_fields, update_fields)
-		exit()
+		store_or_update (cursor, 'exon_seq', fixed_fields, update_fields, primary_key='exon_seq_id')
 
 
-def store_exon_seqs(cursor, gene_id, species , ensembl_db_name):
+def store_exon_seqs_gene(cursor, gene_id, species, ensembl_db_name):
 	db_name = ensembl_db_name[species]
-	#print(f" {gene_id} {gene2stable(cursor, gene_id, db_name=db_name)}")
+	# print(f" {gene_id} {gene2stable(cursor, gene_id, db_name=db_name)}")
 	# extract raw gene  region - bonus return from checking whether the
 	# sequence is correct: translation of canonical exons
 	gene_region_dna = get_gene_dna(cursor, species, db_name, gene_id)
@@ -109,11 +126,13 @@ def store_exon_seqs(cursor, gene_id, species , ensembl_db_name):
 		return f"Error: gene equence not found for {gene_id} {gene2stable(cursor, gene_id, db_name=db_name)}"
 
 	# get _all_ exons
-	sorted_exons = get_sorted_canonical_exons(cursor, db_name, gene_id)
-	if not sorted_exons:
+	ret = get_sorted_canonical_exons(cursor, db_name, gene_id)
+	if not ret:
 		return f"Error: no exons found."
-	if type(sorted_exons)==str and 'Error' in sorted_exons: # some sort of failure msg - ignore warnings
-		return sorted_exons
+	if type(ret)==str and 'Error' in ret: # some sort of failure msg - ignore warnings
+		return ret
+	# if everything went ok, we have the sorted list of exons
+	sorted_exons = ret
 
 	# cdna - use this to chek if it is translateble into protein
 	cdna = exons2cdna(gene_region_dna, sorted_exons)
@@ -125,14 +144,12 @@ def store_exon_seqs(cursor, gene_id, species , ensembl_db_name):
 		protein = Seq(cdna, generic_dna).translate()
 	if '*' in protein[:-1]:
 		return f"Error: stop codon in the protein sequence."
-	print("++++++++++++++++++++++++++++++++++++")
-	print(gene_id, gene2stable(cursor, gene_id, db_name=db_name))
-	print(protein)
-	# print()
-	# exit()
-	# (the return are three dictionaries, with exon_ids as keys)
-	[exon_seq, left_flank, right_flank, exon_pepseq] = reconstruct_exon_seqs(cdna, sorted_exons, mitochondrial)
-	#store(cursor, sorted_exons, exon_seq, left_flank, right_flank, exon_pepseq)
+
+	# (the return are four dictionaries, with exon_ids as keys)
+	ret = reconstruct_exon_seqs(gene_region_dna, sorted_exons, mitochondrial)
+	if type(ret)==str: return ret # there was a problem
+	[exon_seq, left_flank, right_flank, exon_pepseq] = ret
+	store_exon_seqs(cursor, sorted_exons, exon_seq, left_flank, right_flank, exon_pepseq)
 	return "ok"
 
 #########################################
@@ -141,6 +158,7 @@ def store_exon_seqs_species(species_list, other_args):
 	[ensembl_db_name] = other_args
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
+	search_db(cursor, "set autocommit=1")
 
 	for species in species_list:
 		print()
@@ -153,13 +171,14 @@ def store_exon_seqs_species(species_list, other_args):
 		###########################
 		tot = 0
 		fail_ct = 0
-
-		for gene_id in gene_ids[:100]:
+		# gene_ids = [596919] # this is ABCA4
+		# gene_ids = sample(gene_ids, 10) # testing
+		for gene_id in gene_ids:
 			tot += 1
 			if tot%1000 == 0: print(species, "tot genes:", tot, " fail:", fail_ct)
-			ret = store_exon_seqs(cursor, gene_id, species , ensembl_db_name)
+			ret = store_exon_seqs_gene(cursor, gene_id, species, ensembl_db_name)
 			if ret != "ok":
-				print(gene_id, ret)
+				# print(gene_id, ret)
 				fail_ct += 1
 				store_problem(cursor, ensembl_db_name[species], gene_id, f"When storing exon seqs: {ret}")
 
@@ -167,9 +186,6 @@ def store_exon_seqs_species(species_list, other_args):
 
 	cursor.close()
 	db    .close()
-
-
-
 
 
 #########################################
@@ -180,12 +196,13 @@ def main():
 	The parallelization here is per-species.
 	"""
 
-	no_threads = 1
+	no_threads = 8
 
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species (cursor)
-	all_species = ['homo_sapiens']
+	#all_species = ['homo_sapiens']
+	#all_species = sample(all_species, 10)
 
 	cursor.close()
 	db    .close()

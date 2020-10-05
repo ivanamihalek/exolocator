@@ -94,34 +94,19 @@ def make_gene2exon_table (cursor):
 
 #########################################
 def make_exon_seq_table (cursor):
-
-
-	table = 'exon_seq'
-
-	qry  = "CREATE TABLE " + table + "  (exon_seq_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
-	rows = search_db (cursor, qry)
-	if (rows):
-		return False
-
-	for column_name in ['exon_id']:
-		qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-
-	for column_name in ['phase', 'is_sw']:
-		qry = "ALTER TABLE %s  ADD %s tinyint" %  (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['dna_seq', 'left_flank', 'right_flank', 'protein_seq']:
-		qry = "ALTER TABLE %s  ADD %s blob" %  (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
+	#error_intolerant_search(cursor, "drop table if exists exon_seq")
+	qry = ""
+	qry += "  CREATE TABLE  exon_seq ("
+	qry += "     exon_seq_id INT PRIMARY KEY AUTO_INCREMENT, "
+	qry += "     exon_id INT, "
+	qry += "     phase tinyint, "
+	qry += "     by_exolocator tinyint, "
+	qry += "	 dna_seq text, "
+	qry += "	 left_flank text, "
+	qry += "	 right_flank text, "
+	qry += "	 protein_seq text "
+	qry += ") ENGINE=MyISAM"
+	error_intolerant_search(cursor, qry)
 
 
 #########################################
@@ -165,8 +150,6 @@ def modify_exon_map_table (cursor):
 		rows = search_db (cursor, qry)
 		if (rows):
 			return False
-
-
 
 
 #########################################
@@ -337,10 +320,9 @@ def main():
 
 	# add exon tables to all species
 	for species in all_species:
-
+		print(species)
 		db_name = ensembl_db_name[species]
-		switch_to_db (cursor, ensembl_db_name[species])
-
+		switch_to_db (cursor, db_name)
 
 		for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region', 'problems']:
 			if check_table_exists(cursor, db_name, table):
