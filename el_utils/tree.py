@@ -108,13 +108,12 @@ class Tree:
 			while current_id:
 				current_node = self.node[current_id]
 				parent_id    = taxid2parentid (cursor, parent_id)
-				if (not parent_id or  current_id == parent_id):
+				if not parent_id or  current_id == parent_id:
 					current_node.is_root = True
 					self.root = self.node[current_id]
 					current_id = None
 
 				else:
-
 					# does parent exist by any chance
 					if parent_id in self.node:
 						parent_node = self.node[parent_id]
@@ -200,17 +199,22 @@ def find_cousins (qry_node):
 	return cousins
 
 
-##############
-def species_sort(cursor, all_species, qry_species):
-	qry_leaf = None
+def species_tree(cursor, all_species):
 	tree = Tree()
 	for species in all_species:
 		leaf = Node(species)
 		tree.leafs.append(leaf)
+	tree.build(cursor)
+	return tree
+
+def species_sort(cursor, all_species, qry_species):
+	tree = species_tree(cursor, all_species)
+	qry_leaf = None
+	for leaf  in tree.leafs:
 		if leaf.name == qry_species:
 			qry_leaf = leaf
+			break
 	assert qry_leaf, f"in species_sort(), leaf not found for {qry_species}"
-	tree.build(cursor)
 	#find cousins for the qry leaf (recursively)
 	cousins = find_cousins(qry_leaf)
 

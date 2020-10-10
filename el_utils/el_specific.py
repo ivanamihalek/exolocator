@@ -76,8 +76,11 @@ def get_sorted_canonical_exons(cursor, db_name, gene_id):
 
 	column_names = get_column_names(cursor, db_name, "gene2exon")
 	exons = []
-	for ret in hard_landing_search(cursor, f"select * from {db_name}.gene2exon where gene_id={gene_id}"):
-		exon = dict(zip(column_names, ret))
+	ret = error_intolerant_search(cursor,f"select * from {db_name}.gene2exon where gene_id={gene_id}")
+	if not ret:
+		return []
+	for line in ret:
+		exon = dict(zip(column_names, line))
 		if not exon['is_canonical']: continue
 		exons.append(exon)
 

@@ -94,7 +94,7 @@ def make_gene2exon_table (cursor):
 
 #########################################
 def make_exon_seq_table (cursor):
-	#error_intolerant_search(cursor, "drop table if exists exon_seq")
+	# error_intolerant_search(cursor, "drop table if exists exon_seq")
 	qry = ""
 	qry += "  CREATE TABLE  exon_seq ("
 	qry += "     exon_seq_id INT PRIMARY KEY AUTO_INCREMENT, "
@@ -323,6 +323,7 @@ def main():
 		print(species)
 		db_name = ensembl_db_name[species]
 		switch_to_db (cursor, db_name)
+		#make_exon_seq_table(cursor)
 
 		for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region', 'problems']:
 			if check_table_exists(cursor, db_name, table):

@@ -15,3 +15,5 @@ class Config:
 
 	# exon flankingin region - not clear how long is the splice length
 	exon_flanking_region_length = 15
+
+	model_orgs = ['homo_sapiens', 'mus_musculus', 'danio_rerio', 'xenopus_tropicalis', 'gallus_gallus']

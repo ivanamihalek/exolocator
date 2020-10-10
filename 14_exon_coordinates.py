@@ -553,7 +553,7 @@ if __name__ == '__main__':
 	main()
 
 '''
-In v 101 a bund of canonical transcript coordinated were missing for mus caroli
+In v 101 a bunch of canonical transcript coordinates were missing for mus caroli
 not sure if I should worry about that - there ar 75 cases like that
 exmaple MGP_CAROLIEiJ_G0027698 Ppp1cc protein phosphatase 1 catalytic subunit gamma
 The smae for mus pahari and mus spreturs

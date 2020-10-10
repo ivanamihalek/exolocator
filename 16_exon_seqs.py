@@ -12,7 +12,7 @@ from Bio.Alphabet import generic_dna
 verbose = True
 
 
-####################
+#############################################################
 # phase: position where the codon is split, not the offset
 # phase can be -1 in UTR exons
 def find_offset(exon, exon_length):
@@ -24,7 +24,6 @@ def find_offset(exon, exon_length):
 	return offset, full_codons
 
 
-#########################################
 def reconstruct_exon_seqs (gene_region_dna, sorted_exons, mitochondrial):
 
 	flank_length = Config.exon_flanking_region_length
@@ -92,31 +91,40 @@ def reconstruct_exon_seqs (gene_region_dna, sorted_exons, mitochondrial):
 
 	return [exon_seq, left_flank, right_flank, exon_pepseq]
 
+#########################################
+def store_directly_to_db(cursor, ei, exon, exon_seq, left_flank, right_flank, exon_pepseq):
+	fixed_fields  = {}
+	update_fields = {}
+	fixed_fields['exon_id'] = ei
+	fixed_fields['by_exolocator']   = 0
+	update_fields['phase']  = exon['phase']
+	if exon_seq[ei]:
+		update_fields['dna_seq']     = exon_seq[ei]
+	if left_flank[ei]:
+		update_fields['left_flank']  = left_flank[ei]
+	if right_flank[ei]:
+		update_fields['right_flank'] = right_flank[ei]
+	if ei in exon_pepseq and exon_pepseq[ei]:
+		update_fields['protein_seq'] = exon_pepseq[ei]
+	store_or_update (cursor, 'exon_seq', fixed_fields, update_fields, primary_key='exon_seq_id')
 
 #########################################
-def store_exon_seqs(cursor, exons, exon_seq, left_flank, right_flank, exon_pepseq):
+def store_exon_seqs(cursor, exons, exon_seq, left_flank, right_flank, exon_pepseq, outfile, count):
 
 	for exon in exons:
 		if not exon['is_coding']: continue
-		exon_id = exon['exon_id']
-		#####
-		fixed_fields  = {}
-		update_fields = {}
-		fixed_fields['exon_id'] = exon_id
-		fixed_fields['by_exolocator']   = 0
-		update_fields['phase']  = exon['phase']
-		if exon_seq[exon_id]:
-			update_fields['dna_seq']     = exon_seq[exon_id]
-		if left_flank[exon_id]:
-			update_fields['left_flank']  = left_flank[exon_id]
-		if right_flank[exon_id]:
-			update_fields['right_flank'] = right_flank[exon_id]
-		if exon_id in exon_pepseq and exon_pepseq[exon_id]:
-			update_fields['protein_seq'] = exon_pepseq[exon_id]
-		store_or_update (cursor, 'exon_seq', fixed_fields, update_fields, primary_key='exon_seq_id')
+		ei = exon['exon_id']
+		if outfile: # write out, load later; this is faster
+			# exon_seq_id, exon_id, phase, by_exolocator, dna_seq, left_flank, right_flank, protein_seq
+			count += 1
+			fields = [count, ei, exon['phase'], 0, exon_seq[ei], exon_seq[ei], left_flank[ei], right_flank[ei], exon_pepseq[ei]]
+			print("\t".join([str(f) for f in fields]), file=outfile)
+		else: # slower, but checks for the existence
+			store_directly_to_db(cursor, ei, exon, exon_seq, left_flank, right_flank, exon_pepseq)
+	return count
 
 
-def store_exon_seqs_gene(cursor, gene_id, species, ensembl_db_name):
+def store_exon_seqs_gene(cursor, gene_id, species, ensembl_db_name, outfile, count):
 	db_name = ensembl_db_name[species]
 	# print(f" {gene_id} {gene2stable(cursor, gene_id, db_name=db_name)}")
 	# extract raw gene  region - bonus return from checking whether the
@@ -149,65 +157,105 @@ def store_exon_seqs_gene(cursor, gene_id, species, ensembl_db_name):
 	ret = reconstruct_exon_seqs(gene_region_dna, sorted_exons, mitochondrial)
 	if type(ret)==str: return ret # there was a problem
 	[exon_seq, left_flank, right_flank, exon_pepseq] = ret
-	store_exon_seqs(cursor, sorted_exons, exon_seq, left_flank, right_flank, exon_pepseq)
-	return "ok"
+	count = store_exon_seqs(cursor, sorted_exons, exon_seq, left_flank, right_flank, exon_pepseq, outfile, count)
+	return count
 
-#########################################
+
 def store_exon_seqs_species(species_list, other_args):
 
-	[ensembl_db_name] = other_args
+	[ensembl_db_name, outdir] = other_args
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	search_db(cursor, "set autocommit=1")
 
 	for species in species_list:
-		print()
-		print("############################")
-		print(species)
+		# load this file later with
+		# sudo mysqlimport  --local <species db>  outfir/species/gene2exon.tsv
+		# mysqlimport strips any extension and uses what's left as a table name
+		# before you begin, do
+		# mysql> SET GLOBAL local_infile = 1;
+		os.makedirs(f"{outdir}/{species}", exist_ok=True)
+		# remember the table name and file name must match
+		outfile = open(f"{outdir}/{species}/exon_seq.tsv", "w")
+
 		switch_to_db(cursor, ensembl_db_name[species])
 		gene_ids = get_gene_ids (cursor, biotype='protein_coding')
-		print(f"nummber of genes: {len(gene_ids)}")
+
+		print()
+		print("############################")
+		print(f"{species} nummber of genes: {len(gene_ids)}")
 
 		###########################
 		tot = 0
 		fail_ct = 0
+		exon_seqs_stored = 0 # the number of exons stored; used as exon_seq_id when loading back in
+		time0 = time()
 		# gene_ids = [596919] # this is ABCA4
 		# gene_ids = sample(gene_ids, 10) # testing
 		for gene_id in gene_ids:
 			tot += 1
-			if tot%1000 == 0: print(species, "tot genes:", tot, " fail:", fail_ct)
-			ret = store_exon_seqs_gene(cursor, gene_id, species, ensembl_db_name)
-			if ret != "ok":
+			if tot%1000 == 0:
+				mins = (time()-time0)/60
+				print(species, "tot genes:", tot, " fail:", fail_ct, " time for the last 1000: %.1f mins" % mins)
+				time0 = time()
+			ret = store_exon_seqs_gene(cursor, gene_id, species, ensembl_db_name, outfile, exon_seqs_stored)
+			if type(ret)!=int:
 				# print(gene_id, ret)
 				fail_ct += 1
 				store_problem(cursor, ensembl_db_name[species], gene_id, f"When storing exon seqs: {ret}")
-
+			else:
+				exon_seqs_stored = ret
+		outfile.close()
 		print(species, "done; tot:", tot, " fail:", fail_ct)
 
 	cursor.close()
 	db    .close()
 
 
+def check_species_done(cursor, all_species, ensembl_db_name, outdir):
+	unprocessed_species = []
+	for species in all_species:
+		switch_to_db(cursor, ensembl_db_name[species])
+		gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+		exon_seqs_found = 0
+		exon_seq_file = f"{outdir}/{species}/exon_seq.tsv"
+		if not os.path.exists(exon_seq_file):
+			exon_seqs_found = "not processed"
+		# else:
+		# 	cmd = f"wc -l {outdir}/{species}/exon_seq.tsv"
+		# 	exon_seqs_found = subprocess.check_output(["bash", "-c", cmd]).decode('UTF-8').split()[0]
+		if exon_seqs_found == "not processed": # or int(exon_seqs_found)//len(gene_ids)<0.5:
+			# print()
+			# print("############################")
+			# print(f"{species} number of genes: {len(gene_ids)}   exon_seqs: {exon_seqs_found}")
+			unprocessed_species.append(species)
+
+	return unprocessed_species
+
 #########################################
 def main():
 
-	"""
-	Main entry point, but in reality does nothing except taking care of the parallelization.
-	The parallelization here is per-species.
-	"""
-
-	no_threads = 8
+	outdir = "raw_tables"
+	os.makedirs(outdir, exist_ok=True)
 
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
-	[all_species, ensembl_db_name] = get_species (cursor)
-	#all_species = ['homo_sapiens']
+	[all_species, ensembl_db_name] = get_species(cursor)
+
+	unprocessed_species = check_species_done(cursor, all_species, ensembl_db_name, outdir)
+	print("unprocessed_species:")
+	print("\n".join(unprocessed_species))
+	exit()
+
+	all_species = unprocessed_species
+	#all_species = ['mus_caroli']
 	#all_species = sample(all_species, 10)
 
 	cursor.close()
 	db    .close()
 
-	parallelize (no_threads, store_exon_seqs_species, all_species, [ensembl_db_name])
+	no_threads = 8
+	parallelize (no_threads, store_exon_seqs_species, all_species, [ensembl_db_name, outdir])
 
 
 
@@ -273,3 +321,6 @@ Hope this helps,
 
 Emily
 '''
+
+
+
