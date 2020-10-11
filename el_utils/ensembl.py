@@ -589,7 +589,7 @@ def get_biotype(cursor, exon_id, db_name=None):
 
 	qry = "select biotype from gene where gene_id = %d " % int(exon_id)
 	rows = search_db(cursor, qry)
-	if (not rows):
+	if not rows:
 		return ""
 
 	return rows[0][0]
@@ -633,7 +633,7 @@ def get_gene_coordinates(cursor, gene_id, db_name=None):
 	qry += " where gene_id = %d" % gene_id
 	rows = search_db(cursor, qry)
 
-	if (not rows or isinstance(rows[0], str) and 'error' in rows[0].lower()):
+	if not rows or isinstance(rows[0], str) and 'error' in rows[0].lower():
 		search_db(cursor, qry, verbose=True)
 		return None
 
@@ -662,31 +662,16 @@ def is_mitochondrial(cursor, gene_id, db_name=None):
 
 #########################################
 def get_exon_pepseq(cursor, exon, db_name=None, verbose=False):
-	if (db_name):
+	if db_name:
 		if not switch_to_db(cursor, db_name):
 			return False
 
-	if exon.exon_seq_id:
-		exon_seq_id = exon.exon_seq_id
-		qry = "select protein_seq "
-		qry += " from exon_seq where exon_seq_id = %d" % exon_seq_id
-	else:
-		exon_id = exon.exon_id
-		is_known = exon.is_known
-		qry = "select protein_seq  "
-		qry += " from exon_seq where exon_id = %d and is_known = %d" % (exon_id, is_known)
+	rows = error_intolerant_search(cursor, f"select protein_seq rom exon_seq where exon_id = {exon['exon_id']}")
 
-	rows = search_db(cursor, qry)
-
-	if (not rows):
-		if verbose:
-			rows = search_db(cursor, qry, verbose=True)
-			print(rows)
-		return ""
+	if not rows: return ""
 
 	protein_seq = rows[0][0]
-	if (protein_seq is None):
-		protein_seq = ""
+	if protein_seq is None: protein_seq = ""
 
 	return protein_seq
 

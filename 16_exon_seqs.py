@@ -1,7 +1,7 @@
 #!/usr/bin/python3 -u
 
 from random import sample
-from   el_utils.el_specific import  *
+from el_utils.el_specific import  *
 from el_utils.processes import parallelize
 from config import Config
 

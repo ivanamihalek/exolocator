@@ -433,6 +433,23 @@ def exons2cdna(gene_region_dna, sorted_exons):
 #     return null
 #
 #
+
+# #########################################
+def get_orthos(cursor, ref_species, other_species, ensembl_db_name, gene_id):
+	ortho_gene_id = {}
+	qry  = f"select cognate_gene_id, cognate_genome_db_id from {ensembl_db_name[ref_species]}.orthologues "
+	qry += f"where gene_id={gene_id}"
+	for line in error_intolerant_search(cursor, qry):
+		[cognate_gene_id, cognate_genome_db_id] = line
+		qry = f"select db_name from exolocator_meta.db_names where genome_db_id={cognate_genome_db_id}"
+		db_name = hard_landing_search(cursor, qry)[0][0]
+		#stable_transl_id = gene2stable_canon_transl_id(cursor, cognate_gene_id, db_name)
+		species = db_name.split("core")[0].rstrip("_")
+		if species not in other_species: continue
+		ortho_gene_id[species]=cognate_gene_id
+	return ortho_gene_id
+
+
 # #########################################
 # def get_reliable_orthos(cursor, ensembl_db_name, gene_id):
 #
