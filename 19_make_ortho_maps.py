@@ -81,31 +81,36 @@ def maps_for_gene_list(gene_list, db_info):
 			print(f"no exons found for {gene_id}")
 			continue
 		# get rid of the old maps
-		map_cleanup(cursor, ensembl_db_name, human_exons)
+		# map_cleanup(cursor, ensembl_db_name, human_exons)
 
 		# human as its own orthologue - let's be systematic
-		maps = self_maps(cursor, ensembl_db_name, human_exons)
+		# maps = self_maps(cursor, ensembl_db_name, human_exons)
+		# for map in maps:
+		# 	print(map)
 		# store(cursor, maps, ensembl_db_name)
+		# exit()
 
-		exit()
 		#
 		orthologues = get_orthos(cursor, 'homo_sapiens', other_species, ensembl_db_name, gene_id)
-		for ortho_species, ortho_gene_id in orthologues.item():
-			ortho_exons = get_sorted_canonical_exons(cursor, ensembl_db_name[ortho_species], ortho_gene_id)
+		for ortho_species, ortho_gene_id in orthologues.items():
+			print(ortho_species)
 
+			ortho_exons = get_sorted_canonical_exons(cursor, ensembl_db_name[ortho_species], ortho_gene_id)
 			if not ortho_exons:
 				missing_exon_info += 1
 				print(f"\t{ortho_species} no exon info")
 				continue
-		# 	# maps are based on pairwise alignments of human to other species
-		# 	# multiple sequence alignements on exon-by-exon basis are produced in 17_ortho_exon_map_to_msa.py
-		# 	# reconstruction of full length multiple seqence alignments is  done only in
-		# 	# 30_db_migration/06_reconstruct_ortho_alnmts.py
-		# 	maps = make_maps (cursor, ensembl_db_name,  cfg, acg, ortho_species, human_exons, ortho_exons, verbose)
-		# 	if not maps:
-		# 		missing_seq_info += 1
-		# 		print("\t", ortho_species, "no maps")
-		# 		continue
+
+			# maps are based on pairwise alignments of human to other species
+			# multiple sequence alignements on exon-by-exon basis are produced in 17_ortho_exon_map_to_msa.py
+			# reconstruction of full length multiple seqence alignments is  done only in
+			# 30_db_migration/06_reconstruct_ortho_alnmts.py
+			maps = make_maps(cursor, ensembl_db_name, ortho_species, human_exons, ortho_exons, verbose)
+			exit()
+			if not maps:
+				missing_seq_info += 1
+				print(f"\t{ortho_species} no exon maps")
+				continue
 		#
 		# 	no_maps += len(maps)
 		# 	store (cursor, maps, ensembl_db_name)
@@ -115,7 +120,7 @@ def maps_for_gene_list(gene_list, db_info):
 		# 	print("processed ", ct, "genes,  out of ", len(gene_list), "  ", end=' ', file=datastring)
 		# 	print(no_maps, " maps;  no_exon_info: ", missing_exon_info, "no_seq_info:", missing_seq_info, file=datastring)
 		# 	print(datastring.getvalue())
-	print("gene list done")
+
 	cursor.close()
 	db.close()
 
@@ -131,10 +136,11 @@ def main():
 
 
 	[all_species, ensembl_db_name] = get_species (cursor)
-	# tree = species_tree(cursor, all_species)
+	tree = species_tree(cursor, all_species)
 	# print(tree.nhx_string()) # https://phylo.io
+	# exit()
 	switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
-	gene_list = get_gene_ids (cursor, biotype='protein_coding')
+	gene_list = get_gene_ids(cursor, biotype='protein_coding')
 
 
 	cursor.close()

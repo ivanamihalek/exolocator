@@ -3,29 +3,30 @@ import os
 from el_utils.el_specific import *
 
 # from  el_utils.py_alignment import  smith_waterman, exon_aware_smith_waterman
-import c_utils.alignment as alnmt
+# pycharm does not recognize this, but python itself does
+from c_utils.alignment import smith_waterman_context
 
 #########################################################
 class Map:    # this particular map is between exons
 
 	#################################################
 	# print
-	def __str__ (self):
+	def __str__(self):
 
 		printstr = ""
 
 		for attr, value in self.__dict__.items():
-			if not value is None:
-				printstr += attr+ "    "+ str(value)
+			if value is None:
+				printstr += attr + "    None"
 			else:
-				printstr += attr+ "    None"
-
+				printstr += attr + "    " + str(value)
 			printstr += "\n"
+
 		return printstr
 
 	###################################
 	# when something is defined as an exon ....
-	def __init__ (self):
+	def __init__(self):
 
 		self.species_1          = 'homo_sapiens'
 		self.species_2          = None
@@ -308,22 +309,6 @@ def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, 
 
 	return maps
 
-#########################################
-def decorate_and_concatenate (exons):
-	# formatting mini-language https://docs.python.org/3.8/library/string.html#formatspec
-	# this is adding the exon number to the alignment (am I hacking here or what)
-	# for exaple, for pepseq = "JKHHG", count=5
-	# 'B'+padded_count+pepseq+'Z' is 'B005JKHHGZ'
-	decorated_seq = ""
-	count = 1
-	for  exon in exons:
-		pepseq = exon.pepseq
-		padded_count = "{0:03d}".format(count)
-		decorated_seq += 'B'+padded_count+pepseq+'Z'
-		count += 1
-
-	return decorated_seq
-
 
 
 
@@ -335,11 +320,11 @@ def find_relevant_exons (cursor, all_exons, human):
 
 	# 1) choose exons that I need
 	for exon in all_exons:
-		if exon['covering_exon'] > 0:
-			continue
+		# if exon['covering_exon'] > 0:
+		# 	continue
 		if human and not exon['is_coding']:
 			continue
-		if exon['is_known']>1 and not exon['exon_seq_id']:
+		if not exon['exon_seq_id']:
 			continue
 		relevant_exons.append(exon)
 
@@ -379,22 +364,41 @@ def find_exon_positions(seq):
 
 
 #########################################
-def make_maps (cursor, ensembl_db_name, cfg, acg, ortho_species, human_exons, ortho_exons, verbose=False):
+def decorate_and_concatenate (exons):
+	# formatting mini-language https://docs.python.org/3.8/library/string.html#formatspec
+	# this is adding the exon number to the alignment (am I hacking here or what)
+	# for exaple, for pepseq = "JKHHG", count=5
+	# 'B'+padded_count+pepseq+'Z' is 'B005JKHHGZ'
+	decorated_seq = ""
+	count = 1
+	for exon in exons:
+		pepseq = exon['pepseq']
+		padded_count = "{0:03d}".format(count)
+		decorated_seq += 'B'+padded_count+pepseq+'Z'
+		count += 1
+
+	return decorated_seq
+
+
+#########################################
+def make_maps (cursor, ensembl_db_name, ortho_species, human_exons, ortho_exons, verbose=False):
 
 	maps = []
 
-	# #print "############################## human"
-	# switch_to_db(cursor,  ensembl_db_name['homo_sapiens'])
-	# relevant_human_exons = find_relevant_exons (cursor, human_exons, human=True)
-	# #print "##############################", ortho_species
-	# switch_to_db(cursor,  ensembl_db_name[ortho_species])
-	# relevant_ortho_exons = find_relevant_exons (cursor, ortho_exons, human=False)
+	print("############################## human")
+	switch_to_db(cursor,  ensembl_db_name['homo_sapiens'])
+	relevant_human_exons = find_relevant_exons (cursor, human_exons, human=True)
+
+	print("##############################", ortho_species)
+	switch_to_db(cursor,  ensembl_db_name[ortho_species])
+	relevant_ortho_exons = find_relevant_exons (cursor, ortho_exons, human=False)
 	#
-	# human_seq = decorate_and_concatenate (relevant_human_exons)
-	# ortho_seq = decorate_and_concatenate (relevant_ortho_exons)
+	human_seq = decorate_and_concatenate(relevant_human_exons)
+	ortho_seq = decorate_and_concatenate(relevant_ortho_exons)
+	# TODO it looks like I have pieces of nt seqeuence here
+	print(human_seq)
 	#
-	# if (not human_seq or not ortho_seq):
-	#     return maps
+	if not human_seq or not ortho_seq: return maps
 	#
 	# aligned_seq = {}
 	# # if False:# python implementation

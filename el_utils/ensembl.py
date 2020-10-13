@@ -666,7 +666,7 @@ def get_exon_pepseq(cursor, exon, db_name=None, verbose=False):
 		if not switch_to_db(cursor, db_name):
 			return False
 
-	rows = error_intolerant_search(cursor, f"select protein_seq rom exon_seq where exon_id = {exon['exon_id']}")
+	rows = error_intolerant_search(cursor, f"select protein_seq from exon_seq where exon_id = {exon['exon_id']}")
 
 	if not rows: return ""
 

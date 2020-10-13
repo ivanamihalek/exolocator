@@ -76,7 +76,7 @@ def get_sorted_canonical_exons(cursor, db_name, gene_id):
 
 	column_names = get_column_names(cursor, db_name, "gene2exon")
 	exons = []
-	ret = error_intolerant_search(cursor,f"select * from {db_name}.gene2exon where gene_id={gene_id}")
+	ret = error_intolerant_search(cursor, f"select * from {db_name}.gene2exon where gene_id={gene_id}")
 	if not ret:
 		return []
 	for line in ret:
