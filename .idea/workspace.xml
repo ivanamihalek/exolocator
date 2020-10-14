@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/exolocator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/exolocator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/14_exon_coordinates.py" beforeDir="false" afterPath="$PROJECT_DIR$/14_gene2exon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/18_fill_exon_seq_id_field.py" beforeDir="false" afterPath="$PROJECT_DIR$/18_fill_exon_seq_id_field.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/19_make_ortho_maps.py" beforeDir="false" afterPath="$PROJECT_DIR$/19_make_ortho_maps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/23_gene2exon_store.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/el_specific.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/el_specific.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/map.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/map.py" afterDir="false" />
-    </list>
+    <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="" />
     <ignored path="exolocator.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,7 +19,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="19_make_ortho_maps.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="19_make_ortho_maps.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/19_make_ortho_maps.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="309">
@@ -42,11 +31,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="map.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="map.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/el_utils/map.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="157">
-              <caret line="397" column="19" selection-start-line="397" selection-start-column="19" selection-end-line="397" selection-end-column="19" />
+            <state relative-caret-position="409">
+              <caret line="399" column="5" lean-forward="true" selection-start-line="399" selection-start-column="5" selection-end-line="399" selection-end-column="5" />
               <folding>
                 <element signature="e#1#10#0" expanded="true" />
               </folding>
@@ -288,7 +277,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1972" y="91" width="1692" height="977" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22588377" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -476,22 +464,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/el_utils/map.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="399" column="5" lean-forward="true" selection-start-line="399" selection-start-column="5" selection-end-line="399" selection-end-column="5" />
+          <folding>
+            <element signature="e#1#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/19_make_ortho_maps.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="309">
           <caret line="102" selection-start-line="102" selection-end-line="102" />
           <folding>
             <element signature="e#23#48#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/el_utils/map.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="157">
-          <caret line="397" column="19" selection-start-line="397" selection-start-column="19" selection-end-line="397" selection-end-column="19" />
-          <folding>
-            <element signature="e#1#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
