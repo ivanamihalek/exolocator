@@ -9,8 +9,9 @@ from el_utils.map import *
 #########################################
 verbose = True
 
+
 #########################################
-def store (cursor, maps, ensembl_db_name):
+def store(cursor, maps, ensembl_db_name):
 
 	for map in maps:
 		fixed_fields  = {}
@@ -29,8 +30,9 @@ def store (cursor, maps, ensembl_db_name):
 
 	return True
 
+
 #########################################
-def  map_cleanup (cursor, ensembl_db_name, human_exons):
+def map_cleanup(cursor, ensembl_db_name, human_exons):
 
 	switch_to_db(cursor,ensembl_db_name['homo_sapiens'])
 	for exon in human_exons:
@@ -80,6 +82,7 @@ def maps_for_gene_list(gene_list, db_info):
 		if not human_exons:
 			print(f"no exons found for {gene_id}")
 			continue
+
 		# get rid of the old maps
 		# map_cleanup(cursor, ensembl_db_name, human_exons)
 
@@ -90,10 +93,11 @@ def maps_for_gene_list(gene_list, db_info):
 		# store(cursor, maps, ensembl_db_name)
 		# exit()
 
-		#
+
 		orthologues = get_orthos(cursor, 'homo_sapiens', other_species, ensembl_db_name, gene_id)
 		for ortho_species, ortho_gene_id in orthologues.items():
-			print(ortho_species)
+			if ortho_species != "xenopus_tropicalis": continue
+			print(ortho_species, ortho_gene_id)
 
 			ortho_exons = get_sorted_canonical_exons(cursor, ensembl_db_name[ortho_species], ortho_gene_id)
 			if not ortho_exons:
@@ -106,12 +110,11 @@ def maps_for_gene_list(gene_list, db_info):
 			# reconstruction of full length multiple seqence alignments is  done only in
 			# 30_db_migration/06_reconstruct_ortho_alnmts.py
 			maps = make_maps(cursor, ensembl_db_name, ortho_species, human_exons, ortho_exons, verbose)
-			exit()
 			if not maps:
 				missing_seq_info += 1
 				print(f"\t{ortho_species} no exon maps")
 				continue
-		#
+
 		# 	no_maps += len(maps)
 		# 	store (cursor, maps, ensembl_db_name)
 		#
@@ -136,9 +139,8 @@ def main():
 
 
 	[all_species, ensembl_db_name] = get_species (cursor)
-	tree = species_tree(cursor, all_species)
-	# print(tree.nhx_string()) # https://phylo.io
-	# exit()
+
+	# TODO: loop over representative species - get the rep spec + the members
 	switch_to_db (cursor,  ensembl_db_name['homo_sapiens'])
 	gene_list = get_gene_ids(cursor, biotype='protein_coding')
 

@@ -139,7 +139,6 @@ def store_or_update(cursor, table, fixed_fields, update_fields, verbose=False, p
 
 #########################################
 def create_index(cursor, db_name, table, index_name, columns, verbose=False):
-
 	time0 = 0
 	# check whether this index exists already
 	if verbose: print("checking existence of index {} on table {} in {}".format(index_name, table, db_name))
@@ -147,6 +146,8 @@ def create_index(cursor, db_name, table, index_name, columns, verbose=False):
 	rows = search_db(cursor, qry, verbose=False)
 	if rows:
 		print("found index {} on table {} in {}.".format(index_name, table, db_name))
+		print(rows)
+		exit()
 		return True
 
 	if verbose:

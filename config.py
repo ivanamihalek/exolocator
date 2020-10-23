@@ -17,15 +17,3 @@ class Config:
 	exon_flanking_region_length = 15
 
 	model_orgs = ['homo_sapiens', 'mus_musculus', 'danio_rerio', 'xenopus_tropicalis', 'gallus_gallus']
-	species_subtrees = ['Archosauria',  # birds and crocs
-	                    'Testudines',  # turtles
-	                    'Lepidosauria',  # scaled reptiles (lizards and snakes)
-	                    'Eutheria', 'Marsupialia',
-	                    'ornithorhynchus_anatinus',  # platipus
-	                    'Anura',  # frogs
-	                    'latimeria_chalumnae',  # coelacanth
-	                    'Euteleosteomorpha', 'Otomorpha', 'Osteoglossiformes',  # ray-finned fish
-	                    'lepisosteus_oculatus', 'erpetoichthys_calabaricus',  # more ray-finned fish
-	                    'callorhinchus milii',  # Australian ghostshark or elephant shark
-	                    'Cyclostomata'  # nightmare stuff
-	                    ]

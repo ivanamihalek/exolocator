@@ -22,6 +22,7 @@ import pprint
 def exon_flanks():
 	return
 
+
 ##########
 def get_seq_data(cursor, species, db_name, gene_id, sorted_exons):
 
@@ -64,7 +65,7 @@ def get_seq_data(cursor, species, db_name, gene_id, sorted_exons):
 		if reverse:
 			flank = Seq(gene_region_dna[end+1:end + splice_length], generic_dna)
 			acceptor_splice[cumulative_length+1] = str(flank.reverse_complement())
-			flank = Seq( gene_region_dna[max(start-splice_length, 0):start], generic_dna)
+			flank = Seq(gene_region_dna[max(start-splice_length, 0):start], generic_dna)
 			donor_splice[cumulative_length+exon_length] = str(flank.reverse_complement())
 		else:
 			acceptor_splice[cumulative_length+1] = gene_region_dna[max(start-splice_length, 0):start]

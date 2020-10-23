@@ -20,7 +20,7 @@ my @farm =  split "\n", `ls -d *_*`;
 
 foreach my $animal (@farm) {
 
-	# $animal eq "xenopus_tropicalis" && last;
+	#$animal eq "danio_rerio" && next;
 
 	print "\n----------------------------\n";
 	print " ... formating  $animal ... \n\n";

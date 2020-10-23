@@ -30,7 +30,7 @@ def write_to_fasta(home, species, stable_transl_id, tmpfile, logfile, out_fasta)
 
 	return False
 
-def reorder_seqs(in_afa, species_sorted, out_afa, trivial):
+def reorder_seqs(in_afa, species_sorted, out_afa, trivial=None, name_prefix=None):
 	seq = {}
 	name = 'anon'
 	with open(in_afa) as inf:
@@ -45,7 +45,9 @@ def reorder_seqs(in_afa, species_sorted, out_afa, trivial):
 
 	with open(out_afa, "w") as outf:
 		for name in species_sorted:
-			outf.write(f">{trivial[name] if trivial else name}\n")
+			outname = trivial[name] if trivial else name
+			if name_prefix: outname = f"{name_prefix}_{outname}"
+			outf.write(f">{outname}\n")
 			for i in range(0,len(seq[name]), 100):
 				outf.write(f"{seq[name][i:i+100]}\n")
 
@@ -54,10 +56,12 @@ def reorder_seqs(in_afa, species_sorted, out_afa, trivial):
 def main():
 
 	if len(sys.argv)<2:
-		print("usage: %s <gene symbol> [trivial]" % sys.argv[0])
+		print("usage: %s <gene symbol> [trivial] [prepend]" % sys.argv[0])
+		print("trivial = use trivial species name; prepend = prepend gene name")
 		exit()
 	gene_name = sys.argv[1]
-	trivial =  len(sys.argv)>2 and sys.argv[2]=="trivial"
+	trivial = "trivial" in sys.argv
+	prepend = "prepend" in sys.argv # prepends geen synbol to gene name
 	ref_species = 'homo_sapiens'  # the orthologue table is filled only here, for the moment
 
 	out_fasta = f"{gene_name}.orthos.fasta"
@@ -103,7 +107,8 @@ def main():
 
 	species_sorted = species_sort(cursor, species_in_the_almt, ref_species)
 	trivial_names = get_trivial(cursor, species_sorted) if trivial else None
-	reorder_seqs('tmp.afa', species_sorted, out_afa, trivial_names)
+	name_prefix = gene_name if prepend else None
+	reorder_seqs('tmp.afa', species_sorted, out_afa, trivial_names, name_prefix)
 	if os.path.exists('tmp.afa'): os.remove('tmp.afa')
 
 	cursor.close()

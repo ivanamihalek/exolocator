@@ -224,7 +224,7 @@ static PyObject* smith_waterman_context(PyObject* self, PyObject* args)
 	//char gap_character = '-'
 	//int gap_opening    =  -3;  // used in 25_db_migration/06_make_alignments
 	//int gap_extension  =   0;
-	char gap_character = '#';
+	char gap_character = '#'; // why am I using this as a gap character?
 	int endgap         =   0;
 	int use_endgap     =   0;
 

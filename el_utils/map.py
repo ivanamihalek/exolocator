@@ -226,7 +226,7 @@ def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
 
 
 #########################################
-def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, exon_positions, verbose=False):
+def maps_evaluate (min_similarity, human_exons, ortho_exons, aligned_seq, exon_positions, verbose=False):
 
 	maps = []
 
@@ -243,7 +243,6 @@ def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, 
 		print('==============================================================')
 		print(other_species)
 
-	min_similarity = cfg.get_value('min_accptbl_exon_sim')
 
 	for human_exon_ct in range(len(human_exons)):
 
@@ -267,15 +266,15 @@ def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, 
 				map.species_1    = 'homo_sapiens'
 				map.species_2    = other_species
 
-				map.exon_id_1    = human_exons[human_exon_ct].exon_id
-				map.exon_id_2    = ortho_exons[ortho_exon_ct].exon_id
+				map.exon_id_1    = human_exons[human_exon_ct]['exon_id']
+				map.exon_id_2    = ortho_exons[ortho_exon_ct]['exon_id']
 
-				map.exon_known_1 = human_exons[human_exon_ct].is_known
-				map.exon_known_2 = ortho_exons[ortho_exon_ct].is_known
+				map.exon_known_1 = human_exons[human_exon_ct]['is_known']
+				map.exon_known_2 = ortho_exons[ortho_exon_ct]['is_known']
 
-				if ortho_exons[ortho_exon_ct].is_known == 2:
+				if ortho_exons[ortho_exon_ct]['is_known'] == 2:
 					map.source   = 'sw_sharp'
-				elif ortho_exons[ortho_exon_ct].is_known == 3:
+				elif ortho_exons[ortho_exon_ct]['is_known'] == 3:
 					map.source   = 'usearch'
 				else:
 					map.source   = 'ensembl'
@@ -301,9 +300,7 @@ def maps_evaluate (cfg, ensembl_db_name, human_exons, ortho_exons, aligned_seq, 
 
 				if map.similarity < min_similarity: continue
 
-				ciggy = cigar_line (seq['human'], seq['other'])
-				map.cigar_line = ciggy
-
+				map.cigar_line = cigar_line(seq['human'], seq['other'])
 
 				maps.append(map)
 
@@ -333,7 +330,7 @@ def find_relevant_exons (cursor, all_exons, human):
 	relevant_exons.sort(key=lambda exon: exon['start_in_gene'])
 	for i in range(len(relevant_exons)):
 		exon   = relevant_exons[i]
-		pepseq = get_exon_pepseq (cursor, exon)
+		pepseq = get_exon_pepseq(cursor, exon)
 		if not pepseq:
 			to_remove.append(i)
 			continue
@@ -347,6 +344,7 @@ def find_relevant_exons (cursor, all_exons, human):
 		del relevant_exons[to_remove[i]]
 
 	return relevant_exons
+
 
 #########################################
 def find_exon_positions(seq):
@@ -365,6 +363,11 @@ def find_exon_positions(seq):
 
 #########################################
 def decorate_and_concatenate (exons):
+	# assumes that the exons are sorted in the order of appearance on main strand
+	# also assume that they are all coded on the same strand
+	if exons[0]['strand']<0: exons.reverse()
+	# get rid of the stop codon
+	if exons[-1]['pepseq'][-1]=='*': exons[-1]['pepseq'] =  exons[-1]['pepseq'][:-1]
 	# formatting mini-language https://docs.python.org/3.8/library/string.html#formatspec
 	# this is adding the exon number to the alignment (am I hacking here or what)
 	# for exaple, for pepseq = "JKHHG", count=5
@@ -381,7 +384,7 @@ def decorate_and_concatenate (exons):
 
 
 #########################################
-def make_maps (cursor, ensembl_db_name, ortho_species, human_exons, ortho_exons, verbose=False):
+def make_maps(cursor, ensembl_db_name, ortho_species, human_exons, ortho_exons, verbose=False):
 
 	maps = []
 
@@ -395,37 +398,37 @@ def make_maps (cursor, ensembl_db_name, ortho_species, human_exons, ortho_exons,
 	#
 	human_seq = decorate_and_concatenate(relevant_human_exons)
 	ortho_seq = decorate_and_concatenate(relevant_ortho_exons)
-	# TODO it looks like I have pieces of nt seqeuence here
 	print(human_seq)
+	print(ortho_seq)
 	#
 	if not human_seq or not ortho_seq: return maps
-	#
-	# aligned_seq = {}
-	# # if False:# python implementation
-	# #     [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
-	# #         = exon_aware_smith_waterman (human_seq, ortho_seq)
-	# # else: # C implementation
-	# [aligned_seq['homo_sapiens'], aligned_seq[ortho_species]] \
-	#         = smith_waterman_context (human_seq, ortho_seq, -5, -3)
-	#
-	# if (not aligned_seq['homo_sapiens'] or
-	#     not aligned_seq[ortho_species]):
-	#     return []
-	#
-	# # find the positions of the exons in the alignment
-	# exon_positions = {}
-	# for species, seq in aligned_seq.items():
-	#     # move B to beginning of each exon sequence
-	#     seq = moveB(seq)
-	#     #beginning and end of each exon in the alignment
-	#     exon_positions[species] = find_exon_positions(seq)
-	#
-	# # fill in the actual map values
-	# maps = maps_evaluate (cfg, ensembl_db_name, relevant_human_exons,
-	#                       relevant_ortho_exons, aligned_seq, exon_positions, verbose)
-	#
+
+	aligned_seq = {'homo_sapiens': smith_waterman_context(human_seq, ortho_seq, -5, -3)[0],
+	               ortho_species: smith_waterman_context(human_seq, ortho_seq, -5, -3)[1]}
+	print()
+	print(f">homo_sapiens\n{aligned_seq['homo_sapiens']}")
+	print(f">{ortho_species}\n{aligned_seq[ortho_species]}")
+	if not aligned_seq['homo_sapiens'] or not aligned_seq[ortho_species]: return []
+
+
+	# find the positions of the exons in the alignment
+	exon_positions = {}
+	for species, seq in aligned_seq.items():
+		# move B to beginning of each exon sequence
+		seq = moveB(seq)
+		#beginning and end of each exon in the alignment
+		exon_positions[species] = find_exon_positions(seq)
+
+		print()
+		print(species, exon_positions[species])
+	# fill in the actual map values
+	# TODO what should be the min exon similarity? store somehwere in config
+	maps = maps_evaluate(0.8, relevant_human_exons, relevant_ortho_exons, aligned_seq, exon_positions, verbose)
+	for map in maps:
+		print(map)
+	exit()
 	return maps
 
 
-if __name__=="__main__":
-	alnmt.smith_waterman_context()
+# if __name__=="__main__":
+# 	return

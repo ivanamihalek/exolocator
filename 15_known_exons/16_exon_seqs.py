@@ -117,7 +117,7 @@ def store_exon_seqs(cursor, exons, exon_seq, left_flank, right_flank, exon_pepse
 		if outfile: # write out, load later; this is faster
 			# exon_seq_id, exon_id, phase, by_exolocator, dna_seq, left_flank, right_flank, protein_seq
 			count += 1
-			fields = [count, ei, exon['phase'], 0, exon_seq[ei], exon_seq[ei], left_flank[ei], right_flank[ei], exon_pepseq[ei]]
+			fields = [count, ei, exon['phase'], 0, exon_seq[ei], left_flank[ei], right_flank[ei], exon_pepseq[ei]]
 			print("\t".join([str(f) for f in fields]), file=outfile)
 		else: # slower, but checks for the existence
 			store_directly_to_db(cursor, ei, exon, exon_seq, left_flank, right_flank, exon_pepseq)
@@ -131,8 +131,7 @@ def store_exon_seqs_gene(cursor, gene_id, species, ensembl_db_name, outfile, cou
 	# sequence is correct: translation of canonical exons
 	gene_region_dna = get_gene_dna(cursor, species, db_name, gene_id)
 	if not gene_region_dna:
-		return f"Error: gene equence not found for {gene_id} {gene2stable(cursor, gene_id, db_name=db_name)}"
-
+		return f"Error: gene sequence not found for {gene_id} {gene2stable(cursor, gene_id, db_name=db_name)}"
 	# get _all_ exons
 	ret = get_sorted_canonical_exons(cursor, db_name, gene_id)
 	if not ret:
@@ -179,6 +178,7 @@ def store_exon_seqs_species(species_list, other_args):
 		outfile = open(f"{outdir}/{species}/exon_seq.tsv", "w")
 
 		switch_to_db(cursor, ensembl_db_name[species])
+		error_intolerant_search(cursor, "delete from problems")
 		gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 
 		print()
@@ -235,6 +235,8 @@ def check_species_done(cursor, all_species, ensembl_db_name, outdir):
 #########################################
 def main():
 
+	no_threads = 8
+
 	outdir = "raw_tables"
 	os.makedirs(outdir, exist_ok=True)
 
@@ -243,19 +245,18 @@ def main():
 	[all_species, ensembl_db_name] = get_species(cursor)
 
 	unprocessed_species = check_species_done(cursor, all_species, ensembl_db_name, outdir)
-	print("unprocessed_species:")
-	print("\n".join(unprocessed_species))
-	exit()
+	# print("unprocessed_species:")
+	# print("\n".join(unprocessed_species))
+	# exit()
 
 	all_species = unprocessed_species
-	#all_species = ['mus_caroli']
-	#all_species = sample(all_species, 10)
+	#all_species = ['nothoprocta_perdicaria']
+	#all_species = sample(unprocessed_species, 8)
 
 	cursor.close()
 	db    .close()
 
-	no_threads = 8
-	parallelize (no_threads, store_exon_seqs_species, all_species, [ensembl_db_name, outdir])
+	parallelize(no_threads, store_exon_seqs_species, all_species, [ensembl_db_name, outdir])
 
 
 

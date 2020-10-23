@@ -85,7 +85,7 @@ foreach $animal ( @farm ) {
 
     foreach $dir  ( "pep",  "dna" ){
 
-		$local_dir = "$local_repository/$animal/$dir" ;
+ 		$local_dir = "$local_repository/$animal/$dir" ;
 		( -e $local_dir )  || `mkdir -p $local_dir`;
 
 		$foreign_dir = "$topdir/$animal/$dir";
@@ -99,8 +99,10 @@ foreach $animal ( @farm ) {
 
 		@contents =  $ftp->ls;
 		foreach $item (@contents) {
-
-		    next if ($item!~/\.dna_rm\.toplevel.*gz$/ && $item!~/.*pep.*gz$/ );
+			# dns_rm files are smaller (for human) but the idiotic application is masking correct parts of gene
+			# for non-human species the files are 10% smaller - not worth the trouble
+		    # next if ($item!~/\.dna\.toplevel.*gz$/ && $item!~/.*pep.*gz$/ );
+		    next if ($item!~/\.dna\.toplevel.*gz$/ );
 
 		    print LOG "\t$item\n";
 			print "\t$item\n";

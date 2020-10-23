@@ -344,25 +344,6 @@ def main():
 		print(search_db(cursor, qry))
 
 
-	# add orthologue table to human - we are human-centered here
-	# ditto for map (which exons from other species map onto human exons)
-	print("adding exon_map to human")
-	species = 'homo_sapiens'
-	db_name = ensembl_db_name[species]
-	for table in [ 'exon_map']:
-		if check_table_exists(cursor, db_name, table):
-			print(table, " found in ", db_name)
-		else:
-			print(table, " not found in ", db_name)
-			make_table (cursor, db_name, table)
-		if table == 'exon_map':
-			create_index(cursor, db_name,'gene_index', table, ['exon_id'])
-			create_index(cursor, db_name,'exon_index', table, ['exon_id', 'exon_known'])
-			create_index(cursor, db_name,'cognate_exon_index', table, ['cognate_exon_id', 'cognate_exon_known', 'cognate_genome_db_id'])
-		else:
-			create_index (cursor, db_name,'gene_index', table, ['gene_id'])
-
-
 	cursor.close()
 	db.close()
 

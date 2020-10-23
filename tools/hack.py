@@ -31,21 +31,27 @@ def main():
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
+	cursor.close()
+	db.close()
 	for species in all_species:
 		infile = f"{in_dir}/{species}/{table}.tsv"
 		for dep in [f"{in_dir}/{species}", infile]:
 			if not os.path.exists(dep):
 				print(dep,"not found")
 				exit()
-		error_intolerant_search(cursor, f"delete from {ensembl_db_name[species]}.{table}")
-	cursor.close()
-	db.close()
 
-	for species in all_species:
+	for species in all_species[1:]:
+		print(species)
 		infile = f"{in_dir}/{species}/{table}.tsv"
-		cmd = f"mysqlimport --login-path=tcga --fields_escaped_by=\\\\ {ensembl_db_name[species]} -L {infile}"
-		print(cmd)
-		subprocess.call(["bash","-c", cmd])
+		outfile =  f"{in_dir}/{species}/{table}.2.tsv"
+		outf = open(outfile, "w")
+		with open(infile) as inf:
+			for line in inf:
+				fields = line.split("\t")
+				newfields = fields[:5]+fields[6:]
+				outf.write("\t".join(newfields))
+		outf.close()
+		os.rename(outfile, infile)
 
 #####################################################
 if __name__=="__main__":

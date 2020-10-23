@@ -40,8 +40,9 @@ def extract_region_from_fasta(fasta_full_path, seq_region_name, seq_region_start
 
 	tmpfile = f"tmp.{os.getpid()}.fasta"
 	if os.path.exists(tmpfile): os.remove(tmpfile)
+	# %s == "no header line"
 	cmd  = f"{Config.blastdbcmd} -db {fasta_full_path} -dbtype nucl -entry {seq_region_name} "
-	cmd += f"-range {seq_region_start}-{seq_region_end} -out {tmpfile} -outfmt %s"
+	cmd += f"-range {seq_region_start}-{seq_region_end} -out {tmpfile} -outfmt %s "
 	subprocess.call(["bash", "-c", cmd])
 	if not os.path.exists(tmpfile):
 		print(f"{tmpfile} not produced")

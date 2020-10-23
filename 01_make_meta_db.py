@@ -104,33 +104,34 @@ def set_trivial_names():
 
 	return trivial
 
-#########################################
-def  make_parameter_table (cursor, table):
 
-	"""
-	Creates parameter table in the config database.
-	@param [cursor] db cursor, assumed top be pointing to the config database
-	@retval True  on success
-	@retval False on failure;  in that case the seach_db() call is repeated in verbose mode.
-	"""
+
+
+
+
+
+#########################################
+def make_parameter_table (cursor, table):
 
 	print("making ", table)
 
 	qry  = "create table " + table + "  (id int(10) primary key auto_increment)"
-	rows = search_db (cursor, qry, verbose=True)
-	if (rows):
+	rows = search_db(cursor, qry, verbose=True)
+	if rows:
 		return False
 
 	# make the columns
-	for column  in  ['name', 'value']:
+	for column in ['name', 'value']:
 		qry = "alter table  %s  add  %s  varchar (50)" % (table, column)
-		rows = search_db (cursor, qry, verbose=True)
-		if (rows):
+		rows = search_db(cursor, qry, verbose=True)
+		if rows:
 			return False
 	return False
 
+
 #########################################
-def  make_flags_table (cursor, db_name, table):
+def make_flags_table (cursor, db_name, table):
+
 	switch_to_db (cursor, db_name)
 	table = 'flags'
 	if check_table_exists(cursor, db_name, table):
@@ -176,6 +177,57 @@ def make_seqregion2file_table (cursor, db_name):
 	print(qry)
 	print(rows)
 	return
+
+
+#########################################
+def make_taxonomy_table (cursor, db_name):
+
+	switch_to_db (cursor, db_name)
+	table_name = 'taxonomy'
+	if check_table_exists(cursor, db_name, table_name):
+		qry = "drop table " + table_name
+		search_db(cursor, qry, verbose=True)
+
+	qry = ""
+	qry += "  CREATE TABLE  %s (" % table_name
+	qry += "     id INT NOT NULL  AUTO_INCREMENT, "
+	qry += "  	 name VARCHAR (100) NOT NULL, "
+	qry += "  	 value TEXT NOT NULL, "
+
+	qry += "	 PRIMARY KEY (id) "
+	qry += ") ENGINE=MyISAM"
+
+	rows = search_db(cursor, qry)
+	print(qry)
+	print(rows)
+	return
+
+
+########################################
+def make_taxonomy_groups_table(cursor, db_name):
+
+	switch_to_db (cursor, db_name)
+	table_name = 'taxonomy_groups'
+	if check_table_exists(cursor, db_name, table_name):
+		qry = "drop table " + table_name
+		search_db(cursor, qry, verbose=True)
+
+	qry = ""
+	qry += "  CREATE TABLE  %s (" % table_name
+	qry += "     id INT NOT NULL  AUTO_INCREMENT, "
+	qry += "  	 name VARCHAR (50) NOT NULL, "
+	qry += "  	 trivial_name VARCHAR (50) NOT NULL, "
+	qry += "  	 representative_species  VARCHAR (50) NOT NULL, "
+	qry += "  	 members  TEXT, "
+	qry += "	 PRIMARY KEY (id) "
+	qry += ") ENGINE=MyISAM"
+
+	rows = search_db(cursor, qry)
+	print(qry)
+	print(rows)
+	return
+
+
 
 
 #########################################
@@ -246,6 +298,7 @@ def fill_db_names_table(cursor, ensembl_db_name):
 		fixed_fields={"genome_db_id":genome_db_id, "species_name":species_name, "db_name":ensembl_db_name[species_name]}
 		store_or_update(cursor, "db_names", fixed_fields=fixed_fields, update_fields={}, primary_key='genome_db_id')
 	return
+
 
 #########################################
 def get_trivial_names(cursor, all_species, common_name):
@@ -409,6 +462,10 @@ def main():
 	# create flags table (for flagging arbitrary problems - to be filled as we go)
 	# make_flags_table(cursor, exolocator_meta_db_name, 'flags')
 
+	########################################################
+	# create table to store tax info that we might need and don't wan to recalculate each time
+	make_taxonomy_table (cursor,  exolocator_meta_db_name)
+	make_taxonomy_groups_table(cursor, exolocator_meta_db_name) # fish, frogs, mammalse etc
 	#######################################################
 	# get trivial names
 	trivial_names, ncbi_tax_id = get_trivial_names(cursor, all_species, common_name)

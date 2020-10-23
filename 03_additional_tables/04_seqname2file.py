@@ -112,6 +112,11 @@ def slurp_in(db_name, table):
 
 	return
 
+# renamed
+# cricetulus_griseus_crigri to cricetulus_griseus
+# 'heterocephalus_glaber_male' to 'heterocephalus_glaber'
+# 'stachyris_ruficeps' to 'cyanoderma_ruficeps'
+
 
 ####################################################
 def main():
@@ -152,7 +157,6 @@ def main():
 		os.remove(tmpfile)
 
 		print("%50s stored in %.1f mins"%(species, (time()-time0)/60))
-
 
 	cursor.close()
 	db    .close()

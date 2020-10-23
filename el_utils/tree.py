@@ -4,6 +4,7 @@ import os
 from .ncbi    import get_ncbi_tax_name, taxid2parentid, taxid2sciname
 from .ensembl import get_compara_name, species2taxid, get_species
 from .mysql   import switch_to_db, connect_to_mysql
+import re
 
 #########################################################
 class Node:
@@ -23,17 +24,119 @@ class Node:
 			firstborn = 1
 			for child in self.children:
 				child_string = child.nhx_string()
-				if (not firstborn):
+				if not firstborn:
 					ret_string += ","
 				ret_string += child_string
 				firstborn = 0
 			# right bracket
 			ret_string += ")"
 			# my own name
-			if ( self.name):
+			if self.name:
 				ret_string += self.name
-
 		return ret_string
+
+	###########################################################
+	def from_nhx_string(self, nhxstr, name2node=None):
+		nhxstr = nhxstr.replace(' ','') # I don trust anybody to have doe that for me
+		if not nhxstr: return
+		if not "(" in nhxstr and not ")" in nhxstr:
+			# our input consist of a single leaf
+			self.name = nhxstr
+			return
+		# otherwise, we must start with an open bracket:
+		if nhxstr[0]!="(":
+			print(f"improperly formatted nhx string: {nhxstr[:10]} open bracket expected")
+			exit()
+		node_payload_end = 0
+		for i in range(1,len(nhxstr)):
+			if nhxstr[-i] == ")":
+				node_payload_end = -i
+				break
+			elif nhxstr[-i] == "(":
+				print(f"improperly formatted nhx string: {nhxstr[i:]} closing bracket expected at the end")
+				exit()
+
+		self.name = nhxstr[node_payload_end+1:]
+		if not self.name:
+			print(nhxstr)
+			exit()
+
+		# now check what we have in the payload
+		payload = nhxstr[1:node_payload_end]
+		
+		# at any point of descent I might have a mixed set of leafs and subtrees
+		# find the  nests of inner brackets
+		bracket_start = []
+		bracket_end   = []
+		open_brackets = 0
+		for i in range(len(payload)):
+			if payload[i]=="(":
+				if open_brackets==0: bracket_start.append(i)
+				open_brackets += 1
+			elif payload[i]==")":
+				if open_brackets==0:
+					print(f"improperly formatted nhx string: {payload}")
+					exit()
+				open_brackets -= 1
+				if open_brackets==0: bracket_end.append(i)
+
+
+		# the number of bracket nests is the number of subtrees
+		number_of_subtrees = len(bracket_start)
+		# they should all be matching though
+		if len(bracket_end)!=number_of_subtrees:
+			print(f"improperly formatted nhx string: {payload}")
+			exit()
+
+		# there might be isolated leafs between the bracket nests/subtrees
+		# they should be separated by commas
+		comma_positions = []
+		prev = 0
+		for b in range(number_of_subtrees):
+			nest_start = bracket_start[b]
+			nest_end = bracket_end[b]
+			for i in range(prev,nest_start):
+				if payload[i] == ",": comma_positions.append(i)
+			prev = nest_end
+
+		for i in range(prev, len(payload)):
+			if payload[i]==",": comma_positions.append(i)
+		comma_positions.append(len(payload))
+
+
+		prev_pos = 0
+		for comma_position in comma_positions:
+			# everything between the two commas is a leaf or a subtree
+			chunk = payload[prev_pos:comma_position]
+			if "(" in chunk: # this is subtree
+				new_node = Node()
+				new_node.from_nhx_string(chunk, name2node)
+				name2node[new_node.name] = new_node
+				self.children.append(new_node)
+
+			else: # this is leaf name
+				new_node = Node(chunk)
+				new_node.is_leaf=True
+				name2node[new_node.name] = new_node
+				self.children.append(new_node)
+			prev_pos = comma_position+1
+
+
+		if not self.children: self.is_leaf = True
+
+		return
+
+
+	def subtree_leafs(self):
+
+		leafs = []
+		if self.is_leaf:
+			leafs.append(self.name)
+		else:
+			for child in self.children:
+				leafs += child.subtree_leafs()
+		return leafs
+
 
 	###################################
 	# this should really be operation on the
@@ -46,7 +149,8 @@ class Node:
 			ret   = child.__cleanup__()
 			if ret:
 				self.children[i] = ret
-		if (len(self.children) == 1):
+
+		if len(self.children) == 1:
 			firstborn = self.children[0]
 			self.children = []
 			return firstborn
@@ -54,7 +158,7 @@ class Node:
 
 	###################################
 	# when something is defined as a Node ....
-	def __init__ (self, name):
+	def __init__ (self, name="anon"):
 
 		self.name      = name
 
@@ -77,6 +181,13 @@ class Tree:
 	###################################
 	def nhx_string(self):
 		return self.root.nhx_string()
+
+
+	def from_nhx_string(self, nhxstr):
+		self.root = Node()
+		self.root.is_root = True
+		self.root.from_nhx_string(nhxstr.strip(), self.name2node)
+		self.name2node[self.root.name] = self.root
 
 	###################################
 	def add(self, cursor, name):
@@ -149,6 +260,13 @@ class Tree:
 
 		self.__set_parent_ids__ (self.root)
 
+	def get_node(self, name):
+		return self.name2node.get(name, None)
+
+
+	def invert_node_map(self):
+		self.name2node = dict([(node.name, node) for node in self.node.values()])
+
 	###################################
 	def __set_parent_ids__ (self, node):
 		if node.is_leaf:
@@ -156,31 +274,20 @@ class Tree:
 		for child in node.children:
 			child.parent_id = node.tax_id
 			child.parent    = node
-			self.__set_parent_ids__ (child)
+			self.__set_parent_ids__(child)
 		return
-
 
 	###################################
 	# when something is defined as a Tree ....
-	def __init__ (self):
-
+	def __init__ (self, nhxstr=None):
 		self.root  = None
 		self.node  = {}
 		self.leafs = []
+		self.name2node = {}
+		if nhxstr:
+			self.from_nhx_string(nhxstr)
 
 
-
-
-#########################################
-def subtree_leafs (node):
-
-	leafs = []
-	if node.is_leaf:
-		leafs.append (node.name)
-	else:
-		for child in node.children:
-			leafs += subtree_leafs(child)
-	return leafs
 
 
 #########################################
@@ -205,7 +312,9 @@ def species_tree(cursor, all_species):
 		leaf = Node(species)
 		tree.leafs.append(leaf)
 	tree.build(cursor)
+	tree.invert_node_map()
 	return tree
+
 
 def species_sort(cursor, all_species, qry_species):
 	tree = species_tree(cursor, all_species)
