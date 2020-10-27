@@ -145,9 +145,7 @@ def create_index(cursor, db_name, table, index_name, columns, verbose=False):
 	qry = "show index from %s.%s where key_name like '%s'" % (db_name, table, index_name)
 	rows = search_db(cursor, qry, verbose=False)
 	if rows:
-		print("found index {} on table {} in {}.".format(index_name, table, db_name))
-		print(rows)
-		exit()
+		if verbose: print("found index {} on table {} in {}.".format(index_name, table, db_name))
 		return True
 
 	if verbose:

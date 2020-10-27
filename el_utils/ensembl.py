@@ -147,39 +147,39 @@ def get_canonical_transcript_id(cursor, gene_id, db_name=None):
 
 
 #########################################
-def get_canonical_coding_exons(cursor, gene_id, db_name=None):
-	if db_name and not switch_to_db(cursor, db_name):
-		return []
-
-	all_exons = gene2exon_list(cursor, gene_id)
-	if not all_exons:  return []
-
-	exons = [x for x in all_exons if x.is_coding and x.is_canonical]
-	if not exons:   return []
-	# now, the problem is that an exon can be coding,
-	# but not in the canonical version of the transcript
-	exons.sort(key=lambda exon: exon.start_in_gene)
-	if not exons:   return []
-	# is there info about the beginning and the end of canonical translation?
-	canonical_transcript_id = get_canonical_transcript_id(cursor, gene_id, db_name=None)
-	if not canonical_transcript_id:   return []
-	ret = get_canonical_coordinates(cursor, canonical_transcript_id)
-	if not ret or not len(ret) == 4:  return []
-	[canonical_start_in_exon, canonical_start_exon_id,
-	 canonical_end_in_exon, canonical_end_exon_id] = ret
-	if canonical_start_exon_id is None or canonical_end_exon_id is None:  return []
-
-	# filter the exons that are within the start and end bracket
-	canonical_exons = []
-	reading = 0
-	for exon in exons:
-		if exon.exon_id == canonical_start_exon_id or exon.exon_id == canonical_end_exon_id:
-			reading = 1 - reading
-			canonical_exons.append(exon)
-		elif reading:
-			canonical_exons.append(exon)
-
-	return canonical_exons
+# def get_canonical_coding_exons(cursor, gene_id, db_name=None):
+# 	if db_name and not switch_to_db(cursor, db_name):
+# 		return []
+#
+# 	all_exons = gene2exon_list(cursor, gene_id)
+# 	if not all_exons:  return []
+#
+# 	exons = [x for x in all_exons if x.is_coding and x.is_canonical]
+# 	if not exons:   return []
+# 	# now, the problem is that an exon can be coding,
+# 	# but not in the canonical version of the transcript
+# 	exons.sort(key=lambda exon: exon.start_in_gene)
+# 	if not exons:   return []
+# 	# is there info about the beginning and the end of canonical translation?
+# 	canonical_transcript_id = get_canonical_transcript_id(cursor, gene_id, db_name=None)
+# 	if not canonical_transcript_id:   return []
+# 	ret = get_canonical_coordinates(cursor, canonical_transcript_id)
+# 	if not ret or not len(ret) == 4:  return []
+# 	[canonical_start_in_exon, canonical_start_exon_id,
+# 	 canonical_end_in_exon, canonical_end_exon_id] = ret
+# 	if canonical_start_exon_id is None or canonical_end_exon_id is None:  return []
+#
+# 	# filter the exons that are within the start and end bracket
+# 	canonical_exons = []
+# 	reading = 0
+# 	for exon in exons:
+# 		if exon.exon_id == canonical_start_exon_id or exon.exon_id == canonical_end_exon_id:
+# 			reading = 1 - reading
+# 			canonical_exons.append(exon)
+# 		elif reading:
+# 			canonical_exons.append(exon)
+#
+# 	return canonical_exons
 
 
 #########################################
@@ -916,6 +916,11 @@ def gene2canon_transl(cursor, gene_id, db_name=None, stable=False):
 	return rows[0][0]
 
 
+def gene_stable2hgnc(cursor, gene_stable):
+	qry = f"select approved_symbol from  identifier_maps.hgnc where ensembl_gene_id='{gene_stable}'"
+	ret = error_intolerant_search(cursor, qry)
+	return ret[0][0] if ret else "anon"
+
 ########
 def stable2member(cursor, stable_id):
 	# member_id refers to compara db
@@ -1293,27 +1298,20 @@ def ncbi_species2taxid(cursor, species):
 
 ########
 def species2genome_db_id(cursor, species):
-	switch_to_db(cursor, get_compara_name(cursor))
 
-	qry = "select genome_db_id from genome_db where name = '%s'" % species
+	compara_name = get_compara_name(cursor)
+	qry = f"select genome_db_id from {compara_name}.genome_db where name = '{species}'"
 
-	rows = search_db(cursor, qry)
-	if (not rows):
-		search_db(cursor, qry, verbose=True)
-		return 0
-
-	return int(rows[0][0])
+	rows = error_intolerant_search(cursor, qry)
+	return int(rows[0][0]) if rows else 0
 
 
 ########
 def genome_db_id2species(cursor, genome_db_id):
-	switch_to_db(cursor, get_compara_name(cursor))
 
-	qry = "select name from genome_db where genome_db_id = %d" % int(genome_db_id)
+	compara_name = get_compara_name(cursor)
+	qry = f"select name from {compara_name}.genome_db where genome_db_id ={int(genome_db_id)}"
 
-	rows = search_db(cursor, qry)
-	if (not rows):
-		search_db(cursor, qry, verbose=True)
-		return ""
+	rows = error_intolerant_search(cursor, qry)
+	return rows[0][0] if rows else ""
 
-	return rows[0][0]

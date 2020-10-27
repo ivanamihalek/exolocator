@@ -3,7 +3,7 @@
 import os
 from .ncbi    import get_ncbi_tax_name, taxid2parentid, taxid2sciname
 from .ensembl import get_compara_name, species2taxid, get_species
-from .mysql   import switch_to_db, connect_to_mysql
+from .mysql import switch_to_db, connect_to_mysql, error_intolerant_search
 import re
 
 #########################################################
@@ -36,7 +36,7 @@ class Node:
 		return ret_string
 
 	###########################################################
-	def from_nhx_string(self, nhxstr, name2node=None):
+	def from_nhx_string(self, nhxstr, name2node=None, leafs=None):
 		nhxstr = nhxstr.replace(' ','') # I don trust anybody to have doe that for me
 		if not nhxstr: return
 		if not "(" in nhxstr and not ")" in nhxstr:
@@ -110,19 +110,24 @@ class Node:
 			chunk = payload[prev_pos:comma_position]
 			if "(" in chunk: # this is subtree
 				new_node = Node()
-				new_node.from_nhx_string(chunk, name2node)
-				name2node[new_node.name] = new_node
+				new_node.from_nhx_string(chunk, name2node, leafs)
+				if name2node is not None: name2node[new_node.name] = new_node
 				self.children.append(new_node)
 
 			else: # this is leaf name
 				new_node = Node(chunk)
 				new_node.is_leaf=True
-				name2node[new_node.name] = new_node
+
+				if leafs is not None:
+					leafs.append(new_node)
+				if name2node is not None: name2node[new_node.name] = new_node
 				self.children.append(new_node)
 			prev_pos = comma_position+1
 
 
-		if not self.children: self.is_leaf = True
+		if not self.children:
+			self.is_leaf = True
+			if leafs: leafs.append(self)
 
 		return
 
@@ -186,8 +191,9 @@ class Tree:
 	def from_nhx_string(self, nhxstr):
 		self.root = Node()
 		self.root.is_root = True
-		self.root.from_nhx_string(nhxstr.strip(), self.name2node)
+		self.root.from_nhx_string(nhxstr.strip(), self.name2node, self.leafs)
 		self.name2node[self.root.name] = self.root
+		self.__set_parent_ids__(self.root)
 
 	###################################
 	def add(self, cursor, name):
@@ -299,7 +305,7 @@ def find_cousins (qry_node):
 	else:
 		for sibling in qry_node.parent.children:
 			if sibling == qry_node: continue
-			cousins += subtree_leafs(sibling)
+			cousins += sibling.subtree_leafs()
 
 	cousins += find_cousins (qry_node.parent)
 
@@ -316,10 +322,10 @@ def species_tree(cursor, all_species):
 	return tree
 
 
-def species_sort(cursor, all_species, qry_species):
-	tree = species_tree(cursor, all_species)
+def species_sort(cursor, species_list, qry_species):
+	tree = species_tree(cursor, species_list)
 	qry_leaf = None
-	for leaf  in tree.leafs:
+	for leaf in tree.leafs:
 		if leaf.name == qry_species:
 			qry_leaf = leaf
 			break

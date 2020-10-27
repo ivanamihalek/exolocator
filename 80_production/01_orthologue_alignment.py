@@ -30,6 +30,7 @@ def write_to_fasta(home, species, stable_transl_id, tmpfile, logfile, out_fasta)
 
 	return False
 
+
 def reorder_seqs(in_afa, species_sorted, out_afa, trivial=None, name_prefix=None):
 	seq = {}
 	name = 'anon'
@@ -79,6 +80,8 @@ def main():
 	ensembl_stable_gene_id = hard_landing_search(cursor, qry)[0][0]
 
 	[all_species, ensembl_db_name] = get_species(cursor)
+	# species_sort(cursor, all_species, 'homo_sapiens')
+	# exit()
 
 	switch_to_db(cursor, ensembl_db_name[ref_species])
 	qry = "select gene_id from gene where stable_id='%s'" % ensembl_stable_gene_id

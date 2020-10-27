@@ -10,15 +10,6 @@ from el_utils.tree import Tree, species_tree
 #########################################
 def main():
 
-	# with open("all_species.nhx") as inf:
-	# 	intree = inf.read()
-	# tree = Tree(intree)
-	# outree = tree.nhx_string()
-	# print(len(outree), len(intree))
-	# print(outree[-30:])
-	# print(intree[-30:])
-	# exit()
-
 	db     = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)

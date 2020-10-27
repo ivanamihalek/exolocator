@@ -1,6 +1,6 @@
 /* see https://docs.python.org/3.8/extending/extending.html*/
 /* compilation: */
-/* gcc -shared -I/usr/include/python3.8/ -lpython3.8 -o alignment.so alignment.c -fPIC */
+/* gcc -shared -I/usr/include/python3.8/ -lpython3.8 -o alignment.so alignment.c -fPIC -O */
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 

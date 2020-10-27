@@ -1,17 +1,17 @@
 #!/usr/bin/python -u
 
 
-import StringIO
-import MySQLdb, commands, re, sys
+import io
+import MySQLdb, subprocess, re, sys
 from hashlib import sha1
 from random  import random, choice
-from   el_utils.mysql   import  *
-from   el_utils.ensembl import  *
-from   el_utils.utils   import  *
-from   el_utils.processes import  parallelize
-from   el_utils.map     import  *
-from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
-from   el_utils.config_reader      import ConfigurationReader
+from   .el_utils.mysql   import  *
+from   .el_utils.ensembl import  *
+from   .el_utils.utils   import  *
+from   .el_utils.processes import  parallelize
+from   .el_utils.map     import  *
+from   .el_utils.almt_cmd_generator import AlignmentCommandGenerator
+from   .el_utils.config_reader      import ConfigurationReader
 from   alignment import * # C implementation of smith waterman
 
 #########################################
@@ -49,15 +49,15 @@ def maps_evaluate (template_exons, para_exons, aligned_seq, exon_positions):
 
     maps = []
    
-    if len(aligned_seq.keys()) > 2:
-        print "right now the mapping implemented for two species only"
+    if len(list(aligned_seq.keys())) > 2:
+        print("right now the mapping implemented for two species only")
         return []
 
 
     for template_exon_ct in range(len(template_exons)):
 
         padded_count_template = "{0:03d}".format(template_exon_ct+1)
-        if ( not  exon_positions['template'].has_key(padded_count_template) ):
+        if ( padded_count_template not in exon_positions['template'] ):
             continue
         [template_start, template_end] = exon_positions['template'][padded_count_template]
 
@@ -65,7 +65,7 @@ def maps_evaluate (template_exons, para_exons, aligned_seq, exon_positions):
         for para_exon_ct in range(len(para_exons)):
 
             padded_count_para = "{0:03d}".format(para_exon_ct+1)
-            if ( not  exon_positions['paralogue'].has_key(padded_count_para) ):
+            if ( padded_count_para not in exon_positions['paralogue'] ):
                 continue
             [other_start, other_end] = exon_positions['paralogue'][padded_count_para]
 
@@ -132,12 +132,12 @@ def find_relevant_exons (cursor, all_exons):
 
 
 #########################################
-def make_para_maps (cursor, ensembl_db_name, cfg, acg, template_exons, para_exons):
+def make_para_maps (cursor, db_name, cfg, acg, template_exons, para_exons):
 
     maps = []
-    relevant_template_exons = find_relevant_exons (cursor, template_exons)
+    relevant_template_exons = find_relevant_exons_and_pepseqs (cursor, template_exons, db_name)
     #print "relevant template: ", map(lambda exon: exon.exon_id, relevant_template_exons)
-    relevant_para_exons     = find_relevant_exons (cursor, para_exons)
+    relevant_para_exons     = find_relevant_exons_and_pepseqs (cursor, para_exons, db_name)
     #print "relevant para:     ", map(lambda exon: exon.exon_id, relevant_para_exons)
 
 
@@ -157,7 +157,7 @@ def make_para_maps (cursor, ensembl_db_name, cfg, acg, template_exons, para_exon
 
     # find the positions of the exons in the alignment
     exon_positions = {}
-    for name, seq in aligned_seq.iteritems():
+    for name, seq in aligned_seq.items():
         # move B to beginning of each exon sequence
         seq = moveB(seq)
         # find beginning and end of each exon in the alignment
@@ -230,9 +230,9 @@ def make_para_exon_maps(species_list, db_info):
     
 
     for species in species_list:
-        print
-        print "############################"
-        print  species
+        print()
+        print("############################")
+        print(species)
         qry = "use " + ensembl_db_name[species]
         search_db(cursor, qry)
         para_table  = 'paralogue'
@@ -245,47 +245,47 @@ def make_para_exon_maps(species_list, db_info):
         ct = 0
         for gene_id in gene_ids:
             ct += 1
-            if not ct%100: print "\t", species, ct, " out of ", len(gene_ids)
+            if not ct%100: print("\t", species, ct, " out of ", len(gene_ids))
             if verbose: 
-                print
-                print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+                print()
+                print(gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id))
                 
             # get the paralogues - only the representative for  the family will have this 
             paralogues = get_paras (cursor, gene_id)  
             if not paralogues:
-                if verbose:  print "\t not a template or no paralogues"
+                if verbose:  print("\t not a template or no paralogues")
                 continue
 
-            if verbose:  print "paralogues: ", paralogues
+            if verbose:  print("paralogues: ", paralogues)
 
             # get _all_ exons
             template_exons = gene2exon_list(cursor, gene_id)
             if (not template_exons):
-                if verbose: print 'no exons for ', gene_id
+                if verbose: print('no exons for ', gene_id)
                 continue
 
-            if verbose: print "\t no map found - making new one"
+            if verbose: print("\t no map found - making new one")
 
             for para_gene_id  in paralogues:
                 description =  get_description (cursor, para_gene_id)
                 para_exons = gene2exon_list(cursor, para_gene_id)
                 if not para_exons:
                     missing_exon_info += 1
-                    if verbose: print "\t",description, "no exon info"
+                    if verbose: print("\t",description, "no exon info")
                     continue
-                if verbose: print "\t", description, "making maps ..."
-                maps = make_para_maps (cursor, ensembl_db_name,  cfg, acg,  template_exons, para_exons)   
+                if verbose: print("\t", description, "making maps ...")
+                maps = make_para_maps (cursor, ensembl_db_name[species],  cfg, acg,  template_exons, para_exons)
                 if not maps:
                     missing_seq_info += 1
-                    if verbose: print "\t", description, "no maps"
+                    if verbose: print("\t", description, "no maps")
                     continue
 
-                if verbose: print "\t", description, "maps ok"
+                if verbose: print("\t", description, "maps ok")
                 no_maps += len(maps)
  
                 store (cursor, maps)
 
-        print species, "done"
+        print(species, "done")
 
     cursor.close()
     db.close()

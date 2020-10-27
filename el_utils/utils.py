@@ -546,37 +546,39 @@ def  pairwise_fract_identity (seq1, seq2):
     fract_identity /= float(len(seq1))
     return fract_identity
 
+
 #########################################
-def  pairwise_fract_similarity (seq1, seq2):
+def pairwise_fract_similarity (seq1, seq2):
     
+    fract_similarity = 0.0
+    if not len(seq1) or not len(seq2):
+        return fract_similarity
+
     is_similar_to = {}
 
     # this is rather crude ...
-    for  char in string.printable:
+    for char in string.printable:
         is_similar_to[char] = char
 
-    is_similar_to['I'] = 'V';
-    is_similar_to['L'] = 'V';
-    is_similar_to['S'] = 'T';
-    is_similar_to['D'] = 'E';
-    is_similar_to['K'] = 'R';
-    is_similar_to['Q'] = 'N';
-    is_similar_to['.'] = '.';
-    is_similar_to['-'] = '.';
+    is_similar_to['I'] = 'V'
+    is_similar_to['L'] = 'V'
+    is_similar_to['S'] = 'T'
+    is_similar_to['D'] = 'E'
+    is_similar_to['K'] = 'R'
+    is_similar_to['Q'] = 'N'
+    is_similar_to['.'] = '.'
+    is_similar_to['-'] = '.'
 
-    is_similar_to['A'] = 'V';
-    is_similar_to['M'] = 'V';
-    is_similar_to['G'] = 'V';
-    is_similar_to['F'] = 'Y';
-    is_similar_to['H'] = 'R';
+    is_similar_to['A'] = 'V'
+    is_similar_to['M'] = 'V'
+    is_similar_to['G'] = 'V'
+    is_similar_to['F'] = 'Y'
+    is_similar_to['H'] = 'R'
 
-    fract_similarity = 0.0
-    if ( not len(seq1)):
-        return fract_similarity
 
     common_length = 0.0
     for i in range(len(seq1)):
-        if (seq1[i] == '-' or seq2[i] == '-'): continue
+        if seq1[i] == '-' or seq2[i] == '-': continue
         if is_similar_to[seq1[i]] == is_similar_to[seq2[i]]: fract_similarity += 1.0
         common_length += 1.0
 
@@ -585,31 +587,32 @@ def  pairwise_fract_similarity (seq1, seq2):
     fract_similarity /= common_length
     return fract_similarity
 
+
 #########################################
-def  pairwise_tanimoto (seq1, seq2, use_heuristics=True):
+def pairwise_tanimoto (seq1, seq2, use_heuristics=True):
     
     tanimoto = 0.0
-    if not len(seq1) or  not len(seq1): return tanimoto
+    if not len(seq1) or not len(seq1): return tanimoto
 
     is_similar_to = {}
 
     # this is rather crude ...
     for char in string.printable: is_similar_to[char] = char
 
-    is_similar_to['I'] = 'V';
-    is_similar_to['L'] = 'V';
-    is_similar_to['S'] = 'T';
-    is_similar_to['D'] = 'E';
-    is_similar_to['K'] = 'R';
-    is_similar_to['Q'] = 'N';
-    is_similar_to['.'] = '.';
-    is_similar_to['-'] = '.';
+    is_similar_to['I'] = 'V'
+    is_similar_to['L'] = 'V'
+    is_similar_to['S'] = 'T'
+    is_similar_to['D'] = 'E'
+    is_similar_to['K'] = 'R'
+    is_similar_to['Q'] = 'N'
+    is_similar_to['.'] = '.'
+    is_similar_to['-'] = '.'
 
-    is_similar_to['A'] = 'V';
-    is_similar_to['M'] = 'V';
-    is_similar_to['G'] = 'V';
-    is_similar_to['F'] = 'Y';
-    is_similar_to['H'] = 'R';
+    is_similar_to['A'] = 'V'
+    is_similar_to['M'] = 'V'
+    is_similar_to['G'] = 'V'
+    is_similar_to['F'] = 'Y'
+    is_similar_to['H'] = 'R'
 
 
     common_length  = 0.0 # number of positions that are non-gap in both sequences
@@ -631,23 +634,23 @@ def  pairwise_tanimoto (seq1, seq2, use_heuristics=True):
     # this is supposed to reproduce what we would
     # intutively call - similar sequences
     if use_heuristics:
-        if similar_length > 0.9*l1:
+        if similar_length > 0.9*l1:     # for short l1
             tanimoto = similar_length/l1
-        elif similar_length > 0.9*l2:
+        elif similar_length > 0.9*l2:   # for short l2
             tanimoto = similar_length/l2
-        elif similar_length >= 0.66*common_length > 4:
-            tanimoto = common_length/similar_length
+        elif similar_length >= 0.66*common_length > 4:  # common length is not too short and very similar
+            tanimoto = similar_length/common_length
         else:
             tanimoto = sqrt(float(similar_length*similar_length)/(l1*l2))
 
     else:
         tanimoto = sqrt(float(similar_length*similar_length)/(l1*l2)) 
 
-    if False:
-        print(l1, l2, "   com", common_length, "   sim", similar_length,  "   eq", equal_length,  "   tani", tanimoto)
-        print(" (similar_length > 0.9*l1 ) ", (similar_length > 0.9*l1 ))
-        print(" (similar_length > 0.9*l2 ) ", (similar_length > 0.9*l2 ))
-        print("  ( similar_length >= 0.66*common_length > 4) ",  ( similar_length >= 0.9*common_length > 4))
+    # if False:
+    #     print(l1, l2, "   com", common_length, "   sim", similar_length,  "   eq", equal_length,  "   tani", tanimoto)
+    #     print(" (similar_length > 0.9*l1 ) ", (similar_length > 0.9*l1 ))
+    #     print(" (similar_length > 0.9*l2 ) ", (similar_length > 0.9*l2 ))
+    #     print("  ( similar_length >= 0.66*common_length > 4) ",  ( similar_length >= 0.9*common_length > 4))
 
     return tanimoto
 
