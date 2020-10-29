@@ -54,43 +54,29 @@ def make_novel_exon_table (cursor, table):
 def make_gene2exon_table (cursor):
 
 	table = 'gene2exon'
-
-	qry  = "CREATE TABLE " + table + " (gene2exon_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
-	rows = search_db (cursor, qry)
-	if (rows):
-		return False
-
-	for column_name in ['gene_id', 'exon_id', 'start_in_gene', 'end_in_gene',
-						'canon_transl_start', 'canon_transl_end', 'exon_seq_id']:
-		qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['strand', 'phase',  'is_known',
-						'is_coding', 'is_canonical', 'is_constitutive']:
-		qry = "ALTER TABLE %s  ADD %s tinyint" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['covering_exon']:
-		qry = "ALTER TABLE %s  ADD %s INT(10)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['covering_is_known']:
-		qry = "ALTER TABLE %s  ADD %s tinyint" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['analysis_id']:
-		qry = "ALTER TABLE %s  ADD %s INT" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
+	# no auto_increment for the gene2exon table - we will be reading it from  the tsv
+	qry = ''' CREATE TABLE `gene2exon` (
+			  `gene2exon_id` int NOT NULL,
+			  `gene_id` int NOT NULL,
+			  `exon_id` int NOT NULL,
+			  `start_in_gene` int DEFAULT NULL,
+			  `end_in_gene` int DEFAULT NULL,
+			  `canon_transl_start` int DEFAULT NULL,
+			  `canon_transl_end` int DEFAULT NULL,
+			  `exon_seq_id` int DEFAULT NULL,
+			  `strand` tinyint DEFAULT NULL,
+			  `phase` tinyint DEFAULT NULL,
+			  `provenance` tinyint DEFAULT NULL,
+			  `is_coding` tinyint DEFAULT NULL,
+			  `is_canonical` tinyint DEFAULT NULL,
+			  `is_constitutive` tinyint DEFAULT NULL,
+			  `covering_exon` int DEFAULT NULL,
+			  `covering_is_known` tinyint DEFAULT NULL,
+			  `analysis_id` int DEFAULT NULL,
+			  PRIMARY KEY (`gene2exon_id`),
+			  KEY `exon_id_idx` (`exon_id`)
+		)  ENGINE=MyISAM '''
+	error_intolerant_search(cursor, qry)
 
 #########################################
 def make_exon_seq_table (cursor):
@@ -325,23 +311,28 @@ def main():
 		switch_to_db (cursor, db_name)
 		#make_exon_seq_table(cursor)
 
-		for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region', 'problems']:
-			if check_table_exists(cursor, db_name, table):
-				print(table, " found in ", db_name)
-			else:
-				print(table, " not found in ", db_name)
-				make_table (cursor, db_name, table)
+		#for table in ['gene2exon', 'exon_seq', 'sw_exon', 'usearch_exon', 'coding_region', 'problems']:
+		for table in ['gene2exon']:
+			check_and_drop_table(cursor, db_name, table)
+			make_table (cursor, db_name, table)
+			# if check_table_exists(cursor, db_name, table):
+			# 	print(table, " found in ", db_name)
+			# else:
+			# 	print(table, " not found in ", db_name)
+			# 	make_table (cursor, db_name, table)
+
 
 		print("optimizing gene2exon")
 		qry = "optimize table gene2exon"
 		print(search_db(cursor, qry))
-		create_index (cursor, db_name, 'eg_index',    'gene2exon', ['exon_id', 'gene_id'])
-		create_index (cursor, db_name, 'gene_id_idx', 'gene2exon', ['gene_id'])
-		create_index (cursor, db_name, 'ek_index',    'exon_seq',  ['exon_id', 'is_known'])
-		create_index (cursor, db_name, 'seq_index',   'exon_seq',  ['exon_seq_id'])
-		print("optimizing exon_seq")
-		qry = "optimize table exon_seq"
-		print(search_db(cursor, qry))
+		# (cursor, db_name, table, index_name, columns, verbose=False)
+		create_index (cursor, db_name,  'gene2exon',  'eg_index',   ['exon_id', 'gene_id'], verbose=True)
+		create_index (cursor, db_name, 'gene2exon', 'gene_id_idx', ['gene_id'], verbose=True)
+		# create_index (cursor, db_name, 'ek_index',    'exon_seq',  ['exon_id', 'is_known'])
+		# create_index (cursor, db_name, 'seq_index',   'exon_seq',  ['exon_seq_id'])
+		# print("optimizing exon_seq")
+		# qry = "optimize table exon_seq"
+		# print(search_db(cursor, qry))
 
 
 	cursor.close()

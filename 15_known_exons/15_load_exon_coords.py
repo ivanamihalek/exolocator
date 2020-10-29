@@ -17,24 +17,11 @@ from el_utils.ensembl import *
 # "mysqlimport --login-path=tcga --fields_escaped_by=\\\\ $db -L *.txt"
 
 
-def make_orthologues_table(cursor, db_name):
-	check_and_drop_table(cursor, db_name, "orthologues")
-	switch_to_db(cursor, db_name)
-	qry = ""
-	qry += f"CREATE TABLE  orthologues ("
-	qry += "     gene_id int unsigned not null, "
-	qry += "  	 cognate_gene_id int unsigned not null, "
-	qry += "  	 cognate_genome_db_id int unsigned not null"
-	#qry += "	 PRIMARY KEY (gene_id) " # I have duplicate gene_ids here!
-	qry += ") ENGINE=MyISAM"
-	error_intolerant_search(cursor, qry)
-	return
-
 
 ####################################################
 def main():
-	print("careful, this script deletes contents of gene2exon table")
-	exit()
+	# print("careful, this script deletes contents of gene2exon table")
+	# exit()
 	in_dir = "raw_tables"
 	table  = "gene2exon"
 	if not os.path.exists(in_dir):
@@ -43,7 +30,10 @@ def main():
 
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
+	search_db(cursor, "set global local_infile = 'ON'")
 	[all_species, ensembl_db_name] = get_species(cursor)
+
+
 	for species in all_species:
 		print(species)
 		infile = f"{in_dir}/{species}/{table}.tsv"

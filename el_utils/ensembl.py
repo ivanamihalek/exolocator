@@ -15,6 +15,7 @@ def get_trivial(cursor, species_names):
 		trivial[spec] = ret[0][0] if (ret and ret[0] and ret[0][0] and len(ret[0][0]) > 0) else spec
 	return trivial
 
+
 #########################################
 def get_species_shorthand(cursor, species):
 	switch_to_db(cursor, 'ensembl_meta')
@@ -25,9 +26,11 @@ def get_species_shorthand(cursor, species):
 
 	return rows[0][0]
 
+
 #########################################
 def get_current_db(cursor):
 	return hard_landing_search(cursor, "SELECT DATABASE() FROM DUAL")[0][0]
+
 
 #########################################
 def canonical_transl_info(cursor, gene_id):
@@ -77,199 +80,107 @@ def check_ccds(cursor, transcript_stable_id="", transcript_id=""):
 
 
 #########################################
-def get_exons(cursor, gene_id, species, table):
+def get_exons(cursor, species_db, gene_id, table):
 	if table == 'exon':
-		return get_known_exons(cursor, gene_id, species)
-	elif table == 'prediction_exon':
-		return get_predicted_exons(cursor, gene_id, species)
-	elif table == 'sw_exon':
-		return get_novel_exons(cursor, gene_id, table)
-	elif table == 'usearch_exon':
+		return get_ensembl_exons(cursor, species_db, gene_id)
+	elif table == 'exolocator_exon':
 		return get_novel_exons(cursor, gene_id, table)
 
 	return []
 
 
 #########################################
-def get_pepseq_transl_range(cursor, exon_id, exon_known, db_name=None):
-	if db_name and not switch_to_db(cursor, db_name):
-		return []
-	qry = "select pepseq_transl_start, pepseq_transl_end from exon_seq "
+def get_pepseq_transl_range(cursor, exon_id, exon_known, species_db):
+	qry = f"select pepseq_transl_start, pepseq_transl_end from {species_db}.exon_seq "
 	qry += "where exon_id = %d " % int(exon_id)
 	qry += "and is_known = %d " % int(exon_known)
 	rows = error_intolerant_search(cursor, qry)
-	if not rows: return []
-	return rows[0]
+	return rows[0] if rows else []
 
 
 #########################################
-def get_canonical_exon_ids(cursor, canonical_transcript_id):
-	canonical_exon_ids = []
-	qry = "select exon_id from exon_transcript "
+def get_canonical_exon_ids(cursor, canonical_transcript_id, species_db):
+	qry = f"select exon_id from {species_db}.exon_transcript "
 	qry += " where transcript_id = %d " % canonical_transcript_id
-	rows = search_db(cursor, qry)
-	if not rows:
-		return []
-	for row in rows:
-		canonical_exon_ids.append(row[0])
-
-	return canonical_exon_ids
+	rows = error_intolerant_search(cursor, qry)
+	return [row[0] for row in rows] if rows else []
 
 
 #########################################
-def get_canonical_coordinates(cursor, canonical_transcript_id):
-	qry = "select seq_start, start_exon_id,  seq_end, end_exon_id "
-	qry += " from translation where transcript_id = %d " % canonical_transcript_id
-	rows = search_db(cursor, qry)
-	if not rows:
-		search_db(cursor, qry, verbose=True)
-		return []
-	return rows[0]
+def get_canonical_coordinates(cursor, canonical_transcript_id, species_db):
+	qry  = "select seq_start, start_exon_id,  seq_end, end_exon_id "
+	qry += f"from {species_db}.translation where transcript_id = {canonical_transcript_id} "
+	rows = error_intolerant_search(cursor, qry)
+	return rows[0] if rows else []
 
 
 #########################################
-def get_canonical_transcript_id(cursor, gene_id, db_name=None):
-	if db_name and not switch_to_db(cursor, db_name):
-		return []
-
-	qry = "select canonical_transcript_id"
-	qry += " from  gene where gene_id=%d" % gene_id
-	rows = search_db(cursor, qry, verbose=False)
-
-	if (not rows):
-		rows = search_db(cursor, qry, verbose=True)
-		return ""
-	elif ('Error' in rows[0]):
-		print(rows[0])
-		return ""
-
-	return rows[0][0]
+def get_canonical_transcript_id(cursor, gene_id, species_db):
+	qry  = "select canonical_transcript_id "
+	qry += f"from  {species_db}.gene where gene_id={gene_id}"
+	rows = error_intolerant_search(cursor, qry)
+	return rows[0][0] if rows else ""
 
 
 #########################################
-# def get_canonical_coding_exons(cursor, gene_id, db_name=None):
-# 	if db_name and not switch_to_db(cursor, db_name):
-# 		return []
-#
-# 	all_exons = gene2exon_list(cursor, gene_id)
-# 	if not all_exons:  return []
-#
-# 	exons = [x for x in all_exons if x.is_coding and x.is_canonical]
-# 	if not exons:   return []
-# 	# now, the problem is that an exon can be coding,
-# 	# but not in the canonical version of the transcript
-# 	exons.sort(key=lambda exon: exon.start_in_gene)
-# 	if not exons:   return []
-# 	# is there info about the beginning and the end of canonical translation?
-# 	canonical_transcript_id = get_canonical_transcript_id(cursor, gene_id, db_name=None)
-# 	if not canonical_transcript_id:   return []
-# 	ret = get_canonical_coordinates(cursor, canonical_transcript_id)
-# 	if not ret or not len(ret) == 4:  return []
-# 	[canonical_start_in_exon, canonical_start_exon_id,
-# 	 canonical_end_in_exon, canonical_end_exon_id] = ret
-# 	if canonical_start_exon_id is None or canonical_end_exon_id is None:  return []
-#
-# 	# filter the exons that are within the start and end bracket
-# 	canonical_exons = []
-# 	reading = 0
-# 	for exon in exons:
-# 		if exon.exon_id == canonical_start_exon_id or exon.exon_id == canonical_end_exon_id:
-# 			reading = 1 - reading
-# 			canonical_exons.append(exon)
-# 		elif reading:
-# 			canonical_exons.append(exon)
-#
-# 	return canonical_exons
-
-
-#########################################
-def get_gene_region(cursor, gene_id):
-	qry = "select seq_region_id, seq_region_start, seq_region_end, "
-	qry += " seq_region_strand "
-	qry += " from  gene  where  gene_id=%d" % gene_id
-
-	rows = search_db(cursor, qry, verbose=False)
-
-	if (not rows):
-		rows = search_db(cursor, qry, verbose=True)
-		return []
-	elif ('Error' in rows[0]):
-		print(rows[0])
-		return []
-
-	return rows[0]
-
-
-#########################################
-# known = "has known transcript
-def get_known_exons(cursor, gene_id, species):
+def get_ensembl_exons(cursor, species_db, gene_id):
 	exons = []
 
-	qry = "select distinct exon_transcript.exon_id from  exon_transcript, transcript "
-	qry += " where exon_transcript.transcript_id = transcript.transcript_id "
-	qry += " and transcript.gene_id = %d " % gene_id
+	qry  = "select distinct exon_transcript.exon_id "
+	qry += f"from  {species_db}.exon_transcript, {species_db}.transcript "
+	qry += "where exon_transcript.transcript_id = transcript.transcript_id "
+	qry += f"and transcript.gene_id = {gene_id} "
 
-	rows = search_db(cursor, qry)
+	rows = error_intolerant_search(cursor, qry)
 
-	if not rows:
-		return []
-	if 'Error' in rows[0]:
-		search_db(cursor, qry, verbose=True)
-		return []
+	if not rows: return exons
+	exon_ids = [row[0] for row in rows]
 
 	# get the region on the gene
-	ret = get_gene_region(cursor, gene_id)
+	ret = get_gene_coordinates(cursor, species_db, gene_id)
 	if ret:
 		[gene_seq_id, gene_region_start, gene_region_end,
 		 gene_region_strand] = ret
 	else:
-		print("region not retrived for ", species, gene_id)
+		print(f"region not retrived for {species_db}  {gene_id}")
 		return []
 
-	exon_ids = []
-	for row in rows:
-		exon_ids.append(row[0])
-
+	column_names = get_column_names(cursor, species_db, "exon")
 	for exon_id in exon_ids:
-		qry = "select * from exon where exon_id=%d" % exon_id
-		rows = search_db(cursor, qry)
-		if not rows or 'Error' in rows[0]:
-			search_db(cursor, qry, verbose=True)
-			continue
 		exon = Exon()
-		exon.gene_id = gene_id
-		exon.load_from_ensembl_exon(gene_region_start, gene_region_end, rows[0])
+		exon.load_from_db(cursor, species_db, "exon", exon_id, column_names=column_names)
+		if not exon.exon_id: continue
 		exons.append(exon)
 
 	return exons
 
 
 #########################################
-def get_predicted_exons(cursor, gene_id, species):
+def get_predicted_exons(cursor, species_db, gene_id):
 	exons = []
 
+	print("check out the implentation of get_predicted_exons() in enembl.py")
+	exit()
 	# get the region on the gene
-	ret = get_gene_region(cursor, gene_id)
+	ret = get_gene_coordinates(cursor, species_db, gene_id)
 	if ret:
-		[gene_seq_id, gene_region_start, gene_region_end,
-		 gene_region_strand] = ret
+		[gene_seq_id, gene_region_start, gene_region_end, gene_region_strand] = ret
 	else:
-		print("region not retrived for ", species, gene_id)
+		print("region not retrived for ", species_db, gene_id)
 		return []
 
-	qry = "SELECT  * FROM  prediction_exon  WHERE seq_region_id = %d " % gene_seq_id
-	qry += " AND  seq_region_start >= %d AND seq_region_start <= %d " % \
-		   (gene_region_start, gene_region_end)
-	qry += " AND  seq_region_end   >= %d AND seq_region_end   <= %d " % \
-		   (gene_region_start, gene_region_end)
+	qry  = f"select * from {species_db}.prediction_exon  where seq_region_id = {gene_seq_id} "
+	qry += f"and  seq_region_start >= {gene_region_start} and seq_region_start <= {gene_region_end} "
+	qry += f"and  seq_region_end   >= {gene_region_start}  and seq_region_end   <= {gene_region_end} "
 	rows = search_db(cursor, qry)
 
-	if (not rows):
-		return []
+	if not rows: return []
+
+	column_names = get_column_names(cursor, species_db, "prediction_exon")
 	for row in rows:
 		exon = Exon()
 		exon.gene_id = gene_id
-		exon.load_from_ensembl_prediction(gene_region_start, gene_region_end, row)
+		#exon.load_from_db(cursor, species_db, "prediction_exon", exon_id, column_names=column_names)
 		exons.append(exon)
 
 	return exons
@@ -410,14 +321,10 @@ def extract_gene_seq(acg, species, seq_name, file_names, seq_region_strand,
 
 
 #########################################
-def get_transcript_ids(cursor, gene_id, db_name=None):
+def get_transcript_ids(cursor, species_db, gene_id):
 	transcript_ids = []
 
-	if (db_name):
-		if not switch_to_db(cursor, db_name):
-			return []
-
-	qry = "select transcript_id, stable_id from transcript where gene_id = %d " % gene_id
+	qry = f"select transcript_id, stable_id from {species_db}.transcript where gene_id = {gene_id}"
 	rows = search_db(cursor, qry)
 
 	if not rows:
@@ -623,21 +530,14 @@ def is_coding_exon(cursor, exon_id, is_known, db_name=None):
 
 
 #########################################
-def get_gene_coordinates(cursor, gene_id, db_name=None):
-	if (db_name):
-		if not switch_to_db(cursor, db_name):
-			return None
+def get_gene_coordinates(cursor, db_name, gene_id):
+	qry  = "select seq_region_id, seq_region_start, seq_region_end, seq_region_strand  "
+	qry += f"from {db_name}.gene  where gene_id = {gene_id}"
+	return hard_landing_search(cursor, qry)[0]  # we will not tolerate gene without coordinates
 
-	qry = "select seq_region_id, seq_region_start, seq_region_end, seq_region_strand  "
-	qry += " from gene "
-	qry += " where gene_id = %d" % gene_id
-	rows = search_db(cursor, qry)
 
-	if not rows or isinstance(rows[0], str) and 'error' in rows[0].lower():
-		search_db(cursor, qry, verbose=True)
-		return None
-
-	return rows[0]
+def get_gene_start(cursor, db_name, gene_id):
+	return get_gene_coordinates(cursor, db_name, gene_id)[1]
 
 
 #########################################
@@ -914,6 +814,13 @@ def gene2canon_transl(cursor, gene_id, db_name=None, stable=False):
 		return ""
 
 	return rows[0][0]
+
+
+def gene_id2hgnc(cursor, gene_id):
+	qry = "select h.approved_symbol from identifier_maps.hgnc h, gene g "
+	qry += f"where h.ensembl_gene_id=g.stable_id and g.gene_id={gene_id}"
+	ret = error_intolerant_search(cursor, qry)
+	return ret[0][0] if ret else "unk"
 
 
 def gene_stable2hgnc(cursor, gene_stable):
