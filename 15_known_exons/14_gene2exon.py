@@ -18,8 +18,9 @@ def mark_canonical (cursor, species_db, gene_id, exons):
 
 	canonical_exon_ids = get_canonical_exon_ids(cursor, canonical_transcript_id, species_db)
 	for exon in exons:
-		setattr(exon, "is_canonical", False)  # we might not have this object until this point
-		exon.is_canonical = (exon.exon_id in canonical_exon_ids)
+		# this has to be 0/1 and not T/F because we will be reading this into MySQL that does not know about T/F
+		setattr(exon, "is_canonical", 0)  # we might not have this object until this point
+		if exon.exon_id in canonical_exon_ids: exon.is_canonical = 1
 
 	ret = get_canonical_coordinates(cursor, canonical_transcript_id, species_db)
 	if not ret:

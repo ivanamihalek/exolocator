@@ -81,20 +81,18 @@ def get_sorted_canonical_exons(cursor, db_name, gene_id):
 	if not ret:
 		return []
 	for line in ret:
-		exon = dict(zip(column_names, line))
-		if not exon['is_canonical']: continue
+		exon = Exon()
+		exon.fields2attributes(column_names, line)
+		if not exon.is_canonical: continue
 		exons.append(exon)
-
-	sorted_exons = sorted(exons,key=lambda x: x['start_in_gene'])
+	sorted_exons = sorted(exons,key=lambda x: x.start_in_gene)
 	# sanity check
 	total_length = 0
 	for exon in sorted_exons:
 		#print(exon)
-		reading = exon['is_coding']
+		reading = exon.is_coding
 		if reading:
-			start = exon['start_in_gene'] if exon['canon_transl_start']<0 else  exon['canon_transl_start']
-			end = exon['end_in_gene'] if exon['canon_transl_end']<0 else  exon['canon_transl_end']
-			total_length += end - start  + 1
+			total_length += exon.end() - exon.start()  + 1
 
 	if total_length%3 != 0:
 		# take care of that later - Esmebl has quite a number of those
@@ -108,18 +106,16 @@ def exons2cdna(gene_region_dna, sorted_exons):
 	reverse = None
 	for exon in sorted_exons:
 		if reverse is None:
-			reverse = (exon['strand']<0)
-		elif reverse != (exon['strand']<0):
-			print(f"gene {exon['gene_id']}, exon {exon['exon_id']} strand mismatch")
+			reverse = (exon.strand<0)
+		elif reverse != (exon.strand<0):
+			print(f"gene {exon.gene_id}, exon {exon.exon_id} strand mismatch")
 			exit()
 
 	cdna= ""
 	for exon in sorted_exons:
-		reading = exon['is_coding']
+		reading = exon.is_coding
 		if reading:
-			start = exon['start_in_gene'] if exon['canon_transl_start']<0 else  exon['canon_transl_start']
-			end = exon['end_in_gene'] if exon['canon_transl_end']<0 else  exon['canon_transl_end']
-			cdna += gene_region_dna[start:end+1]
+			cdna += gene_region_dna[exon.start():exon.end()+1]
 
 	if reverse: cdna = str(Seq(cdna, generic_dna).reverse_complement())
 

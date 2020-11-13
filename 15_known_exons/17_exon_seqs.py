@@ -1,7 +1,7 @@
 #!/usr/bin/python3 -u
 
 from random import sample
-from el_utils.el_specific import  *
+from el_utils.el_specific import *
 from el_utils.processes import parallelize
 from config import Config
 
@@ -16,7 +16,7 @@ verbose = True
 # phase: position where the codon is split, not the offset
 # phase can be -1 in UTR exons
 def find_offset(exon, exon_length):
-	phase = max(exon['phase'],0)
+	phase = max(exon.phase,0)
 	# it seems that the phase always refers to cdna, not the main strand
 	offset = (3-phase)%3 # complement of 3, but 0 stays 0
 	full_codons = (exon_length-offset)//3*3 # integer division in python3
@@ -36,20 +36,20 @@ def reconstruct_exon_seqs (gene_region_dna, sorted_exons, mitochondrial):
 
 	# the hope is we have checled some place else
 	# fo the bizarre possibilty that not all exons are marked as being on the same strand
-	reverse = sorted_exons[0]['strand']<0
+	reverse = sorted_exons[0].strand<0
 
 	last_coding_exon = sorted_exons[-1]
 	for exon in sorted_exons if reverse else reversed(sorted_exons):
-		if exon['is_coding']:
+		if exon.is_coding:
 			last_coding_exon = exon
 			break
 
 	for exon in sorted_exons:
-		if not exon['is_coding']: continue
-		exon_id = exon['exon_id']
-		start = exon['start_in_gene'] if exon['canon_transl_start'] < 0 else exon['canon_transl_start']
-		end   = exon['end_in_gene'] if exon['canon_transl_end'] < 0 else exon['canon_transl_end']
-		exon_length = end - start + 1
+		if not exon.is_coding: continue
+		exon_id = exon.exon_id
+		start   = exon.start()
+		end     = exon.end()
+		exon_length = exon.end() - exon.start() + 1
 
 		left   = gene_region_dna[max(start - flank_length, 0):start]
 		coding = gene_region_dna[start:end+1]
@@ -112,14 +112,15 @@ def store_directly_to_db(cursor, ei, exon, exon_seq, left_flank, right_flank, ex
 def store_exon_seqs(cursor, exons, exon_seq, left_flank, right_flank, exon_pepseq, outfile, count):
 
 	for exon in exons:
-		if not exon['is_coding']: continue
-		ei = exon['exon_id']
+		if not exon.is_coding: continue
+		ei = exon.exon_id
 		if outfile: # write out, load later; this is faster
 			# exon_seq_id, exon_id, phase, by_exolocator, dna_seq, left_flank, right_flank, protein_seq
 			count += 1
-			fields = [count, ei, exon['phase'], 0, exon_seq[ei], left_flank[ei], right_flank[ei], exon_pepseq[ei]]
+			fields = [count, ei, exon.phase, 0, exon_seq[ei], left_flank[ei], right_flank[ei], exon_pepseq[ei]]
+
 			print("\t".join([str(f) for f in fields]), file=outfile)
-		else: # slower, but checks for the existence
+		else:  # slower, but checks for the existence
 			store_directly_to_db(cursor, ei, exon, exon_seq, left_flank, right_flank, exon_pepseq)
 	return count
 
@@ -183,7 +184,7 @@ def store_exon_seqs_species(species_list, other_args):
 
 		print()
 		print("############################")
-		print(f"{species} nummber of genes: {len(gene_ids)}")
+		print(f"{species} number of genes: {len(gene_ids)}")
 
 		###########################
 		tot = 0
@@ -215,8 +216,8 @@ def store_exon_seqs_species(species_list, other_args):
 def check_species_done(cursor, all_species, ensembl_db_name, outdir):
 	unprocessed_species = []
 	for species in all_species:
-		switch_to_db(cursor, ensembl_db_name[species])
-		gene_ids = get_gene_ids (cursor, biotype='protein_coding')
+		# switch_to_db(cursor, ensembl_db_name[species])
+		# gene_ids = get_gene_ids (cursor, biotype='protein_coding')
 		exon_seqs_found = 0
 		exon_seq_file = f"{outdir}/{species}/exon_seq.tsv"
 		if not os.path.exists(exon_seq_file):
@@ -244,14 +245,14 @@ def main():
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species(cursor)
 
-	unprocessed_species = check_species_done(cursor, all_species, ensembl_db_name, outdir)
-	# print("unprocessed_species:")
+	# unprocessed_species = check_species_done(cursor, all_species, ensembl_db_name, outdir)
+	# print("unprocessed_species:", len(unprocessed_species))
 	# print("\n".join(unprocessed_species))
 	# exit()
 
-	all_species = unprocessed_species
-	#all_species = ['nothoprocta_perdicaria']
-	#all_species = sample(unprocessed_species, 8)
+	# all_species = unprocessed_species
+	# all_species = ['monodelphis_domestica']
+	# all_species = sample(all_species, 1)
 
 	cursor.close()
 	db    .close()

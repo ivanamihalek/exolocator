@@ -19,8 +19,8 @@ from el_utils.ensembl import *
 
 ####################################################
 def main():
-	print("careful, this script deletes contents of exon_seq table")
-	exit()
+	# print("careful, this script deletes contents of exon_seq table")
+	# exit()
 	in_dir = "raw_tables"
 	table  = "exon_seq"
 	if not os.path.exists(in_dir):
