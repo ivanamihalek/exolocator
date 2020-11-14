@@ -5,7 +5,7 @@ from el_utils.el_specific import  *
 
 #########################################
 def main():
-	
+
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
 	[all_species, ensembl_db_name] = get_species (cursor)
