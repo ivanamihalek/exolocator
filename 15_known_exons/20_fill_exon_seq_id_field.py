@@ -1,7 +1,6 @@
 #!/usr/bin/python3 -u
 
-from config import Config
-from el_utils.el_specific import  *
+from el_utils.el_specific import *
 
 #########################################
 def main():
@@ -29,6 +28,7 @@ def main():
 	cursor.close()
 	db.close()
 	return True
+
 
 #########################################
 if __name__ == '__main__':

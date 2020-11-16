@@ -463,6 +463,7 @@ def check_species_done( all_species,  outdir):
 
 	return unprocessed_species
 
+
 #########################################
 def main():
 	outdir = "raw_tables"
@@ -481,6 +482,7 @@ def main():
 	unprocessed_species = check_species_done(all_species, "raw_tables")
 
 	parallelize(no_threads, exons_for_species, unprocessed_species, [ensembl_db_name, outdir])
+
 
 #########################################
 if __name__ == '__main__':

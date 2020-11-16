@@ -25,8 +25,14 @@
     <show-object-properties value="true" />
     <loaded-nodes />
   </component>
+  <component name="DBNavigator.Project.DatabaseFileManager">
+    <open-files />
+  </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
+  </component>
+  <component name="DBNavigator.Project.ExecutionManager">
+    <retain-sticky-names value="false" />
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
@@ -151,11 +157,11 @@
         <data-length-threshold value="100" />
         <popup-delay value="1000" />
       </text-editor-popup>
-      <values-list-popup>
+      <values-actions-popup>
         <show-popup-button value="true" />
         <element-count-threshold value="1000" />
         <data-length-threshold value="250" />
-      </values-list-popup>
+      </values-actions-popup>
       <general>
         <fetch-block-size value="100" />
         <fetch-timeout value="30" />
@@ -178,6 +184,8 @@
           <content-type name="XHTML" enabled="true" />
           <content-type name="SQL" enabled="true" />
           <content-type name="PL/SQL" enabled="true" />
+          <content-type name="JSON" enabled="true" />
+          <content-type name="JSON5" enabled="true" />
           <content-type name="YAML" enabled="true" />
         </content-types>
       </qualified-text-editor>

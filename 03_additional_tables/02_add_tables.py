@@ -51,7 +51,7 @@ def make_novel_exon_table (cursor, table):
 
 
 #########################################
-def make_gene2exon_table (cursor):
+def make_gene2exon_table(cursor):
 
 	table = 'gene2exon'
 	# no auto_increment for the gene2exon table - we will be reading it from  the tsv
@@ -71,15 +71,16 @@ def make_gene2exon_table (cursor):
 			  `is_canonical` tinyint DEFAULT NULL,
 			  `is_constitutive` tinyint DEFAULT NULL,
 			  `covering_exon` int DEFAULT NULL,
-			  `covering_is_known` tinyint DEFAULT NULL,
+			  `covering_provenance` tinyint DEFAULT NULL,
 			  `analysis_id` int DEFAULT NULL,
 			  PRIMARY KEY (`gene2exon_id`),
 			  KEY `exon_id_idx` (`exon_id`)
 		)  ENGINE=MyISAM '''
 	error_intolerant_search(cursor, qry)
 
+
 #########################################
-def make_exon_seq_table (cursor):
+def make_exon_seq_table(cursor):
 	# error_intolerant_search(cursor, "drop table if exists exon_seq")
 	qry = ""
 	qry += "  CREATE TABLE  exon_seq ("
@@ -137,115 +138,6 @@ def modify_exon_map_table (cursor):
 		if (rows):
 			return False
 
-
-#########################################
-def make_exon_map_table (cursor):
-
-	table = 'exon_map'
-
-	qry  = "CREATE TABLE " + table + "  (exon_map_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
-	rows = search_db (cursor, qry)
-	if (rows):
-		return False
-
-	for column_name in ['exon_id', 'cognate_exon_id']:
-		qry = "ALTER TABLE %s add %s INT(10)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['exon_known', 'cognate_exon_known']:
-		qry = "ALTER TABLE %s add %s tinyint" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['cognate_genome_db_id']:
-		qry = "ALTER TABLE %s add %s INT" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['cigar_line']:
-		qry = "ALTER TABLE %s add %s blob" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['similarity']:
-		qry = "ALTER TABLE %s add %s float" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['source']:
-		qry = "ALTER TABLE %s add %s VARCHAR(20)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['msa_bitstring']:
-		qry = "ALTER TABLE %s add %s varbinary(1000)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-
-	for column_name in ['warning']:
-		qry = "ALTER TABLE %s add %s blob" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-
-#########################################
-def make_para_exon_map_table (cursor):
-
-	table = 'para_exon_map'
-
-	qry  = "CREATE TABLE " + table + "  (exon_map_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
-	rows = search_db (cursor, qry)
-	if (rows):
-		return False
-
-	for column_name in ['exon_id', 'cognate_exon_id']:
-		qry = "ALTER TABLE %s add %s INT(10)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['exon_known', 'cognate_exon_known']:
-		qry = "ALTER TABLE %s add %s tinyint" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['cigar_line']:
-		qry = "ALTER TABLE %s add %s blob" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['similarity']:
-		qry = "ALTER TABLE %s add %s float" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['source']:
-		qry = "ALTER TABLE %s add %s VARCHAR(20)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-	for column_name in ['msa_bitstring']:
-		qry = "ALTER TABLE %s add %s varbinary(1000)" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
-
-
 #########################################
 def make_table (cursor, db_name, table):
 
@@ -264,10 +156,6 @@ def make_table (cursor, db_name, table):
 		make_novel_exon_table (cursor, table)
 	elif table == 'coding_region':
 		make_coding_region_table (cursor)
-	elif table == 'exon_map':
-		make_exon_map_table (cursor)
-	elif table == 'para_exon_map':
-		make_para_exon_map_table (cursor)
 	elif table == 'problems':
 		make_problems_table (cursor)
 	else:
@@ -320,7 +208,6 @@ def main():
 			# else:
 			# 	print(table, " not found in ", db_name)
 			# 	make_table (cursor, db_name, table)
-
 
 		print("optimizing gene2exon")
 		qry = "optimize table gene2exon"

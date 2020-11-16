@@ -42,12 +42,6 @@ def make_para_exon_map_table (cursor):
 		if (rows):
 			return False
 
-	for column_name in ['exon_known', 'cognate_exon_known']:
-		qry = "ALTER TABLE %s add %s tinyint" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
-
 	for column_name in ['cigar_line']:
 		qry = "ALTER TABLE %s add %s blob" % (table, column_name)
 		rows = search_db (cursor, qry)
@@ -78,7 +72,7 @@ def make_exon_map_table (cursor, db_name):
 
 	table = 'exon_map'
 
-	qry  = "CREATE TABLE " + table + "  (exon_map_id INT(10)  PRIMARY KEY AUTO_INCREMENT)"
+	qry  = "CREATE TABLE " + table + "  (exon_map_id INT(10)  PRIMARY KEY )"
 	rows = search_db (cursor, qry)
 	if (rows):
 		return False
@@ -89,11 +83,6 @@ def make_exon_map_table (cursor, db_name):
 		if (rows):
 			return False
 
-	for column_name in ['exon_known', 'cognate_exon_known']:
-		qry = "ALTER TABLE %s add %s tinyint" % (table, column_name)
-		rows = search_db (cursor, qry)
-		if (rows):
-			return False
 
 	for column_name in ['cognate_genome_db_id']:
 		qry = "ALTER TABLE %s add %s INT" % (table, column_name)
@@ -133,7 +122,6 @@ def make_exon_map_table (cursor, db_name):
 			return False
 
 
-
 #########################################
 def main():
 
@@ -150,15 +138,15 @@ def main():
 		db_name = ensembl_db_name[representative_species]
 
 		if check_table_exists(cursor, db_name, table):
-			print(table, " found in ", db_name)
+			check_and_drop_table(cursor, db_name, table)
+			make_exon_map_table(cursor, db_name)
+			# print(table, " found in ", db_name)
 		else:
 			print(table, " not found in ", db_name)
 			make_exon_map_table(cursor, db_name)
 		#            cursor, db_name, table, index_name, columns,
-		create_index(cursor, db_name, table, 'gene_index', ['exon_id'])
-		create_index(cursor, db_name, table, 'exon_index', ['exon_id', 'exon_known'])
-		create_index(cursor, db_name, table, 'cognate_exon_index', ['cognate_exon_id', 'cognate_exon_known', 'cognate_genome_db_id'])
-
+		create_index(cursor, db_name, table, 'exon_index', ['exon_id'])
+		create_index(cursor, db_name, table, 'cognate_exon_index', ['cognate_exon_id',  'cognate_genome_db_id'])
 
 	cursor.close()
 	db.close()

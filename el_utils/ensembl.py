@@ -561,10 +561,10 @@ def is_mitochondrial(cursor, gene_id, db_name=None):
 
 
 #########################################
-def get_exon_pepseq(cursor, exon, db_name=None):
+def get_exon_pepseq(cursor, db_name, exon_id):
 
-	if db_name and not switch_to_db(cursor, db_name): return ""
-	rows = error_intolerant_search(cursor, f"select protein_seq from exon_seq where exon_id = {exon['exon_id']}")
+	qry = f"select protein_seq from {db_name}.exon_seq where exon_id = {exon_id}"
+	rows = error_intolerant_search(cursor,qry)
 	if not rows: return ""
 
 	protein_seq = rows[0][0]
@@ -1218,7 +1218,6 @@ def genome_db_id2species(cursor, genome_db_id):
 
 	compara_name = get_compara_name(cursor)
 	qry = f"select name from {compara_name}.genome_db where genome_db_id ={int(genome_db_id)}"
-
 	rows = error_intolerant_search(cursor, qry)
 	return rows[0][0] if rows else ""
 

@@ -15,7 +15,7 @@ class Exon:
 	# the ensembl row is assumed to have been
 	# obtained by select * from exon
 	def load_from_db(self, cursor, db_name, table, exon_id, column_names=None):
-		if not column_names: get_column_names(cursor, db_name=db_name, table_name=table)
+		if not column_names: column_names = get_column_names(cursor, db_name=db_name, table_name=table)
 		qry = f"select * from {db_name}.{table} where exon_id={exon_id}"
 		ret = error_intolerant_search(cursor, qry)
 		if not ret:
@@ -24,7 +24,7 @@ class Exon:
 		elif len(ret)>1:
 			print(f"multiple entries for exon_id {exon_id} found in {db_name}.{table} ")
 			return None
-		if len(column_names)!=len(ret[0]):
+		if len(column_names) != len(ret[0]):
 			print(f"provided column names do not match {db_name}.{table} ")
 			return None
 		self.fields2attributes(column_names, ret[0])
@@ -61,6 +61,7 @@ class Exon:
 		self.strand           = None
 		self.gene_id          = None
 		self.exon_id          = None
+		self.pepseq           = None
 		self.is_canonical     = False
 		self.is_coding        = False
 		self.seq_region_start = -1

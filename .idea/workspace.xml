@@ -1,456 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="" />
-    <ignored path="exolocator.iws" />
-    <ignored path=".idea/workspace.xml" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
-    <option name="TRACKING_ENABLED" value="true" />
+    <list default="true" id="7a88455c-d4d8-4fee-a09f-206308ed9735" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/exolocator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/exolocator.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/perl5local.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_additional_tables/02_add_tables.py" beforeDir="false" afterPath="$PROJECT_DIR$/03_additional_tables/02_add_tables.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_additional_tables/03_exon_map_tables.py" beforeDir="false" afterPath="$PROJECT_DIR$/03_additional_tables/03_exon_map_tables.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/15_known_exons/14_gene2exon.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/14_gene2exon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/15_known_exons/20_fill_exon_seq_id_field.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/20_fill_exon_seq_id_field.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/15_known_exons/21_make_ortho_maps.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/21_make_ortho_maps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/15_known_exons/25_ortho_exon_map_to_msa.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/25_ortho_exon_map_to_msa.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/25_ortho_exon_map_to_msa.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/27_para_exon_map_to_msa.py" beforeDir="false" afterPath="$PROJECT_DIR$/27_para_exon_map_to_msa.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/el_utils/exon.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/exon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/el_utils/map.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/map.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="CreatePatchCommitExecutor">
-    <option name="PATCH_PATH" value="" />
-  </component>
-  <component name="FavoritesManager">
-    <favorites_list name="exolocator" />
-  </component>
-  <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="20_fill_exon_seq_id_field.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/../15_known_exons/20_fill_exon_seq_id_field.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="7" selection-start-line="7" selection-end-line="7" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="02_add_tables.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../03_additional_tables/02_add_tables.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-594" />
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Python Script" />
-      </list>
-    </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>cursor_species</find>
-      <find>cliques</find>
-      <find>dirty_cliques</find>
-      <find>stable</find>
-      <find>gene2exon</find>
-      <find>start_in_gene</find>
-      <find>exon_seq_id</find>
-      <find>N</find>
-      <find>canon_transl_start</find>
-      <find>paralogue_grou</find>
-      <find>97</find>
-      <find>abca4</find>
-      <find>get_canonical_coordinates</find>
-      <find>get_gene_re</find>
-      <find>insert</find>
-      <find>mitochon</find>
-      <find>all_species</find>
-      <find>decorate</find>
-      <find>waterma</find>
-      <find>#</find>
-      <find>trivial</find>
-      <find>nhxstr</find>
-      <find>human</find>
-      <find>'homo_sapiens'</find>
-      <find>;</find>
-      <find>leaf</find>
-      <find>mark_coding</find>
-      <find>hgnc</find>
-      <find>hgnc_symbol</find>
-      <find>print</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>exolocator_meta</replace>
-      <replace>cursor</replace>
-      <replace>dirty_cliques</replace>
-      <replace>cliques</replace>
-      <replace>SYMBOL</replace>
-      <replace>payload</replace>
-      <replace>rep_species</replace>
-    </replaceStrings>
-  </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/16_exon_seqs.py" />
-        <option value="$PROJECT_DIR$/c_utils/myModule.c" />
-        <option value="$PROJECT_DIR$/c_utils/setup.py" />
-        <option value="$PROJECT_DIR$/c_utils/alignment.c" />
-        <option value="$PROJECT_DIR$/18_fill_exon_seq_id_field.py" />
-        <option value="$PROJECT_DIR$/el_utils/ensembl.py" />
-        <option value="$PROJECT_DIR$/config.py" />
-        <option value="$PROJECT_DIR$/el_utils/el_specific.py" />
-        <option value="$PROJECT_DIR$/14_exon_coordinates.py" />
-        <option value="$PROJECT_DIR$/19_make_ortho_maps.py" />
-        <option value="$PROJECT_DIR$/el_utils/map.py" />
-        <option value="$PROJECT_DIR$/../hack.py" />
-        <option value="$PROJECT_DIR$/../c_utils/alignment.c" />
-        <option value="$PROJECT_DIR$/../03_seqname2file.py" />
-        <option value="$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl" />
-        <option value="$PROJECT_DIR$/../00_download_dbs/01_ensembl_fasta_format.pl" />
-        <option value="$PROJECT_DIR$/../16_exon_seqs.py" />
-        <option value="$PROJECT_DIR$/../17_load_exon_seqs.py" />
-        <option value="$PROJECT_DIR$/../80_production/05_gene_details.py" />
-        <option value="$PROJECT_DIR$/../19_make_ortho_maps.py" />
-        <option value="$PROJECT_DIR$/../02_add_tables.py" />
-        <option value="$PROJECT_DIR$/../02_exon_map_tables.py" />
-        <option value="$PROJECT_DIR$/../03_exon_map_tables.py" />
-        <option value="$PROJECT_DIR$/../config.py" />
-        <option value="$PROJECT_DIR$/../01_make_meta_db.py" />
-        <option value="$PROJECT_DIR$/../03_additional_tables/03_exon_map_tables.py" />
-        <option value="$PROJECT_DIR$/../el_utils/utils.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/20_ortho_exon_map_to_msa.py" />
-        <option value="$PROJECT_DIR$/../02_tax_groups_and_their_reps.py" />
-        <option value="$PROJECT_DIR$/../el_utils/tree.py" />
-        <option value="$PROJECT_DIR$/../80_production/01_orthologue_alignment.py" />
-        <option value="$PROJECT_DIR$/../el_utils/mysql.py" />
-        <option value="$PROJECT_DIR$/../26_make_para_maps.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/c_utils/alignment.c" />
-        <option value="$PROJECT_DIR$/../el_utils/map.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/20_map_stats.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/19_make_ortho_maps.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/22_ortho_exon_map_to_msa.py" />
-        <option value="$PROJECT_DIR$/../22_missing_exons/24_make_novel_exon_maps.py" />
-        <option value="$PROJECT_DIR$/../el_utils/ensembl.py" />
-        <option value="$PROJECT_DIR$/../03_additional_tables/02_add_tables.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/15_load_exon_coords.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/18_exon_seq_sanity.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/16_gene2exon_sanity.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/14_gene2exon.py" />
-        <option value="$PROJECT_DIR$/../el_utils/exon.py" />
-        <option value="$PROJECT_DIR$/../el_utils/el_specific.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/17_exon_seqs.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/18_load_exon_seqs.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/19_exon_seq_sanity.py" />
-        <option value="$PROJECT_DIR$/../15_known_exons/20_fill_exon_seq_id_field.py" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="2080" />
-    <option name="y" value="33" />
-    <option name="width" value="1614" />
-    <option name="height" value="984" />
-  </component>
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="1" id="Add" />
-  </component>
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="." type="b2602c69:ProjectViewProjectNode" />
-              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="." type="b2602c69:ProjectViewProjectNode" />
-              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-              <item name="03_additional_tables" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="." type="b2602c69:ProjectViewProjectNode" />
-              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-              <item name="15_known_exons" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="." type="b2602c69:ProjectViewProjectNode" />
-              <item name="exolocator" type="462c0819:PsiDirectoryNode" />
-              <item name="el_utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-    </panes>
+  <component name="ProjectId" id="1kGyohZxsVkYUNRqO7x5fEGxLUe" />
+  <component name="ProjectViewState">
+    <option name="foldersAlwaysOnTop" value="false" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="SearchEverywhereHistoryKey" value="homology&#9;null&#9;null" />
-    <property name="last_opened_file_path" value="$USER_HOME$/games/chica/chica_utils" />
-    <property name="options.lastSelected" value="reference.settings.ide.settings.spelling" />
-    <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="recentsLimit" value="5" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
   </component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/../15_known_exons" />
-      <recent name="$PROJECT_DIR$/.." />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/00_download_dbs" />
-      <recent name="$USER_HOME$/00_download_dbs" />
-    </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager">
-    <configuration default="true" type="tests" factoryName="Attests">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="exolocator" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
-      <method />
-    </configuration>
-  </component>
-  <component name="SpellCheckerSettings" BundledDictionaries="5" BundledDictionary0="django.dic" BundledDictionary1="pythonExtras.dic" BundledDictionary2="python.dic" BundledDictionary3="jetbrains.dic" BundledDictionary4="english.dic" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="project-level" UseSingleDictionary="true" />
-  <component name="SvnConfiguration">
-    <configuration />
-  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="5d492c4a-0f18-470a-98d8-c7ea859b28a9" name="Default" comment="" />
-      <created>1427910057237</created>
+      <changelist id="7a88455c-d4d8-4fee-a09f-206308ed9735" name="Default Changelist" comment="" />
+      <created>1605341400878</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1427910057237</updated>
+      <updated>1605341400878</updated>
     </task>
     <servers />
   </component>
-  <component name="TodoView">
-    <todo-panel id="selected-file">
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="all">
-      <are-packages-shown value="true" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-  </component>
-  <component name="ToolWindowManager">
-    <frame x="1920" y="0" width="1920" height="1080" extended-state="6" />
-    <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16394307" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info id="DB Browser" order="2" />
-      <window_info anchor="bottom" id="DB Execution Console" order="7" />
-      <window_info anchor="bottom" id="Event Log" order="13" side_tool="true" weight="0.14468086" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="Python Console" order="9" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="10" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Application Servers" order="11" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Changes" order="12" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3386076" />
-      <window_info anchor="right" id="Data View" order="3" />
-    </layout>
-    <layout-to-restore>
-      <window_info anchor="bottom" id="DB Execution Console" order="7" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18819188" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="right" id="Data View" order="3" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info id="DB Browser" order="3" />
-      <window_info anchor="bottom" id="Python Console" order="9" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Terminal" order="10" />
-      <window_info anchor="bottom" id="Event Log" order="13" side_tool="true" weight="0.14468086" />
-      <window_info anchor="bottom" id="Changes" order="12" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Application Servers" order="11" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.19514768" />
-    </layout-to-restore>
-  </component>
-  <component name="UnknownFeatures">
-    <option featureType="com.intellij.fileTypeFactory" implementationName="*.pl" />
-  </component>
-  <component name="Vcs.Log.UiProperties">
-    <option name="RECENTLY_FILTERED_USER_GROUPS">
-      <collection />
-    </option>
-    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
-      <collection />
-    </option>
-  </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <option name="time" value="27" />
-    </breakpoint-manager>
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../14_gene2exon.py" />
-    <entry file="file://$PROJECT_DIR$/../hack.py" />
-    <entry file="file://$PROJECT_DIR$/../c_utils/alignment.c" />
-    <entry file="file://$PROJECT_DIR$/../05_format_canonical_for_blast.py" />
-    <entry file="file://$PROJECT_DIR$/../03_seqname2file.py" />
-    <entry file="file://$PROJECT_DIR$/../00_download_dbs/01_ensembl_fasta_format.pl" />
-    <entry file="file://$PROJECT_DIR$/../00_download_dbs/00_ensembl_fasta_down.pl" />
-    <entry file="file://$PROJECT_DIR$/../16_exon_seqs.py" />
-    <entry file="file://$PROJECT_DIR$/../17_load_exon_seqs.py" />
-    <entry file="file://$PROJECT_DIR$/../18_fill_exon_seq_id_field.py" />
-    <entry file="file://$PROJECT_DIR$/../80_production/15_all_alignments.py" />
-    <entry file="file://$PROJECT_DIR$/../80_production/05_gene_details.py" />
-    <entry file="file://$PROJECT_DIR$/../02_add_tables.py" />
-    <entry file="file://$PROJECT_DIR$/../19_make_ortho_maps.py" />
-    <entry file="file://$PROJECT_DIR$/../04_seqname2file.py" />
-    <entry file="file://$PROJECT_DIR$/../config.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/-2066100795/builtins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="2883" column="8" selection-start-line="2883" selection-start-column="8" selection-end-line="2883" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../01_make_meta_db.py" />
-    <entry file="file://$PROJECT_DIR$/../03_additional_tables/03_exon_map_tables.py" />
-    <entry file="file://$PROJECT_DIR$/../el_utils/utils.py" />
-    <entry file="file://$PROJECT_DIR$/../80_production/01_orthologue_alignment.py" />
-    <entry file="file://$PROJECT_DIR$/../el_utils/tree.py" />
-    <entry file="file://$PROJECT_DIR$/../02_tax_groups_and_their_reps.py" />
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/18_fill_exon_seq_id_field.py" />
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/17_load_exon_seqs.py" />
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/16_exon_seqs.py" />
-    <entry file="file://$PROJECT_DIR$/../07_homology/07_output_human_homology_members.py" />
-    <entry file="file://$PROJECT_DIR$/../07_homology/08_load_human_homology_members.py" />
-    <entry file="file://$PROJECT_DIR$/../26_make_para_maps.py" />
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/c_utils/alignment.c" />
-    <entry file="file://$PROJECT_DIR$/../el_utils/map.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/-2066100795/MySQLdb/_mysql.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="100" column="4" selection-start-line="100" selection-start-column="4" selection-end-line="100" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../el_utils/almt_cmd_generator.py" />
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/20_map_stats.py" />
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/19_make_ortho_maps.py" />
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/22_ortho_exon_map_to_msa.py" />
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/25_ortho_exon_map_to_msa.py" />
-    <entry file="file://$PROJECT_DIR$/../22_missing_exons/24_make_novel_exon_maps.py" />
-    <entry file="file://$PROJECT_DIR$/../el_utils/mysql.py" />
-    <entry file="file://$PROJECT_DIR$/../el_utils/ensembl.py" />
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/14_gene2exon.py" />
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/15_load_exon_coords.py" />
-    <entry file="file://$PROJECT_DIR$/../el_utils/tree.py" />
-    <entry file="file://$PROJECT_DIR$/../el_utils/exon.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="684">
-          <caret line="38" column="20" selection-start-line="38" selection-start-column="20" selection-end-line="38" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/16_gene2exon_sanity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-324" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/17_exon_seqs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2578">
-          <caret line="238" column="18" selection-start-line="238" selection-start-column="18" selection-end-line="238" selection-end-column="18" />
-          <folding>
-            <element signature="e#23#48#0" expanded="true" />
-            <element signature="e#3676#4210#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/18_load_exon_seqs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="32" selection-start-line="32" selection-end-line="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../el_utils/el_specific.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="75" column="4" selection-start-line="75" selection-start-column="4" selection-end-line="75" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/19_exon_seq_sanity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="10" column="5" selection-start-line="10" selection-start-column="5" selection-end-line="10" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../03_additional_tables/02_add_tables.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-594" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../15_known_exons/20_fill_exon_seq_id_field.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
+  <component name="WindowStateProjectService">
+    <state x="2381" y="175" width="1142" height="729" key="SettingsEditor" timestamp="1605341514532">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2381" y="175" width="1142" height="729" key="SettingsEditor/0.0.1920.1044/1920.0.1920.1080@1920.0.1920.1080" timestamp="1605341514532" />
+    <state x="2688" y="455" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1605345375234">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2688" y="455" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1044/1920.0.1920.1080@1920.0.1920.1080" timestamp="1605345375234" />
+    <state x="364" y="0" width="1556" height="1036" key="dock-window-1" timestamp="1605522610731">
+      <screen x="0" y="0" width="1920" height="1044" />
+    </state>
+    <state x="364" y="0" width="1556" height="1036" key="dock-window-1/0.0.1920.1044/1920.0.1920.1080@1920.0.1920.1080" timestamp="1605522610731" />
   </component>
 </project>

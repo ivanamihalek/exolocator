@@ -2,18 +2,18 @@
 # make the best alignment we can using the maps
 # we currently have at hand
 
-import MySQLdb, commands, re
-from   el_utils.mysql   import  connect_to_mysql, connect_to_db
-from   el_utils.mysql   import  switch_to_db,  search_db, store_or_update
-from   el_utils.ensembl import  *
-from   el_utils.utils   import  erropen, output_fasta
-from   el_utils.map     import  get_maps, Map, map2exon
-from   el_utils.tree    import  species_sort
-from   el_utils.ncbi    import  taxid2trivial
-from   el_utils.almt_cmd_generator import AlignmentCommandGenerator
-from   el_utils.config_reader      import ConfigurationReader
-from   el_utils.threads import  parallelize
-from   el_utils.custom  import  get_theme_ids
+import MySQLdb, subprocess, re
+from   .el_utils.mysql   import  connect_to_mysql, connect_to_db
+from   .el_utils.mysql   import  switch_to_db,  search_db, store_or_update
+from   .el_utils.ensembl import  *
+from   .el_utils.utils   import  erropen, output_fasta
+from   .el_utils.map     import  get_maps, Map, map2exon
+from   .el_utils.tree    import  species_sort
+from   .el_utils.ncbi    import  taxid2trivial
+from   .el_utils.almt_cmd_generator import AlignmentCommandGenerator
+from   .el_utils.config_reader      import ConfigurationReader
+from   .el_utils.threads import  parallelize
+from   .el_utils.custom  import  get_theme_ids
 from   random           import  choice
 
 from time      import  time
@@ -38,15 +38,15 @@ def multiple_exon_alnmt(species_list, db_info):
 
     for species in species_list:
 
-        print
-        print "############################"
-        print  species
+        print()
+        print("############################")
+        print(species)
 
         switch_to_db (cursor,  ensembl_db_name[species])
         gene_ids = get_gene_ids (cursor, biotype='protein_coding')
         #gene_ids = get_theme_ids(cursor, cfg, 'wnt_pathway')
         if not gene_ids:
-            print "no gene_ids"
+            print("no gene_ids")
             continue
 
 
@@ -60,29 +60,29 @@ def multiple_exon_alnmt(species_list, db_info):
 
             if verbose: start = time()
             gene_ct += 1
-            if not gene_ct%100: print species, gene_ct, "genes out of", len(gene_ids)
+            if not gene_ct%100: print(species, gene_ct, "genes out of", len(gene_ids))
             if verbose: 
-                print
-                print gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id)
+                print()
+                print(gene_id, gene2stable(cursor, gene_id), get_description (cursor, gene_id))
 
             # get the paralogues - only the representative for  the family will have this 
             paralogues = get_paras (cursor, gene_id)  
             if not paralogues:
-                if verbose:  print "\t not a template or no paralogues"
+                if verbose:  print("\t not a template or no paralogues")
                 continue
 
-            if verbose:  print "paralogues: ", paralogues
+            if verbose:  print("paralogues: ", paralogues)
 
             # get _all_ exons
             template_exons = gene2exon_list(cursor, gene_id)
             if (not template_exons):
-                if verbose: print 'no exons for ', gene_id
+                if verbose: print('no exons for ', gene_id)
                 continue
 
             # find all template  exons we are tracking in the database
             for template_exon in template_exons:
 
-                if verbose: print template_exon.exon_id
+                if verbose: print(template_exon.exon_id)
                 maps = get_maps(cursor, ensembl_db_name, template_exon.exon_id,
                                 template_exon.is_known, species=species, table='para_exon_map')
 
@@ -98,9 +98,9 @@ def multiple_exon_alnmt(species_list, db_info):
                  left_flank, right_flank, dna_seq] = exon_seqs_info
                 if (not pepseq):
                     if ( template_exon.is_coding and  template_exon.covering_exon <0): # this should be a master exon
-                        print "no pep seq for",  template_exon.exon_id, "coding ", template_exon.is_coding,
-                        print "canonical: ",  template_exon.is_canonical
-                        print "length of dna ", len(dna_seq)
+                        print("no pep seq for",  template_exon.exon_id, "coding ", template_exon.is_coding, end=' ')
+                        print("canonical: ",  template_exon.is_canonical)
+                        print("length of dna ", len(dna_seq))
                         no_pepseq += 1
                     continue
                 
@@ -121,19 +121,19 @@ def multiple_exon_alnmt(species_list, db_info):
                 output_fasta (fasta_fnm, headers, sequences)
 
                 if (len(headers) <=1 ):
-                    print "single species in the alignment (?)"
+                    print("single species in the alignment (?)")
                     no_paralogues += 1
                     continue
 
                 # align
                 afa_fnm  = "{0}/{1}_{2}_{3}.afa".format( cfg.dir_path['scratch'], species, template_exon.exon_id, template_exon.is_known)
                 mafftcmd = acg.generate_mafft_command (fasta_fnm, afa_fnm)
-                ret      = commands.getoutput(mafftcmd)
+                ret      = subprocess.getoutput(mafftcmd)
 
                 # read in the alignment
                 inf = erropen(afa_fnm, "r")
                 if not inf:
-                    print gene_id
+                    print(gene_id)
                     continue
                 template_seq_seen = False
                 for record in SeqIO.parse(inf, "fasta"):
@@ -154,8 +154,8 @@ def multiple_exon_alnmt(species_list, db_info):
                                     {"msa_bitstring":MySQLdb.escape_string(msa_bitmap)})
                 inf.close()
                 ok += 1
-                commands.getoutput("rm "+afa_fnm+" "+fasta_fnm)
-            if verbose: print " time: %8.3f\n" % (time()-start);
+                subprocess.getoutput("rm "+afa_fnm+" "+fasta_fnm)
+            if verbose: print(" time: %8.3f\n" % (time()-start));
  
         outstr  =  species + " done \n"
         outstr +=  "tot: %d   ok: %d  \n" % (tot,  ok)
@@ -163,7 +163,7 @@ def multiple_exon_alnmt(species_list, db_info):
         outstr +=  "no pepseq     %d  \n" % no_pepseq
         outstr +=  "no paralogues %d  \n" % no_paralogues
         outstr += "\n"
-        print outstr
+        print(outstr)
 
 
 #########################################

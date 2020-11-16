@@ -46,13 +46,13 @@ class Map:    # this particular map is between exons
 
 		if (paralogue):
 			[exon_map_id, exon_id, cognate_exon_id,
-			 exon_known, cognate_exon_known,
-			 cigar_line, similarity, source, msa_bitmap] = db_row
+			exon_known, cognate_exon_known,
+			cigar_line, similarity, source, msa_bitmap] = db_row
 			warning = None
 		else:
 			[exon_map_id, exon_id, cognate_exon_id,
-			 exon_known, cognate_exon_known, cognate_genome_db_id,
-			 cigar_line, similarity, source, msa_bitmap, warning] = db_row
+			exon_known, cognate_exon_known, cognate_genome_db_id,
+			cigar_line, similarity, source, msa_bitmap, warning] = db_row
 			self.species_2      = genome_db_id2species (cursor,  cognate_genome_db_id)
 
 		self.exon_id_1          = exon_id
@@ -68,7 +68,6 @@ class Map:    # this particular map is between exons
 
 #########################################
 def get_maps(cursor, species_db_name, exon_id, paralogue=False):
-
 	maps = []
 	table = "paralogue_exon_map" if paralogue else "exon_map"
 	qry  = f"select * from {species_db_name}.{table} where exon_id = {exon_id} "
@@ -136,11 +135,11 @@ def self_maps (cursor, ensembl_db_name, human_exons):
 		map = Map()
 		map.species_1    = 'homo_sapiens'
 		map.species_2    = 'homo_sapiens'
-		map.exon_id_1    = he['exon_id']
-		map.exon_id_2    = he['exon_id']
+		map.exon_id_1    = he.exon_id
+		map.exon_id_2    = he.exon_id
 
-		map.exon_known_1 = he['is_known']
-		map.exon_known_2 = he['is_known']
+		map.exon_known_1 = he.is_known
+		map.exon_known_2 = he.is_known
 		map.similarity   = 1.0
 
 		pepseq = get_exon_pepseq (cursor, he, verbose=True)
@@ -172,37 +171,35 @@ def moveB (seq):
 
 #########################################
 def overlap (start, end, other_start, other_end):
-	if ( other_end < start):
+	if other_end < start:
 		return False
-	elif ( end < other_start):
+	elif end < other_start:
 		return False
 	else:
 		return True
 
 
-
 #########################################
-def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
+def pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
 
 	seq_human = ""
 	seq_other = ""
 
 	padding = ""
-	if ( human_start > other_start):
-		for i in range (human_start-other_start):
+	if human_start > other_start:
+		for i in range(human_start-other_start):
 			padding += "-"
 	seq_human = padding + exon_seq_human
 
-
 	padding = ""
-	if ( other_start > human_start):
+	if other_start > human_start:
 		for i in range (other_start-human_start):
 			padding += "-"
 	seq_other = padding + exon_seq_other
 
-	if ( len(seq_human) > len(seq_other)):
+	if len(seq_human) > len(seq_other):
 		padding = ""
-		for i in range  (len(seq_human)-len(seq_other)):
+		for i in range(len(seq_human)-len(seq_other)):
 			padding += "-"
 		seq_other += padding
 
@@ -225,7 +222,6 @@ def  pad_the_alnmt (exon_seq_human, human_start, exon_seq_other, other_start):
 
 #########################################
 def maps_evaluate (min_similarity, rep_species, rep_species_exons, ortho_exons, aligned_seq, exon_positions, verbose=False):
-
 	maps = []
 
 	if len(list(aligned_seq.keys())) > 2:
@@ -238,9 +234,7 @@ def maps_evaluate (min_similarity, rep_species, rep_species_exons, ortho_exons, 
 		print('==============================================================')
 		print(rep_species, "        ", other_species)
 
-
 	for rep_exon_ct in range(len(rep_species_exons)):
-
 		padded_count_human = "{0:03d}".format(rep_exon_ct+1)
 		if padded_count_human not in exon_positions[rep_species]: continue
 		[rep_start, rep_end] = exon_positions[rep_species][padded_count_human]
@@ -255,31 +249,29 @@ def maps_evaluate (min_similarity, rep_species, rep_species_exons, ortho_exons, 
 			if overlap(rep_start, rep_end, other_start, other_end):
 
 				map = Map()
-				map.species_1    = rep_species
-				map.species_2    = other_species
+				map.species_1  = rep_species
+				map.species_2  = other_species
 
-				map.exon_id_1    = rep_species_exons[rep_exon_ct]['exon_id']
-				map.exon_id_2    = ortho_exons[ortho_exon_ct]['exon_id']
+				map.exon_id_1  = rep_species_exons[rep_exon_ct].exon_id
+				map.exon_id_2  = ortho_exons[ortho_exon_ct].exon_id
 
-				map.exon_known_1 = rep_species_exons[rep_exon_ct]['is_known']
-				map.exon_known_2 = ortho_exons[ortho_exon_ct]['is_known']
-
-				if ortho_exons[ortho_exon_ct]['is_known'] == 2:
-					map.source   = 'sw_sharp'
-				elif ortho_exons[ortho_exon_ct]['is_known'] == 3:
-					map.source   = 'usearch'
-				else:
-					map.source   = 'ensembl'
+				# if ortho_exons[ortho_exon_ct].is_known == 2:
+				# 	map.source   = 'sw_sharp'
+				# elif ortho_exons[ortho_exon_ct].is_known == 3:
+				# 	map.source   = 'usearch'
+				# else:
+				# 	map.source   = 'ensembl'
+				map.source   = 'ensembl'
 
 				exon_seq_human   = aligned_seq[rep_species][rep_start:rep_end].replace('#','-')
 				exon_seq_other   = aligned_seq[other_species][other_start:other_end].replace('#','-')
-				[seq_human, seq_other] = pad_the_alnmt (exon_seq_human,rep_start,
+				[seq_human, seq_other] = pad_the_alnmt (exon_seq_human, rep_start,
 														exon_seq_other, other_start)
 				seq = {'rep':seq_human, 'other':seq_other}
 				seq = strip_gaps(seq)
 				if not seq:
-					c=inspect.currentframe()
-					print(" in %s:%d" % ( c.f_code.co_filename, c.f_lineno))
+					c = inspect.currentframe()
+					print(f"in {c.f_code.co_filename}:{c.f_lineno}: no seq")
 					return []
 
 				map.similarity = pairwise_tanimoto(seq['rep'], seq['other'])
@@ -301,7 +293,7 @@ def maps_evaluate (min_similarity, rep_species, rep_species_exons, ortho_exons, 
 
 ##############################
 def get_exon_pepseqs_batch(cursor, exon_list, db_name=None):
-	exon_string = ",".join([str(exon['exon_id']) for exon in exon_list])
+	exon_string = ",".join([str(exon.exon_id) for exon in exon_list])
 	rows = error_intolerant_search(cursor, f"select exon_id, protein_seq from {db_name}.exon_seq where exon_id in ({exon_string})")
 	if not rows: return {}
 	return dict(rows)
@@ -316,7 +308,7 @@ def find_relevant_exons_and_pepseqs (cursor, all_exons, db_name, ref_species):
 	# 1) choose exons that I need
 	for exon in all_exons:
 		# let's just stick to canonical exons for now - there is too musch stuff going on
-		if exon['is_canonical'] and not exon['is_coding']:
+		if exon.is_canonical and not exon.is_coding:
 			continue
 		# if exon['covering_exon'] > 0:
 		# 	continue
@@ -331,10 +323,10 @@ def find_relevant_exons_and_pepseqs (cursor, all_exons, db_name, ref_species):
 	pepseqs = get_exon_pepseqs_batch(cursor, relevant_exons, db_name=db_name)
 	if not pepseqs: return relevant_exons
 
-	relevant_exons.sort(key=lambda exon: exon['start_in_gene'])
+	relevant_exons.sort(key=lambda exon: exon.start_in_gene)
 	for i in range(len(relevant_exons)):
 		exon   = relevant_exons[i]
-		pepseq = pepseqs.get(exon['exon_id'], None)
+		pepseq = pepseqs.get(exon.exon_id, None)
 		if not pepseq:
 			to_remove.append(i)
 			continue
@@ -342,7 +334,7 @@ def find_relevant_exons_and_pepseqs (cursor, all_exons, db_name, ref_species):
 		if not pepseq:
 			to_remove.append(i)
 		else:
-			exon['pepseq'] = pepseq
+			exon.pepseq = pepseq
 
 	for i in range (len(to_remove)-1, -1, -1):
 		del relevant_exons[to_remove[i]]
@@ -370,10 +362,10 @@ def decorate_and_concatenate (exons):
 	if not exons: return
 	# assumes that the exons are sorted in the order of appearance on main strand
 	# also assume that they are all coded on the same strand
-	if exons[0]['strand']<0: exons.reverse()
+	if exons[0].strand<0: exons.reverse()
 	# get rid of the stop codon
-	if exons[-1].get('pepseq', None):
-		if exons[-1]['pepseq'][-1]=='*': exons[-1]['pepseq'] =  exons[-1]['pepseq'][:-1]
+	if exons[-1].pepseq:
+		if exons[-1].pepseq[-1]=='*': exons[-1].pepseq =  exons[-1].pepseq[:-1]
 	# formatting mini-language https://docs.python.org/3.8/library/string.html#formatspec
 	# this is adding the exon number to the alignment (am I hacking here or what)
 	# for exaple, for pepseq = "JKHHG", count=5
@@ -381,12 +373,13 @@ def decorate_and_concatenate (exons):
 	decorated_seq = ""
 	count = 1
 	for exon in exons:
-		pepseq = exon.get('pepseq', '')
+		pepseq = exon.pepseq if exon.pepseq else ''
 		padded_count = "{0:03d}".format(count)
 		decorated_seq += 'B'+padded_count+pepseq+'Z'
 		count += 1
 
 	return decorated_seq
+
 
 #########################################
 # profile decorator is for the use with kernprof (a line profiler):
@@ -414,12 +407,11 @@ def make_maps(cursor, ensembl_db_name, rep_species, ortho_species, relevant_exon
 	if not rep_species_seq or not ortho_seq: return maps
 
 	aligned_seq = {rep_species: smith_waterman_context(rep_species_seq, ortho_seq, -5, -3)[0],
-	               ortho_species: smith_waterman_context(rep_species_seq, ortho_seq, -5, -3)[1]}
+					ortho_species: smith_waterman_context(rep_species_seq, ortho_seq, -5, -3)[1]}
 	if verbose: print()
 	if verbose: print(f">{rep_species}\n{aligned_seq[rep_species]}")
 	if verbose: print(f">{ortho_species}\n{aligned_seq[ortho_species]}")
 	if not aligned_seq[rep_species] or not aligned_seq[ortho_species]: return []
-
 
 	# find the positions of the exons in the alignment
 	exon_positions = {}
@@ -432,7 +424,6 @@ def make_maps(cursor, ensembl_db_name, rep_species, ortho_species, relevant_exon
 		if verbose: print()
 		if verbose: print(species, exon_positions[species])
 	# fill in the actual map values
-	# TODO what should be the min exon similarity? store somehwere in config
 	# maps_evaluate (min_similarity, rep_species, rep_species_exons, ortho_exons, aligned_seq, exon_positions, verbose=False)
 	maps = maps_evaluate(0.8, rep_species, relevant_exons_rep_species, relevant_ortho_exons, aligned_seq, exon_positions, verbose=False)
 	if verbose:
