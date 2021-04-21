@@ -39,13 +39,13 @@ def switch_to_db(cursor, db_name):
 	return True
 
 
-########
+########################################
 def val2mysqlval(value):
-	if  value is None:
-		return  "null "
+	if value is None:
+		return "null"
 	elif type(value) is str:
-		return "\'%s\'" % value
-	return "{}".format(value)
+		return "\'%s\'" % value.replace("'", "\\'")
+	return f"{value}"
 
 #########################################
 def store_without_checking(cursor, table, fields, verbose=False, database=None, ignore=False):
@@ -79,34 +79,32 @@ def store_without_checking(cursor, table, fields, verbose=False, database=None, 
 		row_id = -1
 	return row_id
 
+
 #########################################
-def store_or_update(cursor, table, fixed_fields, update_fields, verbose=False, primary_key='id'):
+def store_or_update(cursor, table, fixed_fields, update_fields=None, verbose=False, primary_key='id'):
 	# the update heuristics below expect that the type us either in or str
 
 	primary_keys = []
 
 	# check if the row exists
-	conditions = " and ".join(["{}={}".format(k,val2mysqlval(v)) for k,v in fixed_fields.items()])
+	conditions = " and ".join([f"{k}={val2mysqlval(v)}" for k, v in fixed_fields.items()])
 	qry = "select %s from %s  where %s "  % (primary_key, table, conditions)
-	rows   = error_intolerant_search (cursor, qry)
+	rows   = error_intolerant_search(cursor, qry)
 	exists = rows and len(rows)>0
 
 	if exists:
 		primary_keys = [row[0] for row in rows]
-		if type(primary_keys[0])== int:
-			row_id_string = ",".join(["{}".format(row_id) for row_id in primary_keys])
-		else:
-			row_id_string = ",".join(["'{}'".format(row_id) for row_id in primary_keys])
+		row_id_string = ",".join([f"{row[0]}"for row in rows])
 
-		if verbose: print("\nqry + exists? {} {}".format(exists, row_id_string))
+		if verbose: print(f"\nqry + exists? {exists} {row_id_string}")
 		if not update_fields: return primary_keys
 
 		if verbose: print("exists; updating")
 		qry  = "update %s set " % table
-		qry += ",".join(["{}={}".format(k,val2mysqlval(v)) for k,v in update_fields.items()])
-		qry += " where {} in ({})".format(primary_key, row_id_string)
+		qry += ",".join([f"{k}={val2mysqlval(v)}" for k, v in update_fields.items()])
+		qry += f" where {primary_key} in ({row_id_string})"
 
-	else: # if not, make a new one
+	else:  # if not, make a new one
 		if verbose: print("does not exist; making new one")
 		qry  = "insert into %s " % table
 		keys = list(fixed_fields.keys())
@@ -118,12 +116,12 @@ def store_or_update(cursor, table, fixed_fields, update_fields, verbose=False, p
 		qry += " values "
 		qry += "(" + ",".join([val2mysqlval(v) for v in vals]) + ")"
 
-	rows   = search_db (cursor, qry, verbose)
+	rows   = search_db(cursor, qry, verbose)
 
-	if verbose: print("qry:",qry,"\n", "rows:", rows)
+	if verbose: print("qry:", qry, "\n", "rows:", rows)
 	# if there is a return, it is an error msg
 	if rows:
-		rows   = search_db (cursor, qry, verbose=True)
+		rows   = search_db(cursor, qry, verbose=True)
 		print(rows[0])
 		return False
 
@@ -303,4 +301,18 @@ def connect_to_db (db_name, user=None, passwd=None):
 		exit(1)
 
 	return db
+
+
+def db_connect(config, db_name):
+	db = connect_to_mysql(config.mysql_conf_file)
+	cursor = db.cursor()
+	switch_to_db(cursor, db_name)
+	search_db(cursor, "set autocommit = 1")  # ... I thought it was a default
+	return cursor
+
+
+def db_conn_close(cursor):
+	db = cursor.connection
+	cursor.close()
+	db.close()
 

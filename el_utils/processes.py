@@ -1,11 +1,15 @@
 
 import multiprocessing
 import os
+import psutil
+from time import sleep
+from sys import stderr
+from random import random
 
 ########################################
 def get_process_id():
 
-    return os.getpid()
+	return os.getpid()
 
 # don't know how to do this if there are no other_args,
 # except by passing it an empty list in th place
@@ -126,7 +130,39 @@ def round_robin_pll(number_of_chunks,embarassingly_pllbl_fn, list, other_args,):
 
 
 ###########
-def parallelize(number_of_chunks, embarassingly_pllbl_fn, list, other_args, strategy=None, weights=None):
+def queue_handler(task_queue, target_fn, other_args, **kwargs):
+
+	sleeptime = kwargs.get("sleeptime", 3)
+
+	while not task_queue.empty():
+		conditions_met = True
+		if "load_threshold" in kwargs and os.getloadavg()[0] > kwargs["load_threshold"]:
+			conditions_met = False
+		if "available_mem_threshold" in kwargs and psutil.virtual_memory()[1] < kwargs["available_mem_threshold"]:
+			conditions_met = False
+		if conditions_met:
+			argument = task_queue.get()
+			target_fn(argument, other_args)
+		sleep(sleeptime)
+	return True
+
+
+def parent_workers(number_of_chunks, target_fn, input_list, other_args, kwargs):
+	# kwargs define backoff strategy
+	if not kwargs or len(kwargs) == 0:
+		print("kwargs must be defined in parent_workers call",  file=stderr)
+		exit(1)
+	task_queue = multiprocessing.Queue()
+	for argument in input_list:
+		task_queue.put(argument)
+	for n in range(number_of_chunks):
+		p = multiprocessing.Process(target=queue_handler, name=f"{n}",
+									args=(task_queue, target_fn, other_args), kwargs=kwargs)
+		print(p.name)
+		p.start()
+
+###########
+def parallelize(number_of_chunks, embarassingly_pllbl_fn, list, other_args, strategy=None, weights=None, kwargs={}):
 
 	if number_of_chunks < 1:
 		print("number of processes is expected to be >= 1")
@@ -139,7 +175,10 @@ def parallelize(number_of_chunks, embarassingly_pllbl_fn, list, other_args, stra
 			ret = embarassingly_pllbl_fn(list, other_args)
 		return ret
 
-	if strategy == 'round_robin':
+	if strategy == 'parent_workers':
+		return parent_workers(number_of_chunks, embarassingly_pllbl_fn, list, other_args, kwargs=kwargs)
+
+	elif strategy == 'round_robin':
 		return round_robin_pll(number_of_chunks,embarassingly_pllbl_fn, list, other_args)
 	elif strategy == 'weighted':
 		if not weights:
@@ -186,22 +225,73 @@ def wait_join(processes):
 		process.join()
 
 
+########################################
+########################################
 def test_fn(list, other_args, return_dict):
 	pid = get_process_id()
-	new_list = [l+pid for l in list]
+	new_list = [l + pid for l in list]
 	return_dict[pid] = new_list
 	return
 
-def main():
-	inlist = [-3, -2, -1, 0, 0, 0, 1, 2, 3 ]
-	number_of_chunks = 3
+
+def test_return(number_of_chunks=1):
+	inlist = [-3, -2, -1, 0, 0, 0, 1, 2, 3]
 	other_args = []
 	return_dict = pll_w_return(number_of_chunks, test_fn, inlist, other_args)
-	for k, v  in return_dict.items():
-		print (k,v)
+	for k, v in return_dict.items():
+		print(k, v)
 
+
+def test_weighted_partition(number_of_chunks=3):
+	input_list = [1, 2, 3, 4, 5, 6, 7, 8]
+	weights = [36, 25, 18, 7, 5, 3, 1, 1]
+	partition, partition_weight = weighted_partition(number_of_chunks, input_list, weights)
+	print(partition)
+	print(partition_weight)
+
+
+def test_fn_2(mainarg, other_args):
+	print(f"{os.getpid()}  {mainarg}  {other_args[0]}")
+	return
+
+
+def toy_queue_handler(task_queue, target_fn, other_args):
+	print(">>>>", get_process_id())
+	while not task_queue.empty():
+		r = random()
+		conditions_met = r<0.5
+		if conditions_met:
+			argument = task_queue.get()
+			target_fn(argument, [r])
+		else:
+			sleep(3)
+	return True
+
+
+def toy_parent_workers(number_of_chunks, target_fn, input_list, other_args):
+	task_queue = multiprocessing.Queue()
+	for argument in input_list:
+		task_queue.put(argument)
+	for n in range(number_of_chunks):
+		p = multiprocessing.Process(target=toy_queue_handler, args=(task_queue, target_fn, other_args))
+		print(p.name)
+		p.start()
+
+def test_parent_workers(number_of_chunks=3):
+	input_list = [1, 2, 3, 4, 5, 6, 7, 8]
+	toy_parent_workers(number_of_chunks, test_fn_2, input_list, [])
+	pass
+
+
+def main():
+	# test_weighted_partition(number_of_chunks=5)
+	# print("==============")
+	# test_return(number_of_chunks=3)
+	# print("==============")
+	test_parent_workers(number_of_chunks=1)
 	print("==============")
-	weighted_partition(3, [1,2,3,4,5,6,7,8],  [36, 25, 18, 7, 5, 3, 1, 1])
+
+
 
 #########################################
 if __name__ == '__main__':

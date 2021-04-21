@@ -2,31 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a88455c-d4d8-4fee-a09f-206308ed9735" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/exolocator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/exolocator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/perl5local.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/15_known_exons/22_load_ortho_maps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03_additional_tables/02_add_tables.py" beforeDir="false" afterPath="$PROJECT_DIR$/03_additional_tables/02_add_tables.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03_additional_tables/03_exon_map_tables.py" beforeDir="false" afterPath="$PROJECT_DIR$/03_additional_tables/03_exon_map_tables.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_known_exons/14_gene2exon.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/14_gene2exon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_known_exons/20_fill_exon_seq_id_field.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/20_fill_exon_seq_id_field.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/15_known_exons/18_load_exon_seqs.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/18_load_exon_seqs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/15_known_exons/21_make_ortho_maps.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/21_make_ortho_maps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/15_known_exons/22_map_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/23_map_stats.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/15_known_exons/25_ortho_exon_map_to_msa.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/25_ortho_exon_map_to_msa.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/25_ortho_exon_map_to_msa.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/27_para_exon_map_to_msa.py" beforeDir="false" afterPath="$PROJECT_DIR$/27_para_exon_map_to_msa.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/exon.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/exon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/map.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/map.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/el_utils/mysql.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/mysql.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/el_utils/processes.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/processes.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />

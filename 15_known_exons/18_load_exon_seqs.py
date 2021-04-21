@@ -29,6 +29,8 @@ def main():
 
 	db = connect_to_mysql(Config.mysql_conf_file)
 	cursor = db.cursor()
+	search_db(cursor, "set global local_infile = 'ON'")
+
 	[all_species, ensembl_db_name] = get_species(cursor)
 	for species in all_species:
 		print(f"{species}: deleting from {ensembl_db_name[species]}.{table}")

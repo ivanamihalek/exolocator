@@ -117,7 +117,11 @@ def human_genes_with_map_to_tax_group(cursor, ensembl_db_name, rep_species_db_id
 	qry  = f"select distinct(gene_id) from {ensembl_db_name['homo_sapiens']}.orthologues "
 	qry += f"where cognate_genome_db_id='{rep_species_db_id}'"
 	# the following can fail only if there are no orthologues at all
-	return [line[0] for line in hard_landing_search(cursor, qry)]
+	ret  = error_intolerant_search(cursor, qry)
+	if not ret:
+		print(f"no orthologues found for cognate_genome_db_id {rep_species_db_id}")
+		return []
+	return [line[0] for line in ret]
 
 
 #########################################
@@ -125,7 +129,9 @@ def maps_for_rep_species(representative_species, other_args):
 
 	# tax_group_members = members of the taxonomy group represented by representative_species
 	outdir  = other_args[0]
-	outfile = open(f"{outdir}/{representative_species}.maps.tsv", "w")
+	os.makedirs(f"{outdir}/{representative_species}", exist_ok=True)
+	outfile = open(f"{outdir}/{representative_species}/exon_map.tsv", "w")
+
 	ensembl_db_name = other_args[1]
 	tax_group_members = other_args[2:]
 	db = connect_to_mysql(Config.mysql_conf_file)
@@ -142,7 +148,10 @@ def maps_for_rep_species(representative_species, other_args):
 	rep_species_db_id = cognate_genome_db_id[representative_species]
 	if verbose: print(f"{representative_species} {cognate_genome_db_id}")
 
-	human_genes = human_genes_with_map_to_tax_group(cursor, ensembl_db_name, rep_species_db_id)
+	if representative_species == "homo_sapiens":
+		human_genes = get_gene_ids(cursor, biotype='protein_coding', db_name=ensembl_db_name[representative_species])
+	else:  # we go through a bit of redirection
+		human_genes = human_genes_with_map_to_tax_group(cursor, ensembl_db_name, rep_species_db_id)
 	if verbose: print(f"number of human genes that map to this taxonomical group: {len(human_genes)}")
 
 	orthologue = {}
@@ -153,11 +162,16 @@ def maps_for_rep_species(representative_species, other_args):
 	# for human_gene_id in [621232]:
 	for human_gene_id in human_genes:
 		switch_to_db(cursor,  ensembl_db_name['homo_sapiens'])
-		qry  = "select c2.cognate_gene_id, c2.cognate_genome_db_id "
-		qry += "from orthologues c1 left join orthologues c2 on c1.gene_id=c2.gene_id "
-		qry += f"where c1.gene_id={human_gene_id} and c1.cognate_genome_db_id='{rep_species_db_id}'"
+		if representative_species == "homo_sapiens":  # we are interested in all human genes
+			qry  = "select cognate_gene_id, cognate_genome_db_id from orthologues  "
+			qry += f"where gene_id={human_gene_id}"
+		else:   # we are interested in the genes from reps species that map to human gene
+			qry  = "select c2.cognate_gene_id, c2.cognate_genome_db_id "
+			qry += "from orthologues c1 left join orthologues c2 on c1.gene_id=c2.gene_id "
+			qry += f"where c1.gene_id={human_gene_id} and c1.cognate_genome_db_id='{rep_species_db_id}'"
 		ret = error_intolerant_search(cursor, qry)
 		if not ret: continue  # no human orthologues in the representative species
+		if representative_species == "homo_sapiens": orthologue[representative_species] = human_gene_id
 		for line in ret:
 			[cognate_gene_id, belongs_to_genome_db_id] = line
 			if belongs_to_genome_db_id not in cognate_genome_db_id.values(): continue # we're not interested today
@@ -200,12 +214,15 @@ def main():
 		if len(members[rep_species])==1: continue
 		print(f"{rep_species} {len(members[rep_species])} ")
 	print("================================")
-
+	# TODO look into cases where the total coding length is not divisible by 3
 	# TODO uncomment when I'm done with this
 	# for species in all_species:
 	# 	create_index(cursor, ensembl_db_name[species], "exon_seq", "exon_id_idx", ["exon_id"])
 
-	for rep_species in members.keys():
+	#for rep_species in members.keys():
+	for rep_species in ['carassius_auratus']:
+		if len(members[rep_species])==1: continue
+		print(f"{rep_species} {len(members[rep_species])} ")
 		maps_for_rep_species(rep_species, [outdir, ensembl_db_name]+members[rep_species])
 
 	cursor.close()

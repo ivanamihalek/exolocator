@@ -291,6 +291,7 @@ def multiple_alignment_genes(gene_list, other_args):
 
 #########################################
 def main():
+	# TODO: cplit codons
 	no_processes = 1
 	rep_species = 'monodelphis_domestica'
 
