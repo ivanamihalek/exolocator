@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a88455c-d4d8-4fee-a09f-206308ed9735" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/15_known_exons/22_load_ortho_maps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_known_exons/18_load_exon_seqs.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/18_load_exon_seqs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_known_exons/21_make_ortho_maps.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/21_make_ortho_maps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_known_exons/22_map_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/23_map_stats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_known_exons/25_ortho_exon_map_to_msa.py" beforeDir="false" afterPath="$PROJECT_DIR$/15_known_exons/25_ortho_exon_map_to_msa.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/mysql.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/mysql.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/processes.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/processes.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +28,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="settings.editor.selected.configurable" value="Errors" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -45,8 +39,14 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1605341400878</updated>
+      <workItem from="1622037774893" duration="1417000" />
+      <workItem from="1625152383926" duration="2434000" />
+      <workItem from="1625842315467" duration="429000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
     <state x="2381" y="175" width="1142" height="729" key="SettingsEditor" timestamp="1605341514532">
