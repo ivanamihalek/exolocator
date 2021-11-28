@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a88455c-d4d8-4fee-a09f-206308ed9735" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/90_other_stuff/table_for_3D_viewer_testing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/90_other_stuff/get_canonical_translations.py" beforeDir="false" afterPath="$PROJECT_DIR$/90_other_stuff/get_canonical_translations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/el_utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +45,7 @@
       <workItem from="1622037774893" duration="1417000" />
       <workItem from="1625152383926" duration="2434000" />
       <workItem from="1625842315467" duration="429000" />
+      <workItem from="1633604940949" duration="686000" />
     </task>
     <servers />
   </component>

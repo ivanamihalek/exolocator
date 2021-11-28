@@ -1,8 +1,8 @@
 import sys, os,  re, subprocess
 import string, random
 from subprocess import Popen, PIPE, STDOUT
-from tempfile   import NamedTemporaryFile
-from math       import sqrt
+from tempfile import NamedTemporaryFile
+from math import sqrt
 
 
 ###########
@@ -16,6 +16,79 @@ def isinteger(x):
     except:
         return False
     return True
+
+
+
+def die_if_not_dir(dirname, prepend="", check_writable=True, check_absolute=False, logspecial=None):
+
+    errmsg = None
+    if not dirname:
+        errmsg = f"{prepend} directory name not specified."
+    elif not os.path.exists(dirname):
+        errmsg = f"{prepend} directory {dirname} not found."
+    elif not os.path.isdir(dirname):  # link to dir is ok, it will return True here
+        errmsg = f"{prepend} {dirname} not directory."
+    elif check_writable and not os.access(dirname, os.W_OK):  # is this writeable by us
+        errmsg = f"{prepend} {dirname} is not writable."
+    elif check_absolute and not os.path.isabs(dirname):
+        errmsg = f"{prepend} {dirname} is not absolute."
+
+    if errmsg:
+        log_trace(errmsg, logspecial)
+        exit(1)
+    return
+
+
+def die_if_not_nonzero_file(filename, prepend="", logspecial=None):
+
+    errmsg = None
+    if not filename:
+        errmsg = f"{prepend} file name not specified."
+    elif not os.path.exists(filename):
+        errmsg = f"{prepend} file {filename} not found."
+    elif os.path.isdir(filename):
+        errmsg = f"{prepend} {filename} is a directory, not a file."
+    elif os.path.getsize(filename) == 0:
+        errmsg = f"{prepend} {filename} is empty."
+
+    if errmsg:
+        log_trace(errmsg, logspecial)
+        exit(1)
+    return
+
+
+def die_if_not_runnable(runnable, prepend="", logspecial=None):
+
+    errmsg = None
+    if not runnable:
+        errmsg = f"{prepend} runnable name not specified."
+    elif not os.path.exists(runnable):
+        errmsg = f"{prepend} runnable {runnable} not found."
+    elif os.path.isdir(runnable):
+        errmsg = f"{prepend} {runnable} is a directory, not a runnable."
+    elif not os.access(runnable, os.X_OK):  # is this executable by us
+        errmsg = f"{prepend} {runnable} is not runnable."
+
+    if errmsg:
+        log_trace(errmsg, logspecial)
+        exit(1)
+    return
+
+
+def die_if_not_symlink(linkname, prepend="", logspecial=None):
+
+    errmsg = None
+    if not linkname:
+        errmsg = f"{prepend} symlink name not specified."
+    elif not os.path.exists(linkname):
+        errmsg = f"{prepend} symlink {linkname} not found."
+    elif not os.path.islink(linkname):  # link to dir is ok, it will return True here
+        errmsg = f"{prepend}{linkname} not directory."
+
+    if errmsg:
+        log_trace(errmsg, logspecial)
+        exit(1)
+    return
 
 
 #########################################
@@ -445,6 +518,7 @@ def mkdir_p (path):
         sys.exit(1) 
 
 #########################################
+
 def output_fasta (filename, headers, sequence):
 
     if not type(sequence) is dict: return False
