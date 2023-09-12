@@ -1,69 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="7a88455c-d4d8-4fee-a09f-206308ed9735" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/90_other_stuff/table_for_3D_viewer_testing.py" afterDir="false" />
+    <list default="true" id="1d1d2e30-cf13-4029-89c1-81402ebedf8b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/exolocator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/exolocator.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/90_other_stuff/get_canonical_translations.py" beforeDir="false" afterPath="$PROJECT_DIR$/90_other_stuff/get_canonical_translations.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/80_production/MAP2K2.orthos.fasta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/80_production/NARS.orthos.fasta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/90_other_stuff/table_for_3D_viewer_testing.py" beforeDir="false" afterPath="$PROJECT_DIR$/90_other_stuff/table_for_3D_viewer_testing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Python Script" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectId" id="1kGyohZxsVkYUNRqO7x5fEGxLUe" />
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="0dfhrmea" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="22BOuDKG0W2hmUdbgA52XncFMn0" />
   <component name="ProjectViewState">
     <option name="foldersAlwaysOnTop" value="false" />
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "/home/ivana/projects/abca4",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  }
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="7a88455c-d4d8-4fee-a09f-206308ed9735" name="Default Changelist" comment="" />
-      <created>1605341400878</created>
+      <changelist id="1d1d2e30-cf13-4029-89c1-81402ebedf8b" name="Changes" comment="" />
+      <created>1639307737055</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1605341400878</updated>
-      <workItem from="1622037774893" duration="1417000" />
-      <workItem from="1625152383926" duration="2434000" />
-      <workItem from="1625842315467" duration="429000" />
-      <workItem from="1633604940949" duration="686000" />
+      <updated>1639307737055</updated>
+      <workItem from="1643643683548" duration="46000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="2381" y="175" width="1142" height="729" key="SettingsEditor" timestamp="1605341514532">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2381" y="175" width="1142" height="729" key="SettingsEditor/0.0.1920.1044/1920.0.1920.1080@1920.0.1920.1080" timestamp="1605341514532" />
-    <state x="2688" y="455" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1605345375234">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2688" y="455" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1044/1920.0.1920.1080@1920.0.1920.1080" timestamp="1605345375234" />
-    <state x="364" y="0" width="1556" height="1036" key="dock-window-1" timestamp="1605522610731">
-      <screen x="0" y="0" width="1920" height="1044" />
-    </state>
-    <state x="364" y="0" width="1556" height="1036" key="dock-window-1/0.0.1920.1044/1920.0.1920.1080@1920.0.1920.1080" timestamp="1605522610731" />
   </component>
 </project>

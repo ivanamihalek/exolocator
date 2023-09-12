@@ -1,7 +1,10 @@
 #!/usr/bin/python3 -u
-import os
 
-from sys import  stderr
+import os
+import requests
+
+
+from sys import stderr
 from el_utils.ensembl import *
 from config import Config
 from el_utils.utils import die_if_not_nonzero_file
@@ -57,11 +60,63 @@ def find_pdb_paths_in_swissmodel_dir(sm_home, uniprot_id):
     if not os.path.exists(sm_path): return []
     return [f"{uni_sub_path}/swissmodel/{pdb}" for pdb in os.listdir(sm_path)]
 
+
+def varsome_canonica_transcripts(gene):
+    # response = requests.get(f"https://api.varsome.com/lookup/gene/{gene}/hg19?add-AMP-annotation=1")
+    api_key = os.getenv('VARSOME_API_KEY')
+    headers = {'Accept': 'application/json',
+               'user-agent': 'VarSomeApiClientPython/2.0',
+               'Authorization':  "Token " + api_key}
+    response = requests.get(f"https://api.varsome.com/lookup/gene/{gene}", headers=headers)
+    # print(response.status_code)
+    annotation = json.loads(response.text)
+
+    # trying to understand the packaging
+    # entry = annotation
+    # print(type(entry))
+    # if type(entry) == dict: print(entry.keys())
+
+    # for the gene-level annotation
+    canonical_transcipts = []
+    for transcript in annotation['transcripts']:
+        # print(transcript["name"], transcript["canonical"], type(transcript["canonical"]))
+        if transcript["canonical"] and transcript["name"][:4] == 'ENST':
+            canonical_transcipts.append(transcript["name"])
+
+    # for variant-level annotation
+    # for variant in annotation['saphetor_known_pathogenicity'][0]['items'][0]['annotations']['UNIPROT UniProt Variants']:
+    #     codon = variant.get("codon", None)
+    #     if not codon: continue
+    #     print(variant["codon"], variant["acmg_reannotated"])
+
+    return canonical_transcipts
+
+
+def varsome_variant_count(transcript):
+    # to use beta, the key is not needed
+    response = requests.get(f"https://beta-api.varsome.com/3D-protein-model/1019/{transcript}")
+    print(transcript, response.status_code)
+    if response.status_code != 200: return
+    annotation = json.loads(response.text)
+    for entry in annotation:
+        for k, v in entry.items():
+            if k in ['likely_pathogenic', 'pathogenic', 'benign', 'likely_benign', 'uncertain_significance']:
+                print(k, len(set(info['codon'] for info in v)))
+            else:
+                print(k, v)
+    pass
+
+
 #########################################
 def main():
     sm_home = "/storage/databases/swissmodel/human/"
     with open("top_genes.tsv") as inf:
         gene_names = [line.strip().split("\t")[0] for line in inf]
+
+    for canonical_transcript in varsome_canonica_transcripts("KRT14"):
+        print("*************************")
+        varsome_variant_count(canonical_transcript)
+    exit(1)
 
     db = connect_to_mysql(Config.mysql_conf_file)
     cursor = db.cursor()
@@ -105,9 +160,11 @@ def main():
                     some_paths_non_primary = True
                     pdb_paths.extend(alt_uniprot_id_paths)
             out.extend([str(some_paths_non_primary)] + pdb_paths)
+
         print("\t".join(out))
 
     cursor.close()
+
 
 #########################################
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ sel#! /usr/bin/perl -w
 use strict;
 use warnings FATAL => 'all';
 use Net::FTP;
-my $release_num = 101;
+my $release_num = 110;
 
 #my $local_repository = 
 #    "/mnt/ensembl-mirror/release-".$release_num."/mysql";

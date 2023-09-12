@@ -2,7 +2,8 @@
 
 use warnings;
 use strict;
-my $release_num = 101;
+use Cwd;
+my $release_num = 110;
 
 my $local_repository    = "/storage/databases/ensembl-$release_num/fasta";
 my $db_formatting_tool  = "/usr/bin/makeblastdb";
@@ -25,31 +26,38 @@ foreach my $animal (@farm) {
 	print "\n----------------------------\n";
 	print " ... formating  $animal ... \n\n";
 
-    foreach my $dir  ( "pep",  "dna" ){
+    foreach my $dir  ( "dna", 'pep' ){
 
 		chdir $local_repository;
 		chdir "$animal/$dir";
-
-		my @fastas = split "\n",  `ls *.fa`;
+        print ("I am in ", getcwd, "\n");
+		my @fastas = split "\n",  `ls *.fa.gz`;
 		for my $fasta (@fastas) {
+		    my $new_db_name = $fasta;
+		    $new_db_name =~ s/.gz$//;
+		    my $title = $new_db_name;
 			my $cmd;
 			if ( $dir eq "dna") {
-				if ((-e "$fasta.nsq" && ! -z  "$fasta.nsq") || (-e "$fasta.00.nsq" && ! -z  "$fasta.00.nsq")) {
-					print "\t found $fasta \n";
+				if ((-e "$new_db_name.nsq" && ! -z  "$new_db_name.nsq") || (-e "$new_db_name.00.nsq" && ! -z  "$new_db_name.00.nsq")) {
+					print "\t found formatted $fasta \n";
 
 				} else {
 					print "\t formatting $fasta\n";
-					$cmd = "$db_formatting_tool -in $fasta -dbtype nucl -parse_seqids";
+					# $cmd = "$db_formatting_tool -in $fasta -dbtype nucl -parse_seqids";
+					$cmd = "gunzip -c $fasta | $db_formatting_tool -out $new_db_name -dbtype nucl -parse_seqids";
+					$cmd .= " -title $title";
 					(system $cmd) && die " error running $cmd\n";
 				}
 
 			} else {
-				if (-e "$fasta.psq" && ! -z  "$fasta.psq") {
-					print "\t found $fasta \n";
+				if (-e "$new_db_name.psq" && ! -z  "$new_db_name.psq") {
+					print "\t found formatted $fasta \n";
 
 				} else {
 					print "\t formatting $fasta\n";
-					$cmd = "$db_formatting_tool -in $fasta -dbtype prot -parse_seqids";
+					#$cmd = "$db_formatting_tool -in $fasta -dbtype prot -parse_seqids";
+					$cmd = "gunzip -c $fasta | $db_formatting_tool -out $new_db_name  -dbtype prot -parse_seqids";
+					$cmd .= " -title $title";
 					(system $cmd) && die " error running $cmd\n";
 				}
 			}

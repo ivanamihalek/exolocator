@@ -27,8 +27,22 @@
 
 use strict;
 use warnings FATAL => 'all';
+
+
+sub checksum {
+    # Ensembl is using the unix 'sum' utilty to calcualte the checksums
+    my ($directory, $item, $checksums) = @_;
+	# do the checksum
+	my $sum_original = `grep $item $checksums | awk '{print \$1, \$2}'`; chomp $sum_original;
+	my $sum = `sum $directory/$item | awk '{print \$1, \$2}'`; chomp $sum;
+	($sum_original eq $sum) || die " checksum mismatch\nexpected: $sum_original\n     got: $sum\n";
+	print("\t\tchecksum ok\n");
+}
+
+
+
 use Net::FTP;
-my $release_num = 101;
+my $release_num = 110;
 my $local_repository = "/storage/databases/ensembl-$release_num/fasta";
 $| = 1; # flush stdout
 
@@ -55,8 +69,8 @@ my @skip = ("ancestral_alleles", "caenorhabditis_elegans",
 	    "ciona_intestinalis",  "ciona_savignyi", "drosophila_melanogaster",
 	    "saccharomyces_cerevisiae");
 # ensembl has started collecting breeds for some animals - not of interest here
-my @breed = ("mus_musculus_", "hybrid", "oryzias_latipes_", "sus_scrofa_", "capra_hircus_",
-			"cyprinus_carpio_", "ovis_aries_", "astyanax_mexicanus_");
+my @breed = ( "astyanax_mexicanus_", "bos_taurus_",  "capra_hircus_", "gallus_gallus_",  "hybrid",  "mus_musculus_",
+        "oryzias_latipes_", "rattus_norvegicus_", "sus_scrofa_", "cyprinus_carpio_", "ovis_aries_");
 # astyanax_mexicanus_pachon is an older build of astyanax_mexicanus
 
 my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
@@ -64,7 +78,6 @@ my ($dir, $local_dir, $foreign_dir,  @contents, $item, $unzipped);
 open (LOG, ">ensembl_download.log") || die "error opening log: $!\n";
 
 my $ct = 0;
-
 #@farm = ('homo_sapiens');
 foreach $animal ( @farm ) {
 
@@ -82,9 +95,9 @@ foreach $animal ( @farm ) {
     $ct += 1;
     print $ct, "  ", $animal, "\n";
 
-
     foreach $dir  ( "pep",  "dna" ){
 
+        print("\tdownloading $dir\n");
  		$local_dir = "$local_repository/$animal/$dir" ;
 		( -e $local_dir )  || `mkdir -p $local_dir`;
 
@@ -101,41 +114,29 @@ foreach $animal ( @farm ) {
 		foreach $item (@contents) {
 			# dns_rm files are smaller (for human) but the idiotic application is masking correct parts of gene
 			# for non-human species the files are 10% smaller - not worth the trouble
-		    # next if ($item!~/\.dna\.toplevel.*gz$/ && $item!~/.*pep.*gz$/ );
-		    next if ($item!~/\.dna\.toplevel.*gz$/ );
+		    next if ($item!~/\.dna\.toplevel.*gz$/ && $item!~/.*pep\.all\.*gz$/ );
+		    # next if ($item!~/\.dna\.toplevel.*gz$/ );
 
 		    print LOG "\t$item\n";
-			print "\t$item\n";
-
-		    $unzipped = $item;
-		    $unzipped =~ s/\.gz$//;
-		    if ( -e "$local_dir/$unzipped" ) {
-				print  LOG  "\t\t $unzipped found in $local_dir\n";
-				next;
-		    }
-
-		    $ftp->get($item) || die "getting $item  failed ", $ftp->message;
-			# do the checsum
-			my $sum_reported = `grep $item $checksums | awk '{print \$1, \$2}'`; chomp $sum_reported;
-			print "\t\t$item downloaded, running checksum\n";
-			my $sum = `sum $item | awk '{print \$1, \$2}'`; chomp $sum;
-			($sum_reported eq $sum) || die " checksum mismatch\n";
-
-		    `mv  $item  $local_dir`;
-	    
-		    print  LOG "\t\t $item moved to $local_dir\n";
-
-		    if (system ( "gunzip $local_dir/$item" )) {
-				print LOG "error uncompressing $local_dir/$item.\n";
-				die  "\t\terror uncompressing $local_dir/$item.\n";
+			print "\tdownloading: $item\n";
+		    if ( -e "$local_dir/$item" ) {
+				print "\t\t $item found in $local_dir; running checksum\n";
+				checksum($local_dir, $item, $checksums);
 		    } else {
-				print "\t\t $item unzipped \n";
+    		    $ftp->get($item) || die "getting $item failed ", $ftp->message;
+    		    print "\t\t$item downloaded, running checksum\n";
+                checksum(".", $item, $checksums);  # will die leaving the file behind
+                # move to its intended place
+		        `mv  $item  $local_dir`;
+		        print  LOG "\t\t $item moved to $local_dir\n";
 		    }
 		}
-
 		# remove the old checksums file
 		`rm -f $checksums`;
     }
+
 }
    
 close LOG;
+
+

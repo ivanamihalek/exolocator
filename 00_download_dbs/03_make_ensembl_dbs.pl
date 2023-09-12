@@ -4,7 +4,7 @@
 
 use strict;
 use warnings;
-my $release_num = 101;
+my $release_num = 110;
 
 my $path_to_db  = "/storage/databases/ensembl-$release_num/mysql";
 (-e $path_to_db) || die "$path_to_db not found\n";
