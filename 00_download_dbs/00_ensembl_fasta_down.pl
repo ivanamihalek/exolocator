@@ -98,6 +98,7 @@ foreach $animal ( @farm ) {
     foreach $dir  ( "pep",  "dna" ){
 
         print("\tdownloading $dir\n");
+
  		$local_dir = "$local_repository/$animal/$dir" ;
 		( -e $local_dir )  || `mkdir -p $local_dir`;
 
@@ -111,12 +112,11 @@ foreach $animal ( @farm ) {
 		$ftp->get($checksums) || die "getting $checksums  failed:", $ftp->message;
 
 		@contents =  $ftp->ls;
+
 		foreach $item (@contents) {
 			# dns_rm files are smaller (for human) but the idiotic application is masking correct parts of gene
 			# for non-human species the files are 10% smaller - not worth the trouble
-		    next if ($item!~/\.dna\.toplevel.*gz$/ && $item!~/.*pep\.all\.*gz$/ );
-		    # next if ($item!~/\.dna\.toplevel.*gz$/ );
-
+		    next if ($item!~/\.dna\.toplevel.*gz$/ && $item!~/\.pep\.all\.fa\.gz$/ );
 		    print LOG "\t$item\n";
 			print "\tdownloading: $item\n";
 		    if ( -e "$local_dir/$item" ) {
@@ -134,7 +134,6 @@ foreach $animal ( @farm ) {
 		# remove the old checksums file
 		`rm -f $checksums`;
     }
-
 }
    
 close LOG;

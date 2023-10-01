@@ -1,4 +1,4 @@
-sel#! /usr/bin/perl -w
+#! /usr/bin/perl -w
 
 use strict;
 use warnings FATAL => 'all';
@@ -96,10 +96,8 @@ foreach $dir ( @dirs_I_need) {
         }
         print "\t$item\n";
 
-        $unzipped = $item;
-        $unzipped =~ s/\.gz$//;
-        if ( -e "$local_dir/$unzipped" ) {
-            print "\t\t $unzipped found in $local_dir\n";
+        if ( -e "$local_dir/$item" ) {
+            print "\t\t $item found in $local_dir\n";
             next;
         }
 
@@ -109,73 +107,10 @@ foreach $dir ( @dirs_I_need) {
         }
 
         `mv  $item  $local_dir`;
-
         print "\t\t $item moved to $local_dir\n";
 
-        if (system ( "gunzip $local_dir/$item" )) {
-            print LOG "error uncompressing $local_dir/$item.\n";
-            print     "\t\terror uncompressing $local_dir/$item.\n";
-        } else {
-            print "\t\t $item unzipped \n";
-        }
-
     }
 }
-
-#
-#################################################################################
-# now take care of compara db
-# caveat here: homology_member.txt.gz is huge - almo 70 GB as og ensembl 101
-# 15 hours to download (using wget), another 1 hr to gunzip to 173 GB
-# can I reconstruct the contents on my own, without downloading?
-# the time to load this shit into mySQL is also becoming ridiculous  - 4hr just for homology table
-$dir       = $compara_dir;
-$local_dir = "$local_repository/$dir" ;
-(-e $local_dir )|| `mkdir -p $local_dir`;
-
-$foreign_dir = "$topdir/$dir";
-
-$ftp->cwd($foreign_dir)
-    or die "Cannot cwd to $foreign_dir: ", $ftp->message;
-@contents =  $ftp->ls;
-
-my $compara_sql = 'ensembl_compara_'.$release_num.'.sql.gz';
- 
-foreach $item ('homology.txt.gz', 'homology_member.txt.gz', 
-	       'gene_member.txt.gz', 'genome_db.txt.gz',
-            'species_set.txt.gz', 'method_link_species_set.txt.gz',
-            'species_tree_node.txt.gz', $compara_sql) {
-
-    (grep {/$item/} @contents) || die "$item not found in $foreign_dir\n";
-    
-    print "\t$item\n";
-    $unzipped = $item;
-    $unzipped =~ s/\.gz$//;
-    if ( -e "$local_dir/$unzipped" ) {
-    	print "\t\t $unzipped found in $local_dir\n";
-    	next;
-    }
-
-    if ( ! $ftp->get($item) ) {
-    	print LOG   "getting $item  failed ", $ftp->message, "\n";
-    	next;
-    }
-
-    `mv  $item  $local_dir`;
-	    
-    print "\t\t $item moved to $local_dir\n";
-
-    if (system ( "gunzip $local_dir/$item" )) {
-    	print LOG "error uncompressing $local_dir/$item.\n";
-    	print     "\t\terror uncompressing $local_dir/$item.\n";
-    } else {
-    	print "\t\t $item unzipped \n";
-    }
-
-
-}
-
-   
 close LOG;
 
 

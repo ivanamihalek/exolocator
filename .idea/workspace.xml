@@ -5,18 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1d1d2e30-cf13-4029-89c1-81402ebedf8b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/exolocator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/exolocator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/00_download_dbs/03_ensembl_mysql_compara_down.pl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/MAP2K2.orthos.fasta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/NARS.orthos.fasta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/90_other_stuff/table_for_3D_viewer_testing.py" beforeDir="false" afterPath="$PROJECT_DIR$/90_other_stuff/table_for_3D_viewer_testing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_down.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_small_down.pl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/03_make_ensembl_dbs.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/05_make_ensembl_dbs.pl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/04_make_ncbi_tax_db.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/06_make_ncbi_tax_db.pl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/05_drop_old_databases.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/08_drop_old_databases.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,10 +36,15 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/home/ivana/projects/abca4",
+    "last_opened_file_path": "/home/ivana/pypeworks/exolocator/00_download_dbs",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/00_download_dbs" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
