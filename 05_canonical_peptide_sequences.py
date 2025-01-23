@@ -78,7 +78,7 @@ def canon_seqs_for_species(cursor, species, ensembl_db_name):
     run_subprocess(cmd, stdoutfnm=out_fasta)
 
     secs = (time()-time0)
-    print(f"{species} extracting seqs  done in {secs:.1f} secS")
+    print(f"{species} extracting seqs done in {secs:.1f} secS")
 
     run_subprocess(f'gzip {in_fasta}')
     if os.path.exists(names_file): os.remove(names_file)
