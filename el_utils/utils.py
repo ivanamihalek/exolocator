@@ -19,7 +19,7 @@ def isinteger(x):
 
 
 
-def die_if_not_dir(dirname, prepend="", check_writable=True, check_absolute=False, logspecial=None):
+def die_if_not_dir(dirname, prepend="", check_writable=True, check_absolute=False):
 
     errmsg = None
     if not dirname:
@@ -34,25 +34,25 @@ def die_if_not_dir(dirname, prepend="", check_writable=True, check_absolute=Fals
         errmsg = f"{prepend} {dirname} is not absolute."
 
     if errmsg:
-        log_trace(errmsg, logspecial)
+        print(errmsg)
         exit(1)
     return
 
 
-def die_if_not_nonzero_file(filename, prepend="", logspecial=None):
+def die_if_not_nonzero_file(filename, prepend=""):
 
     errmsg = None
     if not filename:
         errmsg = f"{prepend} file name not specified."
     elif not os.path.exists(filename):
-        errmsg = f"{prepend} file {filename} not found."
+        errmsg = f"{prepend} file {filename} not found. I am in {os.getcwd()}."
     elif os.path.isdir(filename):
         errmsg = f"{prepend} {filename} is a directory, not a file."
     elif os.path.getsize(filename) == 0:
         errmsg = f"{prepend} {filename} is empty."
 
     if errmsg:
-        log_trace(errmsg, logspecial)
+        print(errmsg)
         exit(1)
     return
 

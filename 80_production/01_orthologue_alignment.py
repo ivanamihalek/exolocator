@@ -3,16 +3,18 @@ from el_utils.mysql import  *
 from el_utils.ensembl import *
 from config import Config
 from el_utils.tree import species_sort
+from el_utils.utils import die_if_not_dir, die_if_not_nonzero_file
 
 
 def write_to_fasta(home, species, stable_transl_id, tmpfile, logfile, out_fasta):
 
 	fasta_path = "/storage/databases/ensembl-{}/fasta/{}/pep".format(Config.release_number, species)
-	assert os.path.exists(fasta_path), f"{fasta_path} not found"
+	die_if_not_dir(fasta_path)
 	os.chdir(fasta_path)
 
 	canonical_fasta = f"canonical_peptides.fa"
-	assert os.path.exists(canonical_fasta), f"{canonical_fasta} not found"
+	die_if_not_nonzero_file(canonical_fasta)
+
 	cmd  = f"{Config.blastdbcmd} -db {canonical_fasta} -dbtype prot -out {home}/{tmpfile} -outfmt %s "
 	cmd += f"-entry {stable_transl_id} -logfile {logfile}"
 	subprocess.call(["bash","-c", cmd])
