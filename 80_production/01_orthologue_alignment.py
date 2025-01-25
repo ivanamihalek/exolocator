@@ -1,4 +1,6 @@
 #!/usr/bin/python3 -u
+import os.path
+
 from el_utils.mysql import  *
 from el_utils.ensembl import *
 from config import Config
@@ -9,15 +11,25 @@ from el_utils.utils import die_if_not_dir, die_if_not_nonzero_file
 def write_to_fasta(home, species, stable_transl_id, tmpfile, logfile, out_fasta):
 
 	fasta_path = "/storage/databases/ensembl-{}/fasta/{}/pep".format(Config.release_number, species)
-	die_if_not_dir(fasta_path)
+	if not os.path.exists(fasta_path):
+		print(f"{fasta_path} not found")
+		return False
 	os.chdir(fasta_path)
 
 	canonical_fasta = f"canonical_peptides.fa"
-	die_if_not_nonzero_file(canonical_fasta)
+	if not os.path.exists(canonical_fasta):
+		print(f"{canonical_fasta} not found in {fasta_path}")
+		return False
+	if os.path.getsize(canonical_fasta) == 0:
+		print(f"{canonical_fasta} is empty in  {fasta_path}")
+		return False
 
 	cmd  = f"{Config.blastdbcmd} -db {canonical_fasta} -dbtype prot -out {home}/{tmpfile} -outfmt %s "
 	cmd += f"-entry {stable_transl_id} -logfile {logfile}"
 	subprocess.call(["bash","-c", cmd])
+	print(os.getcwd())
+	print(cmd)
+	exit()
 	if os.path.exists(logfile.replace(".log",".perf")): os.remove(logfile.replace(".log",".perf"))
 	os.chdir(home)
 
@@ -29,6 +41,8 @@ def write_to_fasta(home, species, stable_transl_id, tmpfile, logfile, out_fasta)
 		cmd = "cat {} >> {}".format(tmpfile, out_fasta)
 		subprocess.call(["bash","-c", cmd])
 		return True
+	else:
+		print(f"in write_to_fasta(): {tmpfile} does not exist or is empty")
 
 	return False
 
@@ -39,8 +53,8 @@ def reorder_seqs(in_afa, species_sorted, out_afa, trivial=None, name_prefix=None
 	with open(in_afa) as inf:
 		for line in inf:
 			line = line.strip()
-			if len(line)==0:continue
-			if line[0]=='>':
+			if len(line) == 0: continue
+			if line[0] == '>':
 				name = line[1:]
 				seq[name] = ""
 			else:
@@ -95,7 +109,7 @@ def main():
 	print(gene_name, ensembl_stable_gene_id, gene_id, ref_stable_transl_id)
 	species_in_the_almt = [ref_species]
 	qry = "select  cognate_gene_id, cognate_genome_db_id from orthologues where gene_id=%d" % gene_id
-	for line in error_intolerant_search(cursor, qry):
+	for line in list(error_intolerant_search(cursor, qry))[:3]:
 		[cognate_gene_id, cognate_genome_db_id] = line
 		qry = f"select db_name from exolocator_meta.db_names where genome_db_id={cognate_genome_db_id}"
 		db_name = hard_landing_search(cursor, qry)[0][0]
@@ -104,11 +118,13 @@ def main():
 		if species not in all_species: continue
 		print(db_name,  species, cognate_gene_id, stable_transl_id)
 		ok = write_to_fasta(home, species, stable_transl_id, tmpfile, logfile, out_fasta)
+		print(ok)
 		if ok: species_in_the_almt.append(species)
 	if os.path.exists(tmpfile): os.remove(tmpfile)
-
+	print(species_in_the_almt)
+	exit()
 	cmd  = f"{Config.muscle} -in {out_fasta} -out tmp.afa"
-	subprocess.call(["bash","-c", cmd])
+	subprocess.call(["bash", "-c", cmd])
 
 	species_sorted = species_sort(cursor, species_in_the_almt, ref_species)
 	trivial_names = get_trivial(cursor, species_sorted) if trivial else None

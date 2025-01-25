@@ -26,17 +26,16 @@ for (my $idx = 0; $idx < scalar(@dbs); $idx++) {
     print $db, "\n";
     chdir "$path_to_db/$db";
 
-
     # setting longpath: mysql_config_ed
     # https://dev.mysql.com/doc/refman/5.6/en/mysql-config-editor.html
     # in mysql shell: SET GLOBAL show_compatibility_56 = ON;
     # see: http://mysql-tools.com/home/1-mysql/125-showcompatibility56-mysql-57-connection-problem.html
     print "making db  ... \n";
-    my $cmd = "mysqladmin --login-path=tcga  create $db";
+    my $cmd = "sudo mysqladmin   create $db";
     if ($dry) {
         print($cmd, "\n");
     } else {
-        (system $cmd) && die "error running $cmd\n";
+        (system $cmd) # && die "error running $cmd\n";
     }
 
     ########################################
@@ -50,7 +49,7 @@ for (my $idx = 0; $idx < scalar(@dbs); $idx++) {
 
     # TODO load without gunzipping
     # zcat /path/to/file.sql.gz | mysql -u 'root' -p your_database
-    $cmd = "mysql --login-path=tcga $db < $db.sql";
+    $cmd = "sudo mysql $db < $db.sql";
     if ($dry) {
         print($cmd, "\n");
     } else {
@@ -66,7 +65,7 @@ for (my $idx = 0; $idx < scalar(@dbs); $idx++) {
         push @txt_files, $txtf
     }
 
-    $cmd = "mysqlimport --login-path=tcga --fields_escaped_by=\\\\ $db -L *.txt";
+    $cmd = "sudo mysqlimport --fields_escaped_by=\\\\ $db -L *.txt";
     if ($dry) {
         print($cmd, "\n");
     } else {
@@ -78,5 +77,5 @@ for (my $idx = 0; $idx < scalar(@dbs); $idx++) {
      }
 
     print "\n";
-    exit;
+
 }
