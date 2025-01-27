@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1d1d2e30-cf13-4029-89c1-81402ebedf8b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/00_download_dbs/05_make_ensembl_dbs.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/perl5local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/exolocator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/exolocator.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/05_make_ensembl_dbs.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/05_make_ensembl_dbs.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/all" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +46,8 @@
   "keyToString": {
     "Python.01_orthologue_alignment.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
     "last_opened_file_path": "/home/ivana/pypeworks/exolocator/00_download_dbs",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
@@ -57,7 +60,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-975db3bf15a3-31b6be0877a2-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.18034.82" />
+        <option value="bundled-python-sdk-0e3be3396995-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23339.19" />
       </set>
     </attachedChunks>
   </component>
