@@ -4,12 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d1d2e30-cf13-4029-89c1-81402ebedf8b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/perl5local.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.py" afterDir="false" />
+    <list default="true" id="8c0ecc9f-ace0-4668-8703-4bf1c83b8e5c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_small_down.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/00_download_dbs/download_manager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/00_download_dbs/download_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/exolocator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/exolocator.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.pl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/00_ensembl_fasta_down.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/el_utils" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -27,16 +33,11 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="MacroExpansionManager">
-    <option name="directoryName" value="0dfhrmea" />
-  </component>
-  <component name="MarkdownSettingsMigration">
-    <option name="stateVersion" value="1" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 2
-}</component>
-  <component name="ProjectId" id="22BOuDKG0W2hmUdbgA52XncFMn0" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="2sFvqmtocsa4PukevpULwB4RuDI" />
   <component name="ProjectViewState">
     <option name="foldersAlwaysOnTop" value="false" />
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -44,19 +45,12 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Python.01_orthologue_alignment.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/ivana/pypeworks/exolocator/00_download_dbs",
+    "last_opened_file_path": "/home/ivana/pypeworks/exolocator/00_download_dbs/download_manager.py",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/00_download_dbs" />
-    </key>
-  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -67,27 +61,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="1d1d2e30-cf13-4029-89c1-81402ebedf8b" name="Changes" comment="" />
-      <created>1639307737055</created>
+      <changelist id="8c0ecc9f-ace0-4668-8703-4bf1c83b8e5c" name="Changes" comment="" />
+      <created>1738064331905</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1639307737055</updated>
-      <workItem from="1643643683548" duration="46000" />
+      <updated>1738064331905</updated>
     </task>
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/80_production/01_orthologue_alignment.py</url>
-          <line>125</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
