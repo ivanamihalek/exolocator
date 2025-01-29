@@ -54,7 +54,7 @@ def is_valid_species(animal, skip_species, breed_species):
     filters = [
         lambda x: not any(skip == x for skip in skip_species),
         lambda x: not any(x.startswith(breed) for breed in breed_species),
-        lambda x: not x.startswith("ensembl_"),
+        lambda x: not any(x.startswith(other_data) for other_data in ["ensembl_", "ontology_", "sequence_", "snp_"]),
         lambda x: x == "cricetulus_griseus_crigri" if x.startswith("cricetulus_griseus_") else True,
     ]
 

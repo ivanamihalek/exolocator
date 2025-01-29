@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c0ecc9f-ace0-4668-8703-4bf1c83b8e5c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/00_download_dbs/03_ensembl_mysql_comparal_down.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_small_down.pl" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_small_down.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/02_ensembl_mysql_small_down.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/download_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/download_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,10 +39,15 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/ivana/pypeworks/exolocator/00_download_dbs/download_manager.py",
+    "last_opened_file_path": "/home/ivana/pypeworks/exolocator/00_download_dbs",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/00_download_dbs" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

@@ -12,7 +12,6 @@ class SmallMysqlDwldManager(DownloadManager):
         super().__init__(config)
         self.file_type  = "mysql"
         self.local_repo = config.mysql_repo
-        self.intermediate_level_dirs = ["mysql"]
 
     def construct_remote_file_level_dir(self, remote_topdir, species):
         prefix = f"{species}_core_{self.config.release_number}_"
@@ -47,7 +46,6 @@ class SmallMysqlDwldManager(DownloadManager):
 
 
 def main():
-    # the intermediate directories here can be "dna", "pep",  or "both"
     download_manager = SmallMysqlDwldManager(Config())
     download_manager.run()
 
