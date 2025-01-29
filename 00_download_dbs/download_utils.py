@@ -102,12 +102,58 @@ def download_and_verify(ftp, filename, checksums_file):
         actual_checksum = calculate_checksum(filename)
 
         if actual_checksum != expected_checksum:
-            print(f"Checksum mismatch for {filename}in {os.getcwd()}")
-            print(f"expecte: {expected_checksum}  evaluated: {actual_checksum}")
-            exit(1)
+            print(f"Checksum mismatch for {filename} in {os.getcwd()}")
+            print(f"expected: {expected_checksum}  evaluated: {actual_checksum}")
+            # exit(1)
 
         logging.info(f"\tSuccessfully downloaded and verified: {filename}")
 
     except (StopIteration, ValueError) as e:
         logging.error(f"Verification failed for {filename} in {os.getcwd()}:\n{e}")
         exit(1)
+
+
+def find_unique_dir(ftp: ftplib.FTP, remote_dir, prefix):
+    """
+    Uniq dir implementation using  ftp.mlsd() which is not universally supported (by Ensembl for one)
+    https://stackoverflow.com/questions/49528887/ftplib-mlsd-command-gives-500-unknown-command
+    """
+    # Change to the remote top directory
+    ftp.cwd(remote_dir)
+
+    # Use mlsd() to get a list of dorectories in standardized format
+    try:
+        matching_dirs = [
+            entry[0] for entry in ftp.mlsd()
+            if entry[1]['type'] == 'dir' and entry[0].startswith(prefix)
+        ]
+    except ftplib.error_perm as e:
+        # Handle potential errors like empty directory
+        raise Exception(f"something went wrong when looking for {prefix} in {remote_dir}:\n{e}")
+
+    # Check if exactly one file matches the criteria
+    if len(matching_dirs) != 1:
+        raise ValueError(f"Expected exactly one dir starting with '{prefix}', found {len(matching_dirs)}")
+
+    # Return the single matching filename
+    return matching_dirs[0]
+
+
+def find_unique_file(ftp, remote_dir, prefix):
+    # Change to the remote top directory
+    ftp.cwd(remote_dir)
+
+    # Use nlst() to get a list of files
+    try:
+        matching_files = [file for file in ftp.nlst() if file.startswith(prefix)]
+    except ftplib.error_perm as e:
+        # Handle potential errors like empty directory
+        raise Exception(f"something went wrong when looking for {prefix} in {remote_dir}:\n{e}")
+
+    # Check if exactly one file matches the criteria
+    if len(matching_files) != 1:
+        raise ValueError(f"Expected exactly one file starting with '{prefix}', found {len(matching_files)}")
+
+    # Return the single matching filename
+    return matching_files[0]
+

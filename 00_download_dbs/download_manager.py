@@ -15,8 +15,7 @@ class DownloadManager(ABC):
         self.ftp_address = "ftp.ensembl.org"
         self.file_type  = None
         self.local_repo = None
-        self.intermediate_level_dirs = []
-        self.ftp: str | FTP = "I am not intialized"
+        self.ftp: str | FTP = "I am not initialized"
         # Setup logging
         logging.basicConfig(
             filename='ensembl_download.log',
@@ -28,13 +27,25 @@ class DownloadManager(ABC):
     def downloadable_files_selection(self, species):
         pass
 
-    def download_from_file_level_dir(self, species, foreign_topdir, file_level_dir):
-        local_dir = os.path.join(self.local_repo, species, file_level_dir)
+    @abstractmethod
+    def construct_remote_file_level_dir(self, remote_topdir, species):
+        pass
+
+    @abstractmethod
+    def construct_local_file_level_dir(self, species):
+        pass
+
+    @abstractmethod
+    def find_valid_species(self):
+        pass
+
+    def download_from_file_level_dir(self, remote_topdir,  species):
+        local_dir = self.construct_local_file_level_dir(species)
         os.makedirs(local_dir, exist_ok=True)
         os.chdir(local_dir)
 
-        foreign_dir = f"{foreign_topdir}/{species}/{file_level_dir}"
-        self.ftp.cwd(foreign_dir)
+        remote_dir = self.construct_remote_file_level_dir(remote_topdir, species)
+        self.ftp.cwd(remote_dir)
 
         # Download checksums
         checksum_fnm = "CHECKSUMS"
@@ -46,14 +57,10 @@ class DownloadManager(ABC):
         for item in downloadable_files:
             download_and_verify(self.ftp, item, checksum_fnm)
 
-    def species_download(self,  animal, foreign_topdir):
-        for file_level_dir in self.intermediate_level_dirs:
-            self.download_from_file_level_dir(animal, foreign_topdir, file_level_dir)
-
     ############################
     def run(self):
 
-        if self.file_type is None or self.local_repo is None or  not self.intermediate_level_dirs:
+        if self.file_type is None or self.local_repo is None:
             raise Exception("improperly initialized DownloadManager class")
 
         # Connect to FTP
@@ -63,20 +70,14 @@ class DownloadManager(ABC):
             print(e)
             exit()
         # move to our dir
-        foreign_topdir = f"/pub/release-{self.config.release_number}/{self.file_type}"
-        self.ftp.cwd(foreign_topdir)
+        remote_topdir = f"/pub/release-{self.config.release_number}/{self.file_type}"
+        self.ftp.cwd(remote_topdir)
 
         # Filter valid species using filter() and is_valid_species function
-        valid_species = list(filter(
-            functools.partial(is_valid_species,
-                              skip_species=self.config.skip_species,
-                              breed_species=self.config.breed_species),
-            self.ftp.nlst()
-        ))
-
+        valid_species = self.find_valid_species()
         for species in valid_species:
             print(f"\nProcessing species: {species}")
-            self.species_download(species, foreign_topdir)
+            self.download_from_file_level_dir(remote_topdir, species)
             print(f"{species} done.")
 
         try: self.ftp.quit()
