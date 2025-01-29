@@ -26,8 +26,9 @@ class SmallMysqlDwldManager(DownloadManager):
 
     def downloadable_files_selection(self, species):
         downloadable = []
-        too_big = ['dna.txt.gz', 'repeat_feature.txt.gz', 'CHECKSUMS']
+        too_big = ['dna.txt.gz', 'repeat_feature.txt.gz']
         for file_name in self.ftp.nlst():
+            if file_name[-3:] != ".gz": continue
             if file_name in too_big: continue
             # CCDS info, contained in dna_align_feature.txt.gz
             # covers confirmed alt splices, but only for human and mouse
@@ -37,12 +38,12 @@ class SmallMysqlDwldManager(DownloadManager):
         return downloadable
 
     def find_valid_species(self):
-        return list(filter(
+        return sorted(list(set(filter(
             functools.partial(is_valid_species,
                               skip_species=self.config.skip_species,
                               breed_species=self.config.breed_species),
             [dirname.split("_core_")[0] for dirname in self.ftp.nlst() if "_core_" in dirname]
-        ))
+        ))))
 
 
 def main():
