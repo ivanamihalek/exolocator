@@ -2,8 +2,8 @@
 class Config:
 
 	release_number = "113"
-	fasta_repo = f"/media/ivana/PORTABLE/ensembl-{release_number}/fasta"
-	mysql_repo = f"/media/ivana/PORTABLE/ensembl-{release_number}/mysql"
+	fasta_repo = f"/media/ivana/portable/ensembl-{release_number}/fasta"
+	mysql_repo = f"/media/ivana/portable/ensembl-{release_number}/mysql"
 	# Skip species lists
 	skip_species = [
 		"ancestral_alleles",

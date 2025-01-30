@@ -101,7 +101,9 @@ def download_and_verify(ftp, filename, checksums_file):
 
         actual_checksum = calculate_checksum(filename)
 
-        if actual_checksum != expected_checksum:
+        if actual_checksum == expected_checksum:
+            print(f"Checksum ok for {filename} in {os.getcwd()}")
+        else:
             print(f"Checksum mismatch for {filename} in {os.getcwd()}")
             print(f"expected: {expected_checksum}  evaluated: {actual_checksum}")
             # exit(1)

@@ -131,7 +131,6 @@ class Node:
 
 		return
 
-
 	def subtree_leafs(self):
 
 		leafs = []
@@ -142,10 +141,9 @@ class Node:
 				leafs += child.subtree_leafs()
 		return leafs
 
-
 	###################################
 	# this should really be operation on the
-	# tree, but python woudn't let me define it there
+	# tree, but python wouldn't let me define it there
 	def  __cleanup__ (self):
 		if  (self.is_leaf):
 			return None
@@ -159,7 +157,6 @@ class Node:
 			firstborn = self.children[0]
 			self.children = []
 			return firstborn
-
 
 	###################################
 	# when something is defined as a Node ....
@@ -207,13 +204,12 @@ class Tree:
 
 	###################################
 	# construct tree using the ncbi tree and the given leafs
-	def build (self, cursor):
+	def build(self, cursor):
 
 		for leaf in self.leafs:
-			leaf.tax_id = species2taxid (cursor, leaf.name)
+			leaf.tax_id = species2taxid(cursor, leaf.name)
 			leaf.is_leaf = True
 			self.node[leaf.tax_id] = leaf
-
 
 		# build the tree using ncbi_tax.nodes
 		# fill in the names using ncbi_tax.names
@@ -334,7 +330,6 @@ def species_sort(cursor, species_list, qry_species):
 	cousins = find_cousins(qry_leaf)
 
 	return [qry_species]+cousins
-
 
 
 #####################################        

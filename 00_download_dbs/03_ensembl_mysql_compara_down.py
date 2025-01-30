@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-import functools
 
 from config import Config
 from download_manager import DownloadManager
-from download_utils import find_unique_file, is_valid_species
 
 
 class ComparaMysqlDwldManager(DownloadManager):
@@ -12,7 +10,6 @@ class ComparaMysqlDwldManager(DownloadManager):
         super().__init__(config)
         self.file_type  = "mysql"
         self.local_repo = config.mysql_repo
-        self.intermediate_level_dirs = ["mysql"]
 
     def construct_remote_file_level_dir(self, remote_topdir, ensembl_compara_name):
         remote_dir = f"{remote_topdir}/{ensembl_compara_name}"
@@ -39,6 +36,7 @@ def main():
     download_manager.run()
 
 
+############################################
 if __name__ == "__main__":
     main()
 
