@@ -10,12 +10,13 @@ from download_utils import download_file, download_and_verify, ftp_connect, is_v
 
 class DownloadManager(ABC):
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, verify: bool = True):
         self.config = config
         self.ftp_address = "ftp.ensembl.org"
         self.file_type  = None
         self.local_repo = None
         self.ftp: str | FTP = "I am not initialized"
+        self.verify_checksum = verify
         # Setup logging
         logging.basicConfig(
             filename='ensembl_download.log',
@@ -55,7 +56,7 @@ class DownloadManager(ABC):
         downloadable_files = self.downloadable_files_selection(species)
 
         for item in downloadable_files:
-            download_and_verify(self.ftp, item, checksum_fnm)
+            download_and_verify(self.ftp, item, checksum_fnm, self.verify_checksum)
 
     ############################
     def run(self):

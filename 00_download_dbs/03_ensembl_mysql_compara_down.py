@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from enum import verify
 
 from config import Config
 from download_manager import DownloadManager
@@ -6,8 +7,8 @@ from download_manager import DownloadManager
 
 class ComparaMysqlDwldManager(DownloadManager):
 
-    def __init__(self, config: Config):
-        super().__init__(config)
+    def __init__(self, config: Config, verify: bool = True):
+        super().__init__(config, verify)
         self.file_type  = "mysql"
         self.local_repo = config.mysql_repo
 
@@ -20,10 +21,11 @@ class ComparaMysqlDwldManager(DownloadManager):
         return local_dir
 
     def downloadable_files_selection(self, ensembl_compara_name):
-        downloadable = ['homology.txt.gz', 'homology_member.txt.gz',
+        # 'homology_member.txt.gz' has traditionally been the largest, going into 10s of GB
+        downloadable = ['homology.txt.gz', f"{ensembl_compara_name}.sql.gz",
                         'gene_member.txt.gz', 'genome_db.txt.gz',
                         'species_set.txt.gz', 'method_link_species_set.txt.gz',
-                        'species_tree_node.txt.gz', f"{ensembl_compara_name}.sql.gz"]
+                        'species_tree_node.txt.gz', 'homology_member.txt.gz']
 
         return downloadable
 
@@ -32,7 +34,8 @@ class ComparaMysqlDwldManager(DownloadManager):
 
 
 def main():
-    download_manager = ComparaMysqlDwldManager(Config())
+    #  'homology_member.txt.gz'  can be huge, and thee checksum verification goes on forever
+    download_manager = ComparaMysqlDwldManager(Config(), verify=True)
     download_manager.run()
 
 

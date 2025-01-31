@@ -77,7 +77,7 @@ def download_file(ftp, remote_filename, local_filename):
         exit(1)
 
 
-def download_and_verify(ftp, filename, checksums_file):
+def download_and_verify(ftp, filename, checksums_file, verify = True):
     """
     Download file and verify its integrity
 
@@ -86,9 +86,12 @@ def download_and_verify(ftp, filename, checksums_file):
         filename (str): Filename to download
         local_path (str): Local file path
         checksums_file (str): Checksums reference file
+        verify (bool): choose to do checksum verification (default: True)
     """
     logging.info(f"\tDownloading: {filename}")
     download_file(ftp, filename, filename)
+
+    if not verify: return
 
     # Verify checksum
     try:

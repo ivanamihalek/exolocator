@@ -6,10 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8c0ecc9f-ace0-4668-8703-4bf1c83b8e5c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/03_ensembl_mysql_comparal_down.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/03_ensembl_mysql_compara_down.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/03_ensembl_mysql_compara_down.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_download_dbs/download_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/download_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/00_download_dbs/download_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/download_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/tree.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
