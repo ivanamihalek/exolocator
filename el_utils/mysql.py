@@ -1,3 +1,5 @@
+from wsgiref.simple_server import server_version
+
 import MySQLdb, sys, warnings
 from time import time
 
@@ -13,7 +15,7 @@ def error_intolerant_search(cursor, qry):
 
 #########################################
 def hard_landing_search(cursor, qry):
-	ret =  search_db(cursor, qry)
+	ret = search_db(cursor, qry)
 	if not ret or (type(ret[0][0])==str and 'error' in ret[0][0].lower()):
 		search_db(cursor, qry, verbose=True)
 		exit()
@@ -174,6 +176,21 @@ def column_exists(cursor, db_name, table_name, column_name):
 	else:
 		return False
 
+
+def count_table_rows (cursor, db_name, table_name):
+	# not my problem if the table does not exist
+	qry = f"select count(*) from {db_name}.{table_name}"
+	rows = search_db(cursor, qry, verbose=False)
+	if rows:
+		if 'Error' in rows[0]:
+			return 0
+		else:
+			return rows[0][0]
+	else:
+		return 0
+
+
+
 #########################################
 def add_column(cursor, db_name, table_name, column_name, col_type, default=None, after_col=None):
 	if not column_exists (cursor, db_name, table_name, column_name):
@@ -289,29 +306,27 @@ def connect_to_mysql (conf_file):
 
 
 ########
-def connect_to_db (db_name, user=None, passwd=None):
+def mysql_server_connect (user=None, passwd=None, host='localhost'):
 
 	try:
-		if not user is None:
-			db = MySQLdb.connect(user=user, passwd=passwd, db=db_name)
-		else:
-			db = MySQLdb.connect(user="root", db=db_name)
+		# data cnnot be input from a local file without the last argument
+		db = MySQLdb.connect(user=user, passwd=passwd, local_infile=1)
 	except  MySQLdb.Error as e:
-		print(("Error connecting to %s: %d %s" % (db_name, e.args[0], e.args[1])))
+		print(("Error connecting to mysql server: %d %s" % (e.args[0], e.args[1])))
 		exit(1)
-
-	return db
-
-
-def db_connect(config, db_name):
-	db = connect_to_mysql(config.mysql_conf_file)
 	cursor = db.cursor()
+	return cursor
+
+
+def db_connect(db_name, user=None, passwd=None, host='localhost'):
+
+	cursor = mysql_server_connect(user, passwd, host)
 	switch_to_db(cursor, db_name)
 	search_db(cursor, "set autocommit = 1")  # ... I thought it was a default
 	return cursor
 
 
-def db_conn_close(cursor):
+def mysql_server_conn_close(cursor):
 	db = cursor.connection
 	cursor.close()
 	db.close()

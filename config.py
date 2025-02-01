@@ -20,7 +20,6 @@ class Config:
 		"oryzias_latipes_", "rattus_norvegicus_", "salmo_salar_", "sus_scrofa_",
 	]
 
-	mysql_conf_file = "/home/ivana/.tcga_conf"
 	ucsc_mysql_conf_file  = "/home/ivana/.ucsc_mysql_conf"
 	blastp = "/usr/bin/blastp"
 	blastdbcmd = "/usr/bin/blastdbcmd"
@@ -31,3 +30,8 @@ class Config:
 	min_accptbl_exon_sim = 0.7
 
 	model_orgs = ['homo_sapiens', 'mus_musculus', 'danio_rerio', 'xenopus_tropicalis', 'gallus_gallus']
+
+# note from release 113:
+#  ovis_aries dir contained ovis_aries_rambouillet_core_113_2.sql
+# which I renamed to ovis_aries_core_113_2.sql, adn change the name of the db therein as well
+# it was the only place where the naming was inconsistent in this way

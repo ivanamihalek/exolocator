@@ -4,111 +4,157 @@ import os
 import sys
 import gzip
 import subprocess
-import mysql.connector
 from dotenv import load_dotenv
+from config import Config
+from el_utils.mysql import (mysql_server_connect, mysql_server_conn_close,
+                            error_intolerant_search, switch_to_db, search_db, check_table_exists, count_table_rows)
+from el_utils.processes import run_subprocess
+from el_utils.utils import count_lines_in_compressed_file, is_gz_empty
 
 # Load environment variables
 load_dotenv()
 
 
-def main():
-    release_num = 110
-    path_to_db = f"/storage/databases/ensembl-{release_num}/mysql"
+def decompress_and_cleanup_sql(sql_gz_file):
+    # Decompress SQL file
+    with gzip.open(sql_gz_file, 'rb') as inf:
+        sql_content = inf.read().decode()
 
+    # Replace problematic datetime and schema references
+    sql_content = sql_content.replace('0000-00-00', '1000-01-01')
+    sql_content = sql_content.replace(
+        'INFORMATION_SCHEMA.SESSION_VARIABLES',
+        'performance_schema.session_variables'
+    )
+
+    if not sql_content:
+        raise Exception(f"something went wrong when modifying {sql_gz_file}")
+
+    return sql_content
+
+
+def load_data(cursor, db_name, txt_gz_file, dry_run):
+
+    if is_gz_empty(txt_gz_file):
+        print(f"{txt_gz_file} seems to be empty.")
+        return
+
+    txt_file   = txt_gz_file.replace('.gz', '')
+    fullpath   = f"{os.getcwd()}/{txt_file}"
+    table_name = txt_file.replace('.txt', '')
+    load_qry = f"LOAD DATA LOCAL INFILE '{fullpath}' INTO TABLE {db_name}.{table_name}"
+    if dry_run:
+        print(f"decompressing and loading {fullpath}")
+        print(load_qry)
+        return
+
+    # check first if the table is maybe loaded already
+    if check_table_exists(cursor, db_name, table_name):
+        if (number_of_rows_in_db := count_table_rows(cursor, db_name, table_name)) > 0:
+            print(f"I am counting lines in {txt_gz_file} ...")
+            number_of_lines_in_file = count_lines_in_compressed_file(txt_gz_file)
+            if number_of_rows_in_db == number_of_lines_in_file:
+                print(f"Table {table_name} ok. The number of rows is {number_of_rows_in_db}.")
+                return
+            else:
+                # delete data from the table, because the alternative is to check row-by_row
+                print(f"Table {table_name} was not loaded properly.")
+                print(f"Number of rows in the table {number_of_rows_in_db}. Lines in the file {number_of_lines_in_file}.")
+                print(f"Deleting the rows from the table, and attempting the re-load.")
+                error_intolerant_search(cursor, f"delete from {db_name}.{table_name}")
+        else:
+            print(f"table {table_name} exists in {db_name}, but is empty")
+    else:
+        print(f"table {table_name} not found in {db_name}")
+        return  # it is not our job here to make the table
+
+    # Decompress text file
+    cmd = f"gunzip -c {txt_gz_file}"
+    run_subprocess(cmd, stdoutfnm=txt_file, noexit=True)
+    # ... and, finally, load
+    if os.path.exists(txt_file) and os.path.getsize(txt_file) > 0:
+        search_db(cursor, load_qry)
+    else:
+        print(f"error gunzipping {txt_gz_file} in {os.getcwd()}:\n{cmd}")
+        exit()
+    # Remove temporary text file
+    os.remove(txt_file)
+
+
+def get_sql_file(db):
+    sql_files = [fnm for fnm in os.listdir() if fnm.startswith(db) and fnm.endswith("sql.gz")]
+    if len(sql_files) == 0:
+        print(f"no sql file found in {os.getcwd()}")
+        exit(1)
+    elif len(sql_files) > 1:
+        print(f"multiple sql files found in {os.getcwd()}: {sql_files}")
+        exit(1)
+    return sql_files[0]
+
+
+def make_tables(cursor, sql_gz_file, dry_run):
+    sql_content = ""
+    if dry_run:
+        print("decompress and cleanup the sql file")
+    else:
+        sql_content = decompress_and_cleanup_sql(sql_gz_file)
+
+    # Import SQL file
+    if dry_run:
+        print(f"execute the contents of the sql file - create tables")
+    else:
+        error_intolerant_search(cursor, sql_content)
+
+
+def main():
+
+    dry_run = False
+    from_scratch = False
+
+    path_to_db  = Config.mysql_repo
     # Validate database path exists
     if not os.path.exists(path_to_db):
         raise FileNotFoundError(f"{path_to_db} not found")
-
     os.chdir(path_to_db)
-
-    dry_run = False
-
     # Get list of databases
-    dbs = [d for d in os.listdir('.') if os.path.isdir(d)]
+    dbs = sorted([d for d in os.listdir('.') if os.path.isdir(d)])
 
     # MySQL connection parameters from .env
-    db_config = {
-        'user': os.getenv('MYSQL_USER'),
-        'password': os.getenv('MYSQL_PASSWORD'),
-        'host': os.getenv('MYSQL_HOST', 'localhost')
-    }
+    cursor = mysql_server_connect(user= os.getenv('MYSQL_USER'), passwd=os.getenv('MYSQL_PASSWORD'))
+    error_intolerant_search(cursor, "set GLOBAL local_infile = 'ON'")  # allow loading from non-privileged dir
 
     for db in dbs:
+        print()
         print(f"************************")
         print(db)
 
         os.chdir(os.path.join(path_to_db, db))
-
+        # find the SQL file exists
+        sql_gz_file = get_sql_file(db)
+        db_name = sql_gz_file.replace(".sql.gz", "")
         # Create database
-        if not dry_run:
-            try:
-                with mysql.connector.connect(**db_config) as connection:
-                    with connection.cursor() as cursor:
-                        cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{db}`")
-            except mysql.connector.Error as err:
-                print(f"Error creating database {db}: {err}")
-                continue
+        qry = f"CREATE DATABASE IF NOT EXISTS `{db_name}`"
+        if dry_run:
+            print(qry)
+        else:
+            error_intolerant_search(cursor, qry)
+            switch_to_db(cursor, db_name)
 
-        # Decompress and process SQL file
-        sql_gz_file = f"{db}.sql.gz"
-        if not os.path.exists(sql_gz_file):
-            raise FileNotFoundError(f"{sql_gz_file} not found")
-
-        # Decompress SQL file
-        with gzip.open(sql_gz_file, 'rb') as f_in:
-            with open(f"{db}.sql", 'wb') as f_out:
-                f_out.write(f_in.read())
-
-        # Modify SQL file contents
-        with open(f"{db}.sql", 'r') as f:
-            sql_content = f.read()
-
-        # Replace problematic datetime and schema references
-        sql_content = sql_content.replace('0000-00-00', '1000-01-01')
-        sql_content = sql_content.replace(
-            'INFORMATION_SCHEMA.SESSION_VARIABLES',
-            'performance_schema.session_variables'
-        )
-
-        # Import SQL file
-        if not dry_run:
-            try:
-                with mysql.connector.connect(**db_config, database=db) as connection:
-                    with connection.cursor() as cursor:
-                        cursor.execute(sql_content)
-            except mysql.connector.Error as err:
-                print(f"Error importing SQL for {db}: {err}")
-
-        # Remove temporary SQL file
-        os.remove(f"{db}.sql")
+        if from_scratch:
+            make_tables(cursor, sql_gz_file, dry_run)
 
         # Process and import text files
         txt_files = [f for f in os.listdir('.') if f.endswith('.txt.gz')]
 
         for txt_gz_file in txt_files:
-            # Decompress text file
-            with gzip.open(txt_gz_file, 'rb') as f_in:
-                txt_file = txt_gz_file.replace('.gz', '')
-                with open(txt_file, 'wb') as f_out:
-                    f_out.write(f_in.read())
+            print()
+            print(f"loading {txt_gz_file}")
+            load_data(cursor, db_name, txt_gz_file, dry_run)
+            print(f"loading {txt_gz_file} done")
+            
+        print(f"{db} done")
 
-            # Import text file using mysqlimport equivalent
-            if not dry_run:
-                try:
-                    with mysql.connector.connect(**db_config, database=db) as connection:
-                        with connection.cursor() as cursor:
-                            with open(txt_file, 'r') as f:
-                                for line in f:
-                                    # Basic import - you might need to adjust based on exact requirements
-                                    cursor.execute(
-                                        f"LOAD DATA LOCAL INFILE '{txt_file}' INTO TABLE {txt_file.replace('.txt', '')}")
-                except mysql.connector.Error as err:
-                    print(f"Error importing text file {txt_file}: {err}")
-
-            # Remove temporary text file
-            os.remove(txt_file)
-
-        print()
+    mysql_server_conn_close(cursor)
 
 
 if __name__ == "__main__":
