@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# this is untested;  move to mysqldn and implmentend stufff
+
 import os
 import sys
 import gzip
@@ -42,6 +42,10 @@ def load_data(cursor, db_name, txt_gz_file, dry_run):
     txt_file   = txt_gz_file.replace('.gz', '')
     fullpath   = f"{os.getcwd()}/{txt_file}"
     table_name = txt_file.replace('.txt', '')
+    if not check_table_exists(cursor, db_name, table_name):
+        print(f"table {table_name} not found in {db_name}")
+        return  # it is not our job here to make the table
+
     load_qry = f"LOAD DATA LOCAL INFILE '{fullpath}' INTO TABLE {db_name}.{table_name}"
     if dry_run:
         print(f"decompressing and loading {fullpath}")
@@ -49,24 +53,20 @@ def load_data(cursor, db_name, txt_gz_file, dry_run):
         return
 
     # check first if the table is maybe loaded already
-    if check_table_exists(cursor, db_name, table_name):
-        if (number_of_rows_in_db := count_table_rows(cursor, db_name, table_name)) > 0:
-            print(f"I am counting lines in {txt_gz_file} ...")
-            number_of_lines_in_file = count_lines_in_compressed_file(txt_gz_file)
-            if number_of_rows_in_db == number_of_lines_in_file:
-                print(f"Table {table_name} ok. The number of rows is {number_of_rows_in_db}.")
-                return
-            else:
-                # delete data from the table, because the alternative is to check row-by_row
-                print(f"Table {table_name} was not loaded properly.")
-                print(f"Number of rows in the table {number_of_rows_in_db}. Lines in the file {number_of_lines_in_file}.")
-                print(f"Deleting the rows from the table, and attempting the re-load.")
-                error_intolerant_search(cursor, f"delete from {db_name}.{table_name}")
+    if (number_of_rows_in_db := count_table_rows(cursor, db_name, table_name)) > 0:
+        print(f"I am counting lines in {txt_gz_file} ...")
+        number_of_lines_in_file = count_lines_in_compressed_file(txt_gz_file)
+        if number_of_rows_in_db == number_of_lines_in_file:
+            print(f"Table {table_name} ok. The number of rows is {number_of_rows_in_db}.")
+            return
         else:
-            print(f"table {table_name} exists in {db_name}, but is empty")
+            # delete data from the table, because the alternative is to check row-by_row
+            print(f"Table {table_name} was not loaded properly.")
+            print(f"Number of rows in the table {number_of_rows_in_db}. Lines in the file {number_of_lines_in_file}.")
+            print(f"Deleting the rows from the table, and attempting the re-load.")
+            error_intolerant_search(cursor, f"delete from {db_name}.{table_name}")
     else:
-        print(f"table {table_name} not found in {db_name}")
-        return  # it is not our job here to make the table
+        print(f"table {table_name} exists in {db_name}, but is empty")
 
     # Decompress text file
     cmd = f"gunzip -c {txt_gz_file}"
@@ -120,10 +120,11 @@ def main():
     dbs = sorted([d for d in os.listdir('.') if os.path.isdir(d)])
 
     # MySQL connection parameters from .env
-    cursor = mysql_server_connect(user= os.getenv('MYSQL_USER'), passwd=os.getenv('MYSQL_PASSWORD'))
+    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'), passwd=os.getenv('MYSQL_PASSWORD'))
     error_intolerant_search(cursor, "set GLOBAL local_infile = 'ON'")  # allow loading from non-privileged dir
 
     for db in dbs:
+        if not  db.startswith("ensembl"): continue
         print()
         print(f"************************")
         print(db)
@@ -147,11 +148,12 @@ def main():
         txt_files = [f for f in os.listdir('.') if f.endswith('.txt.gz')]
 
         for txt_gz_file in txt_files:
+            if txt_gz_file in ['homology_member.txt.gz', 'homology.txt.gz']: continue
             print()
             print(f"loading {txt_gz_file}")
-            load_data(cursor, db_name, txt_gz_file, dry_run)
-            print(f"loading {txt_gz_file} done")
-            
+            # load_data(cursor, db_name, txt_gz_file, dry_run)
+            # print(f"loading {txt_gz_file} done")
+
         print(f"{db} done")
 
     mysql_server_conn_close(cursor)
