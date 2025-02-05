@@ -44,6 +44,7 @@ def load_data(cursor, db_name, txt_gz_file, dry_run):
     table_name = txt_file.replace('.txt', '')
     if not check_table_exists(cursor, db_name, table_name):
         print(f"table {table_name} not found in {db_name}")
+        exit()
         return  # it is not our job here to make the table
 
     load_qry = f"LOAD DATA LOCAL INFILE '{fullpath}' INTO TABLE {db_name}.{table_name}"
@@ -120,11 +121,16 @@ def main():
     dbs = sorted([d for d in os.listdir('.') if os.path.isdir(d)])
 
     # MySQL connection parameters from .env
-    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'), passwd=os.getenv('MYSQL_PASSWORD'))
+    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
+                                  passwd=os.getenv('MYSQL_PASSWORD'),
+                                  host=os.getenv('MYSQL_HOST', 'localhost'),
+                                  port=int(os.getenv('MYSQL_PORT', 3306)))
+    # print(search_db(cursor, "show databases like 'zonotrichia_albicollis%'"))
+
     error_intolerant_search(cursor, "set GLOBAL local_infile = 'ON'")  # allow loading from non-privileged dir
 
     for db in dbs:
-        if not  db.startswith("ensembl"): continue
+        if not db.startswith("ensembl"): continue
         print()
         print(f"************************")
         print(db)
@@ -151,8 +157,8 @@ def main():
             if txt_gz_file in ['homology_member.txt.gz', 'homology.txt.gz']: continue
             print()
             print(f"loading {txt_gz_file}")
-            # load_data(cursor, db_name, txt_gz_file, dry_run)
-            # print(f"loading {txt_gz_file} done")
+            load_data(cursor, db_name, txt_gz_file, dry_run)
+            print(f"loading {txt_gz_file} done")
 
         print(f"{db} done")
 

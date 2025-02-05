@@ -215,7 +215,7 @@ def check_table_exists(cursor, db_name, table_name):
 		return False
 
 	qry = "show tables like '%s'" % table_name
-	rows = search_db(cursor, qry, verbose=False)
+	rows = search_db(cursor, qry, verbose=True)
 	if rows:
 		if 'Error' in rows[0]:
 			return False
@@ -295,6 +295,7 @@ def read_creds ():
 
 	return [user, passwd, host, port]
 
+
 ########
 def connect_to_mysql (conf_file):
 	try:
@@ -306,11 +307,11 @@ def connect_to_mysql (conf_file):
 
 
 ########
-def mysql_server_connect (user=None, passwd=None, host='localhost'):
-
+def mysql_server_connect (user=None, passwd=None, host='localhost', port: int = 3306):
 	try:
+		print(type(port))
 		# data cnnot be input from a local file without the last argument
-		db = MySQLdb.connect(user=user, passwd=passwd, local_infile=1)
+		db = MySQLdb.connect(user=user, passwd=passwd, host=host, port=port, local_infile=1)
 	except  MySQLdb.Error as e:
 		print(("Error connecting to mysql server: %d %s" % (e.args[0], e.args[1])))
 		exit(1)
