@@ -44,35 +44,35 @@ def load_data(cursor, db_name, txt_gz_file, dry_run):
     table_name = txt_file.replace('.txt', '')
     if not check_table_exists(cursor, db_name, table_name):
         print(f"table {table_name} not found in {db_name}")
-        exit()
+        # exit()
         return  # it is not our job here to make the table
 
     load_qry = f"LOAD DATA LOCAL INFILE '{fullpath}' INTO TABLE {db_name}.{table_name}"
-    if dry_run:
-        print(f"decompressing and loading {fullpath}")
-        print(load_qry)
-        return
-
-    # check first if the table is maybe loaded already
-    if (number_of_rows_in_db := count_table_rows(cursor, db_name, table_name)) > 0:
-        print(f"I am counting lines in {txt_gz_file} ...")
-        number_of_lines_in_file = count_lines_in_compressed_file(txt_gz_file)
-        if number_of_rows_in_db == number_of_lines_in_file:
-            print(f"Table {table_name} ok. The number of rows is {number_of_rows_in_db}.")
-            return
-        else:
-            # delete data from the table, because the alternative is to check row-by_row
-            print(f"Table {table_name} was not loaded properly.")
-            print(f"Number of rows in the table {number_of_rows_in_db}. Lines in the file {number_of_lines_in_file}.")
-            print(f"Deleting the rows from the table, and attempting the re-load.")
-            error_intolerant_search(cursor, f"delete from {db_name}.{table_name}")
-    else:
-        print(f"table {table_name} exists in {db_name}, but is empty")
+    # if dry_run:
+    #     print(f"decompressing and loading {fullpath}")
+    #     print(load_qry)
+    #     return
+    #
+    # # check first if the table is maybe loaded already
+    # if (number_of_rows_in_db := count_table_rows(cursor, db_name, table_name)) > 0:
+    #     print(f"I am counting lines in {txt_gz_file} ...")
+    #     number_of_lines_in_file = count_lines_in_compressed_file(txt_gz_file)
+    #     if number_of_rows_in_db == number_of_lines_in_file:
+    #         print(f"Table {table_name} ok. The number of rows is {number_of_rows_in_db}.")
+    #         return
+    #     else:
+    #         # delete data from the table, because the alternative is to check row-by_row
+    #         print(f"Table {table_name} was not loaded properly.")
+    #         print(f"Number of rows in the table {number_of_rows_in_db}. Lines in the file {number_of_lines_in_file}.")
+    #         print(f"Deleting the rows from the table, and attempting the re-load.")
+    #         error_intolerant_search(cursor, f"delete from {db_name}.{table_name}")
+    # else:
+    #     print(f"table {table_name} exists in {db_name}, but is empty")
 
     # Decompress text file
-    cmd = f"gunzip -c {txt_gz_file}"
-    run_subprocess(cmd, stdoutfnm=txt_file, noexit=True)
-    # ... and, finally, load
+    # cmd = f"gunzip -c {txt_gz_file}"
+    # run_subprocess(cmd, stdoutfnm=txt_file, noexit=True)
+    # # ... and, finally, load
     if os.path.exists(txt_file) and os.path.getsize(txt_file) > 0:
         search_db(cursor, load_qry)
     else:
@@ -154,7 +154,7 @@ def main():
         txt_files = [f for f in os.listdir('.') if f.endswith('.txt.gz')]
 
         for txt_gz_file in txt_files:
-            if txt_gz_file in ['homology_member.txt.gz', 'homology.txt.gz']: continue
+            if not txt_gz_file in ['homology_member.txt.gz', 'homology.txt.gz']: continue
             print()
             print(f"loading {txt_gz_file}")
             load_data(cursor, db_name, txt_gz_file, dry_run)
