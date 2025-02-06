@@ -49,6 +49,7 @@ def val2mysqlval(value):
 		return "\'%s\'" % value.replace("'", "\\'")
 	return f"{value}"
 
+
 #########################################
 def store_without_checking(cursor, table, fields, verbose=False, database=None, ignore=False):
 
@@ -190,7 +191,6 @@ def count_table_rows (cursor, db_name, table_name):
 		return 0
 
 
-
 #########################################
 def add_column(cursor, db_name, table_name, column_name, col_type, default=None, after_col=None):
 	if not column_exists (cursor, db_name, table_name, column_name):
@@ -224,10 +224,12 @@ def check_table_exists(cursor, db_name, table_name):
 	else:
 		return False
 
+
 ############
 def check_and_drop_table(cursor, db_name, table):
 	search_db(cursor, "drop table if exists %s.%s"% (db_name, table))
 	return
+
 
 #########################################
 def table_create_time(cursor, db_name, table_name):
