@@ -3,8 +3,6 @@
 # the possibility that "A is ortholog of B, and B is ortholog of C, but A is not ortholog of C"
 # is something we don't want to know about right now
 
-
-from config import Config
 from el_utils.ensembl import *
 
 
@@ -13,8 +11,8 @@ def main():
 	# that has 207M and 10,978,400 lines/entries;
 	# the original homology_member file has 945 million entries
 	# how does the Ensembl borwser use that - what am I missing?
-	db = connect_to_mysql(Config.mysql_conf_file)
-	cursor = db.cursor()
+
+	cursor = mysql_using_env_creds()
 
 	ensembl_compara_name = get_compara_name(cursor)
 
@@ -33,9 +31,8 @@ def main():
 			ret = error_intolerant_search(cursor, qry)
 			if not ret: continue
 			print("\n".join(["\t".join([str(field) for field in  line]) for line in ret]), file=outf)
-	cursor.close()
-	db.close()
 
+	mysql_server_conn_close(cursor)
 	return True
 
 

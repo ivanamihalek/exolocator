@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import os
-from .ncbi    import get_ncbi_tax_name, taxid2parentid, taxid2sciname
+from .ncbi    import  taxid2parentid, taxid2sciname
 from .ensembl import get_compara_name, species2taxid, get_species
 from .mysql import switch_to_db, connect_to_mysql, error_intolerant_search
 import re

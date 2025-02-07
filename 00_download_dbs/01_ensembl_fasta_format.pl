@@ -1,4 +1,5 @@
 #! /usr/bin/perl -w 
+# not sure if this is needed any more at all - at some point I switched to
 
 use warnings;
 use strict;

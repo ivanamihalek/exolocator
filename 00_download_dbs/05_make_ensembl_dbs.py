@@ -68,9 +68,9 @@ def big_file_load(cursor, txt_file, db_name, table_name):
 
 def load_data(cursor, db_name, txt_gz_file, dry_run):
 
-    if is_gz_empty(txt_gz_file):
-        print(f"{txt_gz_file} seems to be empty.")
-        return
+    # if is_gz_empty(txt_gz_file):
+    #     print(f"{txt_gz_file} seems to be empty.")
+    #     return
 
     txt_file   = txt_gz_file.replace('.gz', '')
     fullpath   = f"{os.getcwd()}/{txt_file}"
@@ -87,26 +87,24 @@ def load_data(cursor, db_name, txt_gz_file, dry_run):
         return
 
     # check first if the table is maybe loaded already
-    # todo uncomment
-    # if (number_of_rows_in_db := count_table_rows(cursor, db_name, table_name)) > 0:
-    #     print(f"I am counting lines in {txt_gz_file} ...")
-    #     number_of_lines_in_file = count_lines_in_compressed_file(txt_gz_file)
-    #     if number_of_rows_in_db == number_of_lines_in_file:
-    #         print(f"Table {table_name} ok. The number of rows is {number_of_rows_in_db}.")
-    #         return
-    #     else:
-    #         # delete data from the table, because the alternative is to check row-by_row
-    #         print(f"Table {table_name} was not loaded properly.")
-    #         print(f"Number of rows in the table {number_of_rows_in_db}. Lines in the file {number_of_lines_in_file}.")
-    #         print(f"Deleting the rows from the table, and attempting the re-load.")
-    #         error_intolerant_search(cursor, f"delete from {db_name}.{table_name}")
-    # else:
-    #     print(f"table {table_name} exists in {db_name}, but is empty")
+    if (number_of_rows_in_db := count_table_rows(cursor, db_name, table_name)) > 0:
+        print(f"I am counting lines in {txt_gz_file} ...")
+        number_of_lines_in_file = count_lines_in_compressed_file(txt_gz_file)
+        if number_of_rows_in_db == number_of_lines_in_file:
+            print(f"Table {table_name} ok. The number of rows is {number_of_rows_in_db}.")
+            return
+        else:
+            # delete data from the table, because the alternative is to check row-by_row
+            print(f"Table {table_name} was not loaded properly.")
+            print(f"Number of rows in the table {number_of_rows_in_db}. Lines in the file {number_of_lines_in_file}.")
+            print(f"Deleting the rows from the table, and attempting the re-load.")
+            error_intolerant_search(cursor, f"delete from {db_name}.{table_name}")
+    else:
+        print(f"table {table_name} exists in {db_name}, but is empty")
 
     # Decompress text file
-    # TODO don not forget to uncomment
-    # cmd = f"gunzip -c {txt_gz_file}"
-    # run_subprocess(cmd, stdoutfnm=txt_file, noexit=True)
+    cmd = f"gunzip -c {txt_gz_file}"
+    run_subprocess(cmd, stdoutfnm=txt_file, noexit=True)
 
     # What is the size of the decompressed file?
     if not os.path.exists(txt_file):
@@ -120,12 +118,13 @@ def load_data(cursor, db_name, txt_gz_file, dry_run):
 
     size_in_g = decompressed_size / 1024**3
     if size_in_g < 1:  # less than a gigabyte
+        print(f"size of {txt_file} is {size_in_g}G; loading directly")
         search_db(cursor, load_qry)
     else:
         print(f"size of {txt_file} is {size_in_g}G; will receive special treatment")
         big_file_load(cursor, txt_file, db_name, table_name)
     # Remove temporary text file
-    os.remove(txt_file)
+    if os.path.exists(txt_file): os.remove(txt_file)
 
 
 def get_sql_file(db):
@@ -208,7 +207,9 @@ def main():
         txt_files = [f for f in os.listdir('.') if f.endswith('.txt.gz')]
 
         for txt_gz_file in txt_files:
-            if txt_gz_file not in ['homology.txt.gz']: continue
+            # TODO see if I can drop the cigar line and pctg as floats to make homology member smaller
+            # TODO switch to some kind of ORM  and move to postgres
+            if "homology" in txt_gz_file: continue  # big, the loading is a clunker
             print()
             print(f"loading {txt_gz_file}")
             load_data(cursor, db_name, txt_gz_file, dry_run)

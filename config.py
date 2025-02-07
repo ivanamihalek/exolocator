@@ -6,7 +6,7 @@ class Config:
 	mysql_repo = f"/media/ivana/portable/ensembl-{release_number}/mysql"
 	# Skip species lists
 	skip_species = [
-		"ancestral_alleles",
+		"ancestral_alleles", "bos_indicus_x_bos_taurus",
 		"canis_lupus_familiarisbasenji", "canis_lupus_familiarisboxer",
 		"canis_lupus_familiarisgreatdane", "canis_lupus_familiarisgsd",
 		"cyprinus_carpio_germanmirror", "cyprinus_carpio_hebaored", "cyprinus_carpio_huanghe",

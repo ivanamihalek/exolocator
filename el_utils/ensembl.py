@@ -1196,8 +1196,10 @@ def species2taxid(cursor, species):
 
 ########
 def ncbi_species2taxid(cursor, species):
+
+	compara_name = get_compara_name(cursor)
 	species_txt = species.replace('_', ' ')
-	qry  = "select taxon_id from ncbi_taxonomy.ncbi_taxa_name "
+	qry  = f"select taxon_id from {compara_name}.ncbi_taxa_name "
 	qry += f"where name='{species_txt}' "
 	tax_id = hard_landing_search(cursor, qry)[0][0]
 	return tax_id

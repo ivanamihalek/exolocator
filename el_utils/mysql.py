@@ -1,7 +1,12 @@
+import os
 from wsgiref.simple_server import server_version
 
 import MySQLdb, sys, warnings
 from time import time
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 #########################################
 def error_intolerant_search(cursor, qry):
@@ -311,8 +316,7 @@ def connect_to_mysql (conf_file):
 ########
 def mysql_server_connect (user=None, passwd=None, host='localhost', port: int = 3306):
 	try:
-		print(type(port))
-		# data cnnot be input from a local file without the last argument
+		# data cannot be input from a local file without the last argument
 		db = MySQLdb.connect(user=user, passwd=passwd, host=host, port=port, local_infile=1)
 	except  MySQLdb.Error as e:
 		print(("Error connecting to mysql server: %d %s" % (e.args[0], e.args[1])))
@@ -320,6 +324,12 @@ def mysql_server_connect (user=None, passwd=None, host='localhost', port: int = 
 	cursor = db.cursor()
 	return cursor
 
+def mysql_using_env_creds():
+	cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
+                                  passwd=os.getenv('MYSQL_PASSWORD'),
+                                  host=os.getenv('MYSQL_HOST', 'localhost'),
+                                  port=int(os.getenv('MYSQL_PORT', 3306)))
+	return cursor
 
 def db_connect(db_name, user=None, passwd=None, host='localhost'):
 

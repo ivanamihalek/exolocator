@@ -23,6 +23,7 @@ class ComparaMysqlDwldManager(DownloadManager):
     def downloadable_files_selection(self, ensembl_compara_name):
         # 'homology_member.txt.gz' has traditionally been the largest, going into 10s of GB
         downloadable = ['homology.txt.gz', f"{ensembl_compara_name}.sql.gz",
+                        'ncbi_taxa_name.txt.gz', 'ncbi_taxa_node.txt.gz',
                         'gene_member.txt.gz', 'genome_db.txt.gz',
                         'species_set.txt.gz', 'method_link_species_set.txt.gz',
                         'species_tree_node.txt.gz', 'homology_member.txt.gz']

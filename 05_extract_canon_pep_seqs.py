@@ -1,10 +1,16 @@
 #!/usr/bin/python3 -u
 import os.path
 
+from dotenv import load_dotenv
+
 from config import Config
 
 from el_utils.ensembl import  *
 from el_utils.processes import *
+
+
+# Load environment variables
+load_dotenv()
 
 
 ####################################################
@@ -33,7 +39,7 @@ def canon_seqs_for_species(cursor, species, ensembl_db_name):
     # we'll do this for human only, for now
     switch_to_db (cursor, ensembl_db_name[species])
 
-    fasta_path = f"/storage/databases/ensembl-{Config.release_number}/fasta/{species}/pep"
+    fasta_path = f"{Config.fasta_repo}/{species}/pep"
     ext = "pep.all.fa.gz"
     in_fastas = [fnm for fnm in os.listdir(fasta_path) if fnm[-(len(ext)):] == ext]
     if len(in_fastas) == 0:
@@ -50,7 +56,7 @@ def canon_seqs_for_species(cursor, species, ensembl_db_name):
     # so in that case look for that name format first
     versioning = prioritize_versioning(in_fasta)
 
-    out_fasta = "{}/canonical_peptides.fa".format(fasta_path)
+    out_fasta = f"{fasta_path}/canonical_peptides.fa"
     if os.path.exists(out_fasta): os.remove(out_fasta)
 
     #######################
@@ -87,26 +93,31 @@ def canon_seqs_for_species(cursor, species, ensembl_db_name):
 ###########
 def canon_seqs(species_chunk, other_args):
     [ensembl_db_name] = other_args
-    db = connect_to_mysql(Config.mysql_conf_file)
-    cursor = db.cursor()
+    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
+                                  passwd=os.getenv('MYSQL_PASSWORD'),
+                                  host=os.getenv('MYSQL_HOST', 'localhost'),
+                                  port=int(os.getenv('MYSQL_PORT', 3306)))
+
     for species in species_chunk:
         canon_seqs_for_species(cursor, species, ensembl_db_name)
 
-    cursor.close()
-    db.close()
+    mysql_server_conn_close(cursor)
 
 
 ####################################################
 def main():
-    db = connect_to_mysql(Config.mysql_conf_file)
-    cursor = db.cursor()
+    # MySQL connection parameters from .env
+    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
+                                  passwd=os.getenv('MYSQL_PASSWORD'),
+                                  host=os.getenv('MYSQL_HOST', 'localhost'),
+                                  port=int(os.getenv('MYSQL_PORT', 3306)))
+
     [all_species, ensembl_db_name] = get_species(cursor)
-    cursor.close()
-    db.close()
+    mysql_server_conn_close(cursor)
 
     ok_species = []
     for species in all_species:
-        species_path = f"/storage/databases/ensembl-{Config.release_number}/fasta/{species}"
+        species_path = f"{Config.fasta_repo}/{species}"
         if not os.path.exists(species_path):
             print(f"{species_path} not found")
         elif not os.path.exists(pep_path := f"{species_path}/pep"):
