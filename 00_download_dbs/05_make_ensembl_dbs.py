@@ -9,12 +9,11 @@ from time import time
 from dotenv import load_dotenv
 from config import Config
 from el_utils.mysql import (mysql_server_connect, mysql_server_conn_close,
-                            error_intolerant_search, switch_to_db, search_db, check_table_exists, count_table_rows)
+                            error_intolerant_search, switch_to_db, search_db, check_table_exists, count_table_rows,
+                            mysql_using_env_creds)
 from el_utils.processes import run_subprocess
 from el_utils.utils import count_lines_in_compressed_file, is_gz_empty
 
-# Load environment variables
-load_dotenv()
 
 
 def decompress_and_cleanup_sql(sql_gz_file):
@@ -166,10 +165,7 @@ def main():
     dbs = sorted([d for d in os.listdir('.') if os.path.isdir(d)])
 
     # MySQL connection parameters from .env
-    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
-                                  passwd=os.getenv('MYSQL_PASSWORD'),
-                                  host=os.getenv('MYSQL_HOST', 'localhost'),
-                                  port=int(os.getenv('MYSQL_PORT', 3306)))
+    cursor = mysql_using_env_creds()
 
     error_intolerant_search(cursor, "set GLOBAL local_infile = 'ON'")  # allow loading from non-privileged dir
     # the following are supposed to make the loading faster

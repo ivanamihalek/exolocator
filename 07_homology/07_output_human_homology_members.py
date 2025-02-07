@@ -7,10 +7,6 @@ from el_utils.ensembl import *
 
 
 def main():
-	# in version 101, this takes 4 CPU hrs, producing a file
-	# that has 207M and 10,978,400 lines/entries;
-	# the original homology_member file has 945 million entries
-	# how does the Ensembl borwser use that - what am I missing?
 
 	cursor = mysql_using_env_creds()
 

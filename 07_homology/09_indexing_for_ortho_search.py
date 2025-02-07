@@ -13,8 +13,7 @@ from el_utils.processes import *
 def main():
 
 	number_of_chunks = 1
-	db = connect_to_mysql(Config.mysql_conf_file)
-	cursor = db.cursor()
+	cursor = mysql_using_env_creds()
 
 	ensembl_compara_name = get_compara_name(cursor)
 	[all_species, ensembl_db_name] = get_species(cursor)
@@ -47,8 +46,7 @@ def main():
 		error_intolerant_search(cursor, qry)
 	create_index(cursor, ensembl_compara_name, table, 'homology_id', ['homology_id'], verbose=True)
 
-	cursor.close()
-	db.close()
+	mysql_server_conn_close(cursor)
 
 	return True
 

@@ -27,9 +27,6 @@ from el_utils.mysql import *
 from el_utils.ensembl import get_ensembl_species, get_compara_name, ncbi_species2taxid
 from config import Config
 
-# Load environment variables
-load_dotenv()
-
 
 def set_trivial_names():
     trivial = {}
@@ -412,15 +409,9 @@ def feed_species_names(cursor, exolocator_meta_db_name, all_species, ensembl_db_
 
 
 #########################################
-
-#########################################
 def main():
     # MySQL connection parameters from .env
-    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
-                                  passwd=os.getenv('MYSQL_PASSWORD'),
-                                  host=os.getenv('MYSQL_HOST', 'localhost'),
-                                  port=int(os.getenv('MYSQL_PORT', 3306)))
-
+    cursor = mysql_using_env_creds()
     error_intolerant_search(cursor, "set autocommit=1")
 
     #######################################################

@@ -12,9 +12,6 @@ from config import Config
 from el_utils.ensembl import *
 from el_utils.processes import *
 
-load_dotenv()
-
-
 #########################################
 # ./el_utils/kernprof.py -l <calling script>.py
 # python3 -m line_profiler <calling script>.py.lprof
@@ -45,7 +42,9 @@ def get_orthologues(cursor, compara_db, homology_ids, qry_stable_id, verbose=Fal
             db_name = ret[0][0]
 
             qry = f"select gene_id from {db_name}.gene where stable_id='{stable_id}'"
-            ortho_gene_id = hard_landing_search(cursor, qry)[0][0]
+            ret = error_intolerant_search(cursor, qry)
+            if not ret: continue  # investigate at some point why this happens
+            ortho_gene_id = ret[0][0]
 
             if not homology_description in orthos:  orthos[homology_description] = []
             orthos[homology_description].append([ortho_gene_id, genome_db_id])
@@ -96,10 +95,7 @@ def collect_orthologues(cursor, ensembl_compara_name, ensembl_db_name, stable_id
 def core_loop(genes, other_args):
     [ensembl_compara_name, ensembl_db_name] = other_args
 
-    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
-                                  passwd=os.getenv('MYSQL_PASSWORD'),
-                                  host=os.getenv('MYSQL_HOST', 'localhost'),
-                                  port=int(os.getenv('MYSQL_PORT', 3306)))
+    cursor =  mysql_using_env_creds()
 
     filehandle = open_files()
 
@@ -125,10 +121,7 @@ def core_loop(genes, other_args):
 
 
 def main():
-    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
-                                  passwd=os.getenv('MYSQL_PASSWORD'),
-                                  host=os.getenv('MYSQL_HOST', 'localhost'),
-                                  port=int(os.getenv('MYSQL_PORT', 3306)))
+    cursor = mysql_using_env_creds()
 
     ensembl_compara_name = get_compara_name(cursor)
     [all_species, ensembl_db_name] = get_species(cursor)

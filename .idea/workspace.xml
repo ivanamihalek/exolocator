@@ -5,28 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="307ed4cd-a143-4c9b-b8fe-5d50264e8a01" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/ivana.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/exolocator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/exolocator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/perl5local.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/01_ensembl_fasta_format.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/03_ensembl_mysql_compara_down.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/03_ensembl_mysql_compara_down.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/00_download_dbs/05_make_ensembl_dbs.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/05_make_ensembl_dbs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/06_make_ncbi_tax_db.pl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/08_drop_old_databases.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/08_drop_old_databases.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/01_make_meta_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/01_make_meta_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02_tax_groups_and_their_reps.py" beforeDir="false" afterPath="$PROJECT_DIR$/02_tax_groups_and_their_reps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/05_canonical_peptide_sequences.py" beforeDir="false" afterPath="$PROJECT_DIR$/05_extract_canon_pep_seqs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/06_format_canonical_for_blast.py" beforeDir="false" afterPath="$PROJECT_DIR$/06_format_canonical_for_blast.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/07_homology/07_output_human_homology_members.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_homology/07_output_human_homology_members.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/07_homology/08_load_human_homology_members.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_homology/08_load_human_homology_members.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/07_homology/09_indexing_for_ortho_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_homology/09_indexing_for_ortho_search.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/07_homology/10_orthologues.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_homology/10_orthologues.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/mysql.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/mysql.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/ncbi.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ncbi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/tree.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,7 +62,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1738946507062</updated>
-      <workItem from="1738947044833" duration="15461000" />
+      <workItem from="1738947044833" duration="18907000" />
     </task>
     <servers />
   </component>

@@ -43,12 +43,8 @@ def make_human_hom_member_table(cursor, db_name, table):
 	return
 
 
-
 def main():
-	print("careful, this script deletes table contents")
-	exit()
-	# in ensembl 101 this take about 1 min to read in
-	# check out, though, the previous scrip for the time to produce this table
+
 	home = os.getcwd()
 	table_name = "homology_member_human"
 	infile = f"{home}/raw_tables/{table_name}.tsv"
@@ -56,17 +52,14 @@ def main():
 		print(f"{infile} not found")
 		exit()
 
-	db = connect_to_mysql(Config.mysql_conf_file)
-	cursor = db.cursor()
+	cursor = mysql_using_env_creds()
 	search_db(cursor, "set autocommit=1")
 
 	ensembl_compara_name = get_compara_name(cursor)
 	make_human_hom_member_table(cursor, ensembl_compara_name, table_name)
-	cursor.close()
-	db.close()
-
-	cmd = f"mysqlimport --login-path=tcga --fields_escaped_by=\\\\ {ensembl_compara_name} -L {infile}"
-	subprocess.call(["bash","-c", cmd])
+	load_qry = f"LOAD DATA LOCAL INFILE '{infile}' INTO TABLE {ensembl_compara_name}.{table_name}"
+	search_db(cursor, load_qry)
+	mysql_server_conn_close(cursor)
 
 
 
