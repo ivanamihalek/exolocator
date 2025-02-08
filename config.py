@@ -31,6 +31,8 @@ class Config:
 
 	model_orgs = ['homo_sapiens', 'mus_musculus', 'danio_rerio', 'xenopus_tropicalis', 'gallus_gallus']
 
+	scratch = "/home/ivana/scratch"
+
 # note from release 113:
 #  ovis_aries dir contained ovis_aries_rambouillet_core_113_2.sql
 # which I renamed to ovis_aries_core_113_2.sql, adn change the name of the db therein as well

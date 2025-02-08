@@ -6,12 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="307ed4cd-a143-4c9b-b8fe-5d50264e8a01" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00_download_dbs/05_make_ensembl_dbs.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_download_dbs/05_make_ensembl_dbs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/01_make_meta_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/01_make_meta_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/07_homology/07_output_human_homology_members.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_homology/07_output_human_homology_members.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/07_homology/08_load_human_homology_members.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_homology/08_load_human_homology_members.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/07_homology/09_indexing_for_ortho_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_homology/09_indexing_for_ortho_search.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/07_homology/10_orthologues.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_homology/10_orthologues.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/05_extract_canon_pep_seqs.py" beforeDir="false" afterPath="$PROJECT_DIR$/05_extract_canon_pep_seqs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/07_homology/11_load_orthologues.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_homology/11_load_orthologues.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/80_production/config.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,10 +32,13 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.01_orthologue_alignment.executor": "Run",
+    "Python.ortho align.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
+    "last_opened_file_path": "/home/ivana/pypeworks/exolocator/80_production/01_orthologue_alignment.py",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -46,6 +48,42 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="ortho align" type="PythonConfigurationType" factoryName="Python">
+      <module name="exolocator" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.12 (exolocator)" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/80_production" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" />
+      <option name="PARAMETERS" value="SKOR2" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -62,11 +100,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1738946507062</updated>
-      <workItem from="1738947044833" duration="18907000" />
+      <workItem from="1738947044833" duration="20259000" />
+      <workItem from="1739032173877" duration="18424000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/exolocator$ortho_align.coverage" NAME="ortho align Coverage Results" MODIFIED="1739038112238" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/80_production" />
+    <SUITE FILE_PATH="coverage/exolocator$01_orthologue_alignment.coverage" NAME="01_orthologue_alignment Coverage Results" MODIFIED="1739037719741" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/80_production" />
   </component>
 </project>

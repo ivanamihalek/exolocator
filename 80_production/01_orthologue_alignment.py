@@ -3,16 +3,16 @@ import os.path
 
 from dotenv import load_dotenv
 
+from el_utils import mysql
 from el_utils.mysql import *
 from el_utils.ensembl import *
 from config import Config
+from el_utils.processes import run_subprocess
 from el_utils.tree import species_sort
 from el_utils.utils import die_if_not_dir, die_if_not_nonzero_file
 
-load_dotenv()
 
-
-def write_to_fasta(home, species, stable_transl_id, tmpfile, logfile, out_fasta):
+def write_to_fasta(home, species, stable_transl_id,  out_fasta):
     fasta_path = f"{Config.fasta_repo}/{species}/pep"
     if not os.path.exists(fasta_path):
         print(f"{fasta_path} not found")
@@ -26,26 +26,32 @@ def write_to_fasta(home, species, stable_transl_id, tmpfile, logfile, out_fasta)
     if os.path.getsize(canonical_fasta) == 0:
         print(f"{canonical_fasta} is empty in  {fasta_path}")
         return False
+    print(os.getcwd())
 
-    cmd = f"{Config.blastdbcmd} -db {canonical_fasta} -dbtype prot -out {home}/{tmpfile} -outfmt %s "
-    cmd += f"-entry {stable_transl_id} -logfile {logfile}"
-    subprocess.call(["bash", "-c", cmd])
+    names_file = f"{Config.scratch}/names.{os.getpid()}.txt"
+    tmp_fasta  = f"{Config.scratch}/tmp_fasta.{os.getpid()}.txt"
+    with open(names_file, "w") as outnm:
+        print(stable_transl_id, file=outnm)
+    cmd = f"{Config.seqtk} subseq {canonical_fasta} {names_file}"
+    run_subprocess(cmd, stdoutfnm=tmp_fasta)
+    os.remove(names_file)
 
-    if os.path.exists(logfile.replace(".log", ".perf")): os.remove(logfile.replace(".log", ".perf"))
     os.chdir(home)
 
-    if os.path.exists(tmpfile) and os.path.getsize(tmpfile) > 0:
+    if os.path.exists(tmp_fasta) and os.path.getsize(tmp_fasta) > 0:
         # name = "_".join([sp[:3] for sp in species.split("_")]) # +[gene_name])
         name = species
-        cmd = "echo '>{}' >> {}".format(name, out_fasta)
-        subprocess.call(["bash", "-c", cmd])
-        cmd = "cat {} >> {}".format(tmpfile, out_fasta)
-        subprocess.call(["bash", "-c", cmd])
+        with open(tmp_fasta, "r") as inf, open(out_fasta, "a") as outnm:
+            for line in inf:
+                if line[0] == ">":
+                    print(f">{name}", file=outnm)
+                else:
+                    print(line.strip(), file=outnm)
+        os.remove(tmp_fasta)
         return True
     else:
-        print(f"in write_to_fasta(): {tmpfile} does not exist or is empty")
-
-    return False
+        print(f"in write_to_fasta(): {tmp_fasta} does not exist or is empty")
+        return False
 
 
 def reorder_seqs(in_afa, species_sorted, out_afa, trivial=None, name_prefix=None):
@@ -72,6 +78,7 @@ def reorder_seqs(in_afa, species_sorted, out_afa, trivial=None, name_prefix=None
 
 #########################################
 def main():
+
     if len(sys.argv) < 2:
         print("usage: %s <gene symbol> [trivial] [prepend]" % sys.argv[0])
         print("trivial = use trivial species name; prepend = prepend gene name")
@@ -83,16 +90,12 @@ def main():
 
     out_fasta = f"{gene_name}.orthos.fasta"
     out_afa = f"{gene_name}.orthos.afa"
-    tmpfile = "tmp.fa"
-    logfile = "tmp.log"
-    for fnm in [out_fasta, out_afa, tmpfile, logfile]:
+    for fnm in [out_fasta, out_afa]:
         if os.path.exists(fnm): os.remove(fnm)
+
     home = os.getcwd()
 
-    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
-                                  passwd=os.getenv('MYSQL_PASSWORD'),
-                                  host=os.getenv('MYSQL_HOST', 'localhost'),
-                                  port=int(os.getenv('MYSQL_PORT', 3306)))
+    cursor = mysql_using_env_creds()
 
     qry = f"select ensembl_gene_id  from identifier_maps.hgnc where approved_symbol='{gene_name}'"
     ensembl_stable_gene_id = hard_landing_search(cursor, qry)[0][0]
@@ -105,12 +108,12 @@ def main():
     gene_id = hard_landing_search(cursor, qry)[0][0]
 
     ref_stable_transl_id = gene2stable_canon_transl_id(cursor, gene_id, ensembl_db_name[ref_species])
-    write_to_fasta(home, ref_species, ref_stable_transl_id, tmpfile, logfile, out_fasta)
 
-    print(gene_name, ensembl_stable_gene_id, gene_id, ref_stable_transl_id)
+    write_to_fasta(home, ref_species, ref_stable_transl_id, out_fasta)
+
     species_in_the_almt = [ref_species]
     qry = "select  cognate_gene_id, cognate_genome_db_id from orthologues where gene_id=%d" % gene_id
-    for line in list(error_intolerant_search(cursor, qry))[:3]:
+    for line in list(error_intolerant_search(cursor, qry)):
         [cognate_gene_id, cognate_genome_db_id] = line
         qry = f"select db_name from exolocator_meta.db_names where genome_db_id={cognate_genome_db_id}"
         db_name = hard_landing_search(cursor, qry)[0][0]
@@ -118,12 +121,10 @@ def main():
         species = db_name.split("core")[0].rstrip("_")
         if species not in all_species: continue
         print(db_name, species, cognate_gene_id, stable_transl_id)
-        ok = write_to_fasta(home, species, stable_transl_id, tmpfile, logfile, out_fasta)
+        ok = write_to_fasta(home, species, stable_transl_id, out_fasta)
         print(ok)
         if ok: species_in_the_almt.append(species)
-    if os.path.exists(tmpfile): os.remove(tmpfile)
-    print(species_in_the_almt)
-    exit()
+
     cmd = f"{Config.muscle} -in {out_fasta} -out tmp.afa"
     subprocess.call(["bash", "-c", cmd])
 

@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -u
 import os.path
+from glob import glob
 
 from dotenv import load_dotenv
 
@@ -10,25 +11,47 @@ from el_utils.processes import *
 
 
 # Load environment variables
-load_dotenv()
 
 
 ####################################################
-def prioritize_versioning(fastasfile):
-    headerct = 0
-    index_versioning = 0
-    with open(fastasfile) as inf:
+# why am I doing this?
+def extract_peptide_ids(fastafile) -> dict:
+    # for some reason, Ensembl is tacking the versionin to the stable id in the pep.fa file
+    # e.g ENSP00000452345.1, not just ENSP00000452345
+    # the search for stable id, however will return just the base part ENSP00000452345
+    versions_in_fastafile = {}
+    with open(fastafile) as inf:
         for line in inf:
-            if not '>' in line: continue
-            headerct +=1
-            name = line.split()[0]
+            if line[0] != '>': continue
+            name = line.split()[0][1:]  # get rid og the ">" thing
             if "." in name:
-                index_versioning += 1
-            if headerct==100: break
-    if index_versioning/headerct>0.5:
-        return [f".{v}" for v in range(1,13)] + [""]
-    else:
-        return [""] + [f".{v}" for v in range(1,13)]
+                name, version = name.split(".")
+                version = "." + version
+            else:
+                version = ""
+            if name not in versions_in_fastafile: versions_in_fastafile[name] = []
+            versions_in_fastafile[name].append(version)
+
+    if not versions_in_fastafile:
+        print(f"no seq names in {fastafile} (?!)")
+        exit()
+
+    return versions_in_fastafile
+
+
+def header_cleanup(complicated_header_fasta):
+    tmp_out = complicated_header_fasta + ".tmp"
+    with open(tmp_out, "w") as outf:
+        with open(complicated_header_fasta) as inf:
+            for line in inf:
+                if line[0] == '>':
+                    name = line.split()[0][1:]
+                    if "." in name: name = name.split(".")[0]
+                    outf.write(">" + name + "\n")
+                else:
+                    outf.write(line)
+    print(f"header cleanup for {complicated_header_fasta} done")
+    os.rename(tmp_out, complicated_header_fasta)
 
 
 ###########
@@ -40,6 +63,16 @@ def canon_seqs_for_species(cursor, species, ensembl_db_name):
     switch_to_db (cursor, ensembl_db_name[species])
 
     fasta_path = f"{Config.fasta_repo}/{species}/pep"
+    out_fasta = f"{fasta_path}/canonical_peptides.fa"
+    print(fasta_path)
+    # clean blast indexing files
+    camefrom = os.getcwd()
+    os.chdir(fasta_path)
+    for fnm in glob("canonical_peptides.*"):
+        print(f"removing {fnm}")
+        os.remove(fnm)
+    os.chdir(camefrom)
+
     ext = "pep.all.fa.gz"
     in_fastas = [fnm for fnm in os.listdir(fasta_path) if fnm[-(len(ext)):] == ext]
     if len(in_fastas) == 0:
@@ -54,10 +87,7 @@ def canon_seqs_for_species(cursor, species, ensembl_db_name):
 
     # this is very unsystematic, but some species such as Mus spretus do not have the version number
     # so in that case look for that name format first
-    versioning = prioritize_versioning(in_fasta)
-
-    out_fasta = f"{fasta_path}/canonical_peptides.fa"
-    if os.path.exists(out_fasta): os.remove(out_fasta)
+    name_versions_in_fasta_file  = extract_peptide_ids(in_fasta)
 
     #######################
     print(f"{species} collecting peptide ids")
@@ -66,37 +96,43 @@ def canon_seqs_for_species(cursor, species, ensembl_db_name):
     # get_gene_ids(cursor, db_name=None, biotype=None,  stable=False, ref_only=False):
     for gene_id in get_gene_ids(cursor, ensembl_db_name[species], biotype="protein_coding"):
         canonical_translation_stable_id = gene2stable_canon_transl_id(cursor, gene_id)
-        if canonical_translation_stable_id: stable_translation_ids.append(canonical_translation_stable_id)
+        if not canonical_translation_stable_id: continue
+        if canonical_translation_stable_id not in name_versions_in_fasta_file:
+            print(canonical_translation_stable_id, f"not found in {fasta_path} (?!)")
+            exit()
+        # e.g ENSP00000452040.2
+        # just take the fist version that we bump into - I am not sure what to do with it anyway
+        can_trsl_stable_id_w_version = canonical_translation_stable_id + name_versions_in_fasta_file[canonical_translation_stable_id][0]
+        stable_translation_ids.append(can_trsl_stable_id_w_version)
     mins = (time()-time0)/60
-    print(f"{species} collecting peptide ids done in %.1f min" % mins)
+    print(len(stable_translation_ids))
+    print(f"{species} collecting canonical peptide ids done in {mins:.1f} min. Collected {len(stable_translation_ids)} ids." )
+    print("some examples:", stable_translation_ids[:5])
 
     #######################
     print(f"{species} extracting sequences")
     time0 = time()
     names_file = f"{species}.names.txt"
-    outf = open(names_file, "w")
-    for stable_translation_id in stable_translation_ids:
-        for version in versioning:
-            print(f"{stable_translation_id}{version}", file=outf)
-            break  # one version is enough
+    with open(names_file, "w") as outf:
+        [print(stable_translation_id, file=outf) for stable_translation_id in stable_translation_ids]
 
     cmd = f"{Config.seqtk} subseq {in_fasta} {names_file}"
     run_subprocess(cmd, stdoutfnm=out_fasta)
 
     secs = (time()-time0)
-    print(f"{species} extracting seqs done in {secs:.1f} secS")
+    print(f"{species} extracting seqs done in {secs:.1f} secs")
 
     run_subprocess(f'gzip {in_fasta}')
-    if os.path.exists(names_file): os.remove(names_file)
 
+    # now we've ended up with the versioning numbers in the canonical peptide file
+    header_cleanup(out_fasta)
+
+    if os.path.exists(names_file): os.remove(names_file)
 
 ###########
 def canon_seqs(species_chunk, other_args):
     [ensembl_db_name] = other_args
-    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
-                                  passwd=os.getenv('MYSQL_PASSWORD'),
-                                  host=os.getenv('MYSQL_HOST', 'localhost'),
-                                  port=int(os.getenv('MYSQL_PORT', 3306)))
+    cursor = mysql_using_env_creds()
 
     for species in species_chunk:
         canon_seqs_for_species(cursor, species, ensembl_db_name)
@@ -107,10 +143,7 @@ def canon_seqs(species_chunk, other_args):
 ####################################################
 def main():
     # MySQL connection parameters from .env
-    cursor = mysql_server_connect(user=os.getenv('MYSQL_USER'),
-                                  passwd=os.getenv('MYSQL_PASSWORD'),
-                                  host=os.getenv('MYSQL_HOST', 'localhost'),
-                                  port=int(os.getenv('MYSQL_PORT', 3306)))
+    cursor = mysql_using_env_creds()
 
     [all_species, ensembl_db_name] = get_species(cursor)
     mysql_server_conn_close(cursor)

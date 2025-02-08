@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+import os
 
 from config import Config
 from el_utils.ensembl import *
@@ -44,29 +44,35 @@ def make_orthologues_table(cursor, db_name):
 
 ####################################################
 def main():
-	print("careful, this script deletes orthologues table")
-	exit()
+	# print("careful, this script deletes orthologues table")
+	# exit()
 
 	# we'll do this for human only, for now
 	species = 'homo_sapiens'
 	in_dir = "raw_tables"
-	for dep in [in_dir, f"{in_dir}/orthologues.tsv"]:
+	ortho_fnm = "orthologues.273476.tsv"
+	for dep in [in_dir, f"{in_dir}/{ortho_fnm}"]:
 		if not os.path.exists(dep):
-			print(dep,"not found")
+			print(dep, "not found")
 			exit()
-	db = connect_to_mysql(Config.mysql_conf_file)
-	cursor = db.cursor()
-	search_db(cursor, "set autocommit=1")
+	cursor = mysql_using_env_creds()
+
+	error_intolerant_search(cursor, "set autocommit=1")
+	error_intolerant_search(cursor, "set GLOBAL local_infile = 'ON'")  # allow loading from non-privileged dir
+
 	[all_species, ensembl_db_name] = get_species(cursor)
 
 	make_orthologues_table(cursor, ensembl_db_name[species])
-	cursor.close()
-	db.close()
 
-	cmd = f"mysqlimport --login-path=tcga --fields_escaped_by=\\\\ {ensembl_db_name[species]} -L {in_dir}/orthologues.tsv"
-	subprocess.call(["bash","-c", cmd])
+	fullpath = f"{os.getcwd()}/{in_dir}/{ortho_fnm}"
+	load_qry = f"LOAD DATA LOCAL INFILE '{fullpath}' INTO TABLE {ensembl_db_name[species]}.orthologues"
+	error_intolerant_search(cursor, load_qry)
+
+	mysql_server_conn_close(cursor)
 
 
 #####################################################
-if __name__=="__main__":
+if __name__ == "__main__":
 	main()
+
+
