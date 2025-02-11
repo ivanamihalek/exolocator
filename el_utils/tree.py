@@ -265,7 +265,6 @@ class Tree:
 	def get_node(self, name):
 		return self.name2node.get(name, None)
 
-
 	def invert_node_map(self):
 		self.name2node = dict([(node.name, node) for node in self.node.values()])
 
@@ -288,8 +287,6 @@ class Tree:
 		self.name2node = {}
 		if nhxstr:
 			self.from_nhx_string(nhxstr)
-
-
 
 
 #########################################
