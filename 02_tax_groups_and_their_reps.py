@@ -54,7 +54,7 @@ def main():
         number_of_genes = {}
         number_of_transcripts = {}
 
-        group_species = [node.name] if node.is_leaf else node.subtree_leafs()
+        group_species = [node.name] if node.is_leaf else node.subtree_leaf_names()
         for species in group_species:
             qry = f"select count(*) from {ensembl_db_name[species]}.transcript"
             number_of_transcripts[species] = hard_landing_search(cursor, qry)[0][0]

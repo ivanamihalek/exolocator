@@ -131,14 +131,14 @@ class Node:
 
 		return
 
-	def subtree_leafs(self):
+	def subtree_leaf_names(self) -> list[str]:
 
 		leafs = []
 		if self.is_leaf:
 			leafs.append(self.name)
 		else:
 			for child in self.children:
-				leafs += child.subtree_leafs()
+				leafs += child.subtree_leaf_names()
 		return leafs
 
 	###################################
@@ -298,7 +298,7 @@ def find_cousins (qry_node):
 	else:
 		for sibling in qry_node.parent.children:
 			if sibling == qry_node: continue
-			cousins += sibling.subtree_leafs()
+			cousins += sibling.subtree_leaf_names()
 
 	cousins += find_cousins (qry_node.parent)
 

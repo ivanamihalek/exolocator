@@ -83,6 +83,7 @@ def main():
         print("usage: %s <gene symbol> [trivial] [prepend]" % sys.argv[0])
         print("trivial = use trivial species name; prepend = prepend gene name")
         exit()
+
     gene_name = sys.argv[1]
     trivial = "trivial" in sys.argv
     prepend = "prepend" in sys.argv  # prepends geen synbol to gene name

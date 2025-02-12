@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 import sys
-from Bio import AlignIO, SeqIO
+from Bio import AlignIO
 from Bio.Align import MultipleSeqAlignment
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from typing import List, Dict
+
+from el_utils.bioinfo import get_seq_record_by_id
 
 
 def restrict_to_target(alignment: MultipleSeqAlignment, target_sequence_id: str) -> MultipleSeqAlignment:
@@ -21,13 +23,7 @@ def restrict_to_target(alignment: MultipleSeqAlignment, target_sequence_id: str)
     """
 
     # Find the target sequence
-    target_sequences = [seq_record for seq_record in alignment if seq_record.id == target_sequence_id]
-
-    if len(target_sequences) == 0:
-        raise ValueError(f"Sequence with ID '{target_sequence_id}' not found in alignment.")
-    if len(target_sequences) >  1:
-        raise ValueError(f"Multiple sequences with ID '{target_sequence_id}' found in alignment.")
-    target_sequence = target_sequences[0]
+    target_sequence =  get_seq_record_by_id(alignment, target_sequence_id)
 
     # Identify columns to keep (where the target sequence has no gap)
     columns_to_keep = [i for i, char in enumerate(target_sequence) if char != '-' and char != '.']
