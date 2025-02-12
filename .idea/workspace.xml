@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="307ed4cd-a143-4c9b-b8fe-5d50264e8a01" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/el_utils/bioinfo.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02_tax_groups_and_their_reps.py" beforeDir="false" afterPath="$PROJECT_DIR$/02_tax_groups_and_their_reps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/01_orthologue_alignment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/20_afa_prettyfy.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/20_afa_prettyfy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/80_production/22_color_code_almt.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/22_color_code_almt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/el_utils" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/tree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/80_production/SKOR2.orthos.fasta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/80_production/colored_stripe.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/80_production/test.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +39,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.01_orthologue_alignment.executor": "Run",
+    "Python.22_color_code_almt.executor": "Run",
     "Python.ortho align.executor": "Run",
     "Python.test.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -114,7 +111,8 @@
       <workItem from="1738947044833" duration="20259000" />
       <workItem from="1739032173877" duration="18424000" />
       <workItem from="1739299139966" duration="11341000" />
-      <workItem from="1739310757981" duration="11268000" />
+      <workItem from="1739310757981" duration="11407000" />
+      <workItem from="1739350669060" duration="13275000" />
     </task>
     <servers />
   </component>
@@ -122,6 +120,7 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/exolocator$22_color_code_almt.coverage" NAME="22_color_code_almt Coverage Results" MODIFIED="1739350987112" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/80_production" />
     <SUITE FILE_PATH="coverage/exolocator$test.coverage" NAME="test Coverage Results" MODIFIED="1739323336007" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/80_production" />
     <SUITE FILE_PATH="coverage/exolocator$ortho_align.coverage" NAME="ortho align Coverage Results" MODIFIED="1739321534536" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/80_production" />
     <SUITE FILE_PATH="coverage/exolocator$01_orthologue_alignment.coverage" NAME="01_orthologue_alignment Coverage Results" MODIFIED="1739037719741" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/80_production" />

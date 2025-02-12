@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import svgwrite
 import sys
 from typing import Dict
 
@@ -29,6 +30,14 @@ tax_grouop2color = {
     'Vertebrates':       '#ffb000'
 }
 
+legend_color_map = {
+    'All vertebrates':      '#ffb000',
+    'Tetrapods':            '#fe6100',
+    'Mammals':              '#dc267f',
+    'Rodents and primates': '#785ef0',
+    'Primates':             '#648fff',
+    'Variable in primates': '#ffffff',
+}
 
 def find_majority_character(characters: list[str]) -> str|None:
     """
@@ -76,7 +85,7 @@ def color_code(alignment: MultipleSeqAlignment, species_in_subtree: Dict[str, se
     return ret_list
 
 
-def create_colored_stripe_svg(data: List[List], output_filename="colored_stripe.svg", font_size=12, blocks_per_line=50):
+def create_colored_stripe_svg(data: List[List], output_filename="colored_stripe.svg", font_size=14, blocks_per_line=50):
     """
     Generates an SVG file representing a colored stripe based on the input data.
 
@@ -89,10 +98,10 @@ def create_colored_stripe_svg(data: List[List], output_filename="colored_stripe.
         blocks_per_line (int): Number of color blocks to display per line in the stripe.
     """
 
-    padding_above = 2 * font_size
-    block_height  = 2 * font_size  # Stripe height is 3 times the font size
+    padding_above = font_size
+    block_height  = int(1.5 * font_size)  # Stripe height is 3 times the font size
     block_width   = 15  # Width of each color block
-    x_offset = 30  # horizontal offset
+    x_offset      = 30  # horizontal offset
     line_spacing   = font_size  # Space between the stripe and the letters
     number_spacing = font_size  # Space between the letters and the index
 
@@ -106,6 +115,7 @@ def create_colored_stripe_svg(data: List[List], output_filename="colored_stripe.
             .text {{
                 font-size: {font_size}px;
                 font-family: monospace;
+                font-weight: bold;
             }}
         </style>
     </defs>
@@ -144,6 +154,45 @@ def create_colored_stripe_svg(data: List[List], output_filename="colored_stripe.
     print(f"SVG file created: {output_filename}")
 
 
+def create_legend_svg(color_map, filename="legend.svg", width=400, height=200, box_size=20, margin=20,
+                      border_color='gray', border_width=1):
+    """
+    Generates an SVG file containing a legend based on the provided color map.
+
+    Args:
+        color_map (dict): A dictionary mapping labels (strings) to colors (strings).
+        filename (str): The name of the SVG file to create.
+        width (int): The width of the SVG canvas.
+        height (int): The height of the SVG canvas.
+        box_size (int): The size (side length) of the color boxes in the legend.
+        margin (int): Margin around the legend.
+        border_color (str): The color of the rectangle borders.
+        border_width (int): The width of the rectangle borders.
+
+    """
+    dwg = svgwrite.Drawing(filename, size=(width, height))
+    x = margin
+    y = margin
+    line_height = box_size * 1.5  # Adjust line height based on box size
+
+    for label, color in color_map.items():
+        # Draw the color box
+        dwg.add(dwg.rect((x, y), (box_size, box_size), fill=color,
+                         stroke=border_color, stroke_width=border_width))
+
+        # Add the label
+        dwg.add(dwg.text(label, insert=(x + box_size + 10, y + box_size/1.3), fill='black', font_size=box_size/1.3))
+
+        y += line_height  # Move to the next line
+
+        if y + margin > height:
+            print("Warning: Legend may exceed the specified height.")
+            break
+
+    dwg.save()
+    print(f"Legend saved to {filename}")
+
+
 def main():
     """
     Main function to read alignment, restricts the alignment to the target sequence,
@@ -153,7 +202,7 @@ def main():
         print(f"Usage: {sys.argv[0]} <input_file> <output_file> ")
         sys.exit(1)
 
-    [input_file, output_file] = sys.argv[1:3]
+    [input_file, output_fnm] = sys.argv[1:3]
 
     try:
         # Read the alignment from the input file
@@ -178,8 +227,8 @@ def main():
 
     # assign color code to each position in the alignment according to conservation
     color_rep = color_code(alignment, species_in_subtree)
-    create_colored_stripe_svg(color_rep)
-
+    create_colored_stripe_svg(color_rep, output_filename=output_fnm)
+    create_legend_svg(legend_color_map)
 
 
 ###################################
