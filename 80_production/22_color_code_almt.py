@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from pprint import pprint
 
 import svgwrite
 import sys
@@ -193,10 +194,415 @@ def create_legend_svg(color_map, filename="legend.svg", width=400, height=200, b
     print(f"Legend saved to {filename}")
 
 
+from Bio import SeqIO
+from Bio.Align import MultipleSeqAlignment
+from Bio.SeqRecord import SeqRecord
+from Bio.Seq import Seq
+import io
+
+
+def remove_long_sequences(msa, reference_name, write=False):
+    """
+    Remove sequences that are 30% longer than the reference sequence.
+
+    Parameters:
+    -----------
+    msa : MultipleSeqAlignment
+        Input multiple sequence alignment
+    reference_name : str
+        Name/ID of the reference sequence
+    write : bool, default False
+        If True, write the resulting alignment to a FASTA file
+
+    Returns:
+    --------
+    MultipleSeqAlignment
+        Filtered alignment with sequences removed that are 30% longer than reference
+    """
+    # Find the reference sequence
+    reference_seq = None
+    for record in msa:
+        if record.id == reference_name:
+            reference_seq = record
+            break
+
+    if reference_seq is None:
+        raise ValueError(f"Reference sequence '{reference_name}' not found in alignment")
+
+    # Calculate reference length (excluding gaps)
+    ref_length = len(reference_seq.seq.replace('-', ''))
+    threshold_length = ref_length * 1.3  # 30% longer threshold
+
+    # Filter sequences
+    filtered_records = []
+    for record in msa:
+        seq_length = len(record.seq.replace('-', ''))
+        if seq_length <= threshold_length:
+            filtered_records.append(record)
+
+    # Create new alignment
+    filtered_msa = MultipleSeqAlignment(filtered_records)
+
+    # Write to file if requested
+    if write:
+        with open(f"{reference_name}_length_filtered.afa", "w") as f:
+            SeqIO.write(filtered_records, f, "fasta")
+
+    return filtered_msa
+
+
+def remove_gap_positions(msa, reference_name, write=False):
+    """
+    Remove alignment positions that are gaps in the reference sequence.
+
+    Parameters:
+    -----------
+    msa : MultipleSeqAlignment
+        Input multiple sequence alignment
+    reference_name : str
+        Name/ID of the reference sequence
+    write : bool, default False
+        If True, write the resulting alignment to a FASTA file
+
+    Returns:
+    --------
+    MultipleSeqAlignment
+        Filtered alignment with gap positions from reference removed
+    """
+    # Find the reference sequence
+    reference_seq = None
+    for record in msa:
+        if record.id == reference_name:
+            reference_seq = record
+            break
+
+    if reference_seq is None:
+        raise ValueError(f"Reference sequence '{reference_name}' not found in alignment")
+
+    # Identify positions to keep (non-gap positions in reference)
+    positions_to_keep = []
+    for i, char in enumerate(reference_seq.seq):
+        if char != '-':
+            positions_to_keep.append(i)
+
+    # Filter all sequences to keep only non-gap reference positions
+    filtered_records = []
+    for record in msa:
+        filtered_seq = ''.join([str(record.seq)[i] for i in positions_to_keep])
+        filtered_record = SeqRecord(
+            Seq(filtered_seq),
+            id=record.id,
+            description=record.description
+        )
+        filtered_records.append(filtered_record)
+
+    # Create new alignment
+    filtered_msa = MultipleSeqAlignment(filtered_records)
+
+    # Write to file if requested
+    if write:
+        with open(f"{reference_name}_gap_filtered.afa", "w") as f:
+            SeqIO.write(filtered_records, f, "fasta")
+
+    return filtered_msa
+
+from Bio import SeqIO
+from Bio.Align import MultipleSeqAlignment
+from Bio.SeqRecord import SeqRecord
+from Bio.Seq import Seq
+import io
+
+
+def remove_long_sequences(msa, reference_name, write=False):
+    """
+    Remove sequences that are 30% longer than the reference sequence.
+    
+    Parameters:
+    -----------
+    msa : MultipleSeqAlignment
+        Input multiple sequence alignment
+    reference_name : str
+        Name/ID of the reference sequence
+    write : bool, default False
+        If True, write the resulting alignment to a FASTA file
+    
+    Returns:
+    --------
+    MultipleSeqAlignment
+        Filtered alignment with sequences removed that are 30% longer than reference
+    """
+    # Find the reference sequence
+    reference_seq = None
+    for record in msa:
+        if record.id == reference_name:
+            reference_seq = record
+            break
+    
+    if reference_seq is None:
+        raise ValueError(f"Reference sequence '{reference_name}' not found in alignment")
+    
+    # Calculate reference length (excluding gaps)
+    ref_length = len(reference_seq.seq.replace('-', ''))
+    threshold_length = ref_length * 1.3  # 30% longer threshold
+    
+    # Filter sequences
+    filtered_records = []
+    for record in msa:
+        seq_length = len(record.seq.replace('-', ''))
+        if seq_length <= threshold_length:
+            filtered_records.append(record)
+    
+    # Create new alignment
+    filtered_msa = MultipleSeqAlignment(filtered_records)
+    
+    # Write to file if requested
+    if write:
+        with open(f"{reference_name}_length_filtered.afa", "w") as f:
+            SeqIO.write(filtered_records, f, "fasta")
+    
+    return filtered_msa
+
+
+def remove_gap_positions(msa, reference_name, write=False):
+    """
+    Remove alignment positions that are gaps in the reference sequence.
+    
+    Parameters:
+    -----------
+    msa : MultipleSeqAlignment
+        Input multiple sequence alignment
+    reference_name : str
+        Name/ID of the reference sequence
+    write : bool, default False
+        If True, write the resulting alignment to a FASTA file
+    
+    Returns:
+    --------
+    MultipleSeqAlignment
+        Filtered alignment with gap positions from reference removed
+    """
+    # Find the reference sequence
+    reference_seq = None
+    for record in msa:
+        if record.id == reference_name:
+            reference_seq = record
+            break
+    
+    if reference_seq is None:
+        raise ValueError(f"Reference sequence '{reference_name}' not found in alignment")
+    
+    # Identify positions to keep (non-gap positions in reference)
+    positions_to_keep = []
+    for i, char in enumerate(reference_seq.seq):
+        if char != '-':
+            positions_to_keep.append(i)
+    
+    # Filter all sequences to keep only non-gap reference positions
+    filtered_records = []
+    for record in msa:
+        filtered_seq = ''.join([str(record.seq)[i] for i in positions_to_keep])
+        filtered_record = SeqRecord(
+            Seq(filtered_seq),
+            id=record.id,
+            description=record.description
+        )
+        filtered_records.append(filtered_record)
+    
+    # Create new alignment
+    filtered_msa = MultipleSeqAlignment(filtered_records)
+    
+    # Write to file if requested
+    if write:
+        with open(f"{reference_name}_gap_filtered.afa", "w") as f:
+            SeqIO.write(filtered_records, f, "fasta")
+    
+    return filtered_msa
+
+
+def remove_dissimilar_sequences(msa, reference_name, write=False):
+    """
+    Remove sequences that differ from the reference in 50% or more positions.
+    
+    Parameters:
+    -----------
+    msa : MultipleSeqAlignment
+        Input multiple sequence alignment
+    reference_name : str
+        Name/ID of the reference sequence
+    write : bool, default False
+        If True, write the resulting alignment to a FASTA file
+    
+    Returns:
+    --------
+    MultipleSeqAlignment
+        Filtered alignment with dissimilar sequences removed
+    """
+    # Find the reference sequence
+    reference_seq = None
+    for record in msa:
+        if record.id == reference_name:
+            reference_seq = record
+            break
+    
+    if reference_seq is None:
+        raise ValueError(f"Reference sequence '{reference_name}' not found in alignment")
+    
+    # Filter sequences based on similarity
+    filtered_records = []
+    alignment_length = len(reference_seq.seq)
+    
+    for record in msa:
+        # Count matching positions (excluding positions where either sequence has a gap)
+        matches = 0
+        valid_positions = 0
+        
+        for i in range(alignment_length):
+            ref_char = str(reference_seq.seq)[i]
+            seq_char = str(record.seq)[i]
+            
+            # Only count positions where neither sequence has a gap
+            if ref_char != '-' and seq_char != '-':
+                valid_positions += 1
+                if ref_char == seq_char:
+                    matches += 1
+        
+        # Calculate similarity percentage
+        if valid_positions > 0:
+            similarity = matches / valid_positions
+            # Keep sequences that are at least 50% similar (differ in less than 50% of positions)
+            if similarity >= 0.5:
+                filtered_records.append(record)
+        else:
+            # If no valid positions for comparison, keep the sequence
+            filtered_records.append(record)
+    
+    # Create new alignment
+    filtered_msa = MultipleSeqAlignment(filtered_records)
+    
+    # Write to file if requested
+    if write:
+        with open(f"{reference_name}_similarity_filtered.afa", "w") as f:
+            SeqIO.write(filtered_records, f, "fasta")
+    
+    return filtered_msa
+
+
+def remove_gappy_sequences(msa, write=False):
+    """
+    Remove sequences that have 30% or more positions with gaps ('-') or unknown residues ('x'/'X').
+    
+    Parameters:
+    -----------
+    msa : MultipleSeqAlignment
+        Input multiple sequence alignment
+    write : bool, default False
+        If True, write the resulting alignment to a FASTA file
+    
+    Returns:
+    --------
+    MultipleSeqAlignment
+        Filtered alignment with gappy sequences removed
+    """
+    filtered_records = []
+    
+    for record in msa:
+        sequence = str(record.seq).upper()  # Convert to uppercase for consistent comparison
+        total_length = len(sequence)
+        
+        if total_length == 0:
+            continue  # Skip empty sequences
+        
+        # Count gaps and unknown residues
+        gap_and_unknown_count = sequence.count('-') + sequence.count('X')
+        gap_percentage = gap_and_unknown_count / total_length
+        
+        # Keep sequences with less than 30% gaps/unknowns
+        if gap_percentage < 0.3:
+            filtered_records.append(record)
+    
+    # Create new alignment
+    filtered_msa = MultipleSeqAlignment(filtered_records)
+    
+    # Write to file if requested
+    if write:
+        with open("gappy_filtered.afa", "w") as f:
+            SeqIO.write(filtered_records, f, "fasta")
+    
+    return filtered_msa
+
+
+def remove_dissimilar_sequences(msa, reference_name, write=False):
+    """
+    Remove sequences that differ from the reference in 30% or more positions.
+
+    Parameters:
+    -----------
+    msa : MultipleSeqAlignment
+        Input multiple sequence alignment
+    reference_name : str
+        Name/ID of the reference sequence
+    write : bool, default False
+        If True, write the resulting alignment to a FASTA file
+
+    Returns:
+    --------
+    MultipleSeqAlignment
+        Filtered alignment with dissimilar sequences removed
+    """
+    # Find the reference sequence
+    reference_seq = None
+    for record in msa:
+        if record.id == reference_name:
+            reference_seq = record
+            break
+
+    if reference_seq is None:
+        raise ValueError(f"Reference sequence '{reference_name}' not found in alignment")
+
+    # Filter sequences based on similarity
+    filtered_records = []
+    alignment_length = len(reference_seq.seq)
+
+    for record in msa:
+        # Count matching positions (excluding positions where either sequence has a gap)
+        matches = 0
+        valid_positions = 0
+
+        for i in range(alignment_length):
+            ref_char = str(reference_seq.seq)[i]
+            seq_char = str(record.seq)[i]
+
+            # Only count positions where neither sequence has a gap
+            if ref_char != '-' and seq_char != '-':
+                valid_positions += 1
+                if ref_char == seq_char:
+                    matches += 1
+
+        # Calculate similarity percentage
+        if valid_positions > 0:
+            similarity = matches / valid_positions
+            # Keep sequences that are at least 50% similar (differ in less than 50% of positions)
+            if similarity >= 0.7:
+                filtered_records.append(record)
+        else:
+            # If no valid positions for comparison, keep the sequence
+            filtered_records.append(record)
+
+    # Create new alignment
+    filtered_msa = MultipleSeqAlignment(filtered_records)
+
+    # Write to file if requested
+    if write:
+        with open(f"{reference_name}_similarity_filtered.afa", "w") as f:
+            SeqIO.write(filtered_records, f, "fasta")
+
+    return filtered_msa
+
+
 def main():
     """
     Main function to read alignment, restricts the alignment to the target sequence,
-    remove gappy sequences, and  write the output.
+    remove gappy sequences, and write the output.
     """
     if len(sys.argv) != 3:
         print(f"Usage: {sys.argv[0]} <input_file> <output_file> ")
@@ -211,6 +617,11 @@ def main():
         print(f"Error: Input file '{input_file}' not found.")
         sys.exit(1)
 
+    alignment = remove_long_sequences(alignment, 'homo_sapiens', write=False)
+    alignment = remove_gap_positions(alignment, 'homo_sapiens', write=False)
+    # alignment = remove_gappy_sequences(alignment, write=False)
+    # alignment = remove_dissimilar_sequences(alignment, 'homo_sapiens', write=True)
+
     species_list = [record.id for record in alignment]
 
     cursor = mysql_using_env_creds()
@@ -222,7 +633,8 @@ def main():
     for node_name in special_node_names:
         if not (parent_node := tree.get_node(node_name)): continue
         species_in_subtree[node_name] = set(parent_node.subtree_leaf_names())
-    if len(species_list) > len(species_in_subtree['Tetrapoda']):
+
+    if  'Tetrapoda' not in species_in_subtree or  len(species_list) > len(species_in_subtree['Tetrapoda']) :
         species_in_subtree['Vertebrates'] = set(species_list)
 
     # assign color code to each position in the alignment according to conservation
