@@ -1,6 +1,7 @@
 
 class Config:
 
+	mysql_conf_file  = "/home/ivana/.exoloc_conf"
 	release_number = "113"
 	fasta_repo = f"/media/ivana/portable/ensembl-{release_number}/fasta"
 	mysql_repo = f"/media/ivana/portable/ensembl-{release_number}/mysql"

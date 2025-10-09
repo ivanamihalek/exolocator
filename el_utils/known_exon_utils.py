@@ -1,67 +1,9 @@
-#!/usr/bin/python3 -u
+from el_utils.ensembl import get_canonical_transcript_id, get_canonical_exon_ids, get_canonical_coordinates, \
+	get_transcript_ids, get_gene_coordinates, get_logic_name, get_exons, get_gene_start, gene2stable
+from el_utils.mysql import switch_to_db, search_db, error_intolerant_search, hard_landing_search
 
-from el_utils.processes import *
-from el_utils.special_gene_sets import *
-
-from config import Config
 from itertools import combinations
 import networkx as nx
-
-
-#########################################
-def mark_canonical (cursor, species_db, gene_id, exons):
-
-	canonical_transcript_id = get_canonical_transcript_id(cursor, gene_id, species_db)
-	if not canonical_transcript_id:
-		print("canonical_transcript_id  not retrived for ",  gene_id)
-		return False
-
-	canonical_exon_ids = get_canonical_exon_ids(cursor, canonical_transcript_id, species_db)
-	for exon in exons:
-		# this has to be 0/1 and not T/F because we will be reading this into MySQL that does not know about T/F
-		setattr(exon, "is_canonical", 0)  # we might not have this object until this point
-		if exon.exon_id in canonical_exon_ids: exon.is_canonical = 1
-
-	ret = get_canonical_coordinates(cursor, canonical_transcript_id, species_db)
-	if not ret:
-		return f"Error: no canonical_coordinates found for transcript {canonical_transcript_id} gene {gene_id}."
-	[canonical_start_in_exon, canonical_start_exon_id, canonical_end_in_exon, canonical_end_exon_id] = ret
-
-	for exon in exons:
-		setattr(exon, "canon_transl_start", -1)
-		setattr(exon, "canon_transl_end",  -1)
-	start_found = False
-	end_found   = False
-	for exon in exons:
-		# in translation [n.b: translation, not transcript] table canonical_start_in_exon and canonical_end_in_exon
-		# refer to distance from the exon start - these are small numbers, like 15 or 138, starting from 1
-		# from ensembl schema page, translation columns description
-		# seq_start: 1-based offset into the relative coordinate system of start_exon_id (which is given in the next column)
-		# seq_end: 1-based offset into the relative coordinate system of end_exon_id
-		# and all that after the reverse direction is taken into the account
-		# I find it extremely difficult to work with
-		# I am storing the coding start position measured from the gene start, 0 offset, irrespective of reading direction
-		if exon.exon_id == canonical_start_exon_id:
-			start_found = True
-			if exon.seq_region_strand > 0:
-				exon.canon_transl_start = exon.start_in_gene + canonical_start_in_exon - 1
-			else:
-				exon.canon_transl_end = exon.end_in_gene - (canonical_start_in_exon - 1)
-		if exon.exon_id == canonical_end_exon_id:
-			end_found = True
-			if exon.seq_region_strand > 0:
-				exon.canon_transl_end = exon.start_in_gene + canonical_end_in_exon - 1
-			else:
-				exon.canon_transl_start = exon.end_in_gene - (canonical_end_in_exon - 1)
-
-	# can somehting be canonical if we do not know where it starts
-	if not start_found:
-		return f"canonical translation start not found for {gene_id}"
-	if not end_found:
-		return f"canonical translation end not found for {gene_id}"
-
-	return "ok"
-
 
 #########################################
 def fill_in_annotation_info (cursor, species_db, exons):
@@ -358,6 +300,7 @@ def format_tsv_line(cursor, exon):
 # fetch all exons for a given gene,
 # and figure out whether they are canonical and/or coding
 # which ones cover others, and what is the source of the annotation
+
 def find_exon_info (cursor, gene_id, species_db):
 
 	# print (gene_id, hgnc_symbol(cursor, gene_id), get_description(cursor, gene_id))
@@ -417,80 +360,65 @@ def exons_for_gene(cursor, gene_id, species_db, count, outfile, logf):
 
 
 #########################################
-def exons_for_species(species_list, db_info):
+def mark_canonical (cursor, species_db, gene_id, exons):
 
-	[ensembl_db_name, outdir] = db_info
-	db = connect_to_mysql(Config.mysql_conf_file)
-	cursor = db.cursor()
-	search_db(cursor, "set autocommit=1")
-	logf = open("log.{}.txt".format(get_process_id()),"w")
+	canonical_transcript_id = get_canonical_transcript_id(cursor, gene_id, species_db)
+	if not canonical_transcript_id:
+		print("canonical_transcript_id  not retrived for ",  gene_id)
+		return False
 
-	for species in species_list:
-		# load this file later with
-		# sudo mysqlimport  --local <species db>  outfir/species/gene2exon.tsv
-		# mysqlimport strips any extension and uses what's left as a table name
-		# before you begin, do
-		# mysql> SET GLOBAL local_infile = 1;
-		os.makedirs(f"{outdir}/{species}", exist_ok=True)
-		outfile = open(f"{outdir}/{species}/gene2exon.tsv", "w")
+	canonical_exon_ids = get_canonical_exon_ids(cursor, canonical_transcript_id, species_db)
+	for exon in exons:
+		# this has to be 0/1 and not T/F because we will be reading this into MySQL that does not know about T/F
+		setattr(exon, "is_canonical", 0)  # we might not have this object until this point
+		if exon.exon_id in canonical_exon_ids: exon.is_canonical = 1
 
-		logf.write(species+" started\n")
-		gene_ids = get_gene_ids(cursor, biotype='protein_coding', db_name= ensembl_db_name[species])
-		# gene_ids = [8979]
-		count = 0
-		time0 = time()
-		for gene_id in gene_ids:
-			if gene_ids.index(gene_id)%1000==0:
-				pct_of_genes_processed = float(int(gene_ids.index(gene_id)) + 1)/len(gene_ids)*100
-				print("%50s:  %5.1f%%    %ds" % (species, pct_of_genes_processed, time()-time0))
-				time0 = time()
-			count = exons_for_gene(cursor, gene_id, ensembl_db_name[species], count, outfile, logf)
-		outfile.close()
-		print(f"{species} done", file=logf)
-	logf.close()
-	cursor.close()
-	db.close()
+	ret = get_canonical_coordinates(cursor, canonical_transcript_id, species_db)
+	if not ret:
+		return f"Error: no canonical_coordinates found for transcript {canonical_transcript_id} gene {gene_id}."
+	[canonical_start_in_exon, canonical_start_exon_id, canonical_end_in_exon, canonical_end_exon_id] = ret
 
-	return True
+	for exon in exons:
+		setattr(exon, "canon_transl_start", -1)
+		setattr(exon, "canon_transl_end",  -1)
+	start_found = False
+	end_found   = False
+	for exon in exons:
+		# in translation [n.b: translation, not transcript] table canonical_start_in_exon and canonical_end_in_exon
+		# refer to distance from the exon start - these are small numbers, like 15 or 138, starting from 1
+		# from ensembl schema page, translation columns description
+		# seq_start: 1-based offset into the relative coordinate system of start_exon_id (which is given in the next column)
+		# seq_end: 1-based offset into the relative coordinate system of end_exon_id
+		# and all that after the reverse direction is taken into the account
+		# I find it extremely difficult to work with
+		# I am storing the coding start position measured from the gene start, 0 offset, irrespective of reading direction
+		if exon.exon_id == canonical_start_exon_id:
+			start_found = True
+			if exon.seq_region_strand > 0:
+				exon.canon_transl_start = exon.start_in_gene + canonical_start_in_exon - 1
+			else:
+				exon.canon_transl_end = exon.end_in_gene - (canonical_start_in_exon - 1)
+		if exon.exon_id == canonical_end_exon_id:
+			end_found = True
+			if exon.seq_region_strand > 0:
+				exon.canon_transl_end = exon.start_in_gene + canonical_end_in_exon - 1
+			else:
+				exon.canon_transl_start = exon.end_in_gene - (canonical_end_in_exon - 1)
 
+	# can somehting be canonical if we do not know where it starts
+	if not start_found:
+		return f"canonical translation start not found for {gene_id}"
+	if not end_found:
+		return f"canonical translation end not found for {gene_id}"
 
-def check_species_done( all_species,  outdir):
-	unprocessed_species = []
-	for species in all_species:
-		gene2ex_file = f"{outdir}/{species}/gene2exon.tsv"
-		if not os.path.exists(gene2ex_file):
-			unprocessed_species.append(species)
-
-	return unprocessed_species
-
-
-#########################################
-def main():
-	outdir = "raw_tables"
-	os.makedirs(outdir, exist_ok=True)
-
-	no_threads = 32
-	db = connect_to_mysql(Config.mysql_conf_file)
-	cursor = db.cursor()
-	[all_species, ensembl_db_name] = get_species(cursor)
-	#all_species = ["mus_musculus"]
-	#all_species.remove('homo_sapiens')
-
-	cursor.close()
-	db    .close()
-
-	unprocessed_species = check_species_done(all_species, "raw_tables")
-
-	parallelize(no_threads, exons_for_species, unprocessed_species, [ensembl_db_name, outdir])
+	return "ok"
 
 
-#########################################
-if __name__ == '__main__':
-	main()
+def get_species_shorthand(cursor, species):
+	switch_to_db(cursor, 'ensembl_meta')
 
-'''
-In v 101 a bunch of canonical transcript coordinates were missing for mus caroli
-not sure if I should worry about that - there ar 75 cases like that
-exmaple MGP_CAROLIEiJ_G0027698 Ppp1cc protein phosphatase 1 catalytic subunit gamma
-The smae for mus pahari and mus spretus
-'''
+	qry = "select shorthand from species_names where species='%s'" % species
+	rows = search_db(cursor, qry)
+	if not rows: return ""
+
+	return rows[0][0]

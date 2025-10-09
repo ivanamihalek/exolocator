@@ -17,14 +17,6 @@ def get_trivial(cursor, species_names):
 
 
 #########################################
-def get_species_shorthand(cursor, species):
-	switch_to_db(cursor, 'ensembl_meta')
-
-	qry = "select shorthand from species_names where species='%s'" % species
-	rows = search_db(cursor, qry)
-	if not rows: return ""
-
-	return rows[0][0]
 
 
 #########################################

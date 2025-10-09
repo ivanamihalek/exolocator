@@ -609,6 +609,8 @@ def main():
         sys.exit(1)
 
     [input_file, output_fnm] = sys.argv[1:3]
+    
+    reference_species = 'homo_sapiens'
 
     try:
         # Read the alignment from the input file
@@ -617,10 +619,10 @@ def main():
         print(f"Error: Input file '{input_file}' not found.")
         sys.exit(1)
 
-    alignment = remove_long_sequences(alignment, 'homo_sapiens', write=False)
-    alignment = remove_gap_positions(alignment, 'homo_sapiens', write=False)
+    # alignment = remove_long_sequences(alignment, reference_species, write=False)
+    # alignment = remove_gap_positions(alignment, reference_species, write=False)
     # alignment = remove_gappy_sequences(alignment, write=False)
-    # alignment = remove_dissimilar_sequences(alignment, 'homo_sapiens', write=True)
+    # alignment = remove_dissimilar_sequences(alignment, reference_species, write=True)
 
     species_list = [record.id for record in alignment]
 
