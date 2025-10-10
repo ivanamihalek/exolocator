@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="307ed4cd-a143-4c9b-b8fe-5d50264e8a01" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/15_known_exons/14_all_genes2exon.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/80_production/12_exon_structure.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_known_exons/14_gene2exon.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/known_exon_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_known_exons/c_utils" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_known_exons/config.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/15_known_exons/el_utils" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/22_color_code_almt.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/22_color_code_almt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/80_production/test.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/el_utils/ensembl.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/ensembl.py" afterDir="false" />
-    </list>
+    <list default="true" id="307ed4cd-a143-4c9b-b8fe-5d50264e8a01" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -132,7 +120,7 @@
       <workItem from="1757786269082" duration="8330000" />
       <workItem from="1759943082366" duration="4655000" />
       <workItem from="1759948019882" duration="9553000" />
-      <workItem from="1760010600322" duration="4204000" />
+      <workItem from="1760010600322" duration="4786000" />
     </task>
     <servers />
   </component>
