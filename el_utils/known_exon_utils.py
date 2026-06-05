@@ -269,6 +269,7 @@ def format_tsv_line(cursor, exon):
 	update_fields['exon_seq_id']        = -1 # we'll fill this after we extract the exon seqs
 	update_fields['strand']             = exon.seq_region_strand
 	update_fields['phase']              = exon.phase
+	update_fields['end_phase']          = exon.end_phase
 	update_fields['canon_transl_start'] = exon.canon_transl_start
 	update_fields['canon_transl_end']   = exon.canon_transl_end
 	update_fields['is_coding']          = exon.is_coding
@@ -285,7 +286,7 @@ def format_tsv_line(cursor, exon):
 	all_fields = fixed_fields
 	all_fields.update(update_fields)
 	db_field_names = ["gene_id", "exon_id", "start_in_gene", "end_in_gene",
-	                  "canon_transl_start", "canon_transl_end", "exon_seq_id", "strand", "phase",
+	                  "canon_transl_start", "canon_transl_end", "exon_seq_id", "strand", "phase","end_phase",
 	                  "provenance", "is_coding", "is_canonical", "is_constitutive", "covering_exon",
 	                  "covering_provenance", "analysis_id"]
 	for k,v in all_fields.items():

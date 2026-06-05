@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from pprint import pprint
 
 import svgwrite
@@ -619,10 +619,10 @@ def main():
         print(f"Error: Input file '{input_file}' not found.")
         sys.exit(1)
 
-    # alignment = remove_long_sequences(alignment, reference_species, write=False)
-    # alignment = remove_gap_positions(alignment, reference_species, write=False)
-    # alignment = remove_gappy_sequences(alignment, write=False)
-    # alignment = remove_dissimilar_sequences(alignment, reference_species, write=True)
+    alignment = remove_long_sequences(alignment, reference_species, write=False)
+    alignment = remove_gap_positions(alignment, reference_species, write=False)
+    alignment = remove_gappy_sequences(alignment, write=False)
+    alignment = remove_dissimilar_sequences(alignment, reference_species, write=True)
 
     species_list = [record.id for record in alignment]
 

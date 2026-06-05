@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="307ed4cd-a143-4c9b-b8fe-5d50264e8a01" name="Changes" comment="" />
+    <list default="true" id="307ed4cd-a143-4c9b-b8fe-5d50264e8a01" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/exolocator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/exolocator.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/80_production/12_exon_structure.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/12_exon_structure.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/80_production/22_color_code_almt.py" beforeDir="false" afterPath="$PROJECT_DIR$/80_production/22_color_code_almt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/el_utils/known_exon_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/el_utils/known_exon_utils.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,26 +37,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.01_orthologue_alignment.executor": "Run",
-    "Python.22_color_code_almt.executor": "Run",
-    "Python.ortho align.executor": "Run",
-    "Python.test.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/ivana/pypeworks/exolocator/el_utils",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.01_orthologue_alignment.executor&quot;: &quot;Run&quot;,
+    &quot;Python.22_color_code_almt.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ortho align.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ivana/pypeworks/exolocator/el_utils&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/15_known_exons" />
@@ -69,7 +77,6 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.12 (exolocator)" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/80_production" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -121,6 +128,10 @@
       <workItem from="1759943082366" duration="4655000" />
       <workItem from="1759948019882" duration="9553000" />
       <workItem from="1760010600322" duration="4786000" />
+      <workItem from="1761257059180" duration="1883000" />
+      <workItem from="1761420500240" duration="5811000" />
+      <workItem from="1771531860718" duration="4505000" />
+      <workItem from="1772295361460" duration="2483000" />
     </task>
     <servers />
   </component>

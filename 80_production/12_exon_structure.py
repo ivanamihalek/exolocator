@@ -217,7 +217,7 @@ def main():
     outfnm = f"{gene_name}.exons.tsv"
     with open(outfnm, "w") as outfile:
         table_header = ['exon no',"gene_id", "exon_id", "start_in_gene", "end_in_gene",
-                      "canon_transl_start", "canon_transl_end", "exon_seq_id", "strand", "phase",
+                      "canon_transl_start", "canon_transl_end", "exon_seq_id", "strand", "phase", "end_phase",
                       "provenance", "is_coding", "is_canonical", "is_constitutive", "covering_exon",
                       "covering_provenance", "analysis_id"]
         print("\t".join(table_header), file=outfile)
