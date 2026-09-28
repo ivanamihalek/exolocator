@@ -1,0 +1,19 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: exolocator-mariadb
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # MYSQL_USER/MYSQL_PASSWORD/MYSQL_ALLOW_EMPTY_ROOT_PASSWORD are only
+      # consulted by the entrypoint the FIRST time /var/lib/mysql is empty.
+      # Since this mounts an existing, already-initialized data directory,
+      # none of them apply here - login depends entirely on what accounts
+      # already exist inside that data. Kept only as a safety net in case
+      # the mounted path is ever empty (e.g. wrong path, unmounted drive).
+      MYSQL_ALLOW_EMPTY_ROOT_PASSWORD: "1"
+    ports:
+      - "${MYSQL_HOST}:${MYSQL_PORT}:3306"
+    volumes:
+      - /media/ivana/portable/mysql:/var/lib/mysql
